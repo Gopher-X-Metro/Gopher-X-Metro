@@ -8,12 +8,19 @@ namespace Data {
     const GTFS_REALTIME_URL_TRANSIT = 'https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb';
 
     // Refreshes the cache in the browser
-    async function refreshStaticGTFSCache() {
-        return caches.open("gtfs-static").then(cache => cache.add(GTFS_STATIC_URL).then(() => cache.match(GTFS_STATIC_URL).then(result => result?.arrayBuffer())))
+    async function refreshStaticGTFSCache() : Promise<ArrayBuffer | undefined> {
+        try {
+            await caches.open("gtfs-static").then(cache => cache.add(GTFS_STATIC_URL));
+        } catch (error) {
+            console.error("Error refreshing cache:", error);
+            console.warn("The data was not Cached!");
+        }
+
+        return fetch(GTFS_STATIC_URL).then(response => response.arrayBuffer().then(buffer => buffer));
     }
 
     // Returns a bufferArray promise of the data from the server
-    export async function getStaticGTFS() {
+    export async function getStaticGTFS() : Promise<ArrayBuffer | undefined> {
         if (!window.caches) { 
             // If caching does not exist on the browser, just return the data from the server
             console.warn("This browser does not support Cache!")
