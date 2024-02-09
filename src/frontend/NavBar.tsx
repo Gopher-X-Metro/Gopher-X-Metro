@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import Routes from './gtfs/Routes.ts';
-import Vehicles from './gtfs/Vehicles.ts';
+import URL from '../backend/URL.ts';
+import Routes from './Routes.ts';
+import Vehicles from './Vehicles.ts';
 
 
 export default function NavBar() {
@@ -40,7 +41,7 @@ export default function NavBar() {
                 &#9776;
                 </button>
             </div>
-            
+
             <div id = "main">
                 <button className="AboutButton" onClick={() => window.location.href = 'About-Page.html'}>
                 &#8942;
@@ -53,19 +54,20 @@ export default function NavBar() {
 // Creates a route button with the route that the button leads to and the route that it leads to
 function RouteButton({route, text}) {
     const [_, setForceUpdate] = useState(0);
-    const isActive = Routes.getURLRoutes().includes(route); // used to check if route button is active
+    const isActive = URL.getRoutes().includes(route); // used to check if route button is active
+
     return (
       <button className={`route-btn ${isActive ? 'active' : ''} route-${route}`} onClick={() => {
         // selects specific route depending on button pressed
-        if (Routes.getURLRoutes().indexOf(route) === -1) {
-            Routes.addURLRoute(route)
-          } else {
-            Routes.removeURLRoute(route)
-          }
+        if (URL.getRoutes().indexOf(route) === -1) {
+            URL.addRoute(route);
+        } else {
+            URL.removeRoute(route);
+        }
       
-          Routes.refresh();
-          Vehicles.refresh();
-          setForceUpdate(Math.random()); // updates color of button click immediately
+        Routes.refresh();
+        Vehicles.refresh();
+        setForceUpdate(Math.random()); // updates color of button click immediately
       }}>
         {text}
       </button> 

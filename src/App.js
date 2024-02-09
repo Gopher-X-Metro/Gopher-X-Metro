@@ -1,6 +1,6 @@
 import React from 'react';
-import Map from './Map.js'
-import NavBar from './NavBar.tsx';
+import Map from './frontend/Map.tsx'
+import NavBar from './frontend/NavBar.tsx';
 
 import "./styles.css"
 
