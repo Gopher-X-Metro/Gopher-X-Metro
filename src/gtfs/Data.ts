@@ -7,6 +7,39 @@ namespace Data {
     const GTFS_REALTIME_URL_UMN = "https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=vehicles2&action=list&agencyID=88";
     const GTFS_REALTIME_URL_TRANSIT = 'https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb';
 
+    
+    function test() {
+        const tripsHash = new Map<Number, Array<string>>();
+        const stopsHash = new Map<Number, Array<string>>();
+        const stopTimesHash = new Map<string, Array<string>>();
+        const routesHash = new Map<Number, Array<string>>();
+        const shapesHash = new Map<Number, Array<string>>();
+
+
+        fetch(GTFS_STATIC_URL).then(response => {     
+            if (response.ok) {
+                response.arrayBuffer().then(async buffer => await JSZip.loadAsync(buffer).then(async zip => {
+                    await zip.file("trips.txt")?.async("string").then(contents => contents.split(/\r\n/).map(line => line.split(/,/)).slice(1).forEach(line => {tripsHash.set(Number(line[0]), line);}))
+                    await zip.file("stops.txt")?.async("string").then(contents => contents.split(/\r\n/).map(line => line.split(/,/)).slice(1).forEach(line => {stopsHash.set(Number(line[0]), line);}))
+                    await zip.file("routes.txt")?.async("string").then(contents => contents.split(/\r\n/).map(line => line.split(/,/)).slice(1).forEach(line => {routesHash.set(Number(line[0]), line);}))
+                    await zip.file("shapes.txt")?.async("string").then(contents => contents.split(/\r\n/).map(line => line.split(/,/)).slice(1).forEach(line => {shapesHash.set(Number(line[0]), line);}))
+                    
+                    await zip.file("stop_times.txt")?.async("string").then(contents => contents.split(/\r\n/).map(line => line.split(/,/)).slice(1).forEach(line => {stopTimesHash.set(line[0], line);}))
+
+                })).finally( () => {
+                    console.log(tripsHash);
+                    console.log(stopsHash);
+                    console.log(routesHash);
+                    console.log(shapesHash);
+                    console.log(stopTimesHash);
+                    console.log("done")
+                });
+            } else {
+                console.warn("Could not fetch data of routes");
+            }
+        })
+    }
+    
     // Refreshes the cache in the browser
     async function refreshStaticGTFSCache() : Promise<ArrayBuffer | undefined> {
         try {
