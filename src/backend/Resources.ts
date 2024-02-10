@@ -9,6 +9,8 @@ namespace Resources {
 
     export async function load() {
         console.log("Loading Resources...")
+        
+        await Data.load();
 
         await Data.getFiles().then(async files => {
             await files["trips.txt"].async("string").then(contents => {
@@ -56,6 +58,63 @@ namespace Resources {
         })
         
         console.log("Finished Loading Resources")
+    }
+
+    export async function getShapeIds(route: string) : Promise<Set<string>> {
+        let ids = new Set<string>();
+
+        await Data.getHash("trips.txt").then(hash => {
+            hash.get(route)?.forEach(line => {
+                ids.add(line.split(/,/)[7])
+            })
+        })
+
+        return ids;
+    }
+
+    export async function getTripIds(route: string) : Promise<Set<string>> {
+        let ids = new Set<string>();
+
+        await Data.getHash("trips.txt").then(hash => {
+            hash.get(route)?.forEach(line => {
+                ids.add(line.split(/,/)[2])
+            })
+        })
+
+        return ids;
+    }
+
+    export async function getStopIds(tripId: string) : Promise<Set<string>> {
+        let ids = new Set<string>();
+
+        await Data.getHash("stop_times.txt").then(hash => {
+            hash.get(tripId)?.forEach(line => {
+                ids.add(line.split(/,/)[3])
+            })
+        })
+
+        return ids;
+    }
+
+    export async function getShape(shapeId: string) : Promise<Array<google.maps.LatLng>> {
+        let shape = new Array<google.maps.LatLng>();
+
+        await Data.getHash("shapes.txt").then(hash => {
+            hash.get(shapeId)?.forEach(line =>{
+                const sections = line.split(/,/)
+                shape.push(new google.maps.LatLng(Number(sections[1]), Number(sections[2])))
+            })
+        })
+
+        return shape;
+    }
+
+    export async function getColor(route: string) : Promise<string> {
+        let color = "#";
+        
+        await Data.getHash("routes.txt").then(hash => hash.get(route)?.forEach(line => color += line.split(/,/)[7]))  
+        
+        return color;
     }
 }
 

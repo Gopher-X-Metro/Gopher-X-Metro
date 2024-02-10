@@ -10,12 +10,12 @@ class Route {
         this.vehicles = new Map<string, Vehicle>();
     }
 
-    public addPath(id: string, route: string, tripID: string, color: string, locations: Array<google.maps.LatLng>, map: google.maps.Map) : void {
-        this.paths.set(id, new Path(id, route, tripID, color, locations, map));
+    public addPath(route: string, shapeId: string, tripID: string, color: string, locations: Array<google.maps.LatLng>, map: google.maps.Map) : void {
+        this.paths.set(shapeId, new Path(route, shapeId, tripID, color, locations, map));
     }
 
-    public addStop(id: string, route: string, color: string, location: google.maps.LatLng, map: google.maps.Map) : void {
-        this.stops.set(id, new Stop(id, route, color, location, map));
+    public addStop(route: string, stopId: string, color: string, location: google.maps.LatLng, map: google.maps.Map) : void {
+        this.stops.set(stopId, new Stop(route, stopId, color, location, map));
     }
 
     public addVehicle(id: string, route: string, color: string, location: google.maps.LatLng, map: google.maps.Map) : void {

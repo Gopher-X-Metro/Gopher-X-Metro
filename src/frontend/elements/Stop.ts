@@ -1,5 +1,5 @@
 class Stop {
-    constructor(id: string, route: string, color: string, location: google.maps.LatLng, map: google.maps.Map) {
+    constructor(route: string, id: string, color: string, location: google.maps.LatLng, map: google.maps.Map) {
         this.id = id
         this.route = route
         this.marker = new window.google.maps.Circle({
