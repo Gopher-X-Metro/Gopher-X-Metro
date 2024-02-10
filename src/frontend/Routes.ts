@@ -25,8 +25,8 @@ namespace Routes {
 
     // Sets a route's visibility
     export function setVisible(route : string, visible : boolean) {
-        getRoute(route)?.getPaths()?.forEach(paths => paths.getLine().setVisible(visible));
-        getRoute(route)?.getStops()?.forEach(stops => stops.getMarker().setVisible(visible));
+        getRoute(route)?.getPaths()?.forEach(path => path.getLine().setVisible(visible));
+        getRoute(route)?.getStops()?.forEach(stop => stop.getMarker().setVisible(visible));
         getRoute(route)?.getVehicles()?.forEach(vehicle => vehicle.getMarker().setVisible(visible));
     }
 
@@ -53,33 +53,31 @@ namespace Routes {
     }
 
     // Loads a route into the routes list
-    async function loadRoute(id: string) {
-        const route = new Route(id);
-        routes.set(id, route);
+    async function loadRoute(routeId: string) {
+        const route = new Route(routeId);
 
-        Resources.tripsFileHash.get(id)?.[1].forEach(shapeID => {
-            let color = ROUTE_COLORS[id];
-            let shape = Resources.shapesFileHash.get(shapeID);
+        routes.set(routeId, route);
 
-            if (shape === undefined) {shape = new Set()};
-            if (color === "" || color === undefined) {color = "FF0000";}
+        await Resources.getShapeIds(routeId).then(async shapeIds => shapeIds.forEach(async shapeId => {
+            let color = ROUTE_COLORS[routeId] ? ROUTE_COLORS[routeId] : await Resources.getColor(routeId);
 
-            route.addPath(shapeID, id, "", color, Array.from(shape), map)
-            
+            // Add path
+            route.addPath(routeId, shapeId, "", color, await Resources.getShape(shapeId), map)
+                        
             // If the user hovers over the line, change the width
-            route.getPaths()?.get(shapeID)?.getLine().addListener("mouseover", () => setBolded(route.getId(), true));
+            route.getPaths()?.get(shapeId)?.getLine().addListener("mouseover", () => setBolded(route.getId(), true));
             
             // If the user stops hovering over the line, return back
-            route.getPaths()?.get(shapeID)?.getLine().addListener("mouseout", () => setBolded(route.getId(), false));
-        })
+            route.getPaths()?.get(shapeId)?.getLine().addListener("mouseout", () => setBolded(route.getId(), false));      
+        }))
 
-        Resources.tripsFileHash.get(id)?.[0].forEach(tripID => {
+        Resources.tripsFileHash.get(routeId)?.[0].forEach(tripID => {
             Resources.stopTimesFileHash.get(tripID)?.forEach(stopID => {
                 let location = Resources.stopsFileHash.get(stopID)
 
                 if (location === undefined) { location = new google.maps.LatLng(0, 0) }
 
-                route.addStop(stopID, id, "#0022FF", location, map)
+                route.addStop(stopID, routeId, "#0022FF", location, map)
             })
         })
     }

@@ -1,6 +1,6 @@
 class Path {
-    constructor(id: string, route: string, tripID: string, color: string, locations: Array<google.maps.LatLng>, map: google.maps.Map) {
-        this.id = id;
+    constructor(route: string, shapeId: string, tripID: string, color: string, locations: Array<google.maps.LatLng>, map: google.maps.Map) {
+        this.shapeId = shapeId;
         this.route = route;
         this.tripID = tripID;
 
@@ -19,7 +19,7 @@ class Path {
     
     public getRoute() : string { return this.route; }
 
-    private id: string;
+    private shapeId: string;
     private route: string; 
     private tripID: string; 
     private line: google.maps.Polyline;
