@@ -1,4 +1,5 @@
 class Path {
+    // Path constructor
     constructor(routeId: string, shapeId: string, tripId: string, color: string, locations: Array<google.maps.LatLng>, map: google.maps.Map) {
         this.shapeId = shapeId;
         this.routeId = routeId;
@@ -15,8 +16,10 @@ class Path {
         });
     }
 
+    // Returns the Polyline object
     public getLine() : google.maps.Polyline { return this.line; }
     
+    // Returns the route id this path is a part of.
     public getRouteId() : string { return this.routeId; }
 
     private shapeId: string;

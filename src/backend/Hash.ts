@@ -1,4 +1,5 @@
 class Hash {
+    // Hash class constructor
     constructor (contents: string | undefined, keyIndex?: number) {
         this.hash = new Map<string, Set<string>>();
 
@@ -23,8 +24,10 @@ class Hash {
         } else console.warn("Empty Input");
     }
 
+    // Returns the hashmap
     public get(key: string) : Set<string> | undefined { return this.hash.get(key); }
     
+    // Converts the Hash to a JSON string
     public toJSON() : string {
         let storage = new Map<string, string[]>();
 

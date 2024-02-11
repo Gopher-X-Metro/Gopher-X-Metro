@@ -1,4 +1,5 @@
 class Stop {
+    // Stop class constructor
     constructor(routeId: string, stopId: string, color: string, location: google.maps.LatLng, map: google.maps.Map) {
         this.stopId = stopId;
         this.routeId = routeId
@@ -17,11 +18,15 @@ class Stop {
         })
     }
 
+    // Returns the Circle object
     public getMarker() : google.maps.Circle { return this.marker; }
     
+    // Returns the Stop Times Hash
     public getStopTimes() : Map<string, [string | undefined, string | undefined]> { return this.stopTimes; }
+    // Adds a stop time to the hash
     public addStopTime(tripId: string, arrivalTime: string | undefined, departureTime: string | undefined) : void { this.stopTimes.set(tripId, [arrivalTime, departureTime]); }
 
+    // Returns the location of the stop
     public getLocation() : google.maps.LatLng { return this.location; }
 
     private stopId: string;
