@@ -11,108 +11,72 @@ namespace Resources {
         console.log("Loading Resources...")
         
         await Data.load();
-
-        await Data.getFiles().then(async files => {
-            await files["trips.txt"].async("string").then(contents => {
-                contents.split("\r\n").forEach(line => {
-                    const splitLine = line.split(",");
-                    if (!tripsFileHash.has(splitLine[0])) { tripsFileHash.set(splitLine[0], [new Set(), new Set()]) }
-                    tripsFileHash.get(splitLine[0])?.[0].add(splitLine[2]) // Trip ID for Stops
-                    tripsFileHash.get(splitLine[0])?.[1].add(splitLine[7]) // Shape ID for Paths
-                })
-            })
-            
-            await files["shapes.txt"].async("string").then(contents => {
-                contents.split("\r\n").forEach(line => {
-                    const splitLine = line.split(",");
-                    if (!shapesFileHash.has(splitLine[0])) { shapesFileHash.set(splitLine[0], new Set()) }
-                    shapesFileHash.get(splitLine[0])?.add(new google.maps.LatLng(Number(splitLine[1]), Number(splitLine[2])))
-                })
-            })
-
-            await files["routes.txt"].async("string").then(contents => {
-                contents.split("\r\n").forEach(line => {
-                    const splitLine = line.split(",");
-
-                    if (!routesFileHash.has(splitLine[0])) { routesFileHash.set(splitLine[0], splitLine[7]) }
-                })
-            })
-
-            // await files["stop_times.txt"].async("string").then(contents => {
-            //     contents.split("\r\n").forEach(line => {
-            //         const splitLine = line.split(",");
-
-            //         if (!stopTimesFileHash.has(splitLine[0])) { stopTimesFileHash.set(splitLine[0], new Set()) }
-
-            //         stopTimesFileHash.get(splitLine[0])?.add(splitLine[3]);
-            //     })
-            // })
-
-            // await files["stops.txt"].async("string").then(contents => {
-            //     contents.split("\r\n").forEach(line => {
-            //         const splitLine = line.split(",");
-
-            //         if (!stopsFileHash.has(splitLine[0])) { stopsFileHash.set(splitLine[0], new google.maps.LatLng(Number(splitLine[4]), Number(splitLine[5]))) }
-            //     })
-            // })
-        })
         
         console.log("Finished Loading Resources")
     }
 
-    export async function getShapeIds(route: string) : Promise<Set<string>> {
+    export function getShapeIds(routeId: string) : Set<string> {
         let ids = new Set<string>();
 
-        await Data.getHash("trips.txt").then(hash => {
-            hash.get(route)?.forEach(line => {
-                ids.add(line.split(/,/)[7])
-            })
-        })
+        Data.getHash("trips.txt").get(routeId)?.forEach(line => ids.add(line.split(/,/)[7]))
 
         return ids;
     }
 
-    export async function getTripIds(route: string) : Promise<Set<string>> {
+    export function getTripIds(routeId: string) : Set<string> {
         let ids = new Set<string>();
 
-        await Data.getHash("trips.txt").then(hash => {
-            hash.get(route)?.forEach(line => {
-                ids.add(line.split(/,/)[2])
-            })
-        })
+        Data.getHash("trips.txt").get(routeId)?.forEach(line => ids.add(line.split(/,/)[2]))
+        
+        return ids;
+    }
+
+    export function getStopIds(tripId: string) : Set<string> {
+        let ids = new Set<string>();
+
+        Data.getHash("stop_times.txt").get(tripId)?.forEach(line => ids.add(line.split(/,/)[3]) )
 
         return ids;
     }
 
-    export async function getStopIds(tripId: string) : Promise<Set<string>> {
-        let ids = new Set<string>();
-
-        await Data.getHash("stop_times.txt").then(hash => {
-            hash.get(tripId)?.forEach(line => {
-                ids.add(line.split(/,/)[3])
-            })
-        })
-
-        return ids;
-    }
-
-    export async function getShape(shapeId: string) : Promise<Array<google.maps.LatLng>> {
+    export function getShapeLocations(shapeId: string) : Array<google.maps.LatLng> {
         let shape = new Array<google.maps.LatLng>();
 
-        await Data.getHash("shapes.txt").then(hash => {
-            hash.get(shapeId)?.forEach(line =>{
-                const sections = line.split(/,/)
-                shape.push(new google.maps.LatLng(Number(sections[1]), Number(sections[2])))
-            })
+        Data.getHash("shapes.txt").get(shapeId)?.forEach(line =>{
+            const sections = line.split(/,/);
+            shape.push(new google.maps.LatLng(Number(sections[1]), Number(sections[2])))
         })
 
         return shape;
     }
 
-    export async function getColor(route: string) : Promise<string> {
+    export function getStopLocation(stopId: string) : google.maps.LatLng {
+        let stop : google.maps.LatLng;
+
+        Data.getHash("stops.txt").get(stopId)?.forEach(line => {
+            const sections = line.split(/,/);
+            stop = new google.maps.LatLng(Number(sections[4]), Number(sections[5]))
+        })
+
+        //@ts-ignore
+        return stop;
+    }
+
+    export function getStopTimes(tripId: string) : Map<string, Array<string | undefined>> {
+        let stopTimes = new Map<string, Array<string | undefined>>();
+
+        Data.getHash("stop_times.txt").get(tripId)?.forEach(line => {
+            let sections = line.split(/,/);
+            stopTimes.set(sections[3], [sections[4], sections[1], sections[2]])
+        })
+
+        return stopTimes;
+    }
+
+    export function getColor(routeId: string) : string {
         let color = "#";
         
-        await Data.getHash("routes.txt").then(hash => hash.get(route)?.forEach(line => color += line.split(/,/)[7]))  
+        Data.getHash("routes.txt").get(routeId)?.forEach(line => color += line.split(/,/)[7]);
         
         return color;
     }
