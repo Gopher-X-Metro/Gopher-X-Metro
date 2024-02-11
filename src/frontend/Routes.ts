@@ -3,20 +3,6 @@ import URL from "../backend/URL.ts";
 import Route from "./elements/Route.ts";
 
 namespace Routes {
-    export const ROUTE_COLORS = {
-        "120": "FFC0CB", 
-        "121": "FF0000", 
-        "122": "800080", 
-        "123": "00FFFF", 
-        "124": "90EE90",
-        "2": "bab832",
-        "3": "d18528",
-        "6": "236918",
-        "902": "00843D",
-        "901": "003DA5"
-    }
-
-
     // Sets the map for the routes
     export function setMap(_map : google.maps.Map) : void { map = _map; }
 
@@ -60,13 +46,10 @@ namespace Routes {
 
         routes.set(routeId, route);
 
+        // Load paths
         Resources.getShapeIds(routeId).forEach(async shapeId => {
-            let color = ROUTE_COLORS[routeId] ? ROUTE_COLORS[routeId] : Resources.getColor(routeId);
-
-            console.log(Resources.getColor(routeId));
-
             // Add path
-            route.addPath(routeId, shapeId, "", color, Resources.getShapeLocations(shapeId), map)
+            route.addPath(routeId, shapeId, "", Resources.getColor(routeId), Resources.getShapeLocations(shapeId), map)
                         
             // If the user hovers over the line, change the width
             route.getPaths().get(shapeId)?.getLine().addListener("mouseover", () => setBolded(route.getId(), true));
@@ -75,6 +58,7 @@ namespace Routes {
             route.getPaths().get(shapeId)?.getLine().addListener("mouseout", () => setBolded(route.getId(), false));      
         })
 
+        // Load Stops
         Resources.getTripIds(routeId).forEach(async tripId => {
             // Gets stop times
             const stopTimes = Resources.getStopTimes(tripId);
