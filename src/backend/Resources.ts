@@ -1,20 +1,33 @@
 import Data from "./Data.ts";
 
+// Backend and Frontend interface
 namespace Resources {
-    export const tripsFileHash = new Map<string, [Set<string>, Set<string>]>();
-    export const shapesFileHash = new Map<string, Set<google.maps.LatLng>>();
-    export const routesFileHash = new Map<string, string>();
-    export const stopTimesFileHash = new Map<string, Set<string>>();
-    export const stopsFileHash = new Map<string, google.maps.LatLng>();
+    // Manual route colors
+    const ROUTE_COLORS = {
+        "120": "FFC0CB", 
+        "121": "FF0000", 
+        "122": "800080", 
+        "123": "00FFFF", 
+        "124": "90EE90",
+        "2": "bab832",
+        "3": "d18528",
+        "6": "236918",
+        "902": "00843D",
+        "901": "003DA5"
+    }
 
+    // Load backend
     export async function load() {
+        const initTime = Date.now();
+
         console.log("Loading Resources...")
         
         await Data.load();
         
-        console.log("Finished Loading Resources")
+        console.log("Finished Loading Resources (" + (Date.now() - initTime) + "ms)")
     }
 
+    // Gets the shape ids of a route
     export function getShapeIds(routeId: string) : Set<string> {
         let ids = new Set<string>();
 
@@ -23,6 +36,7 @@ namespace Resources {
         return ids;
     }
 
+    // Gets the trip ids of a route
     export function getTripIds(routeId: string) : Set<string> {
         let ids = new Set<string>();
 
@@ -31,6 +45,7 @@ namespace Resources {
         return ids;
     }
 
+    // Gets the stop ids of a trip
     export function getStopIds(tripId: string) : Set<string> {
         let ids = new Set<string>();
 
@@ -39,6 +54,7 @@ namespace Resources {
         return ids;
     }
 
+    // Gets the location of each point on a shape line
     export function getShapeLocations(shapeId: string) : Array<google.maps.LatLng> {
         let shape = new Array<google.maps.LatLng>();
 
@@ -50,6 +66,7 @@ namespace Resources {
         return shape;
     }
 
+    // Gets the location of a stop id
     export function getStopLocation(stopId: string) : google.maps.LatLng {
         let stop : google.maps.LatLng;
 
@@ -62,6 +79,7 @@ namespace Resources {
         return stop;
     }
 
+    // Gets the stop times of a trip id
     export function getStopTimes(tripId: string) : Map<string, Array<string | undefined>> {
         let stopTimes = new Map<string, Array<string | undefined>>();
 
@@ -73,12 +91,14 @@ namespace Resources {
         return stopTimes;
     }
 
+    // Gets the color of a route
     export function getColor(routeId: string) : string {
         let color = "";
-        
+
         Data.getHash("routes.txt").get(routeId)?.forEach(line => color += line.split(/,/)[7]);
         
-        return color;
+        // It defaults to the colors manually defined. If the color is not defined, it defaults to the one if found. 
+        return ROUTE_COLORS[routeId] ? ROUTE_COLORS[routeId] : color;
     }
 }
 
