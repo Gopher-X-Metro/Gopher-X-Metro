@@ -1,8 +1,8 @@
 class Path {
-    constructor(route: string, shapeId: string, tripID: string, color: string, locations: Array<google.maps.LatLng>, map: google.maps.Map) {
+    constructor(routeId: string, shapeId: string, tripId: string, color: string, locations: Array<google.maps.LatLng>, map: google.maps.Map) {
         this.shapeId = shapeId;
-        this.route = route;
-        this.tripID = tripID;
+        this.routeId = routeId;
+        this.tripId = tripId;
 
         // The path of the bus on the map
         this.line = new window.google.maps.Polyline({
@@ -17,11 +17,11 @@ class Path {
 
     public getLine() : google.maps.Polyline { return this.line; }
     
-    public getRoute() : string { return this.route; }
+    public getRouteId() : string { return this.routeId; }
 
     private shapeId: string;
-    private route: string; 
-    private tripID: string; 
+    private routeId: string; 
+    private tripId: string; 
     private line: google.maps.Polyline;
 }
 

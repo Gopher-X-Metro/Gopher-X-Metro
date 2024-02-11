@@ -21,34 +21,36 @@ namespace Routes {
     export function setMap(_map : google.maps.Map) : void { map = _map; }
 
     // Gets a route from the hashmap
-    export function getRoute(route : string) : Route | undefined { return routes.get(route); }
+    export function getRoute(routeId : string) : Route | undefined { return routes.get(routeId); }
 
     // Sets a route's visibility
-    export function setVisible(route : string, visible : boolean) {
-        getRoute(route)?.getPaths()?.forEach(path => path.getLine().setVisible(visible));
-        getRoute(route)?.getStops()?.forEach(stop => stop.getMarker().setVisible(visible));
-        getRoute(route)?.getVehicles()?.forEach(vehicle => vehicle.getMarker().setVisible(visible));
+    export function setVisible(routeId : string, visible : boolean) {
+        getRoute(routeId)?.getPaths().forEach(path => path.getLine().setVisible(visible));
+        getRoute(routeId)?.getStops()?.forEach(stop => stop.getMarker().setVisible(visible));
+        getRoute(routeId)?.getVehicles().forEach(vehicle => vehicle.getMarker().setVisible(visible));
     }
 
     // Sets a route's thickness
-    export function setBolded(route : string, bolded : boolean) {
-        getRoute(route)?.getPaths()?.forEach(paths => paths.getLine().set("strokeWeight", bolded ? process.env.REACT_APP_LINE_BOLD : process.env.REACT_APP_LINE_NORMAL));
+    export function setBolded(routeId : string, bolded : boolean) {
+        getRoute(routeId)?.getPaths()?.forEach(paths => paths.getLine().set("strokeWeight", bolded ? process.env.REACT_APP_LINE_BOLD : process.env.REACT_APP_LINE_NORMAL));
     }
 
 
     // Refreshes the routes after the change of the url
     export function refresh() {
-        routes.forEach(route => {
-            if (URL.getRoutes().indexOf(route.getId()) === -1) {
-                setVisible(route.getId(), false);
+        // Goes through each route that is not on the URL, and hides it
+        routes.forEach(routeId => {
+            if (URL.getRoutes().indexOf(routeId.getId()) === -1) {
+                setVisible(routeId.getId(), false);
             }
         })
         
-        URL.getRoutes().forEach(route => {
-            if (!routes.has(route)){ 
-                loadRoute(route);
+        // Goes through each route that is on the URL, and unhides it or creates it
+        URL.getRoutes().forEach(routeId => {
+            if (!routes.has(routeId)){ 
+                loadRoute(routeId);
             }
-            setVisible(route, true)
+            setVisible(routeId, true)
         })
     }
 
@@ -58,26 +60,42 @@ namespace Routes {
 
         routes.set(routeId, route);
 
-        await Resources.getShapeIds(routeId).then(async shapeIds => shapeIds.forEach(async shapeId => {
-            let color = ROUTE_COLORS[routeId] ? ROUTE_COLORS[routeId] : await Resources.getColor(routeId);
+        Resources.getShapeIds(routeId).forEach(async shapeId => {
+            let color = ROUTE_COLORS[routeId] ? ROUTE_COLORS[routeId] : Resources.getColor(routeId);
 
             // Add path
-            route.addPath(routeId, shapeId, "", color, await Resources.getShape(shapeId), map)
+            route.addPath(routeId, shapeId, "", color, Resources.getShapeLocations(shapeId), map)
                         
             // If the user hovers over the line, change the width
-            route.getPaths()?.get(shapeId)?.getLine().addListener("mouseover", () => setBolded(route.getId(), true));
+            route.getPaths().get(shapeId)?.getLine().addListener("mouseover", () => setBolded(route.getId(), true));
             
             // If the user stops hovering over the line, return back
-            route.getPaths()?.get(shapeId)?.getLine().addListener("mouseout", () => setBolded(route.getId(), false));      
-        }))
+            route.getPaths().get(shapeId)?.getLine().addListener("mouseout", () => setBolded(route.getId(), false));      
+        })
 
-        Resources.tripsFileHash.get(routeId)?.[0].forEach(tripID => {
-            Resources.stopTimesFileHash.get(tripID)?.forEach(stopID => {
-                let location = Resources.stopsFileHash.get(stopID)
+        Resources.getTripIds(routeId).forEach(async tripId => {
+            // Gets stop times
+            const stopTimes = Resources.getStopTimes(tripId);
 
-                if (location === undefined) { location = new google.maps.LatLng(0, 0) }
-
-                route.addStop(stopID, routeId, "#0022FF", location, map)
+            // Create the routes
+            Resources.getStopIds(tripId).forEach(stopId => {
+                // Creates the stop if it has not been created yet
+                if (!route.getStops().has(stopId)) {
+                    // Create stop
+                    route.addStop(routeId, stopId, "#0022FF", Resources.getStopLocation(stopId), map);
+                    
+                    // If the user hovers over the stop, change the width of the line
+                    route.getStops().get(stopId)?.getMarker().addListener("mouseover", () => {
+                        setBolded(route.getId(), true)
+                    });
+                    
+                    // If the user stops hovering over the stop, return back
+                    route.getStops().get(stopId)?.getMarker().addListener("mouseout", () => {
+                        setBolded(route.getId(), false)
+                    }); 
+                }
+                // Adds the stop time to the stop
+                route.getStops().get(stopId)?.addStopTime(tripId, stopTimes.get(stopId)?.at(1), stopTimes.get(stopId)?.at(2))
             })
         })
     }

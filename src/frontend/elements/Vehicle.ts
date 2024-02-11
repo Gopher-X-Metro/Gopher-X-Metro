@@ -2,15 +2,15 @@ import customBusIcon from "../../img/bus.png";
 
 // The Vehicle Class
 class Vehicle {
-    constructor (id: string, route: string, color : string, location: google.maps.LatLng, map: google.maps.Map) {
-        this.id = id
-        this.route = route
+    constructor (routeId: string, vehicleId: string, color : string, location: google.maps.LatLng, map: google.maps.Map) {
+        this.vehicleId = vehicleId
+        this.routeId = routeId
         this.marker = new window.google.maps.Marker({
             map: map,
             position: location,
             // label: this.route,
             label: {
-                text: this.route,
+                text: this.routeId,
                 color: color,
                 fontWeight: "20px",
                 // fontFamily: 'Neutraface Text',
@@ -24,12 +24,12 @@ class Vehicle {
         })
     }
 
-    public getRoute() : string { return this.route; }
+    public getRouteId() : string { return this.routeId; }
     
     public getMarker() : google.maps.Marker { return this.marker; }
     
-    private id: string;
-    private route: string;
+    private vehicleId: string;
+    private routeId: string;
     private marker: google.maps.Marker;
 }
 

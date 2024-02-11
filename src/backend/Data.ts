@@ -55,7 +55,7 @@ namespace Data {
     }
 
      // Returns the Hash of the data
-     export async function getHash(fileName: string) : Promise<Hash> { 
+    export function getHash(fileName: string) : Hash { 
         //@ts-ignore
         return hashes.get(fileName); 
     }
