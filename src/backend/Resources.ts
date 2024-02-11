@@ -74,7 +74,7 @@ namespace Resources {
     }
 
     export function getColor(routeId: string) : string {
-        let color = "#";
+        let color = "";
         
         Data.getHash("routes.txt").get(routeId)?.forEach(line => color += line.split(/,/)[7]);
         

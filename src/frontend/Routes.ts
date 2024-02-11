@@ -63,6 +63,8 @@ namespace Routes {
         Resources.getShapeIds(routeId).forEach(async shapeId => {
             let color = ROUTE_COLORS[routeId] ? ROUTE_COLORS[routeId] : Resources.getColor(routeId);
 
+            console.log(Resources.getColor(routeId));
+
             // Add path
             route.addPath(routeId, shapeId, "", color, Resources.getShapeLocations(shapeId), map)
                         
