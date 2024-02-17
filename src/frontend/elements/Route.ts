@@ -23,8 +23,8 @@ class Route {
     }
 
     // Adds a Vehicle object
-    public addVehicle(routeId: string, vehicleId: string, color: string, location: google.maps.LatLng, map: google.maps.Map) : void {
-        this.vehicles.set(vehicleId, new Vehicle(routeId, vehicleId, color, location, map));
+    public addVehicle(routeId: string, vehicleId: string, tripId: string, color: string, map: google.maps.Map) : void {
+        this.vehicles.set(vehicleId, new Vehicle(routeId, vehicleId, tripId, color, map));
     }
 
     // Returns Paths hash

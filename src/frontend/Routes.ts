@@ -60,9 +60,6 @@ namespace Routes {
 
         // Load Stops
         Resources.getTripIds(routeId).forEach(async tripId => {
-            // Gets stop times
-            const stopTimes = Resources.getStopTimes(tripId);
-
             // Create the routes
             Resources.getStopIds(tripId).forEach(stopId => {
                 // Creates the stop if it has not been created yet
@@ -80,8 +77,6 @@ namespace Routes {
                         setBolded(route.getId(), false)
                     }); 
                 }
-                // Adds the stop time to the stop
-                route.getStops().get(stopId)?.addStopTime(tripId, stopTimes.get(stopId)?.at(1), stopTimes.get(stopId)?.at(2))
             })
         })
     }

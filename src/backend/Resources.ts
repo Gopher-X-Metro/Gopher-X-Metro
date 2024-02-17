@@ -1,7 +1,17 @@
+import { transit_realtime } from "gtfs-realtime-bindings";
 import Data from "./Data.ts";
 
 // Backend and Frontend interface
 namespace Resources {
+    // University Routes
+    export const UNIVERSITY_ROUTES = {
+        "120": 11324, 
+        "121": 11278, 
+        "122": 11279, 
+        "123": 11280, 
+        "124": 11281
+    };
+
     // Manual route colors
     const ROUTE_COLORS = {
         "120": "FFC0CB", 

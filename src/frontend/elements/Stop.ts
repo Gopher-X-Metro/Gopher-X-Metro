@@ -5,7 +5,7 @@ class Stop {
         this.routeId = routeId
         this.location = location;
 
-        this.stopTimes = new Map<string, [string | undefined, string | undefined]>();
+        this.stopTimes = new Map<string, string | undefined>();
 
         this.marker = new window.google.maps.Circle({
             fillColor: color,
@@ -21,10 +21,13 @@ class Stop {
     // Returns the Circle object
     public getMarker() : google.maps.Circle { return this.marker; }
     
-    // Returns the Stop Times Hash
-    public getStopTimes() : Map<string, [string | undefined, string | undefined]> { return this.stopTimes; }
     // Adds a stop time to the hash
-    public addStopTime(tripId: string, arrivalTime: string | undefined, departureTime: string | undefined) : void { this.stopTimes.set(tripId, [arrivalTime, departureTime]); }
+    public addStopTime(vehicleId: string, time: string | undefined) { this.stopTimes.set(vehicleId, time); }
+    
+    // Returns the Stop Times Hash
+    public getStopTimes() : Map<string, string | undefined> { return this.stopTimes; }
+
+    public getStopId() : string { return this.stopId; }
 
     // Returns the location of the stop
     public getLocation() : google.maps.LatLng { return this.location; }
@@ -32,7 +35,7 @@ class Stop {
     private stopId: string;
     private routeId: string;
 
-    private stopTimes: Map<string, [string | undefined, string | undefined]>;
+    private stopTimes: Map<string, string | undefined>;
 
     private location: google.maps.LatLng;
     private marker: google.maps.Circle;
