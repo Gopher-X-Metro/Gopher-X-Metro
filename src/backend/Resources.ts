@@ -1,4 +1,3 @@
-import { transit_realtime } from "gtfs-realtime-bindings";
 import Data from "./Data.ts";
 
 // Backend and Frontend interface
