@@ -82,24 +82,10 @@ namespace Vehicles {
                 vehicle.setStopTimeUpdates(stopTimeUpdates);
 
                 // When the user hovers over the marker, make route thicker
-                vehicle.getMarker().addListener("mouseover", () => {
-                    Routes.setBolded(routeId, true)
-
-                    const lastUpdate = vehicle?.getStopTimeUpdates()?.at(0)
-                    const nextArrival = new Date(((lastUpdate?.arrival?.time ? lastUpdate?.arrival?.time : lastUpdate?.departure?.time) as number) * 1000);
-                    console.log(nextArrival.toTimeString());
-
-                    Routes.getRoute(routeId)?.getStops().get(vehicle?.getStopTimeUpdates()?.at(0)?.stopId as string)?.getMarker().setRadius(100)
-                });    
+                vehicle.getMarker().addListener("mouseover", () => Routes.setBolded(routeId, true));    
 
                 // When the user stops hovering over the marker, return back
-                vehicle.getMarker().addListener("mouseout", () => {
-                    Routes.setBolded(routeId, false)
-
-                    vehicle?.getStopTimeUpdates()?.forEach(stopTimeUpdate => {
-                        Routes.getRoute(routeId)?.getStops().get(stopTimeUpdate.stopId as string)?.getMarker().setRadius(10);
-                    })
-                });
+                vehicle.getMarker().addListener("mouseout", () => Routes.setBolded(routeId, false));
             }
         } else {
             // If the id exists, modify the vehicle
