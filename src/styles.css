@@ -4,7 +4,13 @@ html, body
     height: 100%;
 }
 
-#root
+div#map
+{
+  height: 90%;
+  width: 100%;
+}
+
+div#root
 {
     margin: 0vh;
     height: 100%;
