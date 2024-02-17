@@ -19,11 +19,16 @@ namespace Vehicles {
     
                 // Goes through each vehicle in the route
                 vehiclePositions.entity.forEach(entity => {
-                    if (entity.vehicle?.trip?.routeId == routeId){   
+                    if (entity.vehicle?.trip?.routeId === routeId){   
                         // Goes through each trip update and gets the stop information                     
                         tripUpdates.entity.forEach(update => {
-                            if (update.tripUpdate?.trip.tripId == entity.vehicle?.trip?.tripId)
-                                updateVehicle(routeId, entity.vehicle?.vehicle?.id, entity.vehicle?.trip?.tripId, entity.vehicle?.timestamp as number, new google.maps.LatLng(entity.vehicle?.position?.latitude as number, entity.vehicle?.position?.longitude as number), update.tripUpdate?.stopTimeUpdate)
+                            if (update.tripUpdate?.trip.tripId === entity.vehicle?.trip?.tripId)
+                                updateVehicle(routeId, 
+                                entity.vehicle?.vehicle?.id, 
+                                entity.vehicle?.trip?.tripId, 
+                                entity.vehicle?.timestamp as number, 
+                                new google.maps.LatLng(entity.vehicle?.position?.latitude as number, entity.vehicle?.position?.longitude as number), 
+                                update.tripUpdate?.stopTimeUpdate);
                         })
                     }
                 })
@@ -34,6 +39,16 @@ namespace Vehicles {
                         updateVehicle(routeId, vehicle.vehicleID, "", 0, new google.maps.LatLng(vehicle.lat, vehicle.lng), []) 
                 }));
             }
+        })
+
+        // Update stop times
+        URL.getRoutes().forEach(routeId => {
+            const route = Routes.getRoute(routeId);
+            route?.getVehicles().forEach(vehicle => {
+                Resources.getStopTimes(vehicle.getTripId()).forEach((value, key) => {
+                    route.getStops().get(key)?.addStopTime(vehicle.getVehicleId(), value[1]);
+                })
+            })
         })
     } 
 
