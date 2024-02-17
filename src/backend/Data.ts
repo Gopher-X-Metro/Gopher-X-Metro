@@ -3,19 +3,10 @@ import Hash from './Hash.ts';
 import JSZip from "jszip";
 
 namespace Data {
-    // University Routes
-    export const UNIVERSITY_ROUTES = {
-        "120": 11324, 
-        "121": 11278, 
-        "122": 11279, 
-        "123": 11280, 
-        "124": 11281
-    };
-
     // Loads the OPFS storage root and gtfs-static directory
     export async function load() : Promise<void> {
         let storageRoot : FileSystemDirectoryHandle;
-        hashes = new Map<string, Hash>()
+        hashes = new Map<string, Hash<any>>()
 
         // Checks if browser supports OPFS
         try {
@@ -47,17 +38,17 @@ namespace Data {
         }))
 
         // Load hashes
-        await loadHash("trips.txt", 0);
-        await loadHash("stops.txt", 0);
-        await loadHash("routes.txt", 0);
-        await loadHash("shapes.txt", 0);
-        await loadHash("stop_times.txt", 0);
+        await loadHash<Number>("trips.txt", 0);
+        await loadHash<Number>("stops.txt", 0);
+        await loadHash<Number>("routes.txt", 0);
+        await loadHash<Number>("shapes.txt", 0);
+        await loadHash<String>("stop_times.txt", 0);
     }
 
      // Returns the Hash of the data
-    export function getHash(fileName: string) : Hash { 
-        //@ts-ignore
-        return hashes.get(fileName); 
+    export function getHash(fileName: string) : Hash<any> {
+        // @ts-ignore
+        return hashes.get(fileName);
     }
 
     // Returns all the files from the server
@@ -86,24 +77,28 @@ namespace Data {
         }
     }
 
-    // Returns the fetched data of the server
-    export async function getRealtimeGTFS(route: string) {
-        if (Object.keys(UNIVERSITY_ROUTES).indexOf(route) === -1) {
-            // Non-University busses
-            return fetch(GTFS_REALTIME_URL_TRANSIT).then(response => response?.arrayBuffer()).then(buffer => GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)))
-        } else {
-            // University busses
-            return fetch(GTFS_REALTIME_URL_UMN).then(response => response?.json())
-        }
+    // Returns the fetched data of the university busses
+    export async function getRealtimeGTFSUniversity() : Promise<any> {
+        return fetch(GTFS_REALTIME_URL_UMN).then(response => response?.json())
+    }
+
+    // Returns the fetched vehicle position data
+    export async function getRealtimeGTFSVehiclePositions() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
+        return fetch(GTFS_REALTIME_URL_VEHICLE_POSITIONS).then(response => response?.arrayBuffer()).then(buffer => GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)))
+    }
+
+    // Returns the fetched 
+    export async function getRealtimeGTFSTripUpdates() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
+        return fetch(GTFS_REALTIME_URL_TRIP_UPDATES).then(response => response?.arrayBuffer()).then(buffer => GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)))
     }
 
 
-
+    //https://svc.metrotransit.org/index.html
     const GTFS_STATIC_URL = "https://svc.metrotransit.org/mtgtfs/gtfs.zip";
     const GTFS_REALTIME_URL_UMN = "https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=vehicles2&action=list&agencyID=88";
-    const GTFS_REALTIME_URL_TRANSIT = 'https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb';
-
-
+    const GTFS_REALTIME_URL_VEHICLE_POSITIONS = 'https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb';
+    const GTFS_REALTIME_URL_TRIP_UPDATES = 'https://svc.metrotransit.org/mtgtfs/tripupdates.pb';
+    const GTFS_REALTIME_URL_SERVICE_ALERTS = 'https://svc.metrotransit.org/mtgtfs/alerts.pb';
     
     // Refreshes the cache in the browser
     async function refreshStaticGTFSCache() : Promise<ArrayBuffer | undefined> {
@@ -128,7 +123,7 @@ namespace Data {
     } 
 
     // Stores the Hash object into a OPFS file
-    async function storeHash(fileName: string, hash: Hash) : Promise<void> {
+    async function storeHash(fileName: string, hash: Hash<any>) : Promise<void> {
         if (fileDirectoryHandle){
             fileDirectoryHandle.getFileHandle(fileName, {create: true}).then(fileHandle => {
                 fileHandle.createWritable().then(file => {
@@ -139,15 +134,15 @@ namespace Data {
     }
 
     // Loads Hash Object
-    async function loadHash(fileName: string, keyIndex: number) : Promise<void> {
+    async function loadHash<KeyType>(fileName: string, keyIndex: number) : Promise<void> {
         if (!hashes.has(fileName)) {
             let fileContents = await getFileContents(fileName);
 
             if (fileContents) {
-                hashes.set(fileName, new Hash(fileContents));
+                hashes.set(fileName, new Hash<KeyType>(fileContents));
             } else {
                 await getFiles().then(async files => {
-                    const newHash = new Hash(await files[fileName].async("string"), keyIndex);
+                    const newHash = new Hash<KeyType>(await files[fileName].async("string"), keyIndex);
                     storeHash(fileName, newHash);
                     hashes.set(fileName, newHash)
                 })
@@ -156,7 +151,7 @@ namespace Data {
     }
 
     let fileDirectoryHandle : FileSystemDirectoryHandle;
-    let hashes : Map<string, Hash>;
+    let hashes : Map<string, Hash<any>>;
 }
 
 export default Data

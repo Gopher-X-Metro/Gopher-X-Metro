@@ -1,42 +1,32 @@
-class Hash {
+class Hash<KeyType> {
     // Hash class constructor
     constructor (contents: string | undefined, keyIndex?: number) {
-        this.hash = new Map<string, Set<string>>();
+        this.hash = new Map<KeyType, string[]>();
 
         if (contents) {
             if (keyIndex !== undefined) {
                 contents.split(/\r\n/).slice(1).forEach(line => {
-                    let sections = line.split(/,/)
+                    const key = line.split(/,/)[keyIndex]
+
+                    if (!this.hash.has(key as KeyType))
+                        this.hash.set(key as KeyType, new Array<string>());
         
-                    if (!this.hash.has(sections[keyIndex]))
-                        this.hash.set(sections[keyIndex], new Set());
-        
-                    this.hash.get(sections[keyIndex])?.add(line);
+                    this.hash.get(key as KeyType)?.push(line);
                 });
             } else {
-                Object.entries(JSON.parse(contents)).forEach((entry) => {
-                    const [key, value] = entry;
-        
-                    //@ts-ignore
-                    this.hash.set(key, new Set(value));
-                })
+                // If no key provided, information is assumed to be from JSON file
+                Object.entries(JSON.parse(contents)).forEach(entry => this.hash.set(entry[0] as KeyType, entry[1] as string[]))
             }
         } else console.warn("Empty Input");
     }
 
     // Returns the hashmap
-    public get(key: string) : Set<string> | undefined { return this.hash.get(key); }
+    public get(key: KeyType) : string[] | undefined { return this.hash.get(key); }
     
     // Converts the Hash to a JSON string
-    public toJSON() : string {
-        let storage = new Map<string, string[]>();
+    public toJSON() : string { return JSON.stringify(Object.fromEntries(this.hash)); }
 
-        this.hash.forEach((value, key) => storage.set(key, Array.from(value))) 
-
-        return JSON.stringify(Object.fromEntries(storage)); 
-    }
-
-    private hash : Map<string, Set<string>>;
+    private hash : Map<KeyType, string[]>;
 }
 
 export default Hash;
