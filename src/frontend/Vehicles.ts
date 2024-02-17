@@ -35,8 +35,15 @@ namespace Vehicles {
             } else {
                 // Operate on the data of vehicles that are part of the University
                 Data.getRealtimeGTFSUniversity().then(response => response.vehicles.forEach(vehicle => { 
-                    if (Resources.UNIVERSITY_ROUTES[routeId] === vehicle.routeID) 
-                        updateVehicle(routeId, vehicle.vehicleID, "", 0, new google.maps.LatLng(vehicle.lat, vehicle.lng), []) 
+                    if (Resources.UNIVERSITY_ROUTES[routeId] === vehicle.routeID){
+                        console.log(vehicle)
+                        updateVehicle(routeId, 
+                            vehicle.vehicleID, 
+                            "empty",
+                            Date.now(),
+                            new google.maps.LatLng(vehicle.lat, vehicle.lng), 
+                            undefined) 
+                    }
                 }));
             }
         })
@@ -62,6 +69,7 @@ namespace Vehicles {
         timestamp: number | null | undefined, 
         location: google.maps.LatLng,
         stopTimeUpdates: transit_realtime.TripUpdate.IStopTimeUpdate[] | undefined | null) {
+
         if (!vehicleId || !tripId || !timestamp) return;
         
         // Find the vehicle
