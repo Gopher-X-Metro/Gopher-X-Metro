@@ -1,18 +1,21 @@
 import { Loader } from "@googlemaps/js-api-loader"
-import React from 'react';
+import React, { useState } from 'react';
 
 import Resources from '../backend/Resources.ts';
 
 import Marker from './Marker.ts';
 import Routes from './Routes.ts';
 import Vehicles from './Vehicles.ts';
+import LoadingScreen from "./LoadingScreen.tsx";
 
 // Map Component
 export default function Map() {
+    const [mapLoaded, setMapLoaded] = useState(false);
+
     let center = { lat: 44.97369560732433, lng: -93.2317259515601 }; // UMN location
     const zoom = 15;
 
-    // Comes from the .env.local file, just for security
+    // Comes from the .env.local file, just for security. Won't appear in main -- all api keys should be added to Vercel console. 
     const apiKey = process.env.REACT_APP_API_KEY ? process.env.REACT_APP_API_KEY : "";
 
     // Load map resources
@@ -30,14 +33,17 @@ export default function Map() {
         }));
     })
 
-    return <div id="map"></div>;
+    if (!mapLoaded) {
+        return <div id="map"></div>;
+    }
+    else {
+        return <LoadingScreen />
+    }
 }
 
 // // Runs on map creation
 async function initMap(map : google.maps.Map) { 
 
-    // TODO: Add a loading Screen!
-    
     // Loads the Route's Resources
     await Resources.load()
     
