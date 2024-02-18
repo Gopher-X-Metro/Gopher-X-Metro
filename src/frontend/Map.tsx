@@ -1,5 +1,5 @@
 import { Loader } from "@googlemaps/js-api-loader"
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Resources from '../backend/Resources.ts';
 
@@ -11,56 +11,55 @@ import LoadingScreen from "./LoadingScreen.tsx";
 // Map Component
 export default function Map() {
     const [mapLoaded, setMapLoaded] = useState(false);
+    useEffect(() => {
+        const init = async () => {
+            let center = { lat: 44.97369560732433, lng: -93.2317259515601 }; // UMN location
+            const zoom = 15;
 
-    let center = { lat: 44.97369560732433, lng: -93.2317259515601 }; // UMN location
-    const zoom = 15;
+            // Comes from the .env.local file, just for security. Won't appear in main -- all api keys should be added to Vercel console. 
+            const apiKey = process.env.REACT_APP_API_KEY ? process.env.REACT_APP_API_KEY : "";
 
-    // Comes from the .env.local file, just for security. Won't appear in main -- all api keys should be added to Vercel console. 
-    const apiKey = process.env.REACT_APP_API_KEY ? process.env.REACT_APP_API_KEY : "";
+            // Load map resources
+            const loader = new Loader({
+                apiKey: apiKey,
+                version: "weekly",
+                libraries: ["places", "geometry"]
+            });
 
-    // Load map resources
-    const loader = new Loader({
-        apiKey: apiKey,
-        version: "weekly",
-        libraries: ["places", "geometry"]
-    });
+            // Creates the map
+            const { Map } = await loader.importLibrary("maps");
+            const map = new Map(document.getElementById("map") as HTMLElement, {
+                center: center,
+                zoom: zoom,
+            });
 
-    // Creates the map
-    loader.importLibrary("maps").then(({ Map }) => {
-        initMap(new Map(document.getElementById("map") as HTMLElement, {
-            center: center,
-            zoom: zoom,
-        }));
-    })
 
-    if (!mapLoaded) {
-        return <div id="map"></div>;
-    }
-    else {
-        return <LoadingScreen />
-    }
+            // Loads the Route's Resources
+            await Resources.load()
+
+            // Sets the Routes map to this map
+            Routes.setMap(map)
+            Vehicles.setMap(map)
+
+            // Loads the static routes
+            Routes.refresh()
+
+            // Initalizes the user's marker
+            Marker.init(map);
+
+            // Updates vehicle and marker postions every 0.5 seconds
+            setInterval(() => {
+                Vehicles.refresh();
+                Marker.update();
+            }, 500); // ms of wait
+
+
+
+        }
+        init().then(() => { setMapLoaded(true) });
+    }, [])
+    return <><LoadingScreen hidden={mapLoaded}></LoadingScreen><div id="map"></div> </>;
+
+
 }
 
-// // Runs on map creation
-async function initMap(map : google.maps.Map) { 
-
-    // Loads the Route's Resources
-    await Resources.load()
-    
-    // Sets the Routes map to this map
-    Routes.setMap(map)
-    Vehicles.setMap(map)
-  
-    // Loads the static routes
-    Routes.refresh()
-  
-    // Initalizes the user's marker
-    Marker.init(map);
-  
-    // Updates vehicle and marker postions every 0.5 seconds
-    setInterval(() => { 
-      Vehicles.refresh();
-      Marker.update();
-    }, 500); // ms of wait
-    
-  }
