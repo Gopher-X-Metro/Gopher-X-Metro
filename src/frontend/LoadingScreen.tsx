@@ -1,10 +1,7 @@
 import React from "react";
 
-interface LoadingScreenProps {
-  hidden: boolean;
-}
 
-const LoadingScreen: React.FC<LoadingScreenProps> = ({ hidden }) => {
+export default function  LoadingScreen({hidden}) {
   return (
     <>
       {!hidden && (
@@ -22,11 +19,9 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ hidden }) => {
           }}
         >
           <h1>Loading...</h1>
-          {/* Add more loading content as needed */}
+          {/* //TODO:  Add more loading content if needed */}
         </div>
       )}
     </>
   );
 };
-
-export default LoadingScreen;
