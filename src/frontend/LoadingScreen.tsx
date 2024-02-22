@@ -1,7 +1,10 @@
 import React from "react";
 
-
-export default function  LoadingScreen({hidden}) {
+/**
+ * The loading screen component
+ * @param hidden if the screen should be hidden
+ */
+export default function LoadingScreen({hidden}) {
   return (
     <>
       {!hidden && (
