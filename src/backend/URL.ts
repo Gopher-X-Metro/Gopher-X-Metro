@@ -1,28 +1,35 @@
 namespace URL {
-    // Gets routes from url
-    export function getRoutes() : string[] {
-        const routes = (new URLSearchParams(window.location.search)).get("route")?.split(",")
 
-        if (routes) { delete routes[routes?.indexOf("")] }
+    /* Public */
 
-        return (routes === undefined) ? [] : routes
+    /**
+     * Gets the routes from the URL as a Set
+     */
+    export function getRoutes() : Set<string> { return new Set((new URLSearchParams(window.location.search)).get("route")?.split(",").filter(String)); }
+    /**
+     * Adds a new route to the URL, Sets the route without reloading the website
+     * @param routeId route ID to add
+     */
+    export function addRoute(routeId: string) : void {
+        window.history.replaceState({}, getQuerySelectorTextContext(), "./?route=" + ((getRoutes().size === 0) ? routeId : (Array.from(getRoutes()).join(",") + "," + (routeId)))); 
     }
-
-    // Adds a new route to the UR, Sets the route without reloading the website
-    export function addRoute(id: string) : void {
-        window.history.replaceState({}, getQuerySelectorTextContext(), "./?route=" + getRoutes().join(",") + ("," + id))
-    }
-
-    // Removes the specified route from the URL
-    export function removeRoute(id: string) : void {
-        let routes = getRoutes();
-        if (routes.indexOf(id) !== -1) {
-            routes.splice(routes.indexOf(id), 1);
-            window.history.replaceState({}, getQuerySelectorTextContext(), "./?route=" + routes.join(","))
+    /**
+     * Removes the specified route from the URL
+     * @param routeId route ID to remove
+     */
+    export function removeRoute(routeId: string) : void {
+        if (getRoutes().has(routeId)) {
+            const routes = getRoutes();
+            routes.delete(routeId);
+            window.history.replaceState({}, getQuerySelectorTextContext(), (routes.size === 0) ? "./" : ("./?route=" + Array.from(routes).join(",")));
         }
     }
 
-    // Gets the url
+    /* Private */
+
+    /**
+     * Gets the url
+     */
     function getQuerySelectorTextContext() : string {
         const query = document.querySelector("title");
 
@@ -30,7 +37,7 @@ namespace URL {
             return query.textContent
         } else {
             console.warn("Could not get document.querySelector(\"title\").textContext!")
-            return ""
+            return "";
         }
     }
 }
