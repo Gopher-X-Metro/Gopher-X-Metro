@@ -3,32 +3,16 @@ import URL from "../backend/URL.ts";
 import Route from "./elements/Route.ts";
 
 namespace Routes {
-    // Sets the map for the routes
-    export function setMap(_map : google.maps.Map) : void { map = _map; }
-
-    // Gets a route from the hashmap
-    export function getRoute(routeId : string) : Route | undefined { return routes.get(routeId); }
-
-    // Sets a route's visibility
-    export function setVisible(routeId : string, visible : boolean) {
-        getRoute(routeId)?.getPaths().forEach(path => path.getLine().setVisible(visible));
-        getRoute(routeId)?.getStops()?.forEach(stop => stop.getMarker().setVisible(visible));
-        getRoute(routeId)?.getVehicles().forEach(vehicle => vehicle.getMarker().setVisible(visible));
-    }
-
-    // Sets a route's thickness
-    export function setBolded(routeId : string, bolded : boolean) {
-        getRoute(routeId)?.getPaths()?.forEach(paths => paths.getLine().set("strokeWeight", bolded ? process.env.REACT_APP_LINE_BOLD : process.env.REACT_APP_LINE_NORMAL));
-    }
-
-
-    // Refreshes the routes after the change of the url
+    
+    /* Public */
+    
+    /**
+     * Refreshes the routes after the change of the url
+     */
     export function refresh() {
         // Goes through each route that is not on the URL, and hides it
         routes.forEach(routeId => {
-            if (URL.getRoutes().indexOf(routeId.getId()) === -1) {
-                setVisible(routeId.getId(), false);
-            }
+            if (!URL.getRoutes().has(routeId.getId())) setVisible(routeId.getId(), false);
         })
         
         // Goes through each route that is on the URL, and unhides it or creates it
@@ -39,8 +23,42 @@ namespace Routes {
             setVisible(routeId, true)
         })
     }
+    /**
+     * Gets a route object
+     * @param routeId ID of the route
+     */
+    export function getRoute(routeId : string) : Route | undefined { return routes.get(routeId); }
+    /**
+     * Sets the map for the routes
+     * @param _map map object
+     */
+    export function setMap(_map : google.maps.Map) : void { map = _map; }
+    /**
+     * Sets a route's visibility
+     * @param routeId ID of route
+     * @param visible should the route be visible
+     */
+    export function setVisible(routeId : string, visible : boolean) {
+        getRoute(routeId)?.getPaths().forEach(path => path.getLine().setVisible(visible));
+        getRoute(routeId)?.getStops()?.forEach(stop => stop.getMarker().setVisible(visible));
+        getRoute(routeId)?.getVehicles().forEach(vehicle => vehicle.getMarker().setVisible(visible));
+    }
+    /**
+     * Sets a route's boldedness
+     * @param routeId ID of route
+     * @param bolded should the route be boolded
+     */
+    export function setBolded(routeId : string, bolded : boolean) {
+        getRoute(routeId)?.getPaths()?.forEach(paths => paths.getLine().set("strokeWeight", bolded ? process.env.REACT_APP_LINE_BOLD : process.env.REACT_APP_LINE_NORMAL));
+    }
 
-    // Loads a route into the routes list
+
+    /* Private */
+
+    /**
+     * Loads a route into the routes hash
+     * @param routeId ID of the route
+     */
     async function loadRoute(routeId: string) {
         const route = new Route(routeId);
 

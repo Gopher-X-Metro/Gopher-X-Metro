@@ -8,7 +8,9 @@ import Routes from './Routes.ts';
 import Vehicles from './Vehicles.ts';
 import LoadingScreen from "./LoadingScreen.tsx";
 
-// Map Component
+/**
+ * The map component
+ */
 export default function Map() {
     const [mapLoaded, setMapLoaded] = useState(false);
     useEffect(() => {
@@ -59,7 +61,5 @@ export default function Map() {
         init().then(() => { setMapLoaded(true) });
     }, [])
     return <><LoadingScreen hidden={mapLoaded}></LoadingScreen><div id="map"></div> </>;
-
-
 }
 

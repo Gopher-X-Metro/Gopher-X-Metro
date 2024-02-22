@@ -5,10 +5,12 @@ import Resources from "../backend/Resources.ts";
 import { transit_realtime } from "gtfs-realtime-bindings";
 
 namespace Vehicles {
-    // Sets the map the vehicles appear on
-    export function setMap(_map: google.maps.Map) { map = _map; }
 
-    // Refreshes the Vehicles, Calls the Data.getRealtimeGTFS
+    /* Public */
+
+    /**
+     * Refreshes the Vehicles and calls the Data.getRealtimeGTFS
+     */
     export async function refresh() {
         // Updates Vehicles
         URL.getRoutes()?.forEach(async routeId => {
@@ -57,10 +59,24 @@ namespace Vehicles {
             })
         })
     } 
+    /**
+     * Sets the map the vehicles appear on
+     * @param _map 
+     */
+    export function setMap(_map: google.maps.Map) { map = _map; }
 
-    let map : google.maps.Map;
+    /* Private */
 
-    // Updates the current list of vehicles
+    /**
+     * Updates the current list of vehicles
+     * @param routeId ID of vehicle's route
+     * @param vehicleId ID of the vehicle
+     * @param tripId 
+     * @param timestamp time of last update
+     * @param location location of vehicle
+     * @param stopTimeUpdates stopTimeUpdates array
+     * @returns 
+     */
     function updateVehicle(
         routeId: string, 
         vehicleId: string | null | undefined, 
@@ -103,6 +119,8 @@ namespace Vehicles {
             vehicle.setTripId(tripId);
         }
     }
+
+    let map : google.maps.Map;
 }
 
 export default Vehicles;

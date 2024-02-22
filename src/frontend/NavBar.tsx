@@ -3,7 +3,9 @@ import URL from '../backend/URL.ts';
 import Routes from './Routes.ts';
 import Vehicles from './Vehicles.ts';
 
-
+/**
+ * Navbar Component
+ */
 export default function NavBar() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -51,19 +53,24 @@ export default function NavBar() {
     );
 };
 
-// Creates a route button with the route that the button leads to and the route that it leads to
+/**
+ * Creates a route button with the route that the button leads to and the route that it leads to
+ * @param routeId ID of the route
+ * @param text Display text of the button
+ * @returns 
+ */
 function RouteButton({routeId, text}) {
     const [_, setForceUpdate] = useState(0);
-    const isActive = URL.getRoutes().includes(routeId); // used to check if route button is active
+    const isActive = Array.from(URL.getRoutes()).includes(routeId); // used to check if route button is active
 
     return (
       <button className={`route-btn ${isActive ? 'active' : ''} route-${routeId}`} onClick={() => {
         // selects specific route depending on button pressed
-        if (URL.getRoutes().indexOf(routeId) === -1) {
+        if (!URL.getRoutes().has(routeId))
             URL.addRoute(routeId);
-        } else {
+        else 
             URL.removeRoute(routeId);
-        }
+        
       
         Routes.refresh();
         Vehicles.refresh();
