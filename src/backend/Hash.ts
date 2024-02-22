@@ -1,5 +1,12 @@
 class Hash<KeyType> {
-    // Hash class constructor
+
+    /* Public */
+    
+    /**
+     * Hash Class Constructor
+     * @param contents contents of the file or json
+     * @param keyIndex index that will be used for key, leave empty for json file
+     */
     constructor (contents: string | undefined, keyIndex?: number) {
         this.hash = new Map<KeyType, string[]>();
 
@@ -19,13 +26,18 @@ class Hash<KeyType> {
             }
         } else console.warn("Empty Input");
     }
-
-    // Returns the hashmap
+    /**
+     * Get the string according to the key that was assigned to it
+     * @param key key to retrieve a certian string in the hash
+     */
     public get(key: KeyType) : string[] | undefined { return this.hash.get(key); }
-    
-    // Converts the Hash to a JSON string
+    /**
+     * Converts the Hash object to a json string
+     */
     public toJSON() : string { return JSON.stringify(Object.fromEntries(this.hash)); }
 
+    /* Private */
+    
     private hash : Map<KeyType, string[]>;
 }
 

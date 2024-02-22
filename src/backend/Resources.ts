@@ -2,30 +2,9 @@ import Data from "./Data.ts";
 
 // Backend and Frontend interface
 namespace Resources {
-    // University Routes
-    export const UNIVERSITY_ROUTES = {
-        "120": 11324, 
-        "121": 11278, 
-        "122": 11279, 
-        "123": 11280, 
-        "124": 11281
-    };
-
-    // Manual route colors
-    const ROUTE_COLORS = {
-        "120": "FFC0CB", 
-        "121": "FF0000", 
-        "122": "800080", 
-        "123": "00FFFF", 
-        "124": "90EE90",
-        "2": "bab832",
-        "3": "d18528",
-        "6": "236918",
-        "902": "00843D",
-        "901": "003DA5"
-    }
-
-    // Load backend
+    /**
+     * Load Backend
+     */
     export async function load() {
         const initTime = Date.now();
 
@@ -35,8 +14,10 @@ namespace Resources {
         
         console.log("Finished Loading Resources (" + (Date.now() - initTime) + "ms)")
     }
-
-    // Gets the shape ids of a route
+    /**
+     * Gets the shape ids of a route as a Set
+     * @param routeId ID of the route
+     */
     export function getShapeIds(routeId: string) : Set<string> {
         let ids = new Set<string>();
 
@@ -44,8 +25,10 @@ namespace Resources {
 
         return ids;
     }
-
-    // Gets the trip ids of a route
+    /**
+     * Gets the trip ids of a route as a Set
+     * @param routeId ID of the route
+     */
     export function getTripIds(routeId: string) : Set<string> {
         let ids = new Set<string>();
 
@@ -53,8 +36,10 @@ namespace Resources {
         
         return ids;
     }
-
-    // Gets the stop ids of a trip
+    /**
+     * Gets the stop ids of a trip as a Set
+     * @param tripId ID of the trip
+     */
     export function getStopIds(tripId: string) : Set<string> {
         let ids = new Set<string>();
 
@@ -62,8 +47,10 @@ namespace Resources {
 
         return ids;
     }
-
-    // Gets the location of each point on a shape line
+    /**
+     * Gets the location of each point on a shape line as an Array
+     * @param shapeId ID of the shape
+     */
     export function getShapeLocations(shapeId: string) : Array<google.maps.LatLng> {
         let shape = new Array<google.maps.LatLng>();
 
@@ -74,8 +61,10 @@ namespace Resources {
 
         return shape;
     }
-
-    // Gets the location of a stop id
+    /**
+     * Gets the location of a stop id
+     * @param stopId ID of the stop
+     */
     export function getStopLocation(stopId: string) : google.maps.LatLng {
         let stop : google.maps.LatLng;
 
@@ -87,8 +76,10 @@ namespace Resources {
         //@ts-ignore
         return stop;
     }
-
-    // Gets the stop times of a trip id
+    /**
+     * Gets the stop times of a trip id as a map
+     * @param tripId ID of the trip
+     */
     export function getStopTimes(tripId: string) : Map<string, Array<string | undefined>> {
         let stopTimes = new Map<string, Array<string | undefined>>();
 
@@ -99,8 +90,10 @@ namespace Resources {
 
         return stopTimes;
     }
-
-    // Gets the color of a route
+    /**
+     * Gets the color of a route as a string
+     * @param routeId ID of the route
+     */
     export function getColor(routeId: string) : string {
         let color = "";
 
@@ -108,6 +101,27 @@ namespace Resources {
         
         // It defaults to the colors manually defined. If the color is not defined, it defaults to the one if found. 
         return ROUTE_COLORS[routeId] ? ROUTE_COLORS[routeId] : color;
+    }
+    /* University Routes and ID */
+    export const UNIVERSITY_ROUTES = {
+        "120": 11324, 
+        "121": 11278, 
+        "122": 11279, 
+        "123": 11280, 
+        "124": 11281
+    };
+    /* Override Route Colors */
+    const ROUTE_COLORS = {
+        "120": "FFC0CB", 
+        "121": "FF0000", 
+        "122": "800080", 
+        "123": "00FFFF", 
+        "124": "90EE90",
+        "2": "bab832",
+        "3": "d18528",
+        "6": "236918",
+        "902": "00843D",
+        "901": "003DA5"
     }
 }
 

@@ -3,7 +3,12 @@ import Hash from './Hash.ts';
 import JSZip from "jszip";
 
 namespace Data {
-    // Loads the OPFS storage root and gtfs-static directory
+    
+    /* Public */
+
+    /**
+     * Loads the OPFS storage root and gtfs-static directory
+     */
     export async function load() : Promise<void> {
         let storageRoot : FileSystemDirectoryHandle;
         hashes = new Map<string, Hash<any>>()
@@ -44,20 +49,24 @@ namespace Data {
         await loadHash<Number>("shapes.txt", 0);
         await loadHash<String>("stop_times.txt", 0);
     }
-
-     // Returns the Hash of the data
+    /**
+     * Gets the Hash object of the data from a file
+     * @param fileName name of the file
+     */
     export function getHash(fileName: string) : Hash<any> {
         // @ts-ignore
         return hashes.get(fileName);
     }
-
-    // Returns all the files from the server
+    /**
+     * Gets all the files from the server
+     */
     export async function getFiles() {
         //@ts-ignore
         return getStaticGTFS().then(async buffer => await JSZip.loadAsync(buffer).then(zip => zip.files))
     }
-
-    // Returns a bufferArray promise of the data from the server
+    /**
+     * Gets a bufferArray promise of the data from the server
+     */
     export async function getStaticGTFS() : Promise<ArrayBuffer | undefined> {
         // test();
         if (!window.caches) { 
@@ -76,64 +85,32 @@ namespace Data {
             }))
         }
     }
-
-    // Returns the fetched data of the university busses
+    /**
+     * Gets the fetched data of the university busses
+     */
     export async function getRealtimeGTFSUniversity() : Promise<any> {
         return fetch(GTFS_REALTIME_URL_UMN).then(response => response?.json())
     }
-
-    // Returns the fetched vehicle position data
+    /**
+     * Gets the fetched vehicle position data
+     */
     export async function getRealtimeGTFSVehiclePositions() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
         return fetch(GTFS_REALTIME_URL_VEHICLE_POSITIONS).then(response => response?.arrayBuffer()).then(buffer => GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)))
     }
-
-    // Returns the fetched 
+    /**
+     * Gets the fetched trip updates data
+     */
     export async function getRealtimeGTFSTripUpdates() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
         return fetch(GTFS_REALTIME_URL_TRIP_UPDATES).then(response => response?.arrayBuffer()).then(buffer => GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)))
     }
 
-
-    //https://svc.metrotransit.org/index.html
-    const GTFS_STATIC_URL = "https://svc.metrotransit.org/mtgtfs/gtfs.zip";
-    const GTFS_REALTIME_URL_UMN = "https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=vehicles2&action=list&agencyID=88";
-    const GTFS_REALTIME_URL_VEHICLE_POSITIONS = 'https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb';
-    const GTFS_REALTIME_URL_TRIP_UPDATES = 'https://svc.metrotransit.org/mtgtfs/tripupdates.pb';
-    const GTFS_REALTIME_URL_SERVICE_ALERTS = 'https://svc.metrotransit.org/mtgtfs/alerts.pb';
+    /* Private */
     
-    // Refreshes the cache in the browser
-    async function refreshStaticGTFSCache() : Promise<ArrayBuffer | undefined> {
-        try {
-            await caches.open("gtfs-static").then(cache => cache.add(GTFS_STATIC_URL));
-        } catch (error) {
-            console.error("Error refreshing cache:", error);
-            console.warn("The data was not Cached!");
-        }
-
-        return fetch(GTFS_STATIC_URL).then(response => response.arrayBuffer().then(buffer => buffer));
-    }
-
-    // Gets data stored file in the OPFS file
-    async function getFileContents(fileName: string) : Promise<string | undefined> {
-        if (fileDirectoryHandle)
-            try {
-                return await fileDirectoryHandle.getFileHandle(fileName).then(async fileHandle => await fileHandle.getFile().then(async blob => await blob.text()));
-            } catch (err) {
-                console.error(err + "\nFile \"" + fileName + "\" does not exist yet, creating file... ");
-            }
-    } 
-
-    // Stores the Hash object into a OPFS file
-    async function storeHash(fileName: string, hash: Hash<any>) : Promise<void> {
-        if (fileDirectoryHandle){
-            fileDirectoryHandle.getFileHandle(fileName, {create: true}).then(fileHandle => {
-                fileHandle.createWritable().then(file => {
-                    file.write(hash.toJSON()).then(() => file.close());
-                })
-            })
-        }
-    }
-
-    // Loads Hash Object
+    /**
+     * Loads a hash object baised on a file
+     * @param fileName name of the file
+     * @param keyIndex index of the line that will be the key
+     */
     async function loadHash<KeyType>(fileName: string, keyIndex: number) : Promise<void> {
         if (!hashes.has(fileName)) {
             let fileContents = await getFileContents(fileName);
@@ -149,9 +126,55 @@ namespace Data {
             }
         }
     }
+    /**
+     * Stores the Hash object into a OPFS file
+     * @param fileName name of the file
+     * @param hash hash object
+     */
+    async function storeHash(fileName: string, hash: Hash<any>) : Promise<void> {
+        if (fileDirectoryHandle){
+            fileDirectoryHandle.getFileHandle(fileName, {create: true}).then(fileHandle => {
+                fileHandle.createWritable().then(file => {
+                    file.write(hash.toJSON()).then(() => file.close());
+                })
+            })
+        }
+    }
+    /**
+     * Refreshes the cache in the browser and returns the data
+     */
+    async function refreshStaticGTFSCache() : Promise<ArrayBuffer | undefined> {
+        try {
+            await caches.open("gtfs-static").then(cache => cache.add(GTFS_STATIC_URL));
+        } catch (error) {
+            console.error("Error refreshing cache:", error);
+            console.warn("The data was not Cached!");
+        }
+
+        return fetch(GTFS_STATIC_URL).then(response => response.arrayBuffer().then(buffer => buffer));
+    }
+    /**
+     * Gets data stored file in the OPFS file and returns its contents
+     * @param fileName name of the file
+     */
+    async function getFileContents(fileName: string) : Promise<string | undefined> {
+        if (fileDirectoryHandle)
+            try {
+                return await fileDirectoryHandle.getFileHandle(fileName).then(async fileHandle => await fileHandle.getFile().then(async blob => await blob.text()));
+            } catch (err) {
+                console.error(err + "\nFile \"" + fileName + "\" does not exist yet, creating file... ");
+            }
+    } 
 
     let fileDirectoryHandle : FileSystemDirectoryHandle;
     let hashes : Map<string, Hash<any>>;
+
+    //https://svc.metrotransit.org/index.html
+    const GTFS_STATIC_URL = "https://svc.metrotransit.org/mtgtfs/gtfs.zip";
+    const GTFS_REALTIME_URL_UMN = "https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=vehicles2&action=list&agencyID=88";
+    const GTFS_REALTIME_URL_VEHICLE_POSITIONS = 'https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb';
+    const GTFS_REALTIME_URL_TRIP_UPDATES = 'https://svc.metrotransit.org/mtgtfs/tripupdates.pb';
+    const GTFS_REALTIME_URL_SERVICE_ALERTS = 'https://svc.metrotransit.org/mtgtfs/alerts.pb';
 }
 
 export default Data
