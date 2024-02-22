@@ -32,14 +32,19 @@ class Stop {
      */
     public getMarker() : google.maps.Circle { return this.marker; }
     /**
+     * Gets the ID of the stop
+     */
+    public getStopId() : string { return this.stopId; }
+    /**
+     * Gets the stop times hash
+     */
+    public getStopTimes() : Map<string, string | undefined> { return this.stopTimes; }
+    /**
      * Adds a stop time to the stop times hash
      * @param vehicleId id of the vehicle
      * @param time time of the stop
      */
     public addStopTime(vehicleId: string, time: string | undefined) { this.stopTimes.set(vehicleId, time); }
-    // Returns the Stop Times Hash
-    public getStopTimes() : Map<string, string | undefined> { return this.stopTimes; }
-    public getStopId() : string { return this.stopId; }
 
     /* Private */
 
