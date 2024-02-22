@@ -41,7 +41,6 @@ export default function Map() {
 
             // Sets the Routes map to this map
             Routes.setMap(map)
-            Vehicles.setMap(map)
 
             // Loads the static routes
             Routes.refresh()
@@ -54,9 +53,6 @@ export default function Map() {
                 Vehicles.refresh();
                 Marker.update();
             }, 500); // ms of wait
-
-
-
         }
         init().then(() => { setMapLoaded(true) });
     }, [])
