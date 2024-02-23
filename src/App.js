@@ -8,7 +8,6 @@ export default function App() {
   return (
     <>
       <NavBar/>
-      <div className='w-[50%] bg-red'>hi</div>
       <Map />
     </>
   );
