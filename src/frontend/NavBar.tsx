@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import URL from '../backend/URL.ts';
 import Routes from './Routes.ts';
 import Vehicles from './Vehicles.ts';
+import { Link } from 'react-router-dom';
+import { Button, ButtonGroup, Heading, extendTheme } from '@chakra-ui/react'
 
 /**
  * Navbar Component
@@ -9,16 +11,27 @@ import Vehicles from './Vehicles.ts';
 export default function NavBar() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
+    const xStyle = {
+        'background': "linear-gradient(to right, #FFCC33 50%, #0053A0 50%)",
+        'background-clip': 'text',
+        'WebkitBackgroundClip': 'text',
+        'WebkitTextFillColor': 'transparent',
+    }
+
     return (
-        <>
-            <div id="title-bar">
-                <h1>
-                <span className="gopher">Gopher Buses </span>
-                <span className="X"> X </span>
-                <span className="city"> Metro Buses</span>
-                </h1>
+        <div id="title-bar">
+            <div>
+                <Link to="/" >
+                    <Heading as='h1' size='2xl' pos='absolute' top='1.5' left='100'>
+                        <Heading display='inline-block' color='#FFCC33' margin='1'>Gopher Buses </Heading>
+                        <Heading display='inline-block' margin='1' style={xStyle}> X </Heading>
+                        <Heading display='inline-block' color ='#0053A0' margin='1'> Metro Buses </Heading>
+                    </Heading>
+                </Link>
             </div>
             
+
+
             <div id="nav-bar" className={sidebarOpen ? 'sidebar open' : 'sidebar'}>
                 <div className="nav-header">
                 <h3>Select Routes</h3>
@@ -38,18 +51,33 @@ export default function NavBar() {
                 </div>
             </div>
 
-            <div id="nav-bar">
-                <button className="openbtn" onClick={() => setSidebarOpen(!sidebarOpen)}>
-                &#9776;
-                </button>
+            <div id = "nav-bar">
+                <Button pos="absolute" top="5" left="5" colorScheme='yellow' onClick={() => setSidebarOpen(!sidebarOpen)}>
+                    &#9776;
+                </Button>
             </div>
 
             <div id = "main">
-                <button className="AboutButton" onClick={() => window.location.href = 'About-Page.html'}>
-                &#8942;
-                </button>
+                <Link to="/schedules" >
+                    <Button pos="absolute" top="5" right="5" colorScheme='yellow'>
+                        Schedules
+                    </Button>
+                </Link>
+                <view width={50}></view>
+                <a href='https://pts.umn.edu/Transit/Transit-Services/Campus-Buses' target="_blank" rel="noreferrer">
+                    <Button pos="absolute" top="5" right="150" colorScheme='yellow'>
+                        Campus Bus Map
+                    </Button>
+                </a>
+                <view width={50}></view>
+
+                <a href='https://umn.rider.peaktransit.com' target="_blank" rel="noreferrer">
+                    <Button pos="absolute" top="5" right="335" colorScheme='yellow'>
+                        GopherTrip Map
+                    </Button>
+                </a>
             </div>
-        </>
+        </div>
     );
 };
 
