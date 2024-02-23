@@ -1,7 +1,7 @@
-import URL from "../backend/URL.ts";
-import Data from "../backend/Data.ts";
+import URL from "../../backend/URL.ts";
+import Data from "../../backend/Data.ts";
 import Routes from "./Routes.ts";
-import Resources from "../backend/Resources.ts";
+import Resources from "../../backend/Resources.ts";
 import { transit_realtime } from "gtfs-realtime-bindings";
 import Vehicle from "./elements/Vehicle.ts";
 

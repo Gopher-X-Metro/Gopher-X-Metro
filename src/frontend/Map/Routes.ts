@@ -1,5 +1,5 @@
-import Resources from "../backend/Resources.ts";
-import URL from "../backend/URL.ts";
+import Resources from "../../backend/Resources.ts";
+import URL from "../../backend/URL.ts";
 import Route from "./elements/Route.ts";
 
 namespace Routes {
