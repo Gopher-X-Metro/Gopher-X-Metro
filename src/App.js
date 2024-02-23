@@ -7,7 +7,8 @@ import "./styles.css"
 export default function App() {
   return (
     <>
-      <NavBar />
+      <NavBar/>
+      <div className='w-[50%] bg-red'>hi</div>
       <Map />
     </>
   );
