@@ -19,9 +19,9 @@ class Stop extends Element {
         this.stopTimes = new Map<string, string | undefined>();
 
         this.marker = new window.google.maps.Circle({
-            fillColor: color,
+            fillColor: this.getColor(),
             fillOpacity: 0,
-            strokeColor: color,
+            strokeColor: this.getColor(),
             center: this.location,
             radius: 10,
             clickable: true,
