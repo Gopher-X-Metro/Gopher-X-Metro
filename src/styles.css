@@ -185,13 +185,13 @@ div#title-bar > h1 > .city {
     top: 0;
     left: 0;
   }
-.AboutButton {
+.PageButton {
     position: absolute;
     top: 0;
     right: 0;
     width: 5%;
     padding: 17px 30px;
-    font-size: 33px;
+    font-size: 15px;
     background-color: transparent;
     color: #ffffff;
     border: none;
