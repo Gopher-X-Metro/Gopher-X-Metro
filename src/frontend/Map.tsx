@@ -25,7 +25,7 @@ export default function Map() {
             const loader = new Loader({
                 apiKey: apiKey,
                 version: "weekly",
-                libraries: ["places", "geometry"]
+                libraries: ["places", "geometry", "marker"]
             });
 
             // Creates the map
@@ -33,6 +33,7 @@ export default function Map() {
             const map = new Map(document.getElementById("map") as HTMLElement, {
                 center: center,
                 zoom: zoom,
+                mapId: process.env.REACT_APP_MAP_ID
             });
 
 
@@ -41,7 +42,6 @@ export default function Map() {
 
             // Sets the Routes map to this map
             Routes.setMap(map)
-            Vehicles.setMap(map)
 
             // Loads the static routes
             Routes.refresh()
@@ -54,9 +54,6 @@ export default function Map() {
                 Vehicles.refresh();
                 Marker.update();
             }, 500); // ms of wait
-
-
-
         }
         init().then(() => { setMapLoaded(true) });
     }, [])

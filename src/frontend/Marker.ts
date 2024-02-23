@@ -7,18 +7,17 @@ namespace Marker {
      * Initalizes the marker on the map
      * @param map map the user marker will display on
      */
-    export function init(map: google.maps.Map) : void {
-        marker = new window.google.maps.Marker({
+    export function init(_map: google.maps.Map) : void {
+        this.map = _map;
+        marker = new window.google.maps.marker.AdvancedMarkerElement({
             map: map,
-            label: "You"
+            content: new window.google.maps.marker.PinElement({background: "#fabb00"}).element
         });
 
         // Centers at User Location
         navigator.geolocation.getCurrentPosition(position => { 
             if (position.coords.accuracy < 1000) // If accuraccy is too low, don't center
             map.setCenter({ lat: position.coords.latitude, lng: position.coords.longitude })
-            
-            // console.log(position)
         })
     }
     /**
@@ -26,14 +25,15 @@ namespace Marker {
      */
     export function update() : void {
         navigator.geolocation.getCurrentPosition(position => { 
-            marker.setPosition({ lat: position.coords.latitude, lng: position.coords.longitude })
-            marker.setVisible(position.coords.accuracy < 1000) // If accuraccy is too low, don't display
+            marker.position = { lat: position.coords.latitude, lng: position.coords.longitude }
+            marker.map = position.coords.accuracy < 1000 ? this.map : null // If accuraccy is too low, don't display
         })
     }
 
     /* Private */
 
-    let marker : google.maps.Marker;
+    let marker : google.maps.marker.AdvancedMarkerElement;
+    let map : google.maps.Map;
 }
 
 export default Marker;
