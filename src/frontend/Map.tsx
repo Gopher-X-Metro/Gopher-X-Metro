@@ -25,7 +25,7 @@ export default function Map() {
             const loader = new Loader({
                 apiKey: apiKey,
                 version: "weekly",
-                libraries: ["places", "geometry"]
+                libraries: ["places", "geometry", "marker"]
             });
 
             // Creates the map
@@ -33,6 +33,7 @@ export default function Map() {
             const map = new Map(document.getElementById("map") as HTMLElement, {
                 center: center,
                 zoom: zoom,
+                mapId: process.env.REACT_APP_MAP_ID
             });
 
 

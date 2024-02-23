@@ -15,14 +15,14 @@ class Vehicle extends Element {
      */
     constructor (vehicleId: string, color : string, map: google.maps.Map) {
         super(vehicleId, color, map);
+
+        const image = document.createElement("img")
+        image.src = customBusIcon;
+        image.width = 30;
         
-        this.marker = new window.google.maps.Marker({
+        this.marker = new window.google.maps.marker.AdvancedMarkerElement({
             map: map,
-            optimized: true,
-            icon: {
-                url: customBusIcon,
-                scaledSize: new window.google.maps.Size(25, 25)            
-            },
+            content: image,
         })
     }
     /**
@@ -43,7 +43,7 @@ class Vehicle extends Element {
     /**
      * Get the marker object of this vehicle on the map
      */
-    public getMarker() : google.maps.Marker { return this.marker; }
+    public getMarker() : google.maps.marker.AdvancedMarkerElement { return this.marker; }
     /**
      * Sets the stopTimeUpdates array for the vehicle 
      * @param stopTimeUpdates stopTimeUpdates array
@@ -60,8 +60,8 @@ class Vehicle extends Element {
      * @param timestamp when this position was updated
      */
     public setPosition(position : google.maps.LatLng, timestamp : number) : void {
-        if (!this.getMarker().getPosition()?.equals(position)) {
-            this.getMarker().setPosition(position);
+        if (!(this.getMarker().position?.toString() === position.toString())) {
+            this.getMarker().position = position;
             this.timestamp = timestamp;
         }
     }
@@ -69,7 +69,7 @@ class Vehicle extends Element {
     /* Private */
     private tripId: string;
     private timestamp : number;
-    private marker: google.maps.Marker;
+    private marker: google.maps.marker.AdvancedMarkerElement;
     private stopTimeUpdates: transit_realtime.TripUpdate.IStopTimeUpdate[] | undefined | null;
 }
 
