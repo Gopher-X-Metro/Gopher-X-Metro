@@ -3,13 +3,27 @@ import URL from '../backend/URL.ts';
 import Routes from './Routes.ts';
 import Vehicles from './Vehicles.ts';
 import { Link } from 'react-router-dom';
-import { Button, ButtonGroup, Heading, extendTheme } from '@chakra-ui/react'
+import { 
+    Button,     
+    ButtonGroup, 
+    Heading, 
+    extendTheme,
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    MenuItemOption,
+    MenuGroup,
+    MenuOptionGroup,
+    MenuDivider,
+        
+} from '@chakra-ui/react'
+import { ChevronDownIcon } from '@chakra-ui/icons';
 
 /**
  * Navbar Component
  */
 export default function NavBar() {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const xStyle = {
         'background': "linear-gradient(to right, #FFCC33 50%, #0053A0 50%)",
@@ -22,7 +36,7 @@ export default function NavBar() {
         <div id="title-bar">
             <div>
                 <Link to="/" >
-                    <Heading as='h1' size='2xl' pos='absolute' top='1.5' left='100'>
+                    <Heading as='h1' size='2xl' pos='absolute' top='1.5' left='200'>
                         <Heading display='inline-block' color='#FFCC33' margin='1'>Gopher Buses </Heading>
                         <Heading display='inline-block' margin='1' style={xStyle}> X </Heading>
                         <Heading display='inline-block' color ='#0053A0' margin='1'> Metro Buses </Heading>
@@ -30,31 +44,30 @@ export default function NavBar() {
                 </Link>
             </div>
             
-
-
-            <div id="nav-bar" className={sidebarOpen ? 'sidebar open' : 'sidebar'}>
-                <div className="nav-header">
-                <h3>Select Routes</h3>
-                <div className="underline"></div>
-                </div>
-                <div className="sidebar-content">
-                <RouteButton routeId={"121"} text={"121 Campus Connector"}/>
-                <RouteButton routeId={"122"} text={"122 University Avenue Circulator"}/>
-                <RouteButton routeId={"123"} text={"123 4th Street Circulator"}/>
-                <RouteButton routeId={"124"} text={"124 St. Paul Campus Circulator"}/>
-                <RouteButton routeId={"120"} text={"120 East Bank Circulator"}/>
-                <RouteButton routeId={"2"} text={"2 Franklin Av / To Hennepin"}/>
-                <RouteButton routeId={"6"} text={"6U 27Av-Univ / Via France"}/>
-                <RouteButton routeId={"3"} text={"3 U of M / Como Av / Dwtn Mpls"}/>
-                <RouteButton routeId={"902"} text={"Metro Green Line"}/>
-                <RouteButton routeId={"901"} text={"Metro Blue Line"}/>
-                </div>
-            </div>
-
             <div id = "nav-bar">
-                <Button pos="absolute" top="5" left="5" colorScheme='yellow' onClick={() => setSidebarOpen(!sidebarOpen)}>
-                    &#9776;
-                </Button>
+                <Menu top="5" left="5" closeOnSelect={false}>
+                    <MenuButton as={Button} rightIcon={<ChevronDownIcon />} margin='5' colorScheme='yellow' >
+                        Routes
+                    </MenuButton>
+                    <MenuList>
+                        <MenuOptionGroup title="University Buses" type='checkbox'>
+                            <RouteMenuItem routeId={'121'} text={"121 Campus Connector"} />
+                            <RouteMenuItem routeId={'122'} text={"122 University Avenue Circulator"} />
+                            <RouteMenuItem routeId={'123'} text={"123 4th Street Circulator"} />
+                            <RouteMenuItem routeId={'124'} text={"124 St. Paul Campus Circulator"} />
+                            <RouteMenuItem routeId={'120'} text={"120 East Bank Circulator"} />
+                        </MenuOptionGroup>
+                        <MenuOptionGroup title='Metro Buses' type='checkbox'>
+                            <RouteMenuItem routeId={'2'} text={"2 Franklin Av / To Hennepin"} />
+                            <RouteMenuItem routeId={'6'} text={"6U 27Av-Univ / Via France"} />
+                            <RouteMenuItem routeId={'3'} text={"3 U of M / Como Av / Dwtn Mpls"} />
+                        </MenuOptionGroup>
+                        <MenuOptionGroup title='Metro Trains' type='checkbox'>
+                            <RouteMenuItem routeId={'902'} text={"Metro Green Line"} />
+                        <RouteMenuItem routeId={'901'} text={"Metro Blue Line"} />
+                        </MenuOptionGroup>
+                    </MenuList>
+                </Menu>
             </div>
 
             <div id = "main">
@@ -87,13 +100,11 @@ export default function NavBar() {
  * @param text Display text of the button
  * @returns 
  */
-function RouteButton({routeId, text}) {
-    const [_, setForceUpdate] = useState(0);
-    const isActive = Array.from(URL.getRoutes()).includes(routeId); // used to check if route button is active
-
+function RouteMenuItem({routeId, text}) {
     return (
-      <button className={`route-btn ${isActive ? 'active' : ''} route-${routeId}`} onClick={() => {
+      <MenuItemOption value={routeId} onClick={() => {
         // selects specific route depending on button pressed
+        console.log(typeof routeId);
         if (!URL.getRoutes().has(routeId))
             URL.addRoute(routeId);
         else 
@@ -102,9 +113,8 @@ function RouteButton({routeId, text}) {
       
         Routes.refresh();
         Vehicles.refresh();
-        setForceUpdate(Math.random()); // updates color of button click immediately
       }}>
         {text}
-      </button> 
+      </MenuItemOption> 
     )
 }
