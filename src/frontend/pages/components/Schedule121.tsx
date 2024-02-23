@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import {
     Table,
@@ -11,7 +11,7 @@ import {
     TableCaption,
     TableContainer,
     Heading,
-  } from '@chakra-ui/react'
+  } from '@chakra-ui/react';
 
   export default function Schedule121(){
     return(

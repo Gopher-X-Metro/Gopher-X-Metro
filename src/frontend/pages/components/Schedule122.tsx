@@ -11,7 +11,7 @@ import {
     TableCaption,
     TableContainer,
     Heading,
-  } from '@chakra-ui/react'
+  } from '@chakra-ui/react';
 
   export default function Schedule122(){
     return(
