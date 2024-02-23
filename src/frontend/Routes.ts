@@ -41,7 +41,7 @@ namespace Routes {
     export function setVisible(routeId : string, visible : boolean) {
         getRoute(routeId)?.getPaths().forEach(path => path.getLine().setVisible(visible));
         getRoute(routeId)?.getStops()?.forEach(stop => stop.getMarker().setVisible(visible));
-        getRoute(routeId)?.getVehicles().forEach(vehicle => vehicle.getMarker().setVisible(visible));
+        getRoute(routeId)?.getVehicles().forEach(vehicle => vehicle.getMarker().map = visible ? map : null);
     }
     /**
      * Sets a route's boldedness
@@ -83,7 +83,7 @@ namespace Routes {
                 // Creates the stop if it has not been created yet
                 if (!route.getStops().has(stopId)) {
                     // Create stop
-                    route.addStop(stopId, "#0022FF", Resources.getStopLocation(stopId));
+                    route.addStop(stopId, "0022FF", Resources.getStopLocation(stopId));
                     
                     // If the user hovers over the stop, change the width of the line
                     route.getStops().get(stopId)?.getMarker().addListener("mouseover", () => {

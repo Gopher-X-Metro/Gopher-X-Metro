@@ -19,7 +19,7 @@ class Path extends Element{
         this.line = new window.google.maps.Polyline({
             path: locations,
             geodesic: true,
-            strokeColor: "#" + color,
+            strokeColor: this.getColor(),
             strokeOpacity: 1.0,
             strokeWeight: Number(process.env.REACT_APP_LINE_NORMAL),
             map: map
