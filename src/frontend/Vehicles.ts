@@ -89,11 +89,9 @@ namespace Vehicles {
         // Check if the vehicle exists
         if (vehicle === undefined) {
             // If the vehicle did not exist, make a new one
-            Routes.getRoute(routeId)?.addVehicle(vehicleId, "#000000");
+            Routes.getRoute(routeId)?.addVehicle(vehicleId, Resources.getColor(routeId));
 
             vehicle = Routes.getRoute(routeId)?.getVehicles()?.get(vehicleId) as Vehicle;
-
-            vehicle.getMarker().setLabel({ text: routeId, fontWeight: "20px", fontSize: "20px" });
 
             // When the user hovers over the marker, make route thicker
             vehicle.getMarker().addListener("mouseover", () => Routes.setBolded(routeId, true));    

@@ -12,7 +12,7 @@ abstract class Element {
      */
     constructor(Id: string, color: string, map: google.maps.Map) {
         this.Id = Id;
-        this.color = color;
+        this.color = "#" + color;
         this.map = map;
     }
     /**
