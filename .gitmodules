@@ -1,3 +1,4 @@
-[submodule "env"]
-	path = env
+
+[submodule "src/env"]
+	path = src/env
 	url = https://github.com/Gopher-Bus-X-Metro-Buses/env.git
