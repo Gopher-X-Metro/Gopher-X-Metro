@@ -1,6 +1,7 @@
 import Element from "./Element.ts";
 import { transit_realtime } from "gtfs-realtime-bindings";
-import customBusIcon from "../../img/bus.png";
+
+import busIcon from "../../../img/bus.png";
 
 class Vehicle extends Element {
 
@@ -17,7 +18,7 @@ class Vehicle extends Element {
         super(vehicleId, color, map);
 
         const image = document.createElement("img")
-        image.src = customBusIcon;
+        image.src = busIcon;
         image.width = 30;
         
         this.marker = new window.google.maps.marker.AdvancedMarkerElement({

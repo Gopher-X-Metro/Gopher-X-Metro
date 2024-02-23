@@ -1,7 +1,7 @@
 import { Loader } from "@googlemaps/js-api-loader"
 import React, { useEffect, useState } from 'react';
 
-import Resources from '../backend/Resources.ts';
+import Resources from '../../backend/Resources.ts';
 
 import Marker from './Marker.ts';
 import Routes from './Routes.ts';
