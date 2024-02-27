@@ -16,8 +16,8 @@ namespace Marker {
 
         // Centers at User Location
         navigator.geolocation.getCurrentPosition(position => { 
-            if (position.coords.accuracy < 1000) // If accuraccy is too low, don't center
-            map.setCenter({ lat: position.coords.latitude, lng: position.coords.longitude })
+            if (map && position.coords.accuracy < 1000) // If accuraccy is too low, don't center
+                map.setCenter({ lat: position.coords.latitude, lng: position.coords.longitude })
         })
     }
     /**
