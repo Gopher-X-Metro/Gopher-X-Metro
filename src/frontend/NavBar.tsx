@@ -64,19 +64,20 @@ function RouteButton({ routeId, text }) {
     const isActive = Array.from(URL.getRoutes()).includes(routeId); // used to check if route button is active
 
     return (
-        <button className={`${isActive ? 'active' : ''} route-${routeId}`} onClick={() => {
-            // selects specific route depending on button pressed
-            if (!URL.getRoutes().has(routeId))
-                URL.addRoute(routeId);
-            else
-                URL.removeRoute(routeId);
+        <div className="flex flex-col items-center w-[50%] md:w-[100%] duration-10000">
+            <button className={`${isActive ? 'active' : ''} route-${routeId}`} onClick={() => {
+                // selects specific route depending on button pressed
+                if (!URL.getRoutes().has(routeId))
+                    URL.addRoute(routeId);
+                else
+                    URL.removeRoute(routeId);
 
 
-            Routes.refresh();
-            Vehicles.refresh();
-            setForceUpdate(Math.random()); // updates color of button click immediately
-        }}>
-            {text}
-        </button>
+                Routes.refresh();
+                Vehicles.refresh();
+                setForceUpdate(Math.random()); // updates color of button click immediately
+            }}>
+                {text}
+            </button></div>
     )
 }
