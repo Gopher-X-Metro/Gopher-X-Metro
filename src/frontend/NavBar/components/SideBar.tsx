@@ -12,7 +12,7 @@ function SideBar() {
                 </button>
             </div>
 
-            <div id="nav-bar" className={`sidebar flex flex-col items-center ${sidebarOpen ? "bg-black w-[100%] md:w-[40%] lg:w-[30%] p-1" : "w-0"}`}>
+            <div id="nav-bar" className={`sidebar flex flex-col items-center ${sidebarOpen ? "bg-grey w-[100%] md:w-[40%] lg:w-[30%] p-1" : "w-0"}`}>
                 <div className="nav-header">
                     <h3>Select Routes</h3>
                     <div className="underline"></div>
