@@ -1,8 +1,9 @@
-import URL from "../backend/URL.ts";
-import Data from "../backend/Data.ts";
+import URL from "../../backend/URL.ts";
+import Data from "../../backend/Data.ts";
 import Routes from "./Routes.ts";
-import Resources from "../backend/Resources.ts";
+import Resources from "../../backend/Resources.ts";
 import { transit_realtime } from "gtfs-realtime-bindings";
+import Vehicle from "./elements/Vehicle.ts";
 
 namespace Vehicles {
 
@@ -54,16 +55,11 @@ namespace Vehicles {
             const route = Routes.getRoute(routeId);
             route?.getVehicles().forEach(vehicle => {
                 Resources.getStopTimes(vehicle.getTripId()).forEach((value, key) => {
-                    route.getStops().get(key)?.addStopTime(vehicle.getVehicleId(), value[1]);
+                    route.getStops().get(key)?.addStopTime(vehicle.getId(), value[1]);
                 })
             })
         })
-    } 
-    /**
-     * Sets the map the vehicles appear on
-     * @param _map 
-     */
-    export function setMap(_map: google.maps.Map) { map = _map; }
+    }
 
     /* Private */
 
@@ -93,34 +89,24 @@ namespace Vehicles {
         // Check if the vehicle exists
         if (vehicle === undefined) {
             // If the vehicle did not exist, make a new one
-            Routes.getRoute(routeId)?.addVehicle(routeId, vehicleId, tripId, "#000000", map);
+            Routes.getRoute(routeId)?.addVehicle(vehicleId, Resources.getColor(routeId));
 
-            vehicle = Routes.getRoute(routeId)?.getVehicles()?.get(vehicleId);
+            vehicle = Routes.getRoute(routeId)?.getVehicles()?.get(vehicleId) as Vehicle;
 
-            if (vehicle) {
-                // Sets vehicle position
-                vehicle.setPosition(location, timestamp);
+            // When the user hovers over the marker, make route thicker
+            vehicle.getMarker().addListener("mouseover", () => Routes.setBolded(routeId, true));    
 
-                // Sets the latest stop times
-                vehicle.setStopTimeUpdates(stopTimeUpdates);
-
-                // When the user hovers over the marker, make route thicker
-                vehicle.getMarker().addListener("mouseover", () => Routes.setBolded(routeId, true));    
-
-                // When the user stops hovering over the marker, return back
-                vehicle.getMarker().addListener("mouseout", () => Routes.setBolded(routeId, false));
-            }
-        } else {
-            // If the id exists, modify the vehicle
-            vehicle.setPosition(location, timestamp);
-
-            vehicle.setStopTimeUpdates(stopTimeUpdates);
-            
-            vehicle.setTripId(tripId);
+            // When the user stops hovering over the marker, return back
+            vehicle.getMarker().addListener("mouseout", () => Routes.setBolded(routeId, false));
         }
-    }
 
-    let map : google.maps.Map;
+        // If the id exists, modify the vehicle
+        vehicle.setPosition(location, timestamp);
+
+        vehicle.setStopTimeUpdates(stopTimeUpdates);
+        
+        vehicle.setTripId(tripId);
+    }
 }
 
 export default Vehicles;
