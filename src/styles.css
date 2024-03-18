@@ -1,7 +1,3 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
-
 html, body 
 {
     margin: 0;
@@ -60,6 +56,7 @@ div#title-bar > h1 > .city {
 /* The sidebar container */
 .sidebar {
     height: 100%;
+    width: 0;
     position: fixed;
     z-index: 1;
     top: 10vh;
@@ -72,11 +69,11 @@ div#title-bar > h1 > .city {
   
   /* The sidebar container when it's open */
   .sidebar.open {
-    width: 100%;
+    width: 285px;
   }
 
   .sidebar-content {
-    width: 100%;
+    width: 285px;
   }
   
   /* The sidebar links */
@@ -105,7 +102,7 @@ div#title-bar > h1 > .city {
     font-size: 17px;
     font-family: 'Neutraface Text', sans-serif;
     white-space: nowrap;
-    width: 100%;
+    width: 285px;
     display: block;
     transition: background-color 0.3s;
     position: relative;
