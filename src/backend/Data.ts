@@ -118,12 +118,11 @@ namespace Data {
             if (fileContents) {
                 hashes.set(fileName, new Hash<KeyType>(fileContents));
             } else {
-                if (!files)
-                    files = await getFiles();
-
-                const newHash = new Hash<KeyType>(await files[fileName].async("binarystring"), keyIndex);                
-                storeHash(fileName, newHash);
-                hashes.set(fileName, newHash);
+                await getFiles().then(async files => {
+                    const newHash = new Hash<KeyType>(await files[fileName].async("string"), keyIndex);
+                    storeHash(fileName, newHash);
+                    hashes.set(fileName, newHash)
+                })
             }
         }
     }
@@ -169,9 +168,6 @@ namespace Data {
 
     let fileDirectoryHandle : FileSystemDirectoryHandle;
     let hashes : Map<string, Hash<any>>;
-    let files : {
-        [key: string]: JSZip.JSZipObject;
-    };
 
     //https://svc.metrotransit.org/index.html
     const GTFS_STATIC_URL = "https://svc.metrotransit.org/mtgtfs/gtfs.zip";
