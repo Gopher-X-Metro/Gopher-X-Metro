@@ -8,7 +8,7 @@ import {
     MenuDivider,
 } from '@chakra-ui/react'
 import { ChevronDownIcon } from '@chakra-ui/icons';
-import RouteMenuItem from '../RouteMenuItem.tsx';
+import RouteMenuItem from './RouteMenuItem.tsx';
 
 export default function SideBar() {
     return(
