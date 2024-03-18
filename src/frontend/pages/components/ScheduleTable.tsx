@@ -1,26 +1,67 @@
-import React from 'react';
-import Schedule121 from './Schedule121.tsx';
-import Schedule122 from './Schedule122.tsx';
-import Schedule123 from './Schedule123.tsx';
-import Schedule124 from './Schedule124.tsx';
-import Schedule120 from './Schedule120.tsx';
+import React, { useState, useEffect } from 'react';
+import Schedule from './Schedule.tsx';
 
+  //Error with selectedSchedule State
   export default function ScheduleTable({selectedSchedule}){
+    
+    const [selectedName, setSelectedName] = useState('121 Campus Connector');
+    const [scheduleTimes, setScheduleTimes] = useState([
+      ["Monday-Friday", "7:00 am – 7:30 am", "every 10 minutes"],
+      ["Monday-Friday", "7:30 am – 6:30 pm", "every 5 minutes"],
+      ["Monday-Friday", "6:30 pm – 10:00 pm", "every 15 minutes"],
+      ["Monday-Wednesday", "10:00 pm – 12:15 am", "every 20 minutes"],
+      ["Thursday-Friday", "10:00 pm – 2:00 am", "every 20 minutes"],
+      ["Saturday", "9:30 am – 2:00 am", "every 20 minutes"],
+      ["Sunday", "9:30 am – 12:15 am", "every 20 minutes"],
+    ]);
 
-    switch(selectedSchedule){
-      case 121:
-        return(<Schedule121 />)
-      case 122:
-        return(<Schedule122 />)
-      case 123:
-        return(<Schedule123 />)
-      case 124:
-        return(<Schedule124 />)
-      case 120:
-        return(<Schedule120 />)
 
-      
-    }
+    useEffect(() => {
+      switch (selectedSchedule) {
+        case 121:
+          setSelectedName('121 Campus Connector');
+          setScheduleTimes([
+            ["Monday-Friday", "7:00 am – 7:30 am", "every 10 minutes"],
+            ["Monday-Friday", "7:30 am – 6:30 pm", "every 5 minutes"],
+            ["Monday-Friday", "6:30 pm – 10:00 pm", "every 15 minutes"],
+            ["Monday-Wednesday", "10:00 pm – 12:15 am", "every 20 minutes"],
+            ["Thursday-Friday", "10:00 pm – 2:00 am", "every 20 minutes"],
+            ["Saturday", "9:30 am – 2:00 am", "every 20 minutes"],
+            ["Sunday", "9:30 am – 12:15 am", "every 20 minutes"],
+          ]);
+          break;
+        case 122:
+          setSelectedName('122 University Avenue Circulator');
+          setScheduleTimes([
+            ["Monday-Friday", "7:00 am – 6:30 pm", "every 10 minutes"],
+            ["Monday-Wednesday", "6:30 pm – 12:15 am", "every 15 minutes"],
+            ["Thursday-Friday", "6:30 pm – 2:00 am", "every 15 minutes"],
+            ["Saturday", "9:30 am – 2:00 am", "every 15 minutes"],
+            ["Sunday", "9:30 am – 12:15 am", "every 15 minutes"],
+          ]);
+          break;
+        case 123:
+          setSelectedName('123 4th Street Circulator');
+          setScheduleTimes([
+            ["Monday-Friday", "7:00 am – 6:00 pm", "every 10 minutes"]
+          ]);
+          break;
+        case 124:
+          setSelectedName('124 St. Paul Campus Circulator');
+          setScheduleTimes([
+            ["Monday-Friday", "7:00 am – 6:00 pm", "every 20 minutes"]
+          ]);
+          break;
+        case 120:
+          setSelectedName('120 East Bank Circulator');
+          setScheduleTimes([
+            ["Monday-Friday", "7:00 am – 6:00 pm", "every 20 minutes"]
+          ]);
+          break;
+      }
+    }, [selectedSchedule]);
+
+    return(<Schedule selectedName={selectedName} scheduleTimes={scheduleTimes} />)
 
   }
 

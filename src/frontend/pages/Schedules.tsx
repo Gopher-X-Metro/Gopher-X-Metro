@@ -36,6 +36,7 @@ export default function Schedules(){
                 </MenuOptionGroup>
             </MenuList>
             </Menu>
+            
             <ScheduleTable selectedSchedule={selectedSchedule}/>
         </div>
     )
