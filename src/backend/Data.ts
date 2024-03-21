@@ -91,11 +91,6 @@ namespace Data {
     export async function getRealtimeGTFSUniversity(): Promise<any> {
         const response = await fetch(GTFS_REALTIME_URL_UMN);
 
-        if (response.status === 404) {
-            console.log(`Data fetching encountered status code 404 (Not Found) with University Data.`);
-            return null;
-        }
-
         if (response.ok) {
             return response.json();
         } else {
@@ -110,11 +105,6 @@ namespace Data {
      */
     export async function getRealtimeGTFSVehiclePositions() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage | null> {
         const response = await fetch(GTFS_REALTIME_URL_VEHICLE_POSITIONS);
-
-        if (response.status === 404) {
-            console.log(`Data fetching encountered status code 404 (Not Found) with Vehicle Position Data.`);
-            return null;
-        }
 
         if (response.ok) {
             return GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(await response.arrayBuffer()));
@@ -132,11 +122,6 @@ namespace Data {
      */
     export async function getRealtimeGTFSTripUpdates() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage | null> {
         const response = await fetch(GTFS_REALTIME_URL_TRIP_UPDATES);
-
-        if (response.status === 404) {
-            console.log(`Data fetching encountered status code 404 (Not Found) with Trip Updates Data.`);
-            return null;
-        }
 
         if (response.ok) {
             return GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(await response.arrayBuffer()));
