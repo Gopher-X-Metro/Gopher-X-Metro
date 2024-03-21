@@ -130,7 +130,7 @@ namespace Data {
     /**
      * Gets the fetched trip updates data
      */
-    export async function getRealtimeGTFSTripUpdates() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
+    export async function getRealtimeGTFSTripUpdates() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage | null> {
         const response = await fetch(GTFS_REALTIME_URL_TRIP_UPDATES);
 
         if (response.status === 404) {
