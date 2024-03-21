@@ -1,4 +1,5 @@
-//import Resources from "../../backend/Resources.ts";
+import { Circle } from "@chakra-ui/react";
+import Resources from "../../backend/Resources.ts";
 class Stop {
 
     /* Public */
@@ -16,17 +17,17 @@ class Stop {
         this.routeId = routeId
         this.location = location;
         this.stopTimes = new Map<string, string | undefined>();
-
+        const Circle_color = Resources.getColor(this.routeId);
         this.marker = new window.google.maps.Circle({
-            fillColor: color,
+            //fillColor: Circle_color,
             fillOpacity: 100,
-            strokeColor: color,
+            strokeWeight: 10,
+            strokeColor: Circle_color,
             center: this.location,
             radius: 5,
             clickable: true,
             map: map
         });
-        //const Circle_color = Resources.getColor(this.routeId);
         const contentString = "Route ID: " + this.routeId;
         
         const infoWindow = new window.google.maps.InfoWindow({
@@ -92,7 +93,6 @@ class Stop {
 
     private stopId: string;
     private routeId: string;
-    public infoWindow: google.maps.InfoWindow;
     private stopTimes: Map<string, string | undefined>;
     private location: google.maps.LatLng;
     private marker: google.maps.Circle;
