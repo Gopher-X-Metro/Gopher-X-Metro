@@ -56,10 +56,7 @@ export default function RouteMenuItem({routeId, text}) {
 
   const removeInfoWindows = () => {
     // Get all markers associated with the routeId
-    //const markers = URL.getRoutes();
-    //const Routes = markers.forEach(marker => {Routes.getRoute(marker)});
     const stops = Routes.getRoute(routeId)?.getStops();
-    //console.log(stops.forEach(stop => {console.log(stop.getInfoWindow())}));
     // Iterate over markers and close their info windows
     stops.forEach(stop => {
         const infoWindow = stop.getInfoWindow();
