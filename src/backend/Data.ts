@@ -89,31 +89,38 @@ namespace Data {
      * Gets the fetched data of the university busses
      */
     export async function getRealtimeGTFSUniversity(): Promise<any> {
-        const response = await fetch(GTFS_REALTIME_URL_UMN);
-
-        if (response.ok) {
-            return response.json();
-        } else {
-            const responseBodyText = await response.text(); // Get the response body as text
-            console.log(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${responseBodyText}`);
+        try {
+            const response = await fetch(GTFS_REALTIME_URL_UMN);
+    
+            if (response.ok) {
+                return response.json();
+            } else {
+                const responseBodyText = await response.text(); // Get the response body as text
+                console.log(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${responseBodyText}`);
+                return null;
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
             return null;
         }
-
     }
     /**
      * Gets the fetched vehicle position data
      */
     export async function getRealtimeGTFSVehiclePositions() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage | null> {
-        const response = await fetch(GTFS_REALTIME_URL_VEHICLE_POSITIONS);
-
-        if (response.ok) {
-            return GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(await response.arrayBuffer()));
-        
-            
+        try {
+            const response = await fetch(GTFS_REALTIME_URL_VEHICLE_POSITIONS);
+    
+            if (response.ok) {
+                return GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(await response.arrayBuffer()));
+            } else {
+                const responseBodyText = await response.text(); // Get the response body as text
+                console.log(`Data fetching encountered status code ${response.status} with Vehicle Position Data. Response Body: ${responseBodyText}`);
+                return null;
+            }
         }
-        else {
-            const responseBodyText = await response.text(); // Get the response body as text
-            console.log(`Data fetching encountered status code ${response.status} with Vehicle Position Data. Response Body: ${responseBodyText}`);
+        catch (error) {
+            console.error('Error fetching data:', error);
             return null;
         }
     }
@@ -121,14 +128,20 @@ namespace Data {
      * Gets the fetched trip updates data
      */
     export async function getRealtimeGTFSTripUpdates() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage | null> {
-        const response = await fetch(GTFS_REALTIME_URL_TRIP_UPDATES);
+        try {
+            const response = await fetch(GTFS_REALTIME_URL_TRIP_UPDATES);
 
-        if (response.ok) {
-            return GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(await response.arrayBuffer()));
-        } else {
-            const responseBodyText = await response.text(); // Get the response body as text
-            console.log(`Data fetching encountered status code ${response.status} with Trip Updates Data. Response Body: ${responseBodyText}`);
-            return null; 
+            if (response.ok) {
+                return GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(await response.arrayBuffer()));
+            } else {
+                const responseBodyText = await response.text(); // Get the response body as text
+                console.log(`Data fetching encountered status code ${response.status} with Trip Updates Data. Response Body: ${responseBodyText}`);
+                return null; 
+            }
+        }
+        catch (error) {
+            console.error('Error fetching data:', error);
+            return null;
         }
     }
 
