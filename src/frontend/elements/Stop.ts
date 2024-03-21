@@ -15,7 +15,6 @@ class Stop {
         this.stopId = stopId;
         this.routeId = routeId
         this.location = location;
-
         this.stopTimes = new Map<string, string | undefined>();
 
         this.marker = new window.google.maps.Circle({
@@ -28,7 +27,6 @@ class Stop {
             map: map
         });
         //const Circle_color = Resources.getColor(this.routeId);
-        //const tripID = Resources.getTripIds(this.routeId).toString();
         const contentString = "Route ID: " + this.routeId;
         
         const infoWindow = new window.google.maps.InfoWindow({
@@ -59,6 +57,9 @@ class Stop {
         });
         this.infoWindow = infoWindow; // jesus
     }
+    /**
+     * Closes the info window on the map
+     */
     public closeInfoWindow() {
         if(this.infoWindow) {
             this.infoWindow.close();
