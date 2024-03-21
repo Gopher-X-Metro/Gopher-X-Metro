@@ -88,11 +88,7 @@ namespace Data {
     /**
      * Gets the fetched data of the university busses
      */
-<<<<<<< Updated upstream
-    export async function getRealtimeGTFSUniversity() : Promise<any> {
-        return fetch(GTFS_REALTIME_URL_UMN).then(response => response?.json())
-=======
-    export async function getRealtimeGTFSUniversity(): Promise<any> {
+    export async function getRealtimeGTFSUniversity(): Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
         const response = await fetch(GTFS_REALTIME_URL_UMN);
 
         if (response.status === 404) {
@@ -108,19 +104,47 @@ namespace Data {
             throw new Error(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${responseBodyText}`);
         }
 
->>>>>>> Stashed changes
     }
     /**
      * Gets the fetched vehicle position data
      */
     export async function getRealtimeGTFSVehiclePositions() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
-        return fetch(GTFS_REALTIME_URL_VEHICLE_POSITIONS).then(response => response?.arrayBuffer()).then(buffer => GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)))
+        const response = await fetch(GTFS_REALTIME_URL_VEHICLE_POSITIONS);
+
+        if (response.status === 404) {
+            console.log(`Data fetching encountered status code 404 (Not Found) with Vehicle Position Data.`);
+            throw new Error(`Data fetching encountered status code 404 (Not Found) with Vehicle Position Data`);
+        }
+
+        if (response.ok) {
+            return GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(await response.arrayBuffer()));
+        
+            
+        }
+        else {
+            const responseBodyText = await response.text(); // Get the response body as text
+            console.log(`Data fetching encountered status code ${response.status} with Vehicle Position Data. Response Body: ${responseBodyText}`);
+            throw new Error(`Data fetching encountered status code ${response.status} with Vehicle Position Data. Response Body: ${responseBodyText}`);
+        }
     }
     /**
      * Gets the fetched trip updates data
      */
     export async function getRealtimeGTFSTripUpdates() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
-        return fetch(GTFS_REALTIME_URL_TRIP_UPDATES).then(response => response?.arrayBuffer()).then(buffer => GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)))
+        const response = await fetch(GTFS_REALTIME_URL_TRIP_UPDATES);
+
+        if (response.status === 404) {
+            console.log(`Data fetching encountered status code 404 (Not Found) with Trip Updates Data.`);
+            throw new Error(`Data fetching encountered status code 404 (Not Found) with Trip Updates Data`);
+        }
+
+        if (response.ok) {
+            return GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(await response.arrayBuffer()));
+        } else {
+            const responseBodyText = await response.text(); // Get the response body as text
+            console.log(`Data fetching encountered status code ${response.status} with Trip Updates Data. Response Body: ${responseBodyText}`);
+            throw new Error(`Data fetching encountered status code ${response.status} with Trip Updates Data. Response Body: ${responseBodyText}`);
+        }
     }
 
     /* Private */
