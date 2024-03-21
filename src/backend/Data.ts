@@ -88,8 +88,27 @@ namespace Data {
     /**
      * Gets the fetched data of the university busses
      */
+<<<<<<< Updated upstream
     export async function getRealtimeGTFSUniversity() : Promise<any> {
         return fetch(GTFS_REALTIME_URL_UMN).then(response => response?.json())
+=======
+    export async function getRealtimeGTFSUniversity(): Promise<any> {
+        const response = await fetch(GTFS_REALTIME_URL_UMN);
+
+        if (response.status === 404) {
+            console.log(`Data fetching encountered status code 404 (Not Found) with University Data.`);
+            throw new Error(`Data fetching encountered status code 404 (Not Found) with University Data`);
+        }
+
+        if (response.ok) {
+            return response.json();
+        } else {
+            const responseBodyText = await response.text(); // Get the response body as text
+            console.log(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${responseBodyText}`);
+            throw new Error(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${responseBodyText}`);
+        }
+
+>>>>>>> Stashed changes
     }
     /**
      * Gets the fetched vehicle position data
