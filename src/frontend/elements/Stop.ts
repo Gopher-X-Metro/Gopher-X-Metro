@@ -18,6 +18,11 @@ class Stop {
         this.location = location;
         this.stopTimes = new Map<string, string | undefined>();
         const Circle_color = Resources.getColor(this.routeId);
+        //const tripIDs = Resources.getTripIds(this.routeId);
+        //const stopIDs = Resources.getStopIds(tripIDs[0]);
+        //const stopTimes = Resources.getStopTimes(stopId);
+        //this.stopTimes = stopTimes;
+        //const Resources.getStopTimes(tripIDs);
         this.marker = new window.google.maps.Circle({
             //fillColor: Circle_color,
             fillOpacity: 100,
@@ -39,6 +44,7 @@ class Stop {
         infoWindow.setPosition(location);
         let infoWindowOpen = false; // Flag to indicate whether the info window is open
         this.marker.addListener('click', () => {
+            //console.log(stopTimes);
             if (infoWindowOpen) {
                 infoWindow.close();
                 infoWindowOpen = false; // Set flag to indicate info window is closed
