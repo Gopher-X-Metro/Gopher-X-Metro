@@ -40,19 +40,20 @@ namespace Vehicles {
                 })
             } else {
                 // Operate on the data of vehicles that are part of the University
-                Data.getRealtimeGTFSUniversity().then(response => {
-                    if (response === null) return;
-                    response.vehicles.forEach(vehicle => {
-                        if (Resources.UNIVERSITY_ROUTES[routeId] === vehicle.routeID) {
-                            updateVehicle(routeId,
-                                vehicle.vehicleID,
-                                "empty",
-                                Date.now(),
-                                new google.maps.LatLng(vehicle.lat, vehicle.lng),
-                                undefined)
-                        }
-                    })
-                });
+
+                const universityData = await Data.getRealtimeGTFSUniversity();
+                if (universityData === null) return;
+                universityData.vehicles.forEach(vehicle => {
+                    if (Resources.UNIVERSITY_ROUTES[routeId] === vehicle.routeID) {
+                        updateVehicle(routeId,
+                            vehicle.vehicleID,
+                            "empty",
+                            Date.now(),
+                            new google.maps.LatLng(vehicle.lat, vehicle.lng),
+                            undefined)
+                    }
+                })
+
             }
         })
 
