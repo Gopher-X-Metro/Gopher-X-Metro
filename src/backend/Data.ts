@@ -88,12 +88,12 @@ namespace Data {
     /**
      * Gets the fetched data of the university busses
      */
-    export async function getRealtimeGTFSUniversity(): Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
+    export async function getRealtimeGTFSUniversity(): Promise<any> {
         const response = await fetch(GTFS_REALTIME_URL_UMN);
 
         if (response.status === 404) {
             console.log(`Data fetching encountered status code 404 (Not Found) with University Data.`);
-            throw new Error(`Data fetching encountered status code 404 (Not Found) with University Data`);
+            return null;
         }
 
         if (response.ok) {
@@ -101,19 +101,19 @@ namespace Data {
         } else {
             const responseBodyText = await response.text(); // Get the response body as text
             console.log(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${responseBodyText}`);
-            throw new Error(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${responseBodyText}`);
+            return null;
         }
 
     }
     /**
      * Gets the fetched vehicle position data
      */
-    export async function getRealtimeGTFSVehiclePositions() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
+    export async function getRealtimeGTFSVehiclePositions() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage | null> {
         const response = await fetch(GTFS_REALTIME_URL_VEHICLE_POSITIONS);
 
         if (response.status === 404) {
             console.log(`Data fetching encountered status code 404 (Not Found) with Vehicle Position Data.`);
-            throw new Error(`Data fetching encountered status code 404 (Not Found) with Vehicle Position Data`);
+            return null;
         }
 
         if (response.ok) {
@@ -124,7 +124,7 @@ namespace Data {
         else {
             const responseBodyText = await response.text(); // Get the response body as text
             console.log(`Data fetching encountered status code ${response.status} with Vehicle Position Data. Response Body: ${responseBodyText}`);
-            throw new Error(`Data fetching encountered status code ${response.status} with Vehicle Position Data. Response Body: ${responseBodyText}`);
+            return null;
         }
     }
     /**
@@ -135,7 +135,7 @@ namespace Data {
 
         if (response.status === 404) {
             console.log(`Data fetching encountered status code 404 (Not Found) with Trip Updates Data.`);
-            throw new Error(`Data fetching encountered status code 404 (Not Found) with Trip Updates Data`);
+            return null;
         }
 
         if (response.ok) {
@@ -143,7 +143,7 @@ namespace Data {
         } else {
             const responseBodyText = await response.text(); // Get the response body as text
             console.log(`Data fetching encountered status code ${response.status} with Trip Updates Data. Response Body: ${responseBodyText}`);
-            throw new Error(`Data fetching encountered status code ${response.status} with Trip Updates Data. Response Body: ${responseBodyText}`);
+            return null; 
         }
     }
 

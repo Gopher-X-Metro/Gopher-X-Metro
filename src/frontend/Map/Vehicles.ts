@@ -18,38 +18,41 @@ namespace Vehicles {
             if (Object.keys(Resources.UNIVERSITY_ROUTES).indexOf(routeId) === -1) {
                 // Operate on the data of the vehilces not part of the University
                 const tripUpdates = await Data.getRealtimeGTFSTripUpdates();
-                const vehiclePositions =  await Data.getRealtimeGTFSVehiclePositions();
+                const vehiclePositions = await Data.getRealtimeGTFSVehiclePositions();
 
                 if (tripUpdates === null || vehiclePositions === null) return;
 
-    
+
                 // Goes through each vehicle in the route
                 vehiclePositions.entity.forEach(entity => {
-                    if (entity.vehicle?.trip?.routeId === routeId){   
+                    if (entity.vehicle?.trip?.routeId === routeId) {
                         // Goes through each trip update and gets the stop information                     
                         tripUpdates.entity.forEach(update => {
                             if (update.tripUpdate?.trip.tripId === entity.vehicle?.trip?.tripId)
-                                updateVehicle(routeId, 
-                                entity.vehicle?.vehicle?.id, 
-                                entity.vehicle?.trip?.tripId, 
-                                entity.vehicle?.timestamp as number, 
-                                new google.maps.LatLng(entity.vehicle?.position?.latitude as number, entity.vehicle?.position?.longitude as number), 
-                                update.tripUpdate?.stopTimeUpdate);
+                                updateVehicle(routeId,
+                                    entity.vehicle?.vehicle?.id,
+                                    entity.vehicle?.trip?.tripId,
+                                    entity.vehicle?.timestamp as number,
+                                    new google.maps.LatLng(entity.vehicle?.position?.latitude as number, entity.vehicle?.position?.longitude as number),
+                                    update.tripUpdate?.stopTimeUpdate);
                         })
                     }
                 })
             } else {
                 // Operate on the data of vehicles that are part of the University
-                Data.getRealtimeGTFSUniversity().then(response => response.vehicles.forEach(vehicle => { 
-                    if (Resources.UNIVERSITY_ROUTES[routeId] === vehicle.routeID){
-                        updateVehicle(routeId, 
-                            vehicle.vehicleID, 
-                            "empty",
-                            Date.now(),
-                            new google.maps.LatLng(vehicle.lat, vehicle.lng), 
-                            undefined) 
-                    }
-                }));
+                Data.getRealtimeGTFSUniversity().then(response => {
+                    if (response === null) return;
+                    response.vehicles.forEach(vehicle => {
+                        if (Resources.UNIVERSITY_ROUTES[routeId] === vehicle.routeID) {
+                            updateVehicle(routeId,
+                                vehicle.vehicleID,
+                                "empty",
+                                Date.now(),
+                                new google.maps.LatLng(vehicle.lat, vehicle.lng),
+                                undefined)
+                        }
+                    })
+                });
             }
         })
 
@@ -77,18 +80,18 @@ namespace Vehicles {
      * @returns 
      */
     function updateVehicle(
-        routeId: string, 
-        vehicleId: string | null | undefined, 
-        tripId: string | null | undefined, 
-        timestamp: number | null | undefined, 
+        routeId: string,
+        vehicleId: string | null | undefined,
+        tripId: string | null | undefined,
+        timestamp: number | null | undefined,
         location: google.maps.LatLng,
         stopTimeUpdates: transit_realtime.TripUpdate.IStopTimeUpdate[] | undefined | null) {
 
         if (!vehicleId || !tripId || !timestamp) return;
-        
+
         // Find the vehicle
         let vehicle = Routes.getRoute(routeId)?.getVehicles()?.get(vehicleId);
-        
+
         // Check if the vehicle exists
         if (vehicle === undefined) {
             // If the vehicle did not exist, make a new one
@@ -97,7 +100,7 @@ namespace Vehicles {
             vehicle = Routes.getRoute(routeId)?.getVehicles()?.get(vehicleId) as Vehicle;
 
             // When the user hovers over the marker, make route thicker
-            vehicle.getMarker().addListener("mouseover", () => Routes.setBolded(routeId, true));    
+            vehicle.getMarker().addListener("mouseover", () => Routes.setBolded(routeId, true));
 
             // When the user stops hovering over the marker, return back
             vehicle.getMarker().addListener("mouseout", () => Routes.setBolded(routeId, false));
@@ -107,7 +110,7 @@ namespace Vehicles {
         vehicle.setPosition(location, timestamp);
 
         vehicle.setStopTimeUpdates(stopTimeUpdates);
-        
+
         vehicle.setTripId(tripId);
     }
 }
