@@ -95,12 +95,10 @@ namespace Data {
             if (response.ok) {
                 return response.json();
             } else {
-                //const responseBodyText = await response.text(); // Get the response body as text
-                //console.log(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${responseBodyText}`);
+                //Please note a bunch of these error alerts are removed because they may confuse other developers
                 return null;
             }
         } catch (error) {
-            //console.error('Error fetching data:', error);
             return null;
         }
     }
@@ -114,13 +112,10 @@ namespace Data {
             if (response.ok) {
                 return GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(await response.arrayBuffer()));
             } else {
-                //const responseBodyText = await response.text(); // Get the response body as text
-                //console.log(`Data fetching encountered status code ${response.status} with Vehicle Position Data. Response Body: ${responseBodyText}`);
                 return null;
             }
         }
         catch (error) {
-            //console.error('Error fetching data:', error);
             return null;
         }
     }
@@ -134,13 +129,10 @@ namespace Data {
             if (response.ok) {
                 return GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(await response.arrayBuffer()));
             } else {
-                //const responseBodyText = await response.text(); // Get the response body as text
-                //console.log(`Data fetching encountered status code ${response.status} with Trip Updates Data. Response Body: ${responseBodyText}`);
                 return null; 
             }
         }
         catch (error) {
-            //console.error('Error fetching data:', error);
             return null;
         }
     }
