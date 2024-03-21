@@ -19,6 +19,9 @@ namespace Vehicles {
                 // Operate on the data of the vehilces not part of the University
                 const tripUpdates = await Data.getRealtimeGTFSTripUpdates();
                 const vehiclePositions =  await Data.getRealtimeGTFSVehiclePositions();
+
+                if (tripUpdates === null || vehiclePositions === null) return;
+
     
                 // Goes through each vehicle in the route
                 vehiclePositions.entity.forEach(entity => {
