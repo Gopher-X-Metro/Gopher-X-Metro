@@ -20,7 +20,7 @@ namespace Vehicles {
                 const tripUpdates = await Data.getRealtimeGTFSTripUpdates();
                 const vehiclePositions = await Data.getRealtimeGTFSVehiclePositions();
 
-                if (tripUpdates === null || vehiclePositions === null) return;
+                if (tripUpdates === null || vehiclePositions === null) return; //api req failed
 
 
                 // Goes through each vehicle in the route
@@ -42,7 +42,9 @@ namespace Vehicles {
                 // Operate on the data of vehicles that are part of the University
 
                 const universityData = await Data.getRealtimeGTFSUniversity();
-                if (universityData === null) return;
+
+                if (universityData === null) return; //api req failed
+
                 universityData.vehicles.forEach(vehicle => {
                     if (Resources.UNIVERSITY_ROUTES[routeId] === vehicle.routeID) {
                         updateVehicle(routeId,
