@@ -1,7 +1,7 @@
 import { Loader } from "@googlemaps/js-api-loader"
 import React, { useEffect, useState } from 'react';
 
-import Resources from '../../backend/Resources.ts';
+import Resources from '../backend/Resources.ts';
 
 import Marker from './Marker.ts';
 import Routes from './Routes.ts';
@@ -25,7 +25,7 @@ export default function Map() {
             const loader = new Loader({
                 apiKey: apiKey,
                 version: "weekly",
-                libraries: ["places", "geometry", "marker"]
+                libraries: ["places", "geometry"]
             });
 
             // Creates the map
@@ -33,7 +33,6 @@ export default function Map() {
             const map = new Map(document.getElementById("map") as HTMLElement, {
                 center: center,
                 zoom: zoom,
-                mapId: process.env.REACT_APP_MAP_ID
             });
 
 
@@ -42,6 +41,7 @@ export default function Map() {
 
             // Sets the Routes map to this map
             Routes.setMap(map)
+            Vehicles.setMap(map)
 
             // Loads the static routes
             Routes.refresh()
@@ -54,6 +54,9 @@ export default function Map() {
                 Vehicles.refresh();
                 Marker.update();
             }, 500); // ms of wait
+
+
+
         }
         init().then(() => { setMapLoaded(true) });
     }, [])

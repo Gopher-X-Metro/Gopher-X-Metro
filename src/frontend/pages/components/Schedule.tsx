@@ -4,7 +4,6 @@ import {
     Table,
     Thead,
     Tbody,
-    Tfoot,
     Tr,
     Th,
     Td,
@@ -13,10 +12,23 @@ import {
     Heading,
   } from '@chakra-ui/react';
 
-  export default function Schedule124(){
+export default function Schedule({selectedName, scheduleTimes}){
+
+    const renderRows = (scheduleTimes) => {
+        return scheduleTimes.map((row) => {
+            return(
+                <Tr>
+                    <Td>{row[0]}</Td>
+                    <Td>{row[1]}</Td>
+                    <Td>{row[2]}</Td>
+                </Tr>
+            )
+          })
+    }
+
     return(
         <div>
-            <Heading as='h1' size='md' margin = '5'>St. Paul Campus Circulator</Heading>
+            <Heading as='h1' size='md' margin = '5'>{selectedName}</Heading>
             <TableContainer>
                 <Table variant='striped'>
                     <TableCaption>Only for Fall/Spring Semesters and Finals</TableCaption>
@@ -28,14 +40,11 @@ import {
                     </Tr>
                     </Thead>
                     <Tbody>
-                    <Tr>
-                        <Td>Monday-Friday</Td>
-                        <Td>7:00 am – 6:00 pm</Td>
-                        <Td>every 20 minutes</Td>
-                    </Tr>
-                   </Tbody>
+                        {renderRows(scheduleTimes)}
+                    </Tbody>
                 </Table>
             </TableContainer>
         </div>
     )
-  }
+
+}
