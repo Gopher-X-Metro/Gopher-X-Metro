@@ -88,20 +88,53 @@ namespace Data {
     /**
      * Gets the fetched data of the university busses
      */
-    export async function getRealtimeGTFSUniversity() : Promise<any> {
-        return fetch(GTFS_REALTIME_URL_UMN).then(response => response?.json())
+    export async function getRealtimeGTFSUniversity(): Promise<any> {
+        try {
+            const response = await fetch(GTFS_REALTIME_URL_UMN);
+    
+            if (response.ok) {
+                return response.json();
+            } else {
+                //Please note a bunch of these error alerts are removed because they may confuse other developers
+                return null;
+            }
+        } catch (error) {
+            return null;
+        }
     }
     /**
      * Gets the fetched vehicle position data
      */
-    export async function getRealtimeGTFSVehiclePositions() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
-        return fetch(GTFS_REALTIME_URL_VEHICLE_POSITIONS).then(response => response?.arrayBuffer()).then(buffer => GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)))
+    export async function getRealtimeGTFSVehiclePositions() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage | null> {
+        try {
+            const response = await fetch(GTFS_REALTIME_URL_VEHICLE_POSITIONS);
+    
+            if (response.ok) {
+                return GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(await response.arrayBuffer()));
+            } else {
+                return null;
+            }
+        }
+        catch (error) {
+            return null;
+        }
     }
     /**
      * Gets the fetched trip updates data
      */
-    export async function getRealtimeGTFSTripUpdates() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
-        return fetch(GTFS_REALTIME_URL_TRIP_UPDATES).then(response => response?.arrayBuffer()).then(buffer => GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)))
+    export async function getRealtimeGTFSTripUpdates() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage | null> {
+        try {
+            const response = await fetch(GTFS_REALTIME_URL_TRIP_UPDATES);
+
+            if (response.ok) {
+                return GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(await response.arrayBuffer()));
+            } else {
+                return null; 
+            }
+        }
+        catch (error) {
+            return null;
+        }
     }
 
     /* Private */
