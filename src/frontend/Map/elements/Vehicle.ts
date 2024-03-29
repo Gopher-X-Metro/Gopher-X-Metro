@@ -1,35 +1,29 @@
+import Element from "./Element.ts";
 import { transit_realtime } from "gtfs-realtime-bindings";
-import customBusIcon from "../../img/bus.png";
 
-class Vehicle {
+import busIcon from "../../../img/bus.png";
+
+class Vehicle extends Element {
 
     /* Public */
 
     /**
      * Vehicle Constructor
-     * @param routeId route ID the vehicle belongs to
      * @param vehicleId vehicle ID
      * @param tripId 
      * @param color color of vehicle image
      * @param map map the vehicle displays on
      */
-    constructor (routeId: string, vehicleId: string, tripId: string, color : string, map: google.maps.Map) {
-        this.vehicleId = vehicleId
-        this.routeId = routeId
-        this.tripId = tripId;
-        this.marker = new window.google.maps.Marker({
+    constructor (vehicleId: string, color : string, map: google.maps.Map) {
+        super(vehicleId, color, map);
+
+        const image = document.createElement("img")
+        image.src = busIcon;
+        image.width = 30;
+        
+        this.marker = new window.google.maps.marker.AdvancedMarkerElement({
             map: map,
-            label: {
-                text: this.routeId,
-                color: color,
-                fontWeight: "20px",
-                fontSize: "20px"
-            },
-            optimized: true,
-            icon: {
-                url: customBusIcon,
-                scaledSize: new window.google.maps.Size(25, 25)            
-            },
+            content: image,
         })
     }
     /**
@@ -44,21 +38,13 @@ class Vehicle {
      */
     public getStopTimeUpdates() : transit_realtime.TripUpdate.IStopTimeUpdate[] | undefined | null {return this.stopTimeUpdates; }
     /**
-     * Get the vehicle ID
-     */
-    public getVehicleId() : string {return this.vehicleId; }
-    /**
      * Get the trip ID
      */
     public getTripId() : string { return this.tripId; }
     /**
-     * Get the route ID
-     */
-    public getRouteId() : string { return this.routeId; }
-    /**
      * Get the marker object of this vehicle on the map
      */
-    public getMarker() : google.maps.Marker { return this.marker; }
+    public getMarker() : google.maps.marker.AdvancedMarkerElement { return this.marker; }
     /**
      * Sets the stopTimeUpdates array for the vehicle 
      * @param stopTimeUpdates stopTimeUpdates array
@@ -75,19 +61,16 @@ class Vehicle {
      * @param timestamp when this position was updated
      */
     public setPosition(position : google.maps.LatLng, timestamp : number) : void {
-        if (!this.getMarker().getPosition()?.equals(position)) {
-            this.getMarker().setPosition(position);
+        if (!(this.getMarker().position?.toString() === position.toString())) {
+            this.getMarker().position = position;
             this.timestamp = timestamp;
         }
     }
     
     /* Private */
-
-    private vehicleId: string;
     private tripId: string;
     private timestamp : number;
-    private routeId: string;
-    private marker: google.maps.Marker;
+    private marker: google.maps.marker.AdvancedMarkerElement;
     private stopTimeUpdates: transit_realtime.TripUpdate.IStopTimeUpdate[] | undefined | null;
 }
 
