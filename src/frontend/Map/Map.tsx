@@ -7,11 +7,7 @@ import Marker from './Marker.ts';
 import Routes from './Routes.ts';
 import Vehicles from './Vehicles.ts';
 import LoadingScreen from "./LoadingScreen.tsx";
-<<<<<<< Updated upstream
 import URL from '../../backend/URL.ts';
-=======
-import { isNotificationSupported, requestNotificationPermission, showNotification } from '../../backend/Notify.ts';
->>>>>>> Stashed changes
 
 /**
  * The map component
@@ -25,14 +21,8 @@ export default function Map() {
       Notification.requestPermission();
     else {
       var notification = new Notification('Notification title', {
-<<<<<<< Updated upstream
         icon: '/favicon/favicon.ico',
         body: `Hey there! You've been notified! ${new Array(...URL.getRoutes()).join(", ")}`,
-=======
-        title: 'Notification title',
-        iconc: 'public/favicon/favicon.ico',
-        body: 'Hey there! You\'ve been notified!',
->>>>>>> Stashed changes
       });
       notification.onclick = function () {
         window.open('http://stackoverflow.com/a/13328397/1269037');
