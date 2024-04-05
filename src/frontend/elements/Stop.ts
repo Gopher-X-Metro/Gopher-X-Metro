@@ -1,6 +1,7 @@
-import { Circle } from "@chakra-ui/react";
 import Resources from "../../backend/Resources.ts";
-class Stop {
+import InfoWindow from './InfoWindow.ts';
+export class Stop {
+    [x: string]: any;
 
     /* Public */
 
@@ -33,16 +34,28 @@ class Stop {
             clickable: true,
             map: map
         });
-        const contentString = "Route ID: " + this.routeId;
-        
-        const infoWindow = new window.google.maps.InfoWindow({
-            ariaLabel: contentString,
-            content: contentString,
-            maxWidth: 200, // Set the maximum width of the info window
-            //maxHeight: 200, // Set the maximum height of the info window
-        });
+        const infoWindow = this.makeInfoWindow(routeId, stopId, color, location, map);
+        this.infoWindow = infoWindow;
+    }
+        /**
+     * Gets the info window object on the map
+     */
+    public getInfoWindow() : google.maps.InfoWindow { return this.infoWindow; }
+        /**
+     * Makes an info window for the stop
+     * @param routeId route ID the stop belongs to
+     * @param stopId ID of the stop
+     * @param color color of the stop
+     * @param location location of the stop
+     * @param map map the stop displays on
+     */
+    public makeInfoWindow(routeId: string, stopId: string, color: string, location: google.maps.LatLng, map: google.maps.Map) {
+        let infoWindowClass = new InfoWindow(routeId, stopId, color, location, map);
+        const infoWindow = infoWindowClass.getInfoWindow();
         infoWindow.setPosition(location);
+        //infoWindow.setMap(map);
         let infoWindowOpen = false; // Flag to indicate whether the info window is open
+    
         this.marker.addListener('click', () => {
             //console.log(stopTimes);
             if (infoWindowOpen) {
@@ -55,27 +68,16 @@ class Stop {
             // Calculate the pixel offset to position the info window above the marker
             const markerPosition = location;
             const pixelOffset = new window.google.maps.Size(0, -20); // Adjust the Y offset as needed
-
+    
             // Open the info window at the clicked marker's position with custom options
             infoWindow.setOptions({
                 position: markerPosition,
                 pixelOffset: pixelOffset,
             });
-        });
-        this.infoWindow = infoWindow; // jesus
-    }
-    /**
-     * Closes the info window on the map
-     */
-    public closeInfoWindow() {
-        if(this.infoWindow) {
-            this.infoWindow.close();
-        }
+        });  
+        return infoWindow;
     } 
-    /**
-     * Gets the info window object on the map
-     */
-    public getInfoWindow() : google.maps.InfoWindow { return this.infoWindow; }
+
     /**
      * Gets the marker object on the map
      */
