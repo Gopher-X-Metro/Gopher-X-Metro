@@ -21,7 +21,7 @@ class Stop {
         //const tripIDs = Resources.getTripIds(this.routeId);
         //const stopIDs = Resources.getStopIds(tripIDs[0]);
         //const stopTimes = Resources.getStopTimes(stopId);
-        //this.stopTimes = stopTimes;
+        //this.stopTimes = stopTimes[tripIDs[0];
         //const Resources.getStopTimes(tripIDs);
         this.marker = new window.google.maps.Circle({
             //fillColor: Circle_color,
@@ -71,7 +71,7 @@ class Stop {
         if(this.infoWindow) {
             this.infoWindow.close();
         }
-    }
+    } 
     /**
      * Gets the info window object on the map
      */
