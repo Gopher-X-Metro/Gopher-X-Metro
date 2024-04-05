@@ -9,9 +9,6 @@ import Vehicles from './Vehicles.ts';
 import LoadingScreen from "./LoadingScreen.tsx";
 import URL from '../../backend/URL.ts';
 
-
-import notificationapi from 'notificationapi-node-server-sdk';
-
 /**
  * The map component
  */
@@ -20,24 +17,17 @@ export default function Map() {
 
 
   const sendNotification = () => {
-
-    notificationapi.init(
-      '153o85ulan8g6cpeb2ncav2k71', // clientId
-      '100k28pdtfaosebgk44brddcfv1ja3j7p8fa3rtdhnsu3u2mrh01'// clientSecret
-    )
-    
-    notificationapi.send({
-      notificationId: 'new_comment',
-      user: {
-        id: "phu00003@umn.edu",
-        email: "phu00003@umn.edu",
-        number: "+15005550006" // Replace with your phone number
-      },
-      mergeTags: {
-        "comment": "Build something great :)",
-        "commentId": "commentId-1234-abcd-wxyz"
-      }
-    })
+    if (Notification.permission !== 'granted')
+      Notification.requestPermission();
+    else {
+      var notification = new Notification('Notification title', {
+        icon: '/favicon/favicon.ico',
+        body: `Hey there! You've been notified! ${new Array(...URL.getRoutes()).join(", ")}`,
+      });
+      notification.onclick = function () {
+        window.open('http://stackoverflow.com/a/13328397/1269037');
+      };
+    }
   }
 
 
