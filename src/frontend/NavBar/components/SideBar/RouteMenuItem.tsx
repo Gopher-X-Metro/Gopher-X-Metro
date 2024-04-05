@@ -5,9 +5,9 @@ import Vehicles from '../../../Vehicles.ts';
 
 import { 
     MenuItemOption,
-    Icon
+    //Icon
 } from '@chakra-ui/react'
-import { AddIcon } from "@chakra-ui/icons";
+//import { AddIcon } from "@chakra-ui/icons";
 
 
 /**
