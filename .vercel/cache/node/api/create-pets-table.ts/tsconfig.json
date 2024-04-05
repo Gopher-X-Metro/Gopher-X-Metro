@@ -1,5 +1,0 @@
-{
-	"include": [
-		"..\\..\\..\\..\\..\\api\\create-pets-table.ts"
-	]
-}
