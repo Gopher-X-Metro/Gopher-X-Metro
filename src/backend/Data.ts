@@ -24,29 +24,11 @@ namespace Data {
             return;
         }
 
-        // Checks if the data in the contents are old, if they are, refresh the cache
-        caches.open("gtfs-static").then(cache => cache.match(GTFS_STATIC_URL).then(async response => {
-            // Checks if the data exists in the cache, if not, refresh it
-            if (response) {
-                // Checks if the data in the contents are old, if they are, refresh the cache
-                // @ts-ignore
-                response.arrayBuffer().then(buffer => JSZip.loadAsync(buffer).then(zip => zip.file("feed_info.txt").async("string").then(contents => {
-                    const date = new Date() // Today's Date
-                    
-                    // Compare the old date to the new date, formatted in (yyyymmdd)
-                    if (Number(contents.split("\r\n")[1].split(",")[5]) < Number([date.getFullYear(), date.getMonth(), date.getDate()].join())) {
-                        // Refresh if old
-                        refreshStaticGTFSCache()  
-                    }
-                })))
-            }
-        }))
-
         // Load hashes
-        await loadHash<Number>("trips.txt", 0);
-        await loadHash<Number>("stops.txt", 0);
-        await loadHash<Number>("routes.txt", 0);
-        await loadHash<Number>("shapes.txt", 0);
+        // await loadHash<Number>("trips.txt", 0);
+        // await loadHash<Number>("stops.txt", 0);
+        // await loadHash<Number>("routes.txt", 0);
+        // await loadHash<Number>("shapes.txt", 0);
         await loadHash<String>("stop_times.txt", 0);
     }
     /**
@@ -88,27 +70,22 @@ namespace Data {
     /**
      * Gets the fetched data of the university busses
      */
-<<<<<<< Updated upstream
-    export async function getRealtimeGTFSUniversity() : Promise<any> {
-        return fetch(GTFS_REALTIME_URL_UMN).then(response => response?.json())
-=======
     export async function getRealtimeGTFSUniversity(): Promise<any> {
         const response = await fetch(GTFS_REALTIME_URL_UMN);
 
-        if (response.status === 404) {
-            console.log(`Data fetching encountered status code 404 (Not Found) with University Data.`);
-            throw new Error(`Data fetching encountered status code 404 (Not Found) with University Data`);
-        }
+        // if (response.status === 404) {
+        //     console.log(`Data fetching encountered status code 404 (Not Found) with University Data.`);
+        //     throw new Error(`Data fetching encountered status code 404 (Not Found) with University Data`);
+        // }
 
-        if (response.ok) {
+        // if (response.ok) {
             return response.json();
-        } else {
-            const responseBodyText = await response.text(); // Get the response body as text
-            console.log(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${responseBodyText}`);
-            throw new Error(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${responseBodyText}`);
-        }
+        // } else {
+        //     const responseBodyText = await response.text(); // Get the response body as text
+        //     console.log(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${responseBodyText}`);
+        //     throw new Error(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${responseBodyText}`);
+        // }
 
->>>>>>> Stashed changes
     }
     /**
      * Gets the fetched vehicle position data
