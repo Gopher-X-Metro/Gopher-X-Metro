@@ -9,20 +9,31 @@ import Vehicles from './Vehicles.ts';
 import LoadingScreen from "./LoadingScreen.tsx";
 import URL from '../../backend/URL.ts';
 
+import { createClient } from "@supabase/supabase-js";
+
+
+
 /**
  * The map component
  */
 export default function Map() {
   const [mapLoaded, setMapLoaded] = useState(false);
+  
+  const supabase = createClient("https://tsmoowqflkcgsdrlxicc.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRzbW9vd3FmbGtjZ3Nkcmx4aWNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTIyNzU2NzYsImV4cCI6MjAyNzg1MTY3Nn0.Mbt6K4ZDGyzKiSuItnI68Yj47fCg6u-MIqu1sHcXrls");
+
+  const sendNotification = async () => {
+
+    const { data } = await supabase.from("countries").select();
 
 
-  const sendNotification = () => {
+
+
     if (Notification.permission !== 'granted')
       Notification.requestPermission();
     else {
       var notification = new Notification('Notification title', {
         icon: '/favicon/favicon.ico',
-        body: `Hey there! You've been notified! ${new Array(...URL.getRoutes()).join(", ")}`,
+        body: `${data?data.map((country) => country.name) : "hi"}Hey there! You've been notified! ${new Array(...URL.getRoutes()).join(", ")}`,
       });
       notification.onclick = function () {
         window.open('http://stackoverflow.com/a/13328397/1269037');
