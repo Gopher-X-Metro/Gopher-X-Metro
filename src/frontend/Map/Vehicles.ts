@@ -73,7 +73,7 @@ namespace Vehicles {
      * @param stopTimeUpdates stopTimeUpdates array
      * @returns 
      */
-    function updateVehicle(
+    async function updateVehicle(
         routeId: string, 
         vehicleId: string | null | undefined, 
         tripId: string | null | undefined, 
@@ -89,7 +89,7 @@ namespace Vehicles {
         // Check if the vehicle exists
         if (vehicle === undefined) {
             // If the vehicle did not exist, make a new one
-            Routes.getRoute(routeId)?.addVehicle(vehicleId, Resources.getColor(routeId));
+            Routes.getRoute(routeId)?.addVehicle(vehicleId, "");
 
             vehicle = Routes.getRoute(routeId)?.getVehicles()?.get(vehicleId) as Vehicle;
 

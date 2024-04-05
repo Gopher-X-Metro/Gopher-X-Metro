@@ -65,38 +65,39 @@ namespace Routes {
         routes.set(routeId, route);
 
         // Load paths
-        Resources.getShapeIds(routeId).forEach(async shapeId => {
+        (await Resources.getShapeIds(routeId)).forEach(async shapeId => {
+            console.log(shapeId)
             // Add path
-            route.addPath(shapeId, Resources.getColor(routeId), Resources.getShapeLocations(shapeId))
+            route.addPath(shapeId, await Resources.getColor(routeId), await Resources.getShapeLocations(shapeId))
                         
             // If the user hovers over the line, change the width
             route.getPaths().get(shapeId)?.getLine().addListener("mouseover", () => setBolded(route.getId(), true));
             
             // If the user stops hovering over the line, return back
             route.getPaths().get(shapeId)?.getLine().addListener("mouseout", () => setBolded(route.getId(), false));      
-        })
+        });
 
         // Load Stops
-        Resources.getTripIds(routeId).forEach(async tripId => {
-            // Create the routes
-            Resources.getStopIds(tripId).forEach(stopId => {
-                // Creates the stop if it has not been created yet
-                if (!route.getStops().has(stopId)) {
-                    // Create stop
-                    route.addStop(stopId, "0022FF", Resources.getStopLocation(stopId));
+        // (await Resources.getTripIds(routeId)).forEach(async tripId => {
+        //     // Create the routes
+        //     Resources.getStopIds(tripId).forEach(async stopId => {
+        //         // Creates the stop if it has not been created yet
+        //         if (!route.getStops().has(stopId)) {
+        //             // Create stop
+        //             route.addStop(stopId, "0022FF", await Resources.getStopLocations(stopId));
                     
-                    // If the user hovers over the stop, change the width of the line
-                    route.getStops().get(stopId)?.getMarker().addListener("mouseover", () => {
-                        setBolded(route.getId(), true)
-                    });
+        //             // If the user hovers over the stop, change the width of the line
+        //             route.getStops().get(stopId)?.getMarker().addListener("mouseover", () => {
+        //                 setBolded(route.getId(), true)
+        //             });
                     
-                    // If the user stops hovering over the stop, return back
-                    route.getStops().get(stopId)?.getMarker().addListener("mouseout", () => {
-                        setBolded(route.getId(), false)
-                    }); 
-                }
-            })
-        })
+        //             // If the user stops hovering over the stop, return back
+        //             route.getStops().get(stopId)?.getMarker().addListener("mouseout", () => {
+        //                 setBolded(route.getId(), false)
+        //             }); 
+        //         }
+        //     })
+        // })
     }
 
     const routes = new Map<string, Route>();

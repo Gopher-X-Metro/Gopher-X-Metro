@@ -15,26 +15,22 @@ namespace Resources {
         console.log("Finished Loading Resources (" + (Date.now() - initTime) + "ms)")
     }
     /**
-     * Gets the shape ids of a route as a Set
+     * Gets the shape ids of a route as an Array
      * @param routeId ID of the route
      */
-    export function getShapeIds(routeId: string) : Set<string> {
-        let ids = new Set<string>();
-
-        Data.getHash("trips.txt").get(routeId)?.forEach(line => ids.add(line.split(/,/)[7]))
-
-        return ids;
+    export async function getShapeIds(routeId: string) : Promise<Array<string>> {
+        return await fetch(API_URL + "/get-shape-ids?route_id=" + routeId)
+        .then(async response => (await response.json())
+        .map((element: { shape_id: any; }) => element.shape_id));
     }
     /**
      * Gets the trip ids of a route as a Set
      * @param routeId ID of the route
      */
-    export function getTripIds(routeId: string) : Set<string> {
-        let ids = new Set<string>();
-
-        Data.getHash("trips.txt").get(routeId)?.forEach(line => ids.add(line.split(/,/)[2]))
-        
-        return ids;
+    export async function getTripIds(routeId: string) : Promise<Array<string>> {
+        return await fetch(API_URL + "/get-trip-ids?route_id=" + routeId)
+        .then(async response => (await response.json())
+        .map((element: { trip_id: any; }) => element.trip_id));
     }
     /**
      * Gets the stop ids of a trip as a Set
@@ -51,30 +47,19 @@ namespace Resources {
      * Gets the location of each point on a shape line as an Array
      * @param shapeId ID of the shape
      */
-    export function getShapeLocations(shapeId: string) : Array<google.maps.LatLng> {
-        let shape = new Array<google.maps.LatLng>();
-
-        Data.getHash("shapes.txt").get(shapeId)?.forEach(line =>{
-            const sections = line.split(/,/);
-            shape.push(new google.maps.LatLng(Number(sections[1]), Number(sections[2])))
-        })
-
-        return shape;
+    export async function getShapeLocations(shapeId: string) : Promise<Array<google.maps.LatLng>> {
+        return await fetch(API_URL + "/get-shape?shape_id=" + shapeId)
+        .then(async response => (await response.json())
+        .map((element: { shape_pt_lat: any, shape_pt_lon: any}) => new google.maps.LatLng(Number(element.shape_pt_lat), Number(element.shape_pt_lon))));
     }
     /**
      * Gets the location of a stop id
      * @param stopId ID of the stop
      */
-    export function getStopLocation(stopId: string) : google.maps.LatLng {
-        let stop : google.maps.LatLng;
-
-        Data.getHash("stops.txt").get(stopId)?.forEach(line => {
-            const sections = line.split(/,/);
-            stop = new google.maps.LatLng(Number(sections[4]), Number(sections[5]))
-        })
-
-        //@ts-ignore
-        return stop;
+    export async function getStopLocations(stopIds: Array<string>) : Promise<google.maps.LatLng> {
+        return await fetch(API_URL + "/get-stop?stop_id=" + stopIds)
+        .then(async response => response.json())
+        .then(result => new google.maps.LatLng(Number(result[0].shape_pt_lat), Number(result[0].shape_pt_lon)));
     }
     /**
      * Gets the stop times of a trip id as a map
@@ -94,11 +79,13 @@ namespace Resources {
      * Gets the color of a route as a string
      * @param routeId ID of the route
      */
-    export function getColor(routeId: string) : string {
+    export async function getColor(routeId: string) : Promise<string> {
         let color = "";
 
-        Data.getHash("routes.txt").get(routeId)?.forEach(line => color += line.split(/,/)[7]);
-        
+        await fetch(API_URL + "/get-route?route_id=" + routeId)
+        .then(response => response.json())
+        .then(result => color = result.route_color)
+
         // It defaults to the colors manually defined. If the color is not defined, it defaults to the one if found. 
         return ROUTE_COLORS[routeId] ? ROUTE_COLORS[routeId] : color;
     }
@@ -123,6 +110,8 @@ namespace Resources {
         "902": "00843D",
         "901": "003DA5"
     }
+
+    const API_URL = process.env.REACT_APP_SUPABASE_FUNCTION_URL
 }
 
 export default Resources;
