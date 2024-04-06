@@ -23,11 +23,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const messaging = getMessaging();
-// Add the public key generated from the console here.
-getToken(messaging, {
-  vapidKey:
-    "BFHVjy-c13qU-ihnLFzru2kguRerHYpJ7CR-ADkDBXTwJivFXm5vHEND0F8UTfxfVkFJjPWh8iNhf1S9P2UE4u0",
-});
+
 
 function requestPermission() {
   console.log("Requesting permission...");
@@ -40,6 +36,9 @@ function requestPermission() {
 
 export function test() {
   requestPermission();
+
+  navigator.serviceWorker.register('./firebase-messaging-sw.js', { type: 'module' });
+
 
   // Get registration token. Initially this makes a network call, once retrieved
   // subsequent calls to getToken will return from cache.
