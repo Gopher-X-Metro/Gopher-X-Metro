@@ -23,22 +23,23 @@ export default function Map() {
 
   const sendNotification = async () => {
 
-    const { data } = await supabase.from("countries").select();
+    // const { data } = await supabase.from("countries").select();
+    // if (Notification.permission !== 'granted')
+    //   Notification.requestPermission();
+    // else {
+    //   var notification = new Notification('Notification title', {
+    //     icon: '/favicon/favicon.ico',
+    //     body: `${data?data.map((country) => country.name) : "hi"}Hey there! You've been notified! ${new Array(...URL.getRoutes()).join(", ")}`,
+    //   });
+    //   notification.onclick = function () {
+    //     window.open('http://stackoverflow.com/a/13328397/1269037');
+    //   };
+    // }
 
 
 
+    test();
 
-    if (Notification.permission !== 'granted')
-      Notification.requestPermission();
-    else {
-      var notification = new Notification('Notification title', {
-        icon: '/favicon/favicon.ico',
-        body: `${data?data.map((country) => country.name) : "hi"}Hey there! You've been notified! ${new Array(...URL.getRoutes()).join(", ")}`,
-      });
-      notification.onclick = function () {
-        window.open('http://stackoverflow.com/a/13328397/1269037');
-      };
-    }
   }
 
 
