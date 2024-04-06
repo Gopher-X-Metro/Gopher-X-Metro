@@ -35,7 +35,6 @@ function requestPermission() {
 
     // Get registration token. Initially this makes a network call, once retrieved
 // subsequent calls to getToken will return from cache.
-const messaging = getMessaging();
 getToken(messaging, { vapidKey: '<YOUR_PUBLIC_VAPID_KEY_HERE>' }).then((currentToken) => {
   if (currentToken) {
     // Send the token to your server and update the UI if necessary
