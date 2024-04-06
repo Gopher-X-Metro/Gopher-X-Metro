@@ -23,3 +23,10 @@ const analytics = getAnalytics(app);
 const messaging = getMessaging();
 // Add the public key generated from the console here.
 getToken(messaging, {vapidKey: "BFHVjy-c13qU-ihnLFzru2kguRerHYpJ7CR-ADkDBXTwJivFXm5vHEND0F8UTfxfVkFJjPWh8iNhf1S9P2UE4u0"});
+
+
+function requestPermission() {
+  console.log('Requesting permission...');
+  Notification.requestPermission().then((permission) => {
+    if (permission === 'granted') {
+      console.log('Notification permission granted.');
