@@ -10,7 +10,7 @@ import LoadingScreen from "./LoadingScreen.tsx";
 import URL from '../../backend/URL.ts';
 
 import { createClient } from "@supabase/supabase-js";
-import  { test } from "../../backend/firebase/Notify.ts"
+import  { test } from "../../Notify.ts"
 
 
 /**
