@@ -37,7 +37,7 @@ function requestPermission() {
 export function test() {
   requestPermission();
 
-  navigator.serviceWorker.register('./firebase-messaging-sw.js', { type: 'module' });
+  navigator.serviceWorker.register('/firebase-messaging-sw.js', { type: 'module' });
 
 
   // Get registration token. Initially this makes a network call, once retrieved
