@@ -34,6 +34,10 @@ class Path {
      * Gets this path's route ID
      */
     public getRouteId() : string { return this.routeId; }
+    /**
+     * Gets the path's shape ID
+     */
+    public getShapeID() : string { return this.shapeId; }
 
     /* Private */
 
