@@ -1,5 +1,5 @@
-import { initializeApp } from "firebase/app";
-import { getMessaging } from "firebase/messaging/sw";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getMessaging } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-messaging.js";
 
 
 const firebaseConfig = {
