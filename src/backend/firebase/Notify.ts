@@ -20,9 +20,8 @@ const firebaseConfig = {
 
 
 // Initialize Firebase
-export const app = initializeApp(firebaseConfig);
-export const analytics = getAnalytics(app);
-export const messaging = async () => await isSupported() && getMessaging();
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 
 async function requestPermission() {
@@ -40,6 +39,12 @@ export function test() {
   if (!requestPermission()) {
     return;
   }
+  if (!isSupported()) {
+    return;
+  }
+
+
+  const messaging = getMessaging();
 
   navigator.serviceWorker.register('/firebase-messaging-sw.js', { type: 'module' });
 
