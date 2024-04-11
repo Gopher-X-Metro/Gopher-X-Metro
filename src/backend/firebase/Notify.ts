@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getMessaging, getToken } from "firebase/messaging";
+import { getMessaging, getToken, isSupported } from "firebase/messaging";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -20,22 +20,26 @@ const firebaseConfig = {
 
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const messaging = getMessaging();
+export const app = initializeApp(firebaseConfig);
+export const analytics = getAnalytics(app);
+export const messaging = async () => await isSupported() && getMessaging();
 
 
-function requestPermission() {
+async function requestPermission() {
   console.log("Requesting permission...");
   Notification.requestPermission().then((permission) => {
     if (permission === "granted") {
       console.log("Notification permission granted.");
+      return true; 
     }
   });
+  return false;
 }
 
 export function test() {
-  requestPermission();
+  if (!requestPermission()) {
+    return;
+  }
 
   navigator.serviceWorker.register('/firebase-messaging-sw.js', { type: 'module' });
 

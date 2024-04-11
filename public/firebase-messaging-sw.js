@@ -20,3 +20,21 @@ const firebaseApp = initializeApp(firebaseConfig);
 // Retrieve an instance of Firebase Messaging so that it can handle background
 // messages.
 const messaging = getMessaging(firebaseApp);
+
+
+messaging.onBackgroundMessage(payload => {
+  console.log('Received background message ', payload);
+
+  const notificationTitle = payload.notification.title;
+  const notificationOptions = {
+    body: payload.notification.body,
+  };
+
+
+  if (Notification.permission !== 'granted') {	
+    console.warn('Permission to display notifications not granted.');	
+    return;	
+  }
+  
+  Notification.showNotification(notificationTitle, notificationOptions);
+});
