@@ -67,6 +67,8 @@ class Route {
         this.vehicles.set(vehicleId, new Vehicle(routeId, vehicleId, tripId, color, map));
     }
 
+    
+
     /* Private */
 
     private routeId: string;
