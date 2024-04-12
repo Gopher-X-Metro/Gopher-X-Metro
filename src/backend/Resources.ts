@@ -33,17 +33,6 @@ namespace Resources {
         .map((element: { trip_id: any; }) => element.trip_id));
     }
     /**
-     * Gets the stop ids of a trip as a Set
-     * @param tripId ID of the trip
-     */
-    export function getStopIds(tripId: string) : Set<string> {
-        let ids = new Set<string>();
-
-        Data.getHash("stop_times.txt").get(tripId)?.forEach(line => ids.add(line.split(/,/)[3]) )
-
-        return ids;
-    }
-    /**
      * Gets the location of each point on a shape line as an Array
      * @param shapeId ID of the shape
      */
@@ -56,10 +45,13 @@ namespace Resources {
      * Gets the location of a stop id
      * @param stopId ID of the stop
      */
-    export async function getStopLocations(stopIds: Array<string>) : Promise<google.maps.LatLng> {
-        return await fetch(API_URL + "/get-stop?stop_id=" + stopIds)
+    export async function getStops(tripId: string) : Promise<Array<{id: string, location: google.maps.LatLng}>> {
+        return await fetch(API_URL + "/get-stops?trip_id=" + tripId)
         .then(async response => response.json())
-        .then(result => new google.maps.LatLng(Number(result[0].shape_pt_lat), Number(result[0].shape_pt_lon)));
+        .then(result => result
+        .map((element: { stop_id: any; stop_lat: any; stop_lon: any; }) => {
+            return {id: element.stop_id, location: new google.maps.LatLng(Number(element.stop_lat), Number(element.stop_lon))}
+        }));
     }
     /**
      * Gets the stop times of a trip id as a map
@@ -68,10 +60,10 @@ namespace Resources {
     export function getStopTimes(tripId: string) : Map<string, Array<string | undefined>> {
         let stopTimes = new Map<string, Array<string | undefined>>();
 
-        Data.getHash("stop_times.txt").get(tripId)?.forEach(line => {
-            let sections = line.split(/,/);
-            stopTimes.set(sections[3], [sections[4], sections[1], sections[2]])
-        })
+        // Data.getHash("stop_times.txt").get(tripId)?.forEach(line => {
+        //     let sections = line.split(/,/);
+        //     stopTimes.set(sections[3], [sections[4], sections[1], sections[2]])
+        // })
 
         return stopTimes;
     }
