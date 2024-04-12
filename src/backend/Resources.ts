@@ -38,8 +38,8 @@ namespace Resources {
      */
     export async function getShapeLocations(shapeId: string) : Promise<Array<google.maps.LatLng>> {
         return await fetch(API_URL + "/get-shape?shape_id=" + shapeId)
-        .then(async response => (await response.json())
-        .map((element: { shape_pt_lat: any, shape_pt_lon: any}) => new google.maps.LatLng(Number(element.shape_pt_lat), Number(element.shape_pt_lon))));
+        .then(response => response.json()
+        .then(json => json.map((element: { shape_pt_lat: any, shape_pt_lon: any}) => new google.maps.LatLng(Number(element.shape_pt_lat), Number(element.shape_pt_lon)))))
     }
     /**
      * Gets the location of a stop id

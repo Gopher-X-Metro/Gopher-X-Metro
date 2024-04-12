@@ -93,12 +93,13 @@ namespace Vehicles {
             Routes.getRoute(routeId)?.addVehicle(vehicleId, "");
 
             vehicle = Routes.getRoute(routeId)?.getVehicles()?.get(vehicleId) as Vehicle;
+            
+            if (vehicle)
+                // When the user hovers over the marker, make route thicker
+                vehicle.getMarker().addListener("mouseover", () => Routes.setBolded(routeId, true));    
 
-            // When the user hovers over the marker, make route thicker
-            vehicle.getMarker().addListener("mouseover", () => Routes.setBolded(routeId, true));    
-
-            // When the user stops hovering over the marker, return back
-            vehicle.getMarker().addListener("mouseout", () => Routes.setBolded(routeId, false));
+                // When the user stops hovering over the marker, return back
+                vehicle.getMarker().addListener("mouseout", () => Routes.setBolded(routeId, false));
         }
 
         // If the id exists, modify the vehicle

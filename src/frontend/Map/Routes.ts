@@ -40,6 +40,7 @@ namespace Routes {
      */
     export function setVisible(routeId : string, visible : boolean) {
         getRoute(routeId)?.getPaths().forEach(path => path.getLine().setVisible(visible));
+        console.log(getRoute(routeId)?.getPaths())
         getRoute(routeId)?.getStops()?.forEach(stop => stop.getMarker().setVisible(visible));
         getRoute(routeId)?.getVehicles().forEach(vehicle => vehicle.getMarker().map = visible ? map : null);
     }
@@ -66,7 +67,6 @@ namespace Routes {
 
         // Load paths
         (await Resources.getShapeIds(routeId)).forEach(async shapeId => {
-            console.log(shapeId)
             // Add path
             route.addPath(shapeId, await Resources.getColor(routeId), await Resources.getShapeLocations(shapeId))
                         
