@@ -29,7 +29,7 @@ namespace Data {
         // await loadHash<Number>("stops.txt", 0);
         // await loadHash<Number>("routes.txt", 0);
         // await loadHash<Number>("shapes.txt", 0);
-        await loadHash<String>("stop_times.txt", 0);
+        // await loadHash<String>("stop_times.txt", 0);
     }
     /**
      * Gets the Hash object of the data from a file
@@ -116,6 +116,8 @@ namespace Data {
             } else {
                 if (!files)
                     files = await getFiles();
+
+                files[fileName].nodeStream().pipe(process.stdout)
 
                 const newHash = new Hash<KeyType>(await files[fileName].async("binarystring"), keyIndex);                
                 storeHash(fileName, newHash);

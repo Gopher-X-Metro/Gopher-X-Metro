@@ -38,6 +38,7 @@ namespace Vehicles {
             } else {
                 // Operate on the data of vehicles that are part of the University
                 Data.getRealtimeGTFSUniversity().then(response => response.vehicles.forEach(vehicle => { 
+                    console.log(response)
                     if (Resources.UNIVERSITY_ROUTES[routeId] === vehicle.routeID){
                         updateVehicle(routeId, 
                             vehicle.vehicleID, 
