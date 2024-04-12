@@ -1,14 +1,16 @@
 import React from 'react';
-import Map from './frontend/Map.tsx'
-import NavBar from './frontend/NavBar.tsx';
+import { BrowserRouter } from 'react-router-dom';
+
+import Pages from './frontend/Pages/Pages.tsx';
+import NavBar from './frontend/NavBar/NavBar.tsx';
 
 import "./styles.css"
 
 export default function App() {
   return (
-    <>
-      <NavBar />
-      <Map />
-    </>
+    <BrowserRouter>
+      <NavBar/>
+      <Pages/>
+    </BrowserRouter>
   );
 }

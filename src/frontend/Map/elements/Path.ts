@@ -1,4 +1,6 @@
-class Path {
+import Element from "./Element.ts";
+
+class Path extends Element{
 
     /* Public */
 
@@ -6,21 +8,18 @@ class Path {
      * Path Constructor
      * @param routeId route ID the path belongs to
      * @param shapeId shape ID of the path
-     * @param tripId 
      * @param color color of the path
      * @param locations locations of points that draw the path
      * @param map map that the line is displayed on
      */
-    constructor(routeId: string, shapeId: string, tripId: string, color: string, locations: Array<google.maps.LatLng>, map: google.maps.Map) {
-        this.shapeId = shapeId;
-        this.routeId = routeId;
-        this.tripId = tripId;
+    constructor(shapeId: string, color: string, locations: Array<google.maps.LatLng>, map: google.maps.Map) {
+        super(shapeId, color, map);
 
         // The path of the bus on the map
         this.line = new window.google.maps.Polyline({
             path: locations,
             geodesic: true,
-            strokeColor: "#" + color,
+            strokeColor: this.getColor(),
             strokeOpacity: 1.0,
             strokeWeight: Number(process.env.REACT_APP_LINE_NORMAL),
             map: map
@@ -41,9 +40,6 @@ class Path {
 
     /* Private */
 
-    private shapeId: string;
-    private routeId: string; 
-    private tripId: string; 
     private line: google.maps.Polyline;
 }
 
