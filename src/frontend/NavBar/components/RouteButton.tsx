@@ -23,7 +23,6 @@ function RouteButton({routeId, text}) {
         else 
             URL.removeRoute(routeId);
         
-      
         Routes.refresh();
         Vehicles.refresh();
         setForceUpdate(Math.random()); // updates color of button click immediately
