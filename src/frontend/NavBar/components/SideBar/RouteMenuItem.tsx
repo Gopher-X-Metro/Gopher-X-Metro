@@ -1,7 +1,7 @@
 import React from "react";
 import URL from '../../../../backend/URL.ts';
-import Routes from '../../../Routes.ts';
-import Vehicles from '../../../Vehicles.ts';
+import Routes from '../../../Map/Routes.ts'
+import Vehicles from '../../../Map/Vehicles.ts'
 
 import { 
     MenuItemOption,
