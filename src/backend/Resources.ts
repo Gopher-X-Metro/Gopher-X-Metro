@@ -15,20 +15,30 @@ namespace Resources {
         console.log("Finished Loading Resources (" + (Date.now() - initTime) + "ms)")
     }
     /**
+     * Gets the running service ids of a route as an Array
+     * @param routeId ID of the route
+     */
+    export async function getServiceIds(routeId: string) : Promise<Array<string>> {
+        return (await fetch(API_URL + "/get-service-ids?route_id=" + routeId + "&date=" + Data.date())
+        .then(async response => (await response.json())
+        .map((element: { service_id: any; }) => element.service_id)))
+        .filter((serviceId: string) => Data.isServiceRunning(serviceId));
+    }
+    /**
      * Gets the shape ids of a route as an Array
      * @param routeId ID of the route
      */
-    export async function getShapeIds(routeId: string) : Promise<Array<string>> {
-        return await fetch(API_URL + "/get-shape-ids?route_id=" + routeId)
-        .then(async response => (await response.json())
-        .map((element: { shape_id: any; }) => element.shape_id));
+    export async function getShapeIds(routeId: string) : Promise<Set<string>> {
+        return new Set(await (await Data.getTrips(routeId))
+        .filter((trip: { service_id: string; }) => Data.isServiceRunning(trip.service_id))
+        .map((trip: { shape_id: any; }) => trip.shape_id));
     }
     /**
      * Gets the trip ids of a route as a Set
      * @param routeId ID of the route
      */
     export async function getTripIds(routeId: string) : Promise<Array<string>> {
-        return await fetch(API_URL + "/get-trip-ids?route_id=" + routeId)
+        return await fetch(API_URL + "/get-trip-ids?route_id=" + routeId + "&date="+Data.date())
         .then(async response => (await response.json())
         .map((element: { trip_id: any; }) => element.trip_id));
     }
@@ -37,21 +47,8 @@ namespace Resources {
      * @param shapeId ID of the shape
      */
     export async function getShapeLocations(shapeId: string) : Promise<Array<google.maps.LatLng>> {
-        return await fetch(API_URL + "/get-shape?shape_id=" + shapeId)
-        .then(response => response.json()
-        .then(json => json.map((element: { shape_pt_lat: any, shape_pt_lon: any}) => new google.maps.LatLng(Number(element.shape_pt_lat), Number(element.shape_pt_lon)))))
-    }
-    /**
-     * Gets the location of a stop id
-     * @param stopId ID of the stop
-     */
-    export async function getStops(tripId: string) : Promise<Array<{id: string, location: google.maps.LatLng}>> {
-        return await fetch(API_URL + "/get-stops?trip_id=" + tripId)
-        .then(async response => response.json())
-        .then(result => result
-        .map((element: { stop_id: any; stop_lat: any; stop_lon: any; }) => {
-            return {id: element.stop_id, location: new google.maps.LatLng(Number(element.stop_lat), Number(element.stop_lon))}
-        }));
+        return await (await Data.getShapes(shapeId))
+        .map((element: { shape_pt_lat: any, shape_pt_lon: any}) => new google.maps.LatLng(Number(element.shape_pt_lat), Number(element.shape_pt_lon)))
     }
     /**
      * Gets the stop times of a trip id as a map
@@ -72,14 +69,8 @@ namespace Resources {
      * @param routeId ID of the route
      */
     export async function getColor(routeId: string) : Promise<string> {
-        let color = "";
-
-        await fetch(API_URL + "/get-route?route_id=" + routeId)
-        .then(response => response.json())
-        .then(result => color = result.route_color)
-
         // It defaults to the colors manually defined. If the color is not defined, it defaults to the one if found. 
-        return ROUTE_COLORS[routeId] ? ROUTE_COLORS[routeId] : color;
+        return ROUTE_COLORS[routeId] ? ROUTE_COLORS[routeId] : await Data.getRoutes(routeId).then(result => result.route_color);
     }
     /* University Routes and ID */
     export const UNIVERSITY_ROUTES = {
@@ -101,7 +92,7 @@ namespace Resources {
         "6": "236918",
         "902": "00843D",
         "901": "003DA5"
-    }
+    };
 
     const API_URL = process.env.REACT_APP_SUPABASE_FUNCTION_URL
 }

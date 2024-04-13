@@ -23,6 +23,7 @@ namespace Vehicles {
                 // Goes through each vehicle in the route
                 vehiclePositions.entity.forEach(entity => {
                     if (entity.vehicle?.trip?.routeId === routeId){   
+                        // console.log(entity)
                         // Goes through each trip update and gets the stop information                     
                         tripUpdates.entity.forEach(update => {
                             if (update.tripUpdate?.trip.tripId === entity.vehicle?.trip?.tripId)
@@ -38,7 +39,6 @@ namespace Vehicles {
             } else {
                 // Operate on the data of vehicles that are part of the University
                 Data.getRealtimeGTFSUniversity().then(response => response.vehicles.forEach(vehicle => { 
-                    console.log(response)
                     if (Resources.UNIVERSITY_ROUTES[routeId] === vehicle.routeID){
                         updateVehicle(routeId, 
                             vehicle.vehicleID, 
