@@ -51,8 +51,6 @@ namespace Data {
             await fetch(API_URL + "/get-trips?route_id=" + routeId + "&date=" + date())
             .then(async response => trips.set(routeId, await response.json()));
 
-        console.log(trips.get(routeId))
-
         return trips.get(routeId)
     }
     /**
