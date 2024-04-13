@@ -1,6 +1,8 @@
 import Resources from "../../backend/Resources.ts";
+import Vehicle from "./elements/Vehicle.ts";
 import URL from "../../backend/URL.ts";
 import Route from "./elements/Route.ts";
+import Realtime from "../../backend/Realtime.ts";
 
 namespace Routes {
     
@@ -64,12 +66,8 @@ namespace Routes {
 
         routes.set(routeId, route);
 
-        const shapes = 
-
         // Load paths
-        (await Resources.getShapeIds(routeId)).forEach(async shapeId => {
-            console.log(shapeId)
-
+        for (const shapeId of await Resources.getShapeIds(routeId)) {
             // Add path
             route.addPath(shapeId, await Resources.getColor(routeId), await Resources.getShapeLocations(shapeId))
                         
@@ -78,36 +76,120 @@ namespace Routes {
             
             // If the user stops hovering over the line, return back
             route.getPaths().get(shapeId)?.getLine().addListener("mouseout", () => setBolded(route.getId(), false));      
-        });
+        };
+
+        
 
         // Load Stops
-        // Resources.getTripIds(routeId).then(response => response.forEach(async tripId => {
-            // Create the stops
-            // (await Resources.getStopIds(tripId)).forEach(async stopId => {
-            //     console.log(stopId);
-        //         // Creates the stop if it has not been created yet
-        //         if (!route.getStops().has(stopId)) {
-        //             // Create stop
-        //             route.addStop(stopId, "0022FF", await Resources.getStopLocations(stopId));
-                    
-        //             // If the user hovers over the stop, change the width of the line
-        //             route.getStops().get(stopId)?.getMarker().addListener("mouseover", () => {
-        //                 setBolded(route.getId(), true)
-        //             });
-                    
-        //             // If the user stops hovering over the stop, return back
-        //             route.getStops().get(stopId)?.getMarker().addListener("mouseout", () => {
-        //                 setBolded(route.getId(), false)
-        //             }); 
-        //         }
-            // })
-        // }))
+        for (const stopInfo of await Resources.getStopsInfo(routeId)) {
+            const stop = stopInfo.stops[0]
 
-        console.log(await Resources.getTripIds(routeId))
+            // Creates the stop if it has not been created yet
+            if (!route.getStops().has(stop.stop_id)) {
+
+                // Create stop
+                route.addStop(stop.stop_id, "0022FF", new google.maps.LatLng(Number(stop.latitude), Number(stop.longitude)));
+                
+                // If the user hovers over the stop, change the width of the line
+                route.getStops().get(stop.stop_id)?.getMarker().addListener("mouseover", () => {
+                    setBolded(route.getId(), true)
+                });
+                
+                // If the user stops hovering over the stop, return back
+                route.getStops().get(stop.stop_id)?.getMarker().addListener("mouseout", () => {
+                    setBolded(route.getId(), false)
+                }); 
+            }
+        }
+        
+        console.log(await Realtime.getVehicles(routeId))
+    }
+
+    /**
+     * Refreshes the Vehicles and calls the Data.getRealtimeGTFS
+     */
+    export async function refreshVehicles() {
+        // Updates Vehicles
+        URL.getRoutes()?.forEach(async routeId => {
+            if (Object.keys(Resources.UNIVERSITY_ROUTES).indexOf(routeId) === -1) {
+                // Operate on the data of the vehilces not part of the University
+                const tripUpdates = await Realtime.getRealtimeGTFSTripUpdates();
+    
+                // Goes through each vehicle in the route
+                (await Realtime.getVehicles(routeId)).forEach(vehicle => {
+                    // Goes through each trip update and gets the stop information                     
+                    tripUpdates.entity.forEach(update => {
+                        if (update.tripUpdate?.trip.tripId === vehicle.trip_id)
+                            updateVehicle(routeId, 
+                            vehicle.trip_id, 
+                            vehicle.trip_id, 
+                            vehicle.location_time, 
+                            new google.maps.LatLng(vehicle.latitude as number, vehicle.longitude as number)
+                        );
+                    })
+                })
+            } else {
+                // Operate on the data of vehicles that are part of the University
+                Realtime.getRealtimeGTFSUniversity().then(response => response.vehicles.forEach(vehicle => { 
+                    if (Resources.UNIVERSITY_ROUTES[routeId] === vehicle.routeID){
+                        updateVehicle(routeId, 
+                            vehicle.vehicleID, 
+                            "empty",
+                            Date.now(),
+                            new google.maps.LatLng(vehicle.lat, vehicle.lng)
+                        ) 
+                    }
+                }));
+            }
+        })
     }
 
     const routes = new Map<string, Route>();
     let map : google.maps.Map;
+
+    /* Private */
+
+    /**
+     * Updates the current list of vehicles
+     * @param routeId ID of vehicle's route
+     * @param vehicleId ID of the vehicle
+     * @param tripId 
+     * @param timestamp time of last update
+     * @param location location of vehicle
+     */
+    async function updateVehicle(
+        routeId: string, 
+        vehicleId: string | null | undefined, 
+        tripId: string | null | undefined, 
+        timestamp: number | null | undefined, 
+        location: google.maps.LatLng) {
+
+        if (!vehicleId || !tripId || !timestamp) return;
+        
+        // Find the vehicle
+        let vehicle = Routes.getRoute(routeId)?.getVehicles()?.get(vehicleId);
+        
+        // Check if the vehicle exists
+        if (vehicle === undefined) {
+            // If the vehicle did not exist, make a new one
+            Routes.getRoute(routeId)?.addVehicle(vehicleId, "");
+
+            vehicle = Routes.getRoute(routeId)?.getVehicles()?.get(vehicleId) as Vehicle;
+            
+            if (vehicle){
+                // When the user hovers over the marker, make route thicker
+                vehicle.getMarker().addListener("mouseover", () => Routes.setBolded(routeId, true));    
+
+                // When the user stops hovering over the marker, return back
+                vehicle.getMarker().addListener("mouseout", () => Routes.setBolded(routeId, false));
+            }
+        }
+
+        // If the id exists, modify the vehicle
+        vehicle.setPosition(location, timestamp);
+        
+        vehicle.setTripId(tripId);
+    }
 }
 
 export default Routes;

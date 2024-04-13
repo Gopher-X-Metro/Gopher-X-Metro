@@ -5,7 +5,6 @@ import Resources from '../../backend/Resources.ts';
 
 import Marker from './Marker.ts';
 import Routes from './Routes.ts';
-import Vehicles from './Vehicles.ts';
 import LoadingScreen from "./LoadingScreen.tsx";
 
 /**
@@ -51,7 +50,7 @@ export default function Map() {
 
             // Updates vehicle and marker postions every 0.5 seconds
             setInterval(() => {
-                Vehicles.refresh();
+                Routes.refreshVehicles();
                 Marker.update();
             }, 500); // ms of wait
         }

@@ -1,5 +1,3 @@
-import GtfsRealtimeBindings from 'gtfs-realtime-bindings';
-
 namespace Data {
     /* Public */
 
@@ -85,39 +83,6 @@ namespace Data {
     }
 
     /**
-     * Gets the fetched data of the university busses
-     */
-    export async function getRealtimeGTFSUniversity(): Promise<any> {
-        const response = await fetch(GTFS_REALTIME_URL_UMN);
-
-        // if (response.status === 404) {
-        //     console.log(`Data fetching encountered status code 404 (Not Found) with University Data.`);
-        //     throw new Error(`Data fetching encountered status code 404 (Not Found) with University Data`);
-        // }
-
-        // if (response.ok) {
-            return response.json();
-        // } else {
-        //     const responseBodyText = await response.text(); // Get the response body as text
-        //     console.log(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${responseBodyText}`);
-        //     throw new Error(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${responseBodyText}`);
-        // }
-
-    }
-    /**
-     * Gets the fetched vehicle position data
-     */
-    export async function getRealtimeGTFSVehiclePositions() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
-        return fetch(GTFS_REALTIME_URL_VEHICLE_POSITIONS).then(response => response?.arrayBuffer()).then(buffer => GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)))
-    }
-    /**
-     * Gets the fetched trip updates data
-     */
-    export async function getRealtimeGTFSTripUpdates() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
-        return fetch(GTFS_REALTIME_URL_TRIP_UPDATES).then(response => response?.arrayBuffer()).then(buffer => GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)))
-    }
-
-    /**
      * Gets the current date in format yyyymmdd
      */
     export function date() {
@@ -140,8 +105,6 @@ namespace Data {
     const trips : Map<string, any> = new Map<string, any>();    
     const shapes : Map<string, any> = new Map<string, any>();
     const stop_times : Map<string, any> = new Map<string, any>();
-
-
     
     /* Days of the week */
     const days = [
@@ -156,10 +119,6 @@ namespace Data {
 
     //https://svc.metrotransit.org/index.html
     const API_URL = process.env.REACT_APP_SUPABASE_FUNCTION_URL
-    const GTFS_REALTIME_URL_UMN = "https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=vehicles2&action=list&agencyID=88";
-    const GTFS_REALTIME_URL_VEHICLE_POSITIONS = 'https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb';
-    const GTFS_REALTIME_URL_TRIP_UPDATES = 'https://svc.metrotransit.org/mtgtfs/tripupdates.pb';
-    const GTFS_REALTIME_URL_SERVICE_ALERTS = 'https://svc.metrotransit.org/mtgtfs/alerts.pb';
 }
 
 export default Data
