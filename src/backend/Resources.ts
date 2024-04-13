@@ -46,8 +46,13 @@ namespace Resources {
      * @param shapeId ID of the shape
      */
     export async function getShapeLocations(shapeId: string) : Promise<Array<google.maps.LatLng>> {
-        return await (await Data.getShapes(shapeId))
-        .map((element: { shape_pt_lat: any, shape_pt_lon: any}) => new google.maps.LatLng(Number(element.shape_pt_lat), Number(element.shape_pt_lon)))
+        const shapeLocations = await (await Data.getShapes(shapeId))
+        // Sorts to keep the order of the path
+        .sort((a: { shape_dist_traveled: number; }, b: { shape_dist_traveled: number; }) => a.shape_dist_traveled - b.shape_dist_traveled)
+        // Converts into locations
+        .map((shape: {shape_pt_lat: any, shape_pt_lon: any}) => new google.maps.LatLng(Number(shape.shape_pt_lat), Number(shape.shape_pt_lon)))
+
+        return shapeLocations
     }
     /**
      * Gets the stop IDs of a trip
