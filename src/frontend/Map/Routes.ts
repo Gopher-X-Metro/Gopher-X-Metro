@@ -64,6 +64,8 @@ namespace Routes {
 
         routes.set(routeId, route);
 
+        const shapes = 
+
         // Load paths
         (await Resources.getShapeIds(routeId)).forEach(async shapeId => {
             console.log(shapeId)
@@ -79,9 +81,10 @@ namespace Routes {
         });
 
         // Load Stops
-        // (await Resources.getTripIds(routeId)).forEach(async tripId => {
-        //     // Create the routes
-        //     Resources.getStopIds(tripId).forEach(async stopId => {
+        // Resources.getTripIds(routeId).then(response => response.forEach(async tripId => {
+            // Create the stops
+            // (await Resources.getStopIds(tripId)).forEach(async stopId => {
+            //     console.log(stopId);
         //         // Creates the stop if it has not been created yet
         //         if (!route.getStops().has(stopId)) {
         //             // Create stop
@@ -97,8 +100,10 @@ namespace Routes {
         //                 setBolded(route.getId(), false)
         //             }); 
         //         }
-        //     })
-        // })
+            // })
+        // }))
+
+        console.log(await Resources.getTripIds(routeId))
     }
 
     const routes = new Map<string, Route>();

@@ -18,11 +18,10 @@ namespace Resources {
      * Gets the running service ids of a route as an Array
      * @param routeId ID of the route
      */
-    export async function getServiceIds(routeId: string) : Promise<Array<string>> {
-        return (await fetch(API_URL + "/get-service-ids?route_id=" + routeId + "&date=" + Data.date())
-        .then(async response => (await response.json())
-        .map((element: { service_id: any; }) => element.service_id)))
-        .filter((serviceId: string) => Data.isServiceRunning(serviceId));
+    export async function getServiceIds(routeId: string) : Promise<Set<string>> {
+        return new Set(await (await Data.getTrips(routeId))
+        .filter((trip: { service_id: string; }) => Data.isServiceRunning(trip.service_id))
+        .map((trip: { service_id: any; }) => trip.service_id));
     }
     /**
      * Gets the shape ids of a route as an Array
@@ -37,10 +36,10 @@ namespace Resources {
      * Gets the trip ids of a route as a Set
      * @param routeId ID of the route
      */
-    export async function getTripIds(routeId: string) : Promise<Array<string>> {
-        return await fetch(API_URL + "/get-trip-ids?route_id=" + routeId + "&date="+Data.date())
-        .then(async response => (await response.json())
-        .map((element: { trip_id: any; }) => element.trip_id));
+    export async function getTripIds(routeId: string) : Promise<Set<string>> {
+        return new Set(await (await Data.getTrips(routeId))
+        .filter((trip: { service_id: string; }) => Data.isServiceRunning(trip.service_id))
+        .map((trip: { trip_id: any; }) => trip.trip_id));
     }
     /**
      * Gets the location of each point on a shape line as an Array
@@ -51,18 +50,12 @@ namespace Resources {
         .map((element: { shape_pt_lat: any, shape_pt_lon: any}) => new google.maps.LatLng(Number(element.shape_pt_lat), Number(element.shape_pt_lon)))
     }
     /**
-     * Gets the stop times of a trip id as a map
+     * Gets the stop IDs of a trip
      * @param tripId ID of the trip
      */
-    export function getStopTimes(tripId: string) : Map<string, Array<string | undefined>> {
-        let stopTimes = new Map<string, Array<string | undefined>>();
-
-        // Data.getHash("stop_times.txt").get(tripId)?.forEach(line => {
-        //     let sections = line.split(/,/);
-        //     stopTimes.set(sections[3], [sections[4], sections[1], sections[2]])
-        // })
-
-        return stopTimes;
+    export async function getStopIds(tripId: string) : Promise<Set<number>> {
+        return new Set(await (await Data.getStops(tripId))
+        .map((stop: { stop_id: any; }) => stop.stop_id));
     }
     /**
      * Gets the color of a route as a string
