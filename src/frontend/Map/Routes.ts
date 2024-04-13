@@ -40,7 +40,6 @@ namespace Routes {
      */
     export function setVisible(routeId : string, visible : boolean) {
         getRoute(routeId)?.getPaths().forEach(path => path.getLine().setVisible(visible));
-        console.log(getRoute(routeId)?.getPaths())
         getRoute(routeId)?.getStops()?.forEach(stop => stop.getMarker().setVisible(visible));
         getRoute(routeId)?.getVehicles().forEach(vehicle => vehicle.getMarker().map = visible ? map : null);
     }
@@ -67,6 +66,8 @@ namespace Routes {
 
         // Load paths
         (await Resources.getShapeIds(routeId)).forEach(async shapeId => {
+            console.log(shapeId)
+
             // Add path
             route.addPath(shapeId, await Resources.getColor(routeId), await Resources.getShapeLocations(shapeId))
                         
@@ -79,26 +80,25 @@ namespace Routes {
 
         // Load Stops
         // (await Resources.getTripIds(routeId)).forEach(async tripId => {
-            // Create the routes
-            // Resources.getStopIds(tripId).forEach(async stopId => {
-            //     // Creates the stop if it has not been created yet
-            //     if (!route.getStops().has(stopId)) {
-            //         // Create stop
-            //         route.addStop(stopId, "0022FF", await Resources.getStopLocations(stopId));
+        //     // Create the routes
+        //     Resources.getStopIds(tripId).forEach(async stopId => {
+        //         // Creates the stop if it has not been created yet
+        //         if (!route.getStops().has(stopId)) {
+        //             // Create stop
+        //             route.addStop(stopId, "0022FF", await Resources.getStopLocations(stopId));
                     
-            //         // If the user hovers over the stop, change the width of the line
-            //         route.getStops().get(stopId)?.getMarker().addListener("mouseover", () => {
-            //             setBolded(route.getId(), true)
-            //         });
+        //             // If the user hovers over the stop, change the width of the line
+        //             route.getStops().get(stopId)?.getMarker().addListener("mouseover", () => {
+        //                 setBolded(route.getId(), true)
+        //             });
                     
-            //         // If the user stops hovering over the stop, return back
-            //         route.getStops().get(stopId)?.getMarker().addListener("mouseout", () => {
-            //             setBolded(route.getId(), false)
-            //         }); 
-            //     }
-            // })
+        //             // If the user stops hovering over the stop, return back
+        //             route.getStops().get(stopId)?.getMarker().addListener("mouseout", () => {
+        //                 setBolded(route.getId(), false)
+        //             }); 
+        //         }
+        //     })
         // })
-        await Resources.getTripIds(routeId).then(async tripIds => console.log(await Resources.getStops(tripIds[0])))
     }
 
     const routes = new Map<string, Route>();

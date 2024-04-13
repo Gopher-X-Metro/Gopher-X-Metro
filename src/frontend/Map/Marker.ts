@@ -24,10 +24,13 @@ namespace Marker {
      * Updates the user's location
      */
     export function update() : void {
-        navigator.geolocation.getCurrentPosition(position => { 
-            marker.position = { lat: position.coords.latitude, lng: position.coords.longitude }
-            marker.map = position.coords.accuracy < 1000 ? this.map : null // If accuraccy is too low, don't display
-        })
+        if (marker)
+            navigator.geolocation.getCurrentPosition(position => { 
+                marker.position = { lat: position.coords.latitude, lng: position.coords.longitude }
+                marker.map = position.coords.accuracy < 1000 ? this.map : null // If accuraccy is too low, don't display
+            })
+        else
+            console.warn("The marker has not been created!")
     }
 
     /* Private */
