@@ -1,17 +1,12 @@
 import GtfsRealtimeBindings from 'gtfs-realtime-bindings';
-import Hash from './Hash.ts';
-import JSZip from "jszip";
 
 namespace Data {
-    
     /* Public */
 
     /**
      * Loads the API
      */
     export async function load() : Promise<void> {        
-        // await loadFileSystem();
-
         // Load calendar
         await fetch(API_URL + "/get-calendar?date="+date())
         .then(async response => (await response.json())
@@ -53,8 +48,10 @@ namespace Data {
     export async function getTrips(routeId: string) : Promise<any> {
         if (!trips.has(routeId))
             // Load Trips
-            await fetch(API_URL + "/get-trips?route_id=" + routeId)
+            await fetch(API_URL + "/get-trips?route_id=" + routeId + "&date=" + date())
             .then(async response => trips.set(routeId, await response.json()));
+
+        console.log(trips.get(routeId))
 
         return trips.get(routeId)
     }
@@ -71,8 +68,22 @@ namespace Data {
      * @param shapeId ID of the shape
      */
     export async function getShapes(shapeId: string) : Promise<any> {
-        return await fetch(API_URL + "/get-shapes?shape_id=" + shapeId)
-        .then(async response => await response.json());
+        if (!shapes.has(shapeId))
+            await fetch(API_URL + "/get-shapes?shape_id=" + shapeId)
+            .then(async response => shapes.set(shapeId, await response.json()));
+        
+        return shapes.get(shapeId); 
+    }
+    /**
+     * Gets the stop_times data of a shapeId
+     * @param tripId ID of the trip
+     */
+    export async function getStopTimes(tripId: string) : Promise<any> {
+        if (!stop_times.has(tripId))
+            await fetch(API_URL + "/get-stop-times?trip_id=" + tripId)
+            .then(async response => stop_times.set(tripId, await response.json()));
+        
+        return stop_times.get(tripId); 
     }
 
     /**
@@ -128,7 +139,10 @@ namespace Data {
     /* Private */
     const calendar : Map<string, any> = new Map<string, any>();
     const stops : Map<string, any> = new Map<string, any>();
-    const trips : Map<string, any> = new Map<string, any>();
+    const trips : Map<string, any> = new Map<string, any>();    
+    const shapes : Map<string, any> = new Map<string, any>();
+    const stop_times : Map<string, any> = new Map<string, any>();
+
 
     
     /* Days of the week */
@@ -148,144 +162,6 @@ namespace Data {
     const GTFS_REALTIME_URL_VEHICLE_POSITIONS = 'https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb';
     const GTFS_REALTIME_URL_TRIP_UPDATES = 'https://svc.metrotransit.org/mtgtfs/tripupdates.pb';
     const GTFS_REALTIME_URL_SERVICE_ALERTS = 'https://svc.metrotransit.org/mtgtfs/alerts.pb';
-
-
-    /* Depreciated */
-
-    /**
-     * Gets all the files from the server
-     * @deprecated Use the API
-     */
-    export async function getFiles() {
-        //@ts-ignore
-        return getStaticGTFS().then(async buffer => await JSZip.loadAsync(buffer).then(zip => zip.files))
-    }
-    /**
-     * Gets a bufferArray promise of the data from the server
-     * @deprecated Use the API
-     */
-    export async function getStaticGTFS() : Promise<ArrayBuffer | undefined> {
-        // test();
-        if (!window.caches) { 
-            // If caching does not exist on the browser, just return the data from the server
-            console.warn("This browser does not support Cache!")
-            return fetch(GTFS_STATIC_URL).then(response => response.arrayBuffer().then(buffer => buffer))
-        } else {
-            // Opens the cache
-            return caches.open("gtfs-static").then(cache => cache.match(GTFS_STATIC_URL).then(async response => {
-                // Checks if the data exists in the cache, if not, refresh it
-                if (response) {
-                    return response.arrayBuffer().then(buffer => buffer);
-                } else {
-                    return refreshStaticGTFSCache()
-                }
-            }))
-        }
-    }
-    /**
-     * Gets the Hash object of the data from a file
-     * @param fileName name of the file
-     * @deprecated Use API
-     */
-    export function getHash(fileName: string) : Hash<any> {
-        // @ts-ignore
-        return hashes.get(fileName);
-    }
-
-    
-    let fileDirectoryHandle : FileSystemDirectoryHandle;
-    let hashes : Map<string, Hash<any>>;
-    let files : {
-        [key: string]: JSZip.JSZipObject;
-    };
-
-    const GTFS_STATIC_URL = "https://svc.metrotransit.org/mtgtfs/gtfs.zip";
-
-
-    /**
-     * Gets data stored file in the OPFS file and returns its contents
-     * @param fileName name of the file
-     * @deprecated Use the API
-     */
-    async function getFileContents(fileName: string) : Promise<string | undefined> {
-        if (fileDirectoryHandle)
-            try {
-                return await fileDirectoryHandle.getFileHandle(fileName).then(async fileHandle => await fileHandle.getFile().then(async blob => await blob.text()));
-            } catch (err) {
-                console.error(err + "\nFile \"" + fileName + "\" does not exist yet, creating file... ");
-            }
-    } 
-    /**
-     * Refreshes the cache in the browser and returns the data
-     * @deprecated Use the API
-     */
-    async function refreshStaticGTFSCache() : Promise<ArrayBuffer | undefined> {
-        try {
-            await caches.open("gtfs-static").then(cache => cache.add(GTFS_STATIC_URL));
-        } catch (error) {
-            console.error("Error refreshing cache:", error);
-            console.warn("The data was not Cached!");
-        }
-
-        return fetch(GTFS_STATIC_URL).then(response => response.arrayBuffer().then(buffer => buffer));
-    }
-    /**
-     * Loads a hash object baised on a file
-     * @param fileName name of the file
-     * @param keyIndex index of the line that will be the key
-     * @deprecated Use API
-     */
-    async function loadHash<KeyType>(fileName: string, keyIndex: number) : Promise<void> {
-        if (!hashes.has(fileName)) {
-            let fileContents = await getFileContents(fileName);
-
-            if (fileContents) {
-                hashes.set(fileName, new Hash<KeyType>(fileContents));
-            } else {
-                if (!files)
-                    files = await getFiles();
-
-                files[fileName].nodeStream().pipe(process.stdout)
-
-                const newHash = new Hash<KeyType>(await files[fileName].async("binarystring"), keyIndex);                
-                storeHash(fileName, newHash);
-                hashes.set(fileName, newHash);
-            }
-        }
-    }
-    /**
-     * Stores the Hash object into a OPFS file
-     * @param fileName name of the file
-     * @param hash hash object
-     * @deprecated Use API
-     */
-    async function storeHash(fileName: string, hash: Hash<any>) : Promise<void> {
-        if (fileDirectoryHandle){
-            fileDirectoryHandle.getFileHandle(fileName, {create: true}).then(fileHandle => {
-                fileHandle.createWritable().then(file => {
-                    file.write(hash.toJSON()).then(() => file.close());
-                })
-            })
-        }
-    }
-    /**
-     * @deprecated Use API
-     */
-    async function loadFileSystem() {
-        let storageRoot : FileSystemDirectoryHandle;
-        hashes = new Map<string, Hash<any>>()
-
-        // Checks if browser supports OPFS
-        try {
-            storageRoot = await navigator.storage.getDirectory();
-            // Sets up OPFS directory
-            fileDirectoryHandle = await storageRoot.getDirectoryHandle("gtfs-static", { create: true });
-        } catch( err ) {
-            console.error( err );
-            alert( "Couldn't open OPFS. See browser console.\n\n" + err );
-            return;
-        }
-    }
 }
 
 export default Data

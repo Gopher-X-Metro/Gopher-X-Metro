@@ -52,14 +52,14 @@ namespace Vehicles {
         })
 
         // Update stop times
-        URL.getRoutes().forEach(routeId => {
-            const route = Routes.getRoute(routeId);
-            route?.getVehicles().forEach(vehicle => {
-                Resources.getStopTimes(vehicle.getTripId()).forEach((value, key) => {
-                    route.getStops().get(key)?.addStopTime(vehicle.getId(), value[1]);
-                })
-            })
-        })
+        // URL.getRoutes().forEach(routeId => {
+        //     const route = Routes.getRoute(routeId);
+        //     route?.getVehicles().forEach(vehicle => {
+        //         Resources.getStopTimes(vehicle.getTripId()).forEach((value, key) => {
+        //             route.getStops().get(key)?.addStopTime(vehicle.getId(), value[1]);
+        //         })
+        //     })
+        // })
     }
 
     /* Private */
