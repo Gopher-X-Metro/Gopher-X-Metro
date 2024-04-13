@@ -1,4 +1,5 @@
-import Data from "./Data.ts";
+import Static from "./Static.ts";
+import Realtime from "./Realtime.ts";
 
 // Backend and Frontend interface
 namespace Resources {
@@ -10,7 +11,7 @@ namespace Resources {
 
         console.log("Loading Resources...")
         
-        await Data.load();
+        await Static.load();
         
         console.log("Finished Loading Resources (" + (Date.now() - initTime) + "ms)")
     }
@@ -19,8 +20,8 @@ namespace Resources {
      * @param routeId ID of the route
      */
     export async function getServiceIds(routeId: string) : Promise<Set<string>> {
-        return new Set(await (await Data.getTrips(routeId))
-        .filter((trip: { service_id: string; }) => Data.isServiceRunning(trip.service_id))
+        return new Set(await (await Static.getTrips(routeId))
+        .filter((trip: { service_id: string; }) => Static.isServiceRunning(trip.service_id))
         .map((trip: { service_id: any; }) => trip.service_id));
     }
     /**
@@ -28,8 +29,8 @@ namespace Resources {
      * @param routeId ID of the route
      */
     export async function getShapeIds(routeId: string) : Promise<Set<string>> {
-        return new Set(await (await Data.getTrips(routeId))
-        .filter((trip: { service_id: string; }) => Data.isServiceRunning(trip.service_id))
+        return new Set(await (await Static.getTrips(routeId))
+        .filter((trip: { service_id: string; }) => Static.isServiceRunning(trip.service_id))
         .map((trip: { shape_id: any; }) => trip.shape_id));
     }
     /**
@@ -37,8 +38,8 @@ namespace Resources {
      * @param routeId ID of the route
      */
     export async function getTripIds(routeId: string) : Promise<Set<string>> {
-        return new Set(await (await Data.getTrips(routeId))
-        .filter((trip: { service_id: string; }) => Data.isServiceRunning(trip.service_id))
+        return new Set(await (await Static.getTrips(routeId))
+        .filter((trip: { service_id: string; }) => Static.isServiceRunning(trip.service_id))
         .map((trip: { trip_id: any; }) => trip.trip_id));
     }
     /**
@@ -46,7 +47,7 @@ namespace Resources {
      * @param shapeId ID of the shape
      */
     export async function getShapeLocations(shapeId: string) : Promise<Array<google.maps.LatLng>> {
-        const shapeLocations = await (await Data.getShapes(shapeId))
+        const shapeLocations = await (await Static.getShapes(shapeId))
         // Sorts to keep the order of the path
         .sort((a: { shape_dist_traveled: number; }, b: { shape_dist_traveled: number; }) => a.shape_dist_traveled - b.shape_dist_traveled)
         // Converts into locations
@@ -56,11 +57,16 @@ namespace Resources {
     }
     /**
      * Gets the stop IDs of a trip
-     * @param tripId ID of the trip
+     * @param routeId ID of the trip
      */
-    export async function getStopIds(tripId: string) : Promise<Set<number>> {
-        return new Set(await (await Data.getStops(tripId))
-        .map((stop: { stop_id: any; }) => stop.stop_id));
+    export async function getStopsInfo(routeId: string) : Promise<Array<any>> {
+        const stopsInfo = new Array();
+        
+        for (const direction of (await Realtime.getDirections(routeId)))
+            for (const stop of (await Realtime.getStops(routeId, direction.direction_id)))
+                stopsInfo.push(await Realtime.getStopInfo(routeId, direction.direction_id, stop.place_code))
+
+        return stopsInfo;
     }
     /**
      * Gets the color of a route as a string
@@ -68,8 +74,10 @@ namespace Resources {
      */
     export async function getColor(routeId: string) : Promise<string> {
         // It defaults to the colors manually defined. If the color is not defined, it defaults to the one if found. 
-        return ROUTE_COLORS[routeId] ? ROUTE_COLORS[routeId] : await Data.getRoutes(routeId).then(result => result.route_color);
+        return ROUTE_COLORS[routeId] ? ROUTE_COLORS[routeId] : await Static.getRoutes(routeId).then(result => result.route_color);
     }
+    
+
     /* University Routes and ID */
     export const UNIVERSITY_ROUTES = {
         "120": 11324, 

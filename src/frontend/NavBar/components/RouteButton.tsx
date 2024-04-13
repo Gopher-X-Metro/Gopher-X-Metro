@@ -3,7 +3,6 @@ import React, {useState} from 'react';
 import URL from '../../../backend/URL.ts';
 
 import Routes from '../../Map/Routes.ts';
-import Vehicles from '../../Map/Vehicles.ts';
 
 /**
  * Creates a route button with the route that the button leads to and the route that it leads to
@@ -25,7 +24,7 @@ function RouteButton({ routeId, text }) {
 
 
           Routes.refresh();
-          Vehicles.refresh();
+          Routes.refreshVehicles();
           setForceUpdate(Math.random()); // updates color of button click immediately
       }}>
           {text}
