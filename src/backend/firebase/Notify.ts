@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getMessaging, getToken, isSupported } from "firebase/messaging";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -45,8 +46,6 @@ export function test() {
 
 
   const messaging = getMessaging();
-
-  navigator.serviceWorker.register('/firebase-messaging-sw.js', { type: 'module' });
 
 
   // Get registration token. Initially this makes a network call, once retrieved
