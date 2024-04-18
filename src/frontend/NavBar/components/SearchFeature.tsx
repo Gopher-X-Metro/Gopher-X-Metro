@@ -13,7 +13,7 @@ namespace SearchFeature {
             if(isNaN(parseInt(bus_route))) {
                 console.warn("Invalid Input");
             } else {
-                if (!URL.getRoutes().has(bus_route) && count == 0) {
+                if (!URL.getRoutes().has(bus_route) && count === 0) {
                     console.log(bus_route + " 1st if");
                     URL.addRoute(bus_route);
                     //URL.removeRoute(old_route);
@@ -22,7 +22,7 @@ namespace SearchFeature {
                     old_route = bus_route;
                     console.log(old_route + " old");
                     
-                } else if (URL.getRoutes().has(old_route) && count == 1) {
+                } else if (URL.getRoutes().has(old_route) && count === 1) {
                     console.log("OLDDD " + old_route);
                     console.log("count second if " + count);
                     // URL.addRoute(bus_route);
