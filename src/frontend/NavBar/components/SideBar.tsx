@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import RouteButton from './RouteButton.tsx';
-import search_route from './Search_feature.tsx';
+import SearchFeature from './SearchFeature.tsx';
 import SearchIcon from "../../../img/CustomBus.png";
 
 function SideBar() {
@@ -39,7 +39,7 @@ function SideBar() {
                 </div> 
                 <div className = "searchContainer">
                 <input type = "text" id = "search_route" placeholder = "123"></input>
-                <button onClick = {search_route} id = "searchButton">
+                <button onClick = {SearchFeature.searchRoute} id = "searchButton">
                 <img className = "busImg" height = "50" width = "50" src={SearchIcon}></img>
                
                 </button>
