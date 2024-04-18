@@ -229,3 +229,70 @@ div#title-bar > h1 > .city {
     background-color: rgb(30, 53, 53);
     margin: 0 auto;
   }
+
+
+
+
+div#search_bar{
+  text-align: center;
+  font-size: 20px;
+  margin-left: 7vh;
+  font-family: 'Neutraface Text', sans-serif;
+  color: whitesmoke;
+}
+
+
+#search_route{
+  display: inline-block;
+  vertical-align: top;
+}
+
+.searchContainer {
+ display: flex;
+ margin-right: 10px;
+ float:center;
+ position: relative;
+ width: 250px;
+}
+
+.searchContainer input {
+border: 2px solid;
+border-radius: 100px;
+padding: 1rem 2rem;
+max-height:100%;
+height: 8px;
+width: 100%;
+text-align: center;
+margin: 0 auto;
+margin-left: 30px;
+background-color: rgb(226, 226, 226);
+
+}
+.searchContainer button {
+position:absolute;
+border-radius: 100%;
+max-height: 100%;
+border: 2px solid;
+width: 40px;
+right: 0;
+padding: 1px 3px;
+}
+
+
+
+
+
+ 
+ 
+
+
+#searchButton:hover{
+  background-color: darkgrey;
+}
+
+#searchButton:active{
+  background-color:rgb(226, 226, 226);
+  box-shadow: 0 5px rgb(226, 226, 226);
+  transform: translateY(1px);
+}
+
