@@ -60,7 +60,6 @@ div#title-bar > h1 > .city {
 /* The sidebar container */
 .sidebar {
     height: 100%;
-    width: 0;
     position: fixed;
     z-index: 1;
     top: 10vh;
@@ -73,11 +72,11 @@ div#title-bar > h1 > .city {
   
   /* The sidebar container when it's open */
   .sidebar.open {
-    width: 285px;
+    width: 100%;
   }
 
   .sidebar-content {
-    width: 285px;
+    width: 100%;
   }
   
   /* The sidebar links */
@@ -106,7 +105,7 @@ div#title-bar > h1 > .city {
     font-size: 17px;
     font-family: 'Neutraface Text', sans-serif;
     white-space: nowrap;
-    width: 285px;
+    width: 100%;
     display: block;
     transition: background-color 0.3s;
     position: relative;
@@ -189,13 +188,13 @@ div#title-bar > h1 > .city {
     top: 0;
     left: 0;
   }
-.AboutButton {
+.PageButton {
     position: absolute;
     top: 0;
     right: 0;
     width: 5%;
     padding: 17px 30px;
-    font-size: 33px;
+    font-size: 15px;
     background-color: transparent;
     color: #ffffff;
     border: none;
