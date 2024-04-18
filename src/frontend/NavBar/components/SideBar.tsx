@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
 import RouteButton from './RouteButton.tsx';
+import SearchFeature from './SearchFeature.tsx';
+import SearchIcon from "../../../img/CustomBus.png";
 
 function SideBar() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -29,6 +31,24 @@ function SideBar() {
                     <RouteButton routeId={"902"} text={"Metro Green Line"} />
                     <RouteButton routeId={"901"} text={"Metro Blue Line"} />
                 </div>
+                
+
+                <div className = "nav-header"> 
+                <h1> Search routes </h1>
+                <div className="underline"></div><br></br>
+                </div> 
+                <div className = "searchContainer">
+                <input type = "text" id = "search_route" placeholder = "123"></input>
+                <button onClick = {SearchFeature.searchRoute} id = "searchButton">
+                <img className = "busImg" height = "50" width = "50" src={SearchIcon}></img>
+               
+                </button>
+
+                <div className= "error"></div>
+                </div>
+
+
+
             </div>
         </>
     )
