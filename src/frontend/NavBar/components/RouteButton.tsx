@@ -11,9 +11,9 @@ import Vehicles from '../../Map/Vehicles.ts';
  * @param text Display text of the button
  * @returns 
  */
-function RouteButton({routeId, text}) {
-    const [_, setForceUpdate] = useState(0);
-    const isActive = Array.from(URL.getRoutes()).includes(routeId); // used to check if route button is active
+function RouteButton({ routeId, text }) {
+  const [_, setForceUpdate] = useState(0);
+  const isActive = Array.from(URL.getRoutes()).includes(routeId); // used to check if route button is active
 
     return (
       <button className={`route-btn ${isActive ? 'active' : ''} route-${routeId}`} onClick={() => {
@@ -27,9 +27,9 @@ function RouteButton({routeId, text}) {
         Vehicles.refresh();
         setForceUpdate(Math.random()); // updates color of button click immediately
       }}>
-        {text}
-      </button> 
-    )
+          {text}
+      </button>
+  )
 }
 
 export default RouteButton;
