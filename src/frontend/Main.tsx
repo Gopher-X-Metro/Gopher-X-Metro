@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
+import Schedules from "./Pages/Schedules.tsx";
 import Map from "../frontend/Map/Map.tsx";
-import Schedules from "./pages/Schedules.tsx";
 
 export default function Main() {
   return(
