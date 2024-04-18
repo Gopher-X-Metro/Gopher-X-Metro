@@ -25,4 +25,4 @@ yarn-debug.log*
 yarn-error.log*
 
 
-/supabase/functions/service-account.json
+supabase/functions/service-account.json
