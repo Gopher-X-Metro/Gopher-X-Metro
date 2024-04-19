@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import RouteButton from './RouteButton.tsx';
+import RouteButtonAddons from './RouteButtonAddons.tsx';
 
 function SideBar() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -28,6 +29,7 @@ function SideBar() {
                     <RouteButton routeId={"3"} text={"3 U of M / Como Av / Dwtn Mpls"} />
                     <RouteButton routeId={"902"} text={"Metro Green Line"} />
                     <RouteButton routeId={"901"} text={"Metro Blue Line"} />
+                    <RouteButtonAddons/>
                 </div>
             </div>
         </>

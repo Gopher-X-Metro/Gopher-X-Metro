@@ -70,8 +70,8 @@ class Route extends Element {
      */
     public setVisible(visible: boolean) {
         this.visible = visible;
-        this.paths.forEach(path => path.getLine().setVisible(visible));
         this.stops.forEach(stop => stop.getMarker().setVisible(visible));
+        this.paths.forEach(path => path.getLine().setVisible(visible));
         this.vehicles.forEach(vehicle => vehicle.setVisible(visible));
     }
 

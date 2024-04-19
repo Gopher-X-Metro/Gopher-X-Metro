@@ -146,7 +146,6 @@ namespace Resources {
         "902": "00843D",
         "901": "003DA5"
     };
-    
 }
 
 export default Resources;
