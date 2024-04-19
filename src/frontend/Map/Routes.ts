@@ -183,8 +183,9 @@ namespace Routes {
         
         // Check if the vehicle exists
         if (vehicle === undefined) {
+            
             // If the vehicle did not exist, make a new one
-            Routes.getRoute(routeId)?.addVehicle(routeId, vehicleId, "");
+            Routes.getRoute(routeId)?.addVehicle(vehicleId, await Resources.getColor(routeId), Resources.getRouteImages(routeId));
 
             vehicle = Routes.getRoute(routeId)?.getVehicles()?.get(vehicleId) as Vehicle;
             

@@ -20,7 +20,7 @@ function About() {
                                     <li><a className="dropdown-item" href="https://umn.rider.peaktransit.com/">GopherTrip Map</a></li>
                                     <li><a className="dropdown-item" href="https://pts.umn.edu/Transit/Transit-Services/Campus-Buses">Campus Bus Map</a></li>
                                     <li><hr className="dropdown-divider" /></li>
-                                    <li><a className="dropdown-item" href="#">Something else here</a></li>
+                                    {/* <li><a className="dropdown-item" href="#">Something else here</a></li> */}
                                 </ul>
                             </li>
                         </ul>
@@ -33,7 +33,7 @@ function About() {
                     <h1>About Gopher X Metro Bus</h1>
                     {/* <!-- <p class="lead">A Social Coding Project made by: Adam, Ken, Riley, Will</p> --> */}
                     <p></p>
-                    <p>The University of Minnesota has included the <a href="https://pts.umn.edu/Transit/Transit-Passes/Universal-Transit-Pass" target="_blank">transit pass</a> for students who pay the who pay the Transportation and Safety Fee. 
+                    <p>The University of Minnesota has included the <a href="https://pts.umn.edu/Transit/Transit-Passes/Universal-Transit-Pass" target="_blank" rel="noreferrer">transit pass</a> for students who pay the who pay the Transportation and Safety Fee. 
                         The transit pass allows students to have access to 
                         the city buses and Metro green and blue lines. 
                     </p>

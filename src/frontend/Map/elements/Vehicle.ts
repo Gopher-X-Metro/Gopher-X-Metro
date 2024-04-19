@@ -1,6 +1,7 @@
 import Element from "./Element.ts";
 import { transit_realtime } from "gtfs-realtime-bindings";
 
+
 class Vehicle extends Element {
 
     /* Public */
@@ -12,21 +13,21 @@ class Vehicle extends Element {
      * @param color color of vehicle image
      * @param map map the vehicle displays on
      */
-    constructor (vehicleId: string, color : string, map: google.maps.Map, busImageSrc: string, arrowImageSrc: string) {
+    constructor (vehicleId: string, color : string, map: google.maps.Map, images: string[2]) {
         super(vehicleId, color, map);
 
+        const content = document.createElement("div");
+
         const busImage = document.createElement("img")
-        busImage.src = busImageSrc;
+        busImage.src = images[0];
         busImage.width = 30;
+        content.appendChild(busImage);
 
         const arrowImage = document.createElement("img")
-        arrowImage.src = arrowImageSrc;
+        arrowImage.src = images[1];
         arrowImage.width = 10;
-
-        const content = document.createElement("div");
-        content.appendChild(busImage);
         content.appendChild(arrowImage);
-        
+
         this.marker = new window.google.maps.marker.AdvancedMarkerElement({
             map: map,
             content: busImage,

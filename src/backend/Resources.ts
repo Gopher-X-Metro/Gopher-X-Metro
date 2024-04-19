@@ -1,6 +1,30 @@
 import Static from "./Static.ts";
 import Realtime from "./Realtime.ts";
 
+import busImage120 from "../img/120_bus.png"
+import busImage121 from "../img/121_bus.png"
+import busImage122 from "../img/122_bus.png"
+import busImage123 from "../img/123_bus.png"
+import busImage124 from "../img/124_bus.png"
+import busImage2 from "../img/2_bus.png"
+import busImage3 from "../img/3_bus.png"
+import busImage6 from "../img/6_bus.png"
+import busImage902 from "../img/902_greenline.png"
+import busImage901 from "../img/901_blueline.png"
+
+import arrowImage120 from "../img/120_arrow.png"
+import arrowImage121 from "../img/121_arrow.png"
+import arrowImage122 from "../img/122_arrow.png"
+import arrowImage123 from "../img/123_arrow.png"
+import arrowImage124 from "../img/124_arrow.png"
+import arrowImage2 from "../img/2_arrow.png"
+import arrowImage3 from "../img/3_arrow.png"
+import arrowImage6 from "../img/6_arrow.png"
+import arrowImage902 from "../img/902_greenline_arrow.png"
+import arrowImage901 from "../img/901_blueline_arrow.png"
+
+import busImage from "../img/bus.png"
+
 // Backend and Frontend interface
 namespace Resources {
     /**
@@ -76,6 +100,14 @@ namespace Resources {
         // It defaults to the colors manually defined. If the color is not defined, it defaults to the one if found. 
         return ROUTE_COLORS[routeId] ? ROUTE_COLORS[routeId] : await Static.getRoutes(routeId).then(result => result.route_color);
     }
+    /**
+     * Gets the color of a route as a string
+     * @param routeId ID of the route
+     */
+    export function getRouteImages(routeId: string) : string[2] {
+        // It defaults to the colors manually defined. If the color is not defined, it defaults to the one if found. 
+        return ROUTE_IMAGES[routeId] ? ROUTE_IMAGES[routeId] : [busImage, ""];
+    }
     
 
     /* University Routes and ID */
@@ -86,6 +118,21 @@ namespace Resources {
         "123": 11280, 
         "124": 11281
     };
+
+    /* Override Bus Images */
+    const ROUTE_IMAGES = {
+        "120": [busImage120, arrowImage120], 
+        "121": [busImage121, arrowImage121],
+        "122": [busImage122, arrowImage122],
+        "123": [busImage123, arrowImage123], 
+        "124": [busImage124, arrowImage124],
+        "2": [busImage2, arrowImage2],
+        "3": [busImage3, arrowImage3],
+        "6": [busImage6, arrowImage6],
+        "902": [busImage902, arrowImage902],
+        "901": [busImage901, arrowImage901]
+    }
+
     /* Override Route Colors */
     const ROUTE_COLORS = {
         "120": "FFC0CB", 
@@ -99,8 +146,7 @@ namespace Resources {
         "902": "00843D",
         "901": "003DA5"
     };
-
-    const API_URL = process.env.REACT_APP_SUPABASE_FUNCTION_URL
+    
 }
 
 export default Resources;
