@@ -1,8 +1,6 @@
 import Element from "./Element.ts";
 import { transit_realtime } from "gtfs-realtime-bindings";
 
-import busIcon from "../../../img/bus.png";
-
 class Vehicle extends Element {
 
     /* Public */
@@ -14,16 +12,24 @@ class Vehicle extends Element {
      * @param color color of vehicle image
      * @param map map the vehicle displays on
      */
-    constructor (vehicleId: string, color : string, map: google.maps.Map) {
+    constructor (vehicleId: string, color : string, map: google.maps.Map, busImageSrc: string, arrowImageSrc: string) {
         super(vehicleId, color, map);
 
-        const image = document.createElement("img")
-        image.src = busIcon;
-        image.width = 30;
+        const busImage = document.createElement("img")
+        busImage.src = busImageSrc;
+        busImage.width = 30;
+
+        const arrowImage = document.createElement("img")
+        arrowImage.src = arrowImageSrc;
+        arrowImage.width = 10;
+
+        const content = document.createElement("div");
+        content.appendChild(busImage);
+        content.appendChild(arrowImage);
         
         this.marker = new window.google.maps.marker.AdvancedMarkerElement({
             map: map,
-            content: image,
+            content: busImage,
         })
     }
     /**
@@ -66,12 +72,20 @@ class Vehicle extends Element {
             this.timestamp = timestamp;
         }
     }
+
+    public getBusBearing(): number { return this.bearing; }
+
+    public setBusBearing(bearing: number): void {
+        this.bearing = bearing;
+        // console.log("Setting Bearing to: ", bearing);
+    } 
     
     /* Private */
     private tripId: string;
     private timestamp : number;
     private marker: google.maps.marker.AdvancedMarkerElement;
     private stopTimeUpdates: transit_realtime.TripUpdate.IStopTimeUpdate[] | undefined | null;
+    private bearing: number;
 }
 
 export default Vehicle;

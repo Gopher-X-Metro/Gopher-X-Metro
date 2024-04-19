@@ -57,8 +57,45 @@ class Route extends Element {
      * @param tripId trip ID of the vehicle
      * @param color color of the vehicle's marker
      */
-    public addVehicle(vehicleId: string, color: string) : void {
-        this.vehicles.set(vehicleId, new Vehicle(vehicleId, color, this.map));
+    public addVehicle(routeId: string, vehicleId: string, color: string) : void {
+        let busImageSrc = "";
+        let arrowImageSrc = "";
+
+        console.log(routeId);
+
+        if (routeId === "120") {
+            busImageSrc = "../../../img/120_bus.png";
+            arrowImageSrc = "../../../img/120_arrow.png";
+        } else if (routeId === "121") {
+            busImageSrc = "../../../img/121_bus.png";
+            arrowImageSrc = "../../../img/121_arrow.png";
+        } else if (routeId === "122") {
+            busImageSrc = "../../../img/122_bus.png";
+            arrowImageSrc = "../../../img/122_arrow.png";
+        } else if (routeId === "123") {
+            busImageSrc = "../../../img/123_bus.png";
+            arrowImageSrc = "../../../img/123_arrow.png";
+        } else if (routeId === "124") {
+            busImageSrc = "../../../img/124_bus.png";
+            arrowImageSrc = "../../../img/124_arrow.png";
+        } else if (routeId === "2") {
+            busImageSrc = "../../../img/2_bus.png";
+            arrowImageSrc = "../../../img/2_arrow.png";
+        } else if (routeId === "3") {
+            busImageSrc = "../../../img/3_bus.png";
+            arrowImageSrc = "../../../img/3_arrow.png";
+        } else if (routeId === "6") {
+            busImageSrc = "../../img/6_bus.png";
+            arrowImageSrc = "../../img/6_arrow.png";
+        } else if (routeId === "902") {
+            busImageSrc = "../../../img/902_greenline.png";
+            arrowImageSrc = "../../../img/902_greenline_arrow.png";
+        } else if (routeId === "901") {
+            busImageSrc = "../../../img/901_blueline.png";
+            arrowImageSrc = "../../../img/901_blueline_arrow.png";
+        }
+
+        this.vehicles.set(vehicleId, new Vehicle(vehicleId, color, this.map, busImageSrc, arrowImageSrc));
     }
 
     /* Private */
