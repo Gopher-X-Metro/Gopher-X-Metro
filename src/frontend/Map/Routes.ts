@@ -44,9 +44,7 @@ namespace Routes {
      * @param visible should the route be visible
      */
     export function setVisible(routeId : string, visible : boolean) {
-        getRoute(routeId)?.getPaths().forEach(path => path.getLine().setVisible(visible));
-        getRoute(routeId)?.getStops()?.forEach(stop => stop.getMarker().setVisible(visible));
-        getRoute(routeId)?.getVehicles().forEach(vehicle => vehicle.getMarker().map = visible ? map : null);
+        getRoute(routeId)?.setVisible(visible);
     }
     /**
      * Sets a route's boldedness
@@ -145,7 +143,6 @@ namespace Routes {
                 
                 // Operate on the data of vehicles that are part of the University
                 if (realtimeUniversityRoutes) {
-                    console.log(realtimeUniversityRoutes)
                     realtimeUniversityRoutes.vehicles.forEach(vehicle => { 
                         if (Resources.UNIVERSITY_ROUTES[routeId] === vehicle.routeID){
                             updateVehicle(routeId, 

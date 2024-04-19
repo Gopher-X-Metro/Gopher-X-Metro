@@ -42,6 +42,7 @@ class Vehicle extends Element {
     }
     /**
      * Gets the stopTimeUpdates array for the vehicle
+     * @deprecated
      */
     public getStopTimeUpdates() : transit_realtime.TripUpdate.IStopTimeUpdate[] | undefined | null {return this.stopTimeUpdates; }
     /**
@@ -55,6 +56,7 @@ class Vehicle extends Element {
     /**
      * Sets the stopTimeUpdates array for the vehicle 
      * @param stopTimeUpdates stopTimeUpdates array
+     * @deprecated
      */
     public setStopTimeUpdates(stopTimeUpdates : transit_realtime.TripUpdate.IStopTimeUpdate[] | undefined | null) : void {this.stopTimeUpdates = stopTimeUpdates}
     /**
@@ -73,13 +75,24 @@ class Vehicle extends Element {
             this.timestamp = timestamp;
         }
     }
-
+    /**
+     * Gets the direction the bus is heading
+     */
     public getBusBearing(): number { return this.bearing; }
-
+    /**
+     * Sets the direction the bus is heading
+     * @param bearing the orientation of the bus
+     */
     public setBusBearing(bearing: number): void {
         this.bearing = bearing;
-        // console.log("Setting Bearing to: ", bearing);
-    } 
+    }
+    /**
+     * Sets if the vehicle is visible
+     * @param visible the visibility of the vehicle
+     */
+    public setVisible(visible: boolean) {
+        this.marker.map = visible ? this.map : null
+    }
     
     /* Private */
     private tripId: string;
