@@ -19,6 +19,8 @@ class Route extends Element {
         this.paths = new Map<string, Path>();
         this.stops = new Map<string, Stop>();
         this.vehicles = new Map<string, Vehicle>();
+
+        this.visible = false;
     }
     /**
      * Gets the paths of this route
@@ -40,6 +42,7 @@ class Route extends Element {
      */
     public addPath(shapeId: string, color: string, locations: Array<google.maps.LatLng>) : void {
         this.paths.set(shapeId, new Path(shapeId, color, locations, this.map));
+        this.paths.get(shapeId)?.getLine().setVisible(this.visible);
     }
     /**
      * Adds a stop to the route
@@ -49,6 +52,7 @@ class Route extends Element {
      */
     public addStop(stopId: string, color: string, location: google.maps.LatLng) : void {
         this.stops.set(stopId, new Stop(stopId, color, location, this.map));
+        this.stops.get(stopId)?.getMarker().setVisible(this.visible);
     }
     /**
      * Adds a vehicle to the route
@@ -57,8 +61,18 @@ class Route extends Element {
      * @param color color of the vehicle's marker
      */
     public addVehicle(vehicleId: string, color: string, images: string[2]) : void {
-
         this.vehicles.set(vehicleId, new Vehicle(vehicleId, color, this.map, images));
+        this.vehicles.get(vehicleId)?.setVisible(this.visible);
+    }
+    /**
+     * Sets the visibility of the route
+     * @param visible  if the route should be visible
+     */
+    public setVisible(visible: boolean) {
+        this.visible = visible;
+        this.paths.forEach(path => path.getLine().setVisible(visible));
+        this.stops.forEach(stop => stop.getMarker().setVisible(visible));
+        this.vehicles.forEach(vehicle => vehicle.setVisible(visible));
     }
 
     /* Private */
@@ -66,6 +80,8 @@ class Route extends Element {
     private paths: Map<string, Path>;
     private stops: Map<string, Stop>;
     private vehicles: Map<string, Vehicle>;
+
+    private visible: boolean;
 }
 
 export default Route;
