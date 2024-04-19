@@ -9,7 +9,9 @@ import {
 } from '@chakra-ui/react'
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import RouteMenuItem from './RouteMenuItem.tsx';
-
+import SearchFeature from '../SearchFeature.tsx';
+import SearchIcon from "../../../../img/CustomBus.png";
+///Users/babacardia/Downloads/Gopher-Bus-X-Metro-Buses-recent/src/img/CustomBus.png
 export default function SideBar() {
     return(
         <div>
@@ -38,6 +40,22 @@ export default function SideBar() {
                 </MenuOptionGroup>
             </MenuList>
         </Menu>
+
+        <div className = "nav-header"> 
+                <h1> Search routes </h1>
+                <div className="underline"></div><br></br>
+                </div> 
+                <div className = "searchContainer">
+                <input type = "text" id = "search_route" placeholder = "123"></input>
+                <button onClick = {SearchFeature.searchRoute} id = "searchButton">
+                <img className = "busImg" height = "50" width = "50" src={SearchIcon}></img>
+                </button>
+                <div className= "error"></div>
+        </div>
+
+
+
+
         </div>
     )
 }
