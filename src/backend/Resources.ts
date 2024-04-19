@@ -84,7 +84,7 @@ namespace Resources {
      * @param routeId ID of the trip
      */
     export async function getStopsInfo(routeId: string) : Promise<Array<any>> {
-        const stopsInfo = new Array();
+        const stopsInfo = new Array<any>();
         
         for (const direction of (await Realtime.getDirections(routeId)))
             for (const stop of (await Realtime.getStops(routeId, direction.direction_id)))

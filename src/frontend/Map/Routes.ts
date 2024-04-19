@@ -123,34 +123,41 @@ namespace Routes {
             if (Object.keys(Resources.UNIVERSITY_ROUTES).indexOf(routeId) === -1) {
                 // Operate on the data of the vehilces not part of the University
                 const tripUpdates = await Realtime.getRealtimeGTFSTripUpdates();
-    
-                // Goes through each vehicle in the route
-                (await Realtime.getVehicles(routeId)).forEach(vehicle => {
-                    // Goes through each trip update and gets the stop information                     
-                    tripUpdates.entity.forEach(update => {
-                        if (update.tripUpdate?.trip.tripId === vehicle.trip_id)
-                            updateVehicle(routeId, 
-                            vehicle.trip_id, 
-                            vehicle.trip_id, 
-                            vehicle.location_time, 
-                            new google.maps.LatLng(vehicle.latitude as number, vehicle.longitude as number),
-                            vehicle.bearing
-                        );
+                
+                if (tripUpdates){
+                    // Goes through each vehicle in the route
+                    (await Realtime.getVehicles(routeId)).forEach(vehicle => {
+                        // Goes through each trip update and gets the stop information                     
+                        tripUpdates?.entity.forEach(update => {
+                            if (update.tripUpdate?.trip.tripId === vehicle.trip_id)
+                                updateVehicle(routeId, 
+                                vehicle.trip_id, 
+                                vehicle.trip_id, 
+                                vehicle.location_time, 
+                                new google.maps.LatLng(vehicle.latitude as number, vehicle.longitude as number),
+                                vehicle.bearing
+                            );
+                        })
                     })
-                })
+                }
             } else {
+                const realtimeUniversityRoutes = await Realtime.getRealtimeGTFSUniversity();
+                
                 // Operate on the data of vehicles that are part of the University
-                Realtime.getRealtimeGTFSUniversity().then(response => response.vehicles.forEach(vehicle => { 
-                    if (Resources.UNIVERSITY_ROUTES[routeId] === vehicle.routeID){
-                        updateVehicle(routeId, 
-                            vehicle.vehicleID, 
-                            "empty",
-                            Date.now(),
-                            new google.maps.LatLng(vehicle.lat, vehicle.lng),
-                            vehicle.heading
-                        ) 
-                    }
-                }));
+                if (realtimeUniversityRoutes) {
+                    console.log(realtimeUniversityRoutes)
+                    realtimeUniversityRoutes.vehicles.forEach(vehicle => { 
+                        if (Resources.UNIVERSITY_ROUTES[routeId] === vehicle.routeID){
+                            updateVehicle(routeId, 
+                                vehicle.vehicleID, 
+                                "empty",
+                                Date.now(),
+                                new google.maps.LatLng(vehicle.lat, vehicle.lng),
+                                vehicle.heading
+                            ) 
+                        }
+                    })
+                };
             }
         })
     }

@@ -73,21 +73,12 @@ namespace Realtime {
      * Gets the fetched data of the university busses
      */
     export async function getRealtimeGTFSUniversity(): Promise<any> {
-        const response = await fetch(GTFS_REALTIME_URL_UMN);
-
-        if (response.status === 404) {
-            console.log(`Data fetching encountered status code 404 (Not Found) with University Data.`);
-            throw new Error(`Data fetching encountered status code 404 (Not Found) with University Data`);
-        }
-
-        if (response.ok) {
-            return response.json();
-        } else {
-            const responseBodyText = await response.text(); // Get the response body as text
-            console.log(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${responseBodyText}`);
-            throw new Error(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${responseBodyText}`);
-        }
-
+        return await fetch(GTFS_REALTIME_URL_UMN).then(async response => {
+            if (response.ok && response.status === 200)
+                return await response.json();
+            else
+                console.warn(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${await response.text()}`);
+        })
     }
     /**
      * Gets the fetched vehicle position data
@@ -95,15 +86,18 @@ namespace Realtime {
     export async function getRealtimeGTFSVehiclePositions() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
         const response = await fetch(GTFS_REALTIME_URL_VEHICLE_POSITIONS);
 
-        console.log(response);
-
         return response?.arrayBuffer().then(buffer => GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)))
     }
     /**
      * Gets the fetched trip updates data
      */
-    export async function getRealtimeGTFSTripUpdates() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
-        return fetch(GTFS_REALTIME_URL_TRIP_UPDATES).then(response => response?.arrayBuffer()).then(buffer => GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)))
+    export async function getRealtimeGTFSTripUpdates() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage | undefined> {
+        return await fetch(GTFS_REALTIME_URL_TRIP_UPDATES).then(async response => {
+            if (response.ok && response.status === 200)
+                return await response.arrayBuffer().then(buffer => GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)))
+            else
+                console.warn(`Data fetching encountered status code ${response.status} with Trip Updates.`);
+        })
     }
 
     const GTFS_REALTIME_URL_UMN = "https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=vehicles2&action=list&agencyID=88";
