@@ -106,6 +106,7 @@ namespace Routes {
         // console.log((await Realtime.getVehicles(routeId)).map(vehicle => vehicle))
 
         // console.log((await Schedule.getRouteDetails(routeId)))
+        // console.log(await Schedule.getRoute(routeId))
         // console.log((await Schedule.getTimeTable(routeId, 1)))
         // console.log((await Schedule.getStopList(routeId, 1)))
         // console.log((await Realtime.getStops(routeId, 1)))
