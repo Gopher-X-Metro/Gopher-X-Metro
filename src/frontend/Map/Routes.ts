@@ -123,20 +123,23 @@ namespace Routes {
                 const tripUpdates = await Realtime.getRealtimeGTFSTripUpdates();
                 
                 if (tripUpdates){
-                    // Goes through each vehicle in the route
-                    (await Realtime.getVehicles(routeId)).forEach(vehicle => {
-                        // Goes through each trip update and gets the stop information                     
-                        tripUpdates?.entity.forEach(update => {
-                            if (update.tripUpdate?.trip.tripId === vehicle.trip_id)
-                                updateVehicle(routeId, 
-                                vehicle.trip_id, 
-                                vehicle.trip_id, 
-                                vehicle.location_time, 
-                                new google.maps.LatLng(vehicle.latitude as number, vehicle.longitude as number),
-                                vehicle.bearing
-                            );
+                    const vehicles = await Realtime.getVehicles(routeId);
+                    if (vehicles) {
+                        // Goes through each vehicle in the route
+                        vehicles.forEach(vehicle => {
+                            // Goes through each trip update and gets the stop information                     
+                            tripUpdates?.entity.forEach(update => {
+                                if (update.tripUpdate?.trip.tripId === vehicle.trip_id)
+                                    updateVehicle(routeId, 
+                                    vehicle.trip_id, 
+                                    vehicle.trip_id, 
+                                    vehicle.location_time, 
+                                    new google.maps.LatLng(vehicle.latitude as number, vehicle.longitude as number),
+                                    vehicle.bearing
+                                );
+                            })
                         })
-                    })
+                    }
                 }
             } else {
                 const realtimeUniversityRoutes = await Realtime.getRealtimeGTFSUniversity();
@@ -200,14 +203,14 @@ namespace Routes {
                 // When the user stops hovering over the marker, return back
                 vehicle.getMarker().addListener("mouseout", () => Routes.setBolded(routeId, false));
             }
+        } else {
+            // If the id exists, modify the vehicle
+            vehicle.setPosition(location, timestamp);
+            
+            vehicle.setTripId(tripId);
+
+            vehicle.setBusBearing(bearing);
         }
-
-        // If the id exists, modify the vehicle
-        vehicle.setPosition(location, timestamp);
-        
-        vehicle.setTripId(tripId);
-
-        vehicle.setBusBearing(bearing);
     }
 }
 

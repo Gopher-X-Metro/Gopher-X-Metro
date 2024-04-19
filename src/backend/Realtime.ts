@@ -32,15 +32,19 @@ namespace Realtime {
      * @returns a list of vehicle data
      */
     export async function getVehicles(routeId: string) : Promise<Array<any>> {
-        let response: any = undefined;
 
-        response = await fetch("https://svc.metrotransit.org/nextrip/vehicles/"+routeId)
-        .then(async response => {
-            if (response.ok) return await response.json()
-            console.warn("Invalid route_id or route is not in service")
+        // response = await fetch("https://svc.metrotransit.org/nextrip/vehicles/"+routeId)
+        // .then(async response => {
+        //     if (response.ok) return await response.json()
+        //     console.warn("Invalid route_id or route is not in service")
+        // })
+
+        return await fetch("https://svc.metrotransit.org/nextrip/vehicles/"+routeId).then(async response => {
+            if (response.ok && response.status === 200)
+                return await response.json();
+            else
+                console.warn(`Data fetching encountered status code ${response.status} with Metro Vehicles`);
         })
-
-        return response ? response : []
     }
     /**
      * Gets the stops that are in the route in the specified direction
