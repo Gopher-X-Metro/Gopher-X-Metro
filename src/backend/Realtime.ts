@@ -75,25 +75,29 @@ namespace Realtime {
     export async function getRealtimeGTFSUniversity(): Promise<any> {
         const response = await fetch(GTFS_REALTIME_URL_UMN);
 
-        // if (response.status === 404) {
-        //     console.log(`Data fetching encountered status code 404 (Not Found) with University Data.`);
-        //     throw new Error(`Data fetching encountered status code 404 (Not Found) with University Data`);
-        // }
+        if (response.status === 404) {
+            console.log(`Data fetching encountered status code 404 (Not Found) with University Data.`);
+            throw new Error(`Data fetching encountered status code 404 (Not Found) with University Data`);
+        }
 
-        // if (response.ok) {
+        if (response.ok) {
             return response.json();
-        // } else {
-        //     const responseBodyText = await response.text(); // Get the response body as text
-        //     console.log(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${responseBodyText}`);
-        //     throw new Error(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${responseBodyText}`);
-        // }
+        } else {
+            const responseBodyText = await response.text(); // Get the response body as text
+            console.log(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${responseBodyText}`);
+            throw new Error(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${responseBodyText}`);
+        }
 
     }
     /**
      * Gets the fetched vehicle position data
      */
     export async function getRealtimeGTFSVehiclePositions() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
-        return fetch(GTFS_REALTIME_URL_VEHICLE_POSITIONS).then(response => response?.arrayBuffer()).then(buffer => GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)))
+        const response = await fetch(GTFS_REALTIME_URL_VEHICLE_POSITIONS);
+
+        console.log(response);
+
+        return response?.arrayBuffer().then(buffer => GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)))
     }
     /**
      * Gets the fetched trip updates data
