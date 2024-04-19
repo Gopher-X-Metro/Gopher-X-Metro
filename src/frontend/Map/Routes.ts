@@ -1,5 +1,8 @@
 import Resources from "../../backend/Resources.ts";
+import Schedule from "../../backend/Schedule.ts";
+import Static from "../../backend/Static.ts";
 import Vehicle from "./elements/Vehicle.ts";
+
 import URL from "../../backend/URL.ts";
 import Route from "./elements/Route.ts";
 import Realtime from "../../backend/Realtime.ts";
@@ -102,7 +105,13 @@ namespace Routes {
             }
         }
         
-        console.log(await Realtime.getVehicles(routeId))
+        // console.log((await Realtime.getVehicles(routeId)).map(vehicle => vehicle))
+
+        // console.log((await Schedule.getRouteDetails(routeId)))
+        // console.log((await Schedule.getTimeTable(routeId, 1)))
+        // console.log((await Schedule.getStopList(routeId, 1)))
+        // console.log((await Realtime.getStops(routeId, 1)))
+        // console.log((await Realtime.getStopInfo(routeId, 1, "UNDA")))
     }
 
     /**
@@ -124,7 +133,8 @@ namespace Routes {
                             vehicle.trip_id, 
                             vehicle.trip_id, 
                             vehicle.location_time, 
-                            new google.maps.LatLng(vehicle.latitude as number, vehicle.longitude as number)
+                            new google.maps.LatLng(vehicle.latitude as number, vehicle.longitude as number),
+                            vehicle.bearing
                         );
                     })
                 })
@@ -136,7 +146,8 @@ namespace Routes {
                             vehicle.vehicleID, 
                             "empty",
                             Date.now(),
-                            new google.maps.LatLng(vehicle.lat, vehicle.lng)
+                            new google.maps.LatLng(vehicle.lat, vehicle.lng),
+                            vehicle.heading
                         ) 
                     }
                 }));
@@ -162,7 +173,8 @@ namespace Routes {
         vehicleId: string | null | undefined, 
         tripId: string | null | undefined, 
         timestamp: number | null | undefined, 
-        location: google.maps.LatLng) {
+        location: google.maps.LatLng,
+        bearing: number) {
 
         if (!vehicleId || !tripId || !timestamp) return;
         
@@ -172,7 +184,7 @@ namespace Routes {
         // Check if the vehicle exists
         if (vehicle === undefined) {
             // If the vehicle did not exist, make a new one
-            Routes.getRoute(routeId)?.addVehicle(vehicleId, "");
+            Routes.getRoute(routeId)?.addVehicle(routeId, vehicleId, "");
 
             vehicle = Routes.getRoute(routeId)?.getVehicles()?.get(vehicleId) as Vehicle;
             
@@ -189,6 +201,8 @@ namespace Routes {
         vehicle.setPosition(location, timestamp);
         
         vehicle.setTripId(tripId);
+
+        vehicle.setBusBearing(bearing);
     }
 }
 
