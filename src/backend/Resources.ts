@@ -98,7 +98,7 @@ namespace Resources {
      */
     export async function getColor(routeId: string) : Promise<string> {
         // It defaults to the colors manually defined. If the color is not defined, it defaults to the one if found. 
-        return ROUTE_COLORS[routeId] ? ROUTE_COLORS[routeId] : await Static.getRoutes(routeId).then(result => result.route_color);
+        return ROUTE_COLORS[routeId] ? ROUTE_COLORS[routeId] : await Static.getRoutes(routeId).then(result => result[0].route_color !== "" ? result[0].route_color : "444444");
     }
     /**
      * Gets the color of a route as a string
