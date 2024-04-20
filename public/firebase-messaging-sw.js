@@ -55,17 +55,21 @@ const isSupported = firebase.messaging.isSupported();
 
 if (isSupported) {
 
-  messaging.onBackgroundMessage(function(payload) {
-    console.log('[firebase-messaging-sw.js] Received background message ', payload);
-    // Customize notification here
-    const notificationTitle = 'Background Message Title';
-    const notificationOptions = {
-      body: 'Background Message body.',
-      icon: '/favicon/favicon-96x96.png'
-    };
+  messaging.onBackgroundMessage(({notification: {title, body, image}}) =>  {
+    console.log('[firebase-messaging-sw.js] Received background message ', {notification: {title, body, image}});
+    
+    // // Customize notification here
+    // const notificationTitle = 'Background Message Title';
+    // const notificationOptions = {
+    //   body: 'Background Message body.',
+    //   icon: '/favicon/favicon-96x96.png'
+    // };
 
-    // showNotification(notificationTitle,
-    //   notificationOptions);
+    self.registration.showNotification(title, { body, icon: image || '/favicon/favicon-96x96.png' });
+
+
+
+
   });
 
 }
