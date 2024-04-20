@@ -67,7 +67,7 @@ export async function getFCMToken(retryAttempts = 5) {
       // https://github.com/firebase/firebase-js-sdk/issues/7575
       if (err instanceof DOMException && retryAttempts > 0) {
         console.log("Received DOM error. Retrying...");
-        await sleep(1000);
+        await delay(1000);
         try
           {
             return getFCMToken(retryAttempts - 1);
