@@ -47,22 +47,26 @@ export async function requestPermission() {
 export async function getFCMToken() {
   // Get registration token. Initially this makes a network call, once retrieved
   // subsequent calls to getToken will return from cache.
-  const token = await getToken(messaging, {
-    vapidKey,
-  })
+  let token; 
+  try {
+    token = await getToken(messaging, {
+      vapidKey,
+    });
+  } catch (err) {
+    console.log("found error where there should not be: " + err);
+    console.log("this error initiated from Notify.ts, if you spot this error, the service worker may not have loaded expectedly")
+  }
 
-  console.log(token)
-  
+  console.log(token);
 }
 
-//workaround to an FCM javascript bug 
+//workaround to an FCM javascript bug
 export function loadServiceWorker() {
   try {
     getToken(messaging, {
       vapidKey,
-    })
-  }
-  catch (err) {
+    });
+  } catch (err) {
     if (!(err instanceof DOMException)) {
       console.log(err);
     }
