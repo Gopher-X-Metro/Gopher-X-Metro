@@ -1,12 +1,26 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import {deleteToken,getMessaging,getToken,MessagePayload,onMessage,isSupported} from "firebase/messaging";
-import { firebaseConfig, vapidKey } from "./Config.ts";
+import {getMessaging,getToken,onMessage,isSupported} from "firebase/messaging";
+
+
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBxH5sCXBWW7J0eKzLNbAzfsVMt85B6Le4",
+  authDomain: "sandboxgxmtest.firebaseapp.com",
+  projectId: "sandboxgxmtest",
+  storageBucket: "sandboxgxmtest.appspot.com",
+  messagingSenderId: "793277942657",
+  appId: "1:793277942657:web:20796b4b6e3d662419f680",
+};
+
+const vapidKey =
+  "BIzzL-h_-fxtywFbOEwcWhvnuA2-bslzyIDRaHhdqfUYdT61LhxVcwdkvJRnqy8jc4xwKRekeTamM1HrAVW75o0";
+
+
+
+
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const messaging = getMessaging(app);
 
 onMessage(messaging, (payload) => {
