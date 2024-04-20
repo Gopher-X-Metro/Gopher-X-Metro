@@ -6,9 +6,9 @@
 // importScripts('/__/firebase/init.js');
 
 
-import {} from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js';
-import {} from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-messaging-compat.js';
-import {} from 'https://www.gstatic.com/firebasejs/init.js';
+importScripts('https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.11.0/firebase-messaging-compat.js');
+
 
 
 const messaging = firebase.messaging();
