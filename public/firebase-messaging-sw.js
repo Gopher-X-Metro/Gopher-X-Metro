@@ -65,7 +65,7 @@ if (isSupported) {
     //   icon: '/favicon/favicon-96x96.png'
     // };
 
-    self.registration.showNotification(title, { body, icon: image || '/favicon/favicon-96x96.png' });
+    self.registration.showNotification(title, { body, icon: image || '/favicon/favicon-128.png' });
 
 
 
