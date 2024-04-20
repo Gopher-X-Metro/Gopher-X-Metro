@@ -1,7 +1,12 @@
 import { initializeApp } from "firebase/app";
-import {getMessaging,getToken,onMessage,isSupported} from "firebase/messaging";
+import {
+  getMessaging,
+  getToken,
+  isSupported,
+  onMessage,
+} from "firebase/messaging";
 
-
+import { createClient } from "@supabase/supabase-js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBxH5sCXBWW7J0eKzLNbAzfsVMt85B6Le4",
@@ -15,9 +20,10 @@ const firebaseConfig = {
 const vapidKey =
   "BIzzL-h_-fxtywFbOEwcWhvnuA2-bslzyIDRaHhdqfUYdT61LhxVcwdkvJRnqy8jc4xwKRekeTamM1HrAVW75o0";
 
-
-
-
+const supabase = createClient(
+  "https://tsmoowqflkcgsdrlxicc.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRzbW9vd3FmbGtjZ3Nkcmx4aWNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTIyNzU2NzYsImV4cCI6MjAyNzg1MTY3Nn0.Mbt6K4ZDGyzKiSuItnI68Yj47fCg6u-MIqu1sHcXrls",
+);
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -30,12 +36,10 @@ onMessage(messaging, (payload) => {
 async function requestPermission() {
   console.log("Requesting permission...");
   Notification.requestPermission().then((permission) => {
-
     if (permission === "granted") {
       console.log("Notification permission granted.");
       return true;
     }
-
   });
   return false;
 }
