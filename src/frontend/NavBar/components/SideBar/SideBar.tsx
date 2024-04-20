@@ -38,20 +38,26 @@ export default function SideBar() {
                 <RouteMenuItem routeId={'902'} text={"Metro Green Line"} />
                 <RouteMenuItem routeId={'901'} text={"Metro Blue Line"} />
                 </MenuOptionGroup>
-            </MenuList>
-        </Menu>
 
-        <div className = "nav-header"> 
+                <div className = "nav-header"> 
                 <h1> Search routes </h1>
                 <div className="underline"></div><br></br>
                 </div> 
                 <div className = "searchContainer">
                 <input type = "text" id = "search_route" placeholder = "123"></input>
                 <button onClick = {SearchFeature.searchRoute} id = "searchButton">
-                <img className = "busImg" height = "50" width = "50" src={SearchIcon}></img>
+                <img className = "busImg" height = "50" alt = "error" width = "50" src={SearchIcon}></img>
                 </button>
                 <div className= "error"></div>
-        </div>
+            </div>
+
+
+            </MenuList>
+
+            
+        </Menu>
+
+        
 
 
 
