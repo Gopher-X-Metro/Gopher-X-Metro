@@ -10,6 +10,14 @@ importScripts('https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js
 importScripts('https://www.gstatic.com/firebasejs/10.11.0/firebase-messaging-compat.js');
 
 
+firebase.initializeApp({
+  apiKey: "AIzaSyBxH5sCXBWW7J0eKzLNbAzfsVMt85B6Le4",
+  authDomain: "sandboxgxmtest.firebaseapp.com",
+  projectId: "sandboxgxmtest",
+  storageBucket: "sandboxgxmtest.appspot.com",
+  messagingSenderId: "793277942657",
+  appId: "1:793277942657:web:20796b4b6e3d662419f680",
+})
 
 const messaging = firebase.messaging();
 
