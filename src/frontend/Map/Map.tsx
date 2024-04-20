@@ -10,7 +10,7 @@ import LoadingScreen from "./LoadingScreen.tsx";
 import URL from '../../backend/URL.ts';
 
 import { createClient } from "@supabase/supabase-js";
-import  { test } from "../../backend/firebase/Notify.ts"
+import { getFCMToken, requestPermission } from "../../backend/firebase/Notify.ts"
 
 
 /**
@@ -18,15 +18,7 @@ import  { test } from "../../backend/firebase/Notify.ts"
  */
 export default function Map() {
   const [mapLoaded, setMapLoaded] = useState(false);
-  
 
-  const sendNotification = async () => {
-
-
-
-    test();
-
-  }
 
 
 
@@ -77,6 +69,12 @@ export default function Map() {
     }
     init().then(() => { setMapLoaded(true) });
   }, [])
-  return <><button onClick={sendNotification}>hi</button><LoadingScreen hidden={mapLoaded}></LoadingScreen><div id="map"></div> </>;
+  return <>
+    <button onClick={getFCMToken}>getFCMToken ()</button>
+    <button onClick={requestPermission}>requestPermission ()</button>
+
+    <LoadingScreen hidden={mapLoaded}></LoadingScreen>
+    <div id="map"></div>
+  </>;
 }
 

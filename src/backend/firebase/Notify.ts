@@ -30,10 +30,10 @@ const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
 onMessage(messaging, (payload) => {
-  console.log("Message received. ", payload);
+  console.log("Message received via Notify TS. ", payload);
 });
 
-async function requestPermission() {
+export async function requestPermission() {
   console.log("Requesting permission...");
   Notification.requestPermission().then((permission) => {
     if (permission === "granted") {
@@ -44,14 +44,9 @@ async function requestPermission() {
   return false;
 }
 
-export function test() {
-  if (!requestPermission()) {
-    return;
-  }
-  if (!isSupported()) {
-    return;
-  }
 
+
+export function getFCMToken() {
   const messaging = getMessaging();
 
   // Get registration token. Initially this makes a network call, once retrieved
@@ -62,10 +57,8 @@ export function test() {
     .then((currentToken) => {
       if (currentToken) {
         console.log("Token: ", currentToken);
-        // Send the token to your server and update the UI if necessary
-        // ...
+
       } else {
-        // Show permission request UI
         console.log(
           "No registration token available. Request permission to generate one.",
         );
