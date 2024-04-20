@@ -44,40 +44,28 @@ export async function requestPermission() {
   return false;
 }
 
-export async function getFCMToken(retryAttempts = 5) {
-  console.log("attempting to get an FCM token");
-  const messaging = getMessaging();
-
+export async function getFCMToken() {
   // Get registration token. Initially this makes a network call, once retrieved
   // subsequent calls to getToken will return from cache.
-  getToken(messaging, {
+  const token = await getToken(messaging, {
     vapidKey,
   })
-    .then((currentToken) => {
-      if (currentToken) {
-        console.log("Token: ", currentToken);
-      } else {
-        console.log(
-          "No registration token available. Request permission to generate one.",
-        );
-      }
-    })
-    .catch(async (err) => {
-      // Workaround for Firebase service worker not registering in time bug
-      // https://github.com/firebase/firebase-js-sdk/issues/7575
-      if (err instanceof DOMException && retryAttempts > 0) {
-        console.log("Received DOM error. Retrying...");
-        await delay(1000);
-        try
-          {
-            return getFCMToken(retryAttempts - 1);
-          }
-        catch (error) {
-          console.log("whattt???")
-        }
-      } else {
-        console.log("An error occurred while retrieving token:", err);
-        throw err; // Rethrow the error to propagate it to the caller
-      }
-    });
+
+  console.log(token)
+  
 }
+
+//workaround to an FCM javascript bug 
+export function loadServiceWorker() {
+  try {
+    getToken(messaging, {
+      vapidKey,
+    })
+  }
+  catch (err) {
+    if (!(err instanceof DOMException)) {
+      console.log(err);
+    }
+  }
+}
+loadServiceWorker();

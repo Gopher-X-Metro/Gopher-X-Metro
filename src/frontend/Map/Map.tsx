@@ -9,7 +9,6 @@ import Vehicles from './Vehicles.ts';
 import LoadingScreen from "./LoadingScreen.tsx";
 import URL from '../../backend/URL.ts';
 
-import { createClient } from "@supabase/supabase-js";
 import { getFCMToken, requestPermission } from "../../backend/firebase/Notify.ts"
 
 
