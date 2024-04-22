@@ -90,7 +90,7 @@ export function registerServiceWorkerOnLoad() {
     }).catch(console.log);
   }
   else {
-    console.log("service workers may not be supported")
+    console.log("service workers may not be supported, failed to load service worker")
   }
 }
 
