@@ -60,16 +60,3 @@ export async function getFCMToken() {
   console.log(token);
 }
 
-//workaround to an FCM javascript bug
-export function loadServiceWorker() {
-  try {
-    getToken(messaging, {
-      vapidKey,
-    });
-  } catch (err) {
-    if (!(err instanceof DOMException)) {
-      console.log(err);
-    }
-  }
-}
-loadServiceWorker();
