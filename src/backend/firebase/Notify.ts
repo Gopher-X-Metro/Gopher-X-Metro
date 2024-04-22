@@ -60,3 +60,19 @@ export async function getFCMToken() {
   console.log(token);
 }
 
+
+export function registerServiceWorkerOnLoad() {
+  if (navigator.serviceWorker) {
+    console.log("registering new service worker")
+    // Register the SW
+    navigator.serviceWorker.register('/firebase-messaging-sw.js', {scope: '/firebase-cloud-messaging-push-scope'}).then(function(registration){
+    }).catch(console.log);
+  }
+  else {
+    console.log("service workers may not be supported")
+  }
+}
+
+
+
+
