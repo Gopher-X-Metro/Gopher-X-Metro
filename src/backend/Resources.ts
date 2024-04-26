@@ -93,6 +93,11 @@ namespace Resources {
         return stopsInfo;
     }
     /**
+     * Gets the the stop locations from a tripId
+     * @param tripId the id of the trip
+     */
+    
+    /**
      * Gets the color of a route as a string
      * @param routeId ID of the route
      */
@@ -108,16 +113,6 @@ namespace Resources {
         // It defaults to the colors manually defined. If the color is not defined, it defaults to the one if found. 
         return ROUTE_IMAGES[routeId] ? ROUTE_IMAGES[routeId] : [busImage, ""];
     }
-    
-
-    /* University Routes and ID */
-    export const UNIVERSITY_ROUTES = {
-        "120": 11324, 
-        "121": 11278, 
-        "122": 11279, 
-        "123": 11280, 
-        "124": 11281
-    };
 
     /* Override Bus Images */
     const ROUTE_IMAGES = {
