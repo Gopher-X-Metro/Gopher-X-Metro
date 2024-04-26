@@ -32,17 +32,29 @@ namespace Realtime {
      * @returns a list of vehicle data
      */
     export async function getVehicles(routeId: string) : Promise<Array<any>> {
-
-        // response = await fetch("https://svc.metrotransit.org/nextrip/vehicles/"+routeId)
-        // .then(async response => {
-        //     if (response.ok) return await response.json()
-        //     console.warn("Invalid route_id or route is not in service")
-        // })
-
         return await fetch("https://svc.metrotransit.org/nextrip/vehicles/"+routeId).then(async response => {
-            if (response.ok && response.status === 200)
-                return await response.json();
-            else
+            if (response.ok && response.status === 200){
+                let json = await response.json();
+
+                if (json.length === 0) {
+                    json = (await getRealtimeGTFSUniversity()).vehicles
+                    .filter(vehicle => UNIVERSITY_ROUTES[routeId] === vehicle.routeID);
+
+                    json.forEach(vehicle => {
+                        vehicle.trip_id = vehicle.tripID;
+                        vehicle.latitude = vehicle.lat;
+                        vehicle.longitude = vehicle.lng;
+                        vehicle.timestamp = vehicle.positionUpdated;
+                        vehicle.bearing = vehicle.linkBearing;
+                    })
+                } else {
+                    json.forEach(vehicle => {
+                        vehicle.timestamp = vehicle.location_time;
+                    })
+                }
+            
+                return json;
+            } else
                 console.warn(`Data fetching encountered status code ${response.status} with Metro Vehicles`);
         })
     }
@@ -86,6 +98,7 @@ namespace Realtime {
     }
     /**
      * Gets the fetched vehicle position data
+     * @depreciated
      */
     export async function getRealtimeGTFSVehiclePositions() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
         const response = await fetch(GTFS_REALTIME_URL_VEHICLE_POSITIONS);
@@ -94,6 +107,7 @@ namespace Realtime {
     }
     /**
      * Gets the fetched trip updates data
+     * @deprecated
      */
     export async function getRealtimeGTFSTripUpdates() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage | undefined> {
         return await fetch(GTFS_REALTIME_URL_TRIP_UPDATES).then(async response => {
@@ -103,6 +117,16 @@ namespace Realtime {
                 console.warn(`Data fetching encountered status code ${response.status} with Trip Updates.`);
         })
     }
+    
+
+    /* University Routes and ID */
+    export const UNIVERSITY_ROUTES = {
+        "120": 11324, 
+        "121": 11278, 
+        "122": 11279, 
+        "123": 11280, 
+        "124": 11281
+    };
 
     const GTFS_REALTIME_URL_UMN = "https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=vehicles2&action=list&agencyID=88";
     const GTFS_REALTIME_URL_VEHICLE_POSITIONS = 'https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb';

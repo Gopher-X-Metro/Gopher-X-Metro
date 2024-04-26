@@ -48,7 +48,7 @@ class Vehicle extends Element {
     /**
      * Get the trip ID
      */
-    public getTripId() : string { return this.tripId; }
+    public getTripId() : string | undefined { return this.tripId; }
     /**
      * Get the marker object of this vehicle on the map
      */
@@ -78,7 +78,7 @@ class Vehicle extends Element {
     /**
      * Gets the direction the bus is heading
      */
-    public getBusBearing(): number { return this.bearing; }
+    public getBusBearing(): number | undefined { return this.bearing; }
     /**
      * Sets the direction the bus is heading
      * @param bearing the orientation of the bus
@@ -95,11 +95,11 @@ class Vehicle extends Element {
     }
     
     /* Private */
-    private tripId: string;
-    private timestamp : number;
+    private tripId: string | undefined;
+    private timestamp : number | undefined;
     private marker: google.maps.marker.AdvancedMarkerElement;
     private stopTimeUpdates: transit_realtime.TripUpdate.IStopTimeUpdate[] | undefined | null;
-    private bearing: number;
+    private bearing: number | undefined;
 }
 
 export default Vehicle;
