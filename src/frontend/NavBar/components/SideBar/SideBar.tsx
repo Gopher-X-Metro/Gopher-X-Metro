@@ -11,7 +11,6 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import RouteMenuItem from './RouteMenuItem.tsx';
 import SearchFeature from '../SearchFeature.tsx';
 import SearchIcon from "../../../../img/CustomBus.png";
-///Users/babacardia/Downloads/Gopher-Bus-X-Metro-Buses-recent/src/img/CustomBus.png
 export default function SideBar() {
     return(
         <div>
@@ -36,6 +35,7 @@ export default function SideBar() {
             <MenuDivider />
             <MenuOptionGroup title='Metro Trains' type='checkbox'>
                 <RouteMenuItem routeId={'902'} text={"Metro Green Line"} />
+                <RouteMenuItem routeId={'901'} text={"Metro Blue Line"} />
                 <RouteMenuItem routeId={'901'} text={"Metro Blue Line"} />
                 </MenuOptionGroup>
 
