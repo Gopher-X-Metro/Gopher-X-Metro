@@ -16,7 +16,6 @@ namespace SearchFeature {
                 if (!URL.getRoutes().has(bus_route) && count === 0) {
                     console.log(bus_route + " 1st if");
                     URL.addRoute(bus_route);
-                    //URL.removeRoute(old_route);
                     count++;
                     console.log("count 1st " + count);
                     old_route = bus_route;
@@ -25,8 +24,6 @@ namespace SearchFeature {
                 } else if (URL.getRoutes().has(old_route) && count === 1) {
                     console.log("OLDDD " + old_route);
                     console.log("count second if " + count);
-                    // URL.addRoute(bus_route);
-                    //count--;
                     URL.removeRoute(old_route);
                     URL.addRoute(bus_route);
                     old_route = bus_route;
