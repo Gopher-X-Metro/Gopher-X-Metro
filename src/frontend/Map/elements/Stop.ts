@@ -34,12 +34,12 @@ class Stop extends Element {
             map: map
         });
         const infoWindow = this.makeInfoWindow(routeId, stopId, color, location, map);
-        //this.infoWindow = infoWindow;
-    }
+        this.infoWindow = infoWindow;
+    }   
     /**
      * Gets the info window object on the map
      */
-            public getInfoWindow() : google.maps.InfoWindow { return this.infoWindow; }
+            public getInfoWindow() : google.maps.InfoWindow { return InfoWindow.getInfoWindow(); }
             /**
          * Makes an info window for the stop
          * @param routeId route ID the stop belongs to
@@ -49,7 +49,7 @@ class Stop extends Element {
          * @param map map the stop displays on
          */
         public makeInfoWindow(routeId: string, stopId: string, color: string, location: google.maps.LatLng, map: google.maps.Map) {
-            let infoWindowClass = new InfoWindow(routeId, stopId, color, location, map);
+            const infoWindowClass = new InfoWindow(routeId, stopId, color, location, map);
             const infoWindow = infoWindowClass.getInfoWindow();
             infoWindow.setPosition(location);
             //infoWindow.setMap(map);
@@ -94,7 +94,7 @@ class Stop extends Element {
     /* Private */
 
     private stopTimes: Map<string, string | undefined>;
-
+    public infoWindow: google.maps.InfoWindow;
     private location: google.maps.LatLng;
     private marker: google.maps.Circle;
     //private stopId: string;
