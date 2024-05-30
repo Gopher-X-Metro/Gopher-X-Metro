@@ -1,6 +1,6 @@
 import Element from "./Element.ts";
 import InfoWindow from './InfoWindow.ts';
-import Resources from "../../../backend/Resources.ts";
+//import Resources from "../../../backend/Resources.ts";
 class Stop extends Element {
 
     /* Public */
@@ -17,17 +17,17 @@ class Stop extends Element {
         this.routeId = routeId;
         this.location = location;
         this.stopTimes = new Map<string, string | undefined>();
-        const Circle_color = Resources.getColor(this.routeId);
+        //const Circle_color = Resources.getColor(this.routeId);
         //const tripIDs = Resources.getTripIds(this.routeId);
         //const stopIDs = Resources.getStopIds(tripIDs[0]);
         //const stopTimes = Resources.getStopTimes(stopId);
         //this.stopTimes = stopTimes[tripIDs[0];
         //const Resources.getStopTimes(tripIDs);
         this.marker = new window.google.maps.Circle({
-            //fillColor: Circle_color,
+            fillColor: this.getColor(),
             fillOpacity: 100,
             strokeWeight: 10,
-            //strokeColor: Circle_color,
+            strokeColor: this.getColor(),
             center: this.location,
             radius: 5,
             clickable: true,
@@ -39,7 +39,7 @@ class Stop extends Element {
     /**
      * Gets the info window object on the map
      */
-            public getInfoWindow() : google.maps.InfoWindow { return InfoWindow.getInfoWindow(); }
+            public getInfoWindow() : google.maps.InfoWindow { return this.infoWindow; }
             /**
          * Makes an info window for the stop
          * @param routeId route ID the stop belongs to

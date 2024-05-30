@@ -89,7 +89,7 @@ namespace Routes {
             if (!route.getStops().has(stop.stop_id)) {
 
                 // Create stop
-                route.addStop(stop.stop_id, "0022FF", new google.maps.LatLng(Number(stop.latitude), Number(stop.longitude)));
+                route.addStop(stop.stop_id, routeId, "0022FF", new google.maps.LatLng(Number(stop.latitude), Number(stop.longitude)));
                 
                 // If the user hovers over the stop, change the width of the line
                 route.getStops().get(stop.stop_id)?.getMarker().addListener("mouseover", () => {
