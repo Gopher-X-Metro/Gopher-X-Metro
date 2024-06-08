@@ -12,50 +12,72 @@ import LoadingScreen from "./LoadingScreen.tsx";
  */
 export default function Map() {
     const [mapLoaded, setMapLoaded] = useState(false);
+
+
+
+
+
+
+
+    const init = async () => {
+        let center = { lat: 44.97369560732433, lng: -93.2317259515601 }; // UMN location
+        const zoom = 15;
+
+        // Comes from the .env.local file, just for security. Won't appear in main -- all api keys should be added to Vercel console. 
+        const apiKey = process.env.REACT_APP_API_KEY ? process.env.REACT_APP_API_KEY : "";
+
+        // Load map resources
+        const loader = new Loader({
+            apiKey: apiKey,
+            version: "weekly",
+            libraries: ["places", "geometry", "marker"]
+        });
+
+        // Creates the map
+        const { Map } = await loader.importLibrary("maps");
+        const map = new Map(document.getElementById("map") as HTMLElement, {
+            center: center,
+            zoom: zoom,
+            mapId: process.env.REACT_APP_MAP_ID
+        });
+
+
+        // Loads the Route's Resources
+        await Resources.load()
+
+        // Sets the Routes map to this map
+        Routes.setMap(map)
+
+        // Loads the static routes
+        Routes.refresh()
+
+        // Initalizes the user's marker
+        Marker.init(map);
+
+        // Updates vehicle and marker postions every 0.5 seconds
+        setInterval(() => {
+            Routes.refreshVehicles();
+            Marker.update();
+        }, 500); // ms of wait
+
+
+    }
+
+
     useEffect(() => {
-        const init = async () => {
-            let center = { lat: 44.97369560732433, lng: -93.2317259515601 }; // UMN location
-            const zoom = 15;
+        // Minimum delay in milliseconds
+        const minimumDelay = 2000;
 
-            // Comes from the .env.local file, just for security. Won't appear in main -- all api keys should be added to Vercel console. 
-            const apiKey = process.env.REACT_APP_API_KEY ? process.env.REACT_APP_API_KEY : "";
-
-            // Load map resources
-            const loader = new Loader({
-                apiKey: apiKey,
-                version: "weekly",
-                libraries: ["places", "geometry", "marker"]
-            });
-
-            // Creates the map
-            const { Map } = await loader.importLibrary("maps");
-            const map = new Map(document.getElementById("map") as HTMLElement, {
-                center: center,
-                zoom: zoom,
-                mapId: process.env.REACT_APP_MAP_ID
-            });
+        const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 
-            // Loads the Route's Resources
-            await Resources.load()
+        // Initialize the map and wait for the minimum delay
+        Promise.all([init(), delay(minimumDelay)]).then(() => {
+            setMapLoaded(true);
+        });
+    }, []);
 
-            // Sets the Routes map to this map
-            Routes.setMap(map)
 
-            // Loads the static routes
-            Routes.refresh()
-
-            // Initalizes the user's marker
-            Marker.init(map);
-
-            // Updates vehicle and marker postions every 0.5 seconds
-            setInterval(() => {
-                Routes.refreshVehicles();
-                Marker.update();
-            }, 500); // ms of wait
-        }
-        init().then(() => { setMapLoaded(true) });
-    }, [])
     return <><LoadingScreen hidden={mapLoaded}></LoadingScreen><div id="map"></div> </>;
 }
 
