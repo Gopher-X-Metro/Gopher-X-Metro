@@ -83,8 +83,13 @@ namespace Resources {
      * Gets the stop IDs of a trip
      * @param routeId ID of the trip
      */
-    export async function getStopsInfo(routeId: string) : Promise<Array<any>> {
+    export async function getStopsInfo(routeId: string) : Promise<Array<any> | null> {
         const stopsInfo = new Array<any>();
+
+        const directions = await Realtime.getDirections(routeId);
+
+        // If there are no directions, return null
+        if (!Array.isArray(directions) || !directions.length) return null;
         
         for (const direction of (await Realtime.getDirections(routeId)))
             for (const stop of (await Realtime.getStops(routeId, direction.direction_id)))
