@@ -25,7 +25,8 @@ class Stop extends Element {
             center: this.location,
             radius: 10,
             clickable: true,
-            map: map
+            map: map,
+            zIndex: 1
         })
     }
     /**
