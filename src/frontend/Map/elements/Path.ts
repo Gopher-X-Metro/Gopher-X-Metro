@@ -22,7 +22,8 @@ class Path extends Element{
             strokeColor: this.getColor(),
             strokeOpacity: 1.0,
             strokeWeight: Number(process.env.REACT_APP_LINE_NORMAL),
-            map: map
+            map: map,
+            zIndex: -1
         });
     }
     /**
