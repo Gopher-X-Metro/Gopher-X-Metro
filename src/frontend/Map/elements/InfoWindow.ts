@@ -1,27 +1,17 @@
 //import Resources from "../../backend/Resources.ts";
 
 export default class InfoWindow{
-    static getInfoWindow(): any {
-        throw new Error("Method not implemented.");
-    }
-        /* Public */
+    /* Public */
 
     /**
      * InfoWindow Constructor
      * @param routeId route ID the InfoWindow belongs to
-     * @param stopId ID of the InfoWindow
      * @param color color of the InfoWindow
      * @param location location of the InfoWindow
      * @param map map the InfoWindow displays on
      */
-    routeId: string;
-    stopId: string;
-    location: google.maps.LatLng;
-    infoWindow: google.maps.InfoWindow;
-    static makeInfoWindow: any;
-    constructor(routeId: string, stopId: string, color: string, location: google.maps.LatLng, map: google.maps.Map) {
+    constructor(routeId: string, location: google.maps.LatLng, map: google.maps.Map) {
         this.routeId = routeId;
-        this.stopId = stopId;
         this.location = location
         //const stopTimes = new Map<string, string | undefined>();
         //const Circle_color = Resources.getColor(this.routeId);
@@ -37,22 +27,26 @@ export default class InfoWindow{
         this.infoWindow.setPosition(location);
     }   
     
-/**
- * Changes the content of the info window on the map
- */
-public changeContent(content: string) {
-    this.infoWindow.setContent(content);
-}
-/**
- * Closes the info window on the map
- */
-public closeInfoWindow() {
-    if(this.infoWindow) {
-        this.infoWindow.close();
+    /**
+     * Changes the content of the info window on the map
+     */
+    public setContent(content: string) {
+        this.infoWindow.setContent(content);
     }
-} 
-/**
- * Gets the info window object on the map
- */
-public getInfoWindow() : google.maps.InfoWindow { return this.infoWindow; }
+    /**
+     * Closes the info window on the map
+     */
+    public closeWindow() {
+        if (this.infoWindow) this.infoWindow.close();
+    } 
+    /**
+     * Gets the info window object on the map
+     */
+    public getWindow() : google.maps.InfoWindow { return this.infoWindow; }
+
+    /* Private */
+
+    private routeId: string;
+    private location: google.maps.LatLng;
+    private infoWindow: google.maps.InfoWindow;
 }
