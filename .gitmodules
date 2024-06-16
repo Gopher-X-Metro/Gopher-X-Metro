@@ -1,4 +1,4 @@
 [submodule "env"]
 	path = env
-	url = https://github.com/Gopher-Bus-X-Metro-Buses/env.git
+	url = https://github.com/Gopher-X-Metro/env.git
 	branch = main
