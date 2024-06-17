@@ -1,7 +1,7 @@
 import Resources from "../../backend/Resources.ts";
 import Schedule from "../../backend/Schedule.ts";
 import Static from "../../backend/Static.ts";
-import Vehicle from "./elements/Vehicle.ts";
+import Vehicle from "./elements/Vehicle/Vehicle.ts";
 
 import URL from "../../backend/URL.ts";
 import Route from "./elements/Route.ts";
@@ -153,9 +153,11 @@ namespace Routes {
         // console.log(await Plan.suggest("U", ""))
         // console.log(await Plan.findaddress("dHA9MCNsb2M9MTk0NyNsbmc9MCNwbD0yODY4I2xicz0xNDoxMTAxNg=="))
 
-        // console.log(await Realtime.getVehicles(routeId));
-        // console.log((await Schedule.getRouteDetails(routeId)))
-        // console.log(await Schedule.getRoute(routeId))
+        console.log(await Realtime.getDirections(routeId));
+        console.log(await Realtime.getVehicles(routeId));
+        console.log((await Schedule.getRouteDetails(routeId)));
+        console.log(await Schedule.getRoute(routeId));
+        console.log(await Realtime.getRoute(routeId));
         // console.log((await Schedule.getTimeTable(routeId, 1)))
         // console.log((await Schedule.getStopList(routeId, 1)))
         // console.log((await Realtime.getDirections(routeId)))

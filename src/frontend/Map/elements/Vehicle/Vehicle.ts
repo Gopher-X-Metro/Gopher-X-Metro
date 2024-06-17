@@ -1,4 +1,5 @@
-import Element from "./Element.ts";
+import Element from "../Element.ts";
+import VehicleInfoWindow from "./VehicleInfoWindow.ts";
 import { transit_realtime } from "gtfs-realtime-bindings";
 
 
@@ -31,6 +32,15 @@ class Vehicle extends Element {
         this.marker = new window.google.maps.marker.AdvancedMarkerElement({
             map: map,
             content: busImage,
+        })
+
+        this.infoWindow = new VehicleInfoWindow(vehicleId, map);
+
+        this.marker.addListener("click", () => {
+            if (this.infoWindow.isOpen())
+                this.infoWindow.close();
+            else
+                this.infoWindow.open();
         })
     }
     /**
@@ -71,6 +81,7 @@ class Vehicle extends Element {
      */
     public setPosition(position : google.maps.LatLng, timestamp : number) : void {
         if (!(this.getMarker().position?.toString() === position.toString())) {
+            this.infoWindow.setPosition(position);
             this.getMarker().position = position;
             this.timestamp = timestamp;
         }
@@ -100,6 +111,7 @@ class Vehicle extends Element {
     private marker: google.maps.marker.AdvancedMarkerElement;
     private stopTimeUpdates: transit_realtime.TripUpdate.IStopTimeUpdate[] | undefined | null;
     private bearing: number | undefined;
+    private infoWindow: VehicleInfoWindow;
 }
 
 export default Vehicle;
