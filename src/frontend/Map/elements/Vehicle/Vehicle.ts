@@ -1,7 +1,5 @@
 import Element from "../Element.ts";
 import VehicleInfoWindow from "./VehicleInfoWindow.ts";
-import { transit_realtime } from "gtfs-realtime-bindings";
-
 
 class Vehicle extends Element {
 
@@ -42,7 +40,11 @@ class Vehicle extends Element {
             else
                 this.infoWindow.open();
         })
-    }
+    }   
+    /**
+     * Gets the info window object on the map
+     */
+    public getInfoWindow() : VehicleInfoWindow { return this.infoWindow; }
     /**
      * Gets the length in ms of the time between when position was updated and now
      */
@@ -51,11 +53,6 @@ class Vehicle extends Element {
             return (Date.now()/1000) - this.timestamp; 
     }
     /**
-     * Gets the stopTimeUpdates array for the vehicle
-     * @deprecated
-     */
-    public getStopTimeUpdates() : transit_realtime.TripUpdate.IStopTimeUpdate[] | undefined | null {return this.stopTimeUpdates; }
-    /**
      * Get the trip ID
      */
     public getTripId() : string | undefined { return this.tripId; }
@@ -63,12 +60,6 @@ class Vehicle extends Element {
      * Get the marker object of this vehicle on the map
      */
     public getMarker() : google.maps.marker.AdvancedMarkerElement { return this.marker; }
-    /**
-     * Sets the stopTimeUpdates array for the vehicle 
-     * @param stopTimeUpdates stopTimeUpdates array
-     * @deprecated
-     */
-    public setStopTimeUpdates(stopTimeUpdates : transit_realtime.TripUpdate.IStopTimeUpdate[] | undefined | null) : void {this.stopTimeUpdates = stopTimeUpdates}
     /**
      * Sets the trip ID
      * @param tripId trip ID
@@ -106,10 +97,10 @@ class Vehicle extends Element {
     }
     
     /* Private */
+
     private tripId: string | undefined;
     private timestamp : number | undefined;
     private marker: google.maps.marker.AdvancedMarkerElement;
-    private stopTimeUpdates: transit_realtime.TripUpdate.IStopTimeUpdate[] | undefined | null;
     private bearing: number | undefined;
     private infoWindow: VehicleInfoWindow;
 }
