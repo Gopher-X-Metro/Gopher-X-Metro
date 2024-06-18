@@ -89,16 +89,18 @@ namespace Routes {
             .then(vehicles => {
                 if (vehicles === undefined) return; // If there are no vehicles, return, it's either an invalid request or invalid route. TODO: notify the user they are requesting an invalid route
 
-                vehicles
-                    .forEach(async vehicle => {
-
+                vehicles.forEach(async vehicle => {
+                        // Add Vehicle
                         route.addVehicle(vehicle.trip_id, await Resources.getColor(routeId), Resources.getRouteImages(routeId));
 
-                        // Set Position
-                        route.getVehicles().get(vehicle.trip_id)?.setPosition(
+                        // Goes through each trip update information 
+                        updateVehicle(routeId,
+                            vehicle.trip_id,
+                            vehicle.trip_id,
+                            vehicle.timestamp,
                             new google.maps.LatLng(vehicle.latitude as number, vehicle.longitude as number),
-                            vehicle.timestamp
-                        )
+                            vehicle.bearing
+                        );
 
                         // If the user hovers over the vehicle, change the width of the line
                         route.getVehicles().get(vehicle.trip_id)?.getMarker().addListener("mouseover", () => {
@@ -183,7 +185,7 @@ namespace Routes {
                     updateVehicle(routeId,
                         vehicle.trip_id,
                         vehicle.trip_id,
-                        vehicle.location_time,
+                        vehicle.timestamp,
                         new google.maps.LatLng(vehicle.latitude as number, vehicle.longitude as number),
                         vehicle.bearing
                     );
@@ -225,6 +227,10 @@ namespace Routes {
             vehicle.setTripId(tripId);
 
             vehicle.setBusBearing(bearing);
+
+            vehicle.getInfoWindow().setContent(
+                String(Math.round(Number(vehicle.getLastUpdated())))
+            );
         }
     }
 }
