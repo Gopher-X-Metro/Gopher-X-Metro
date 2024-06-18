@@ -41,7 +41,7 @@ export default class InfoWindow {
         if (this.window) this.window.open(this.map);
     }
     /**
-     * 
+     * If the info window is displaying on the map
      */
     public isOpen() {
         return this.window.get("map") != null;
