@@ -29,7 +29,7 @@ function SideBar() {
                     <RouteButton routeId={"3"} text={"3 U of M / Como Av / Dwtn Mpls"} />
                     <RouteButton routeId={"902"} text={"Metro Green Line"} />
                     <RouteButton routeId={"901"} text={"Metro Blue Line"} />
-                    <RouteButtonAddons/>
+                    {/* <RouteButtonAddons/> */}
                 </div>
             </div>
         </>
