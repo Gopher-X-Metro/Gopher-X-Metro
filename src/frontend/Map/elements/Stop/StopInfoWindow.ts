@@ -9,8 +9,6 @@ class StopInfoWindow extends InfoWindow {
      */
     constructor(routeId: string, location: google.maps.LatLng, map: google.maps.Map) {
         super(routeId, location, map);
-
-        this.setContent("Route ID: " + this.routeId);
     }
 }
 
