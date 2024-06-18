@@ -28,14 +28,7 @@ class Stop extends Element {
             map: map
         });
 
-        this.infoWindow = new StopInfoWindow(routeId, location, map);
-
-        this.marker.addListener("click", () => {
-            if (this.infoWindow.isOpen())
-                this.infoWindow.close();
-            else
-                this.infoWindow.open();
-        })
+        this.infoWindow = new StopInfoWindow(this.marker, location, map);
     }   
     /**
      * Gets the info window object on the map
