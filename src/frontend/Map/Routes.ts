@@ -84,44 +84,6 @@ namespace Routes {
                 })
             )
 
-        // Load Stops
-        for (let schedule of (await Schedule.getSchedule(routeId)).schedules) {
-            for (let timetable of schedule.timetables) {
-                if (timetable.stop_list) {
-                    for (let stop of timetable.stop_list) {
-                        if (stop.info) {
-                            for (let data of stop.info.stops) {
-                                // Creates the stop if it has not been created yet
-                                if (!route.getStops().has(stop.stop_id)) {
-                                    // Create stop
-                                    route.addStop(stop.stop_id, routeId, "0022FF", new google.maps.LatLng(Number(data.latitude), Number(data.longitude)));
-
-                                    console.log(timetable)
-
-                                    // Stop Text
-                                    route.getStops().get(stop.stop_id)?.setDescription(
-                                        "<div style=\"text-align:center\">" + timetable.direction + "<br />" 
-                                        + data.description + "<br /><br />"
-                                        + stop.info.departures.map(time => time.departure_text).join("<br />") +
-                                        "</div>");
-
-                                    // If the user hovers over the stop, change the width of the line
-                                    route.getStops().get(stop.stop_id)?.getMarker().addListener("mouseover", () => {
-                                        setBolded(route.getId(), true)
-                                    });
-
-                                    // If the user stops hovering over the stop, return back
-                                    route.getStops().get(stop.stop_id)?.getMarker().addListener("mouseout", () => {
-                                        setBolded(route.getId(), false)
-                                    });
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         // Load Vehicles
         Realtime.getVehicles(routeId)
             .then(vehicles => {
@@ -150,6 +112,42 @@ namespace Routes {
                     })
             }
         )
+
+        // Load Stops
+        for (let schedule of (await Schedule.getSchedule(routeId)).schedules) {
+            for (let timetable of schedule.timetables) {
+                if (timetable.stop_list) {
+                    for (let stop of timetable.stop_list) {
+                        if (stop.info) {
+                            for (let data of stop.info.stops) {
+                                // Creates the stop if it has not been created yet
+                                if (!route.getStops().has(stop.stop_id)) {
+                                    // Create stop
+                                    route.addStop(stop.stop_id, routeId, "0022FF", new google.maps.LatLng(Number(data.latitude), Number(data.longitude)));
+
+                                    // Stop Text
+                                    route.getStops().get(stop.stop_id)?.setDescription(
+                                        "<div style=\"text-align:center\">" + timetable.direction + "<br />" 
+                                        + data.description + "<br /><br />"
+                                        + stop.info.departures.map(time => time.departure_text).join("<br />") +
+                                        "</div>");
+
+                                    // If the user hovers over the stop, change the width of the line
+                                    route.getStops().get(stop.stop_id)?.getMarker().addListener("mouseover", () => {
+                                        setBolded(route.getId(), true)
+                                    });
+
+                                    // If the user stops hovering over the stop, return back
+                                    route.getStops().get(stop.stop_id)?.getMarker().addListener("mouseout", () => {
+                                        setBolded(route.getId(), false)
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         
         // navigator.geolocation.getCurrentPosition(async position => {
         // console.log(await Plan.serviceNearby(position.coords.latitude, position.coords.longitude, "", 0, 20))
