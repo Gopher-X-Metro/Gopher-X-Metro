@@ -61,6 +61,8 @@ class Route extends Element {
         this.vehicles.set(vehicleId, new Vehicle(vehicleId, color, this.map));
     }
 
+    
+
     /* Private */
 
     private paths: Map<string, Path>;

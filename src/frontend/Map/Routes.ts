@@ -23,6 +23,24 @@ namespace Routes {
             setVisible(routeId, true)
         })
     }
+    export function dateException(): string[] {
+        const date = new Date();
+        const dayOfWeek = date.getDay(); // Get the current day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+        const hourOfDay = date.getHours(); // Get the current hour of the day (0-23)
+    
+        switch (dayOfWeek) {
+            case 0: // Sunday
+            case 6: // Saturday 
+                return ["121008", "121003", "122004"]; // Weekend shape IDs
+
+            default: // Weekday (Monday to Friday)
+                if (hourOfDay >= 19) { // Check if it's past 7pm (19:00)
+                    return ["121009", "121004", "122005"]; // Weekday evening shape IDs
+                } else {
+                    return ["121007", "121002", "122003"]; // Weekday shape IDs
+                }
+        }
+    }
     /**
      * Gets a route object
      * @param routeId ID of the route
@@ -39,7 +57,15 @@ namespace Routes {
      * @param visible should the route be visible
      */
     export function setVisible(routeId : string, visible : boolean) {
-        getRoute(routeId)?.getPaths().forEach(path => path.getLine().setVisible(visible));
+        getRoute(routeId)?.getPaths().forEach(path => {
+            const shapeID = path.getShapeID();
+            console.log(path)
+            if (dateException().includes(shapeID.substring(2)) && visible) {
+                path.getLine().setVisible(true); 
+            } else {
+                path.getLine().setVisible(false);
+            }
+        });
         getRoute(routeId)?.getStops()?.forEach(stop => stop.getMarker().setVisible(visible));
         getRoute(routeId)?.getVehicles().forEach(vehicle => vehicle.getMarker().map = visible ? map : null);
     }
@@ -97,6 +123,7 @@ namespace Routes {
                 }
             })
         })
+        
     }
 
     const routes = new Map<string, Route>();
