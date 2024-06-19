@@ -29,6 +29,14 @@ class Path extends Element{
      * Gets the polyline object on the map
      */
     public getLine() : google.maps.Polyline { return this.line; }
+    /**
+     * Gets this path's route ID
+     */
+    public getRouteId() : string { return this.routeId; }
+    /**
+     * Gets the path's shape ID
+     */
+    public getShapeID() : string { return this.shapeId; }
 
     /* Private */
 
