@@ -35,6 +35,16 @@ class Vehicle extends Element {
         this.infoWindow = new VehicleInfoWindow(this.marker, map);
         
         this.getInfoWindow().getWindow().set("pixelOffset", new google.maps.Size(0, -15));
+
+        // Fetch initial data
+        this.fetchVehicleData();
+        this.fetchNextStop();
+
+        // Add event listener to marker
+        this.marker.addListener('click', () => {
+            this.infoWindow.updateContent(this);
+            this.infoWindow.getWindow().open(this.map, this.marker);
+        });
     }   
     /**
      * Gets the info window object on the map
@@ -98,6 +108,38 @@ class Vehicle extends Element {
     private marker: google.maps.marker.AdvancedMarkerElement;
     private bearing: number | undefined;
     private infoWindow: VehicleInfoWindow;
+    private capacity: number; // Add this property
+    private nextStop: string; // Add this property
+
+    private async fetchVehicleData() {
+        try {
+            const response = await fetch(`https://api.metrotransit.org/nextrip/vehicles?vehicleId=${this.vehicleId}`);
+            const data = await response.json();
+            this.capacity = data.capacity || "N/A"; // Assuming API returns capacity
+            this.timestamp = data.timestamp; // Assuming API returns timestamp
+        } catch (error) {
+            console.error('Error fetching vehicle data:', error);
+        }
+    }
+
+    private async fetchNextStop() {
+        try {
+            const response = await fetch(`https://api.metrotransit.org/nextrip/predictions/${this.vehicleId}`);
+            const data = await response.json();
+            this.nextStop = data.nextStop || "N/A"; // Assuming API returns next stop
+        } catch (error) {
+            console.error('Error fetching next stop:', error);
+        }
+    }
+
+    public getCapacity(): number {
+        return this.capacity;
+    }
+
+    public getNextStop(): string {
+        return this.nextStop;
+    }
+
 }
 
 export default Vehicle;

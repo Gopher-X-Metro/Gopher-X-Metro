@@ -10,6 +10,18 @@ class VehicleInfoWindow extends InfoWindowElement {
         super(element, undefined, map);
 
         this.getWindow().set("pixelOffset", new google.maps.Size(0, -15));
+
+        public updateContent(vehicle: Vehicle) {
+            const content = document.createElement('div');
+            content.innerHTML = `
+                <div>
+                    <p>Capacity: ${vehicle.getCapacity()}</p>
+                    <p>Last Updated: ${vehicle.getLastUpdated()} seconds ago</p>
+                    <p>Next Stop: ${vehicle.getNextStop()}</p>
+                </div>
+            `;
+            this.getWindow().setContent(content);
+        }
     }
 }
 
