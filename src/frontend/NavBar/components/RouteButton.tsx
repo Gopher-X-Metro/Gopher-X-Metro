@@ -3,11 +3,6 @@ import React, {useState} from 'react';
 import URL from '../../../backend/URL.ts';
 import Routes from '../../Map/Routes.ts';
 
-
-
-
-
-
 /**
  * Creates a route button with the route that the button leads to and the route that it leads to
  * @param routeId ID of the route

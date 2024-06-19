@@ -1,6 +1,5 @@
 import Element from "../Element.ts";
 import StopInfoWindow from "./StopInfoWindow.ts";
-//import Resources from "../../../backend/Resources.ts";
 
 class Stop extends Element {
     /* Public */
@@ -13,17 +12,9 @@ class Stop extends Element {
      * @param map map the stop displays on
      */
     constructor(routeId: string, stopId: string, color: string, location: google.maps.LatLng, map: google.maps.Map) {
-        super(stopId,color,map);
+        super(stopId, color, map);
         this.routeId = routeId;
         this.location = location;
-        this.stopTimes = new Map<string, string | undefined>();
-
-        //const Circle_color = Resources.getColor(this.routeId);
-        //const tripIDs = Resources.getTripIds(this.routeId);
-        //const stopIDs = Resources.getStopIds(tripIDs[0]);
-        //const stopTimes = Resources.getStopTimes(stopId);
-        //this.stopTimes = stopTimes[tripIDs[0];
-        //const Resources.getStopTimes(tripIDs);
 
         this.marker = new window.google.maps.Circle({
             fillColor: this.getColor(),
@@ -36,14 +27,7 @@ class Stop extends Element {
             map: map
         });
 
-        this.infoWindow = new StopInfoWindow(routeId, location, map);
-
-        this.marker.addListener("click", () => {
-            if (this.infoWindow.isOpen())
-                this.infoWindow.close();
-            else
-                this.infoWindow.open();
-        })
+        this.infoWindow = new StopInfoWindow(this.marker, location, map);
     }   
     /**
      * Gets the info window object on the map
@@ -54,23 +38,16 @@ class Stop extends Element {
      */
     public getMarker() : google.maps.Circle { return this.marker; }
     /**
-     * Gets the stop times hash
+     * Sets the description of the info window
+     * @param description   the html text for the info window
      */
-    public getStopTimes() : Map<string, string | undefined> { return this.stopTimes; }
-    /**
-     * Adds a stop time to the stop times hash
-     * @param vehicleId id of the vehicle
-     * @param time time of the stop
-     */
-    public addStopTime(vehicleId: string, time: string | undefined) { this.stopTimes.set(vehicleId, time); }
+    public setDescription(description: string) : void { this.infoWindow.setContent(description); }
 
     /* Private */
 
-    private stopTimes: Map<string, string | undefined>;
     private infoWindow: StopInfoWindow;
     private location: google.maps.LatLng;
     private marker: google.maps.Circle;
-    //private stopId: string;
     private routeId: string;
 }
 

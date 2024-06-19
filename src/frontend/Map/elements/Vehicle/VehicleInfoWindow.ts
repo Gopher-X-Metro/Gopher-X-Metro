@@ -1,16 +1,13 @@
-import InfoWindow from "../InfoWindow";
+import InfoWindowElement from "../InfoWindowElement";
 
-class VehicleInfoWindow extends InfoWindow {
+class VehicleInfoWindow extends InfoWindowElement {
     /**
      * Constructor for VehicleInfoWindow
      * @param routeId   ID of the route
-     * @param location  Location of the infoWindow
      * @param map       Map the infowWindow is put on
      */
-    constructor(routeId: string, map: google.maps.Map) {
-        super(routeId, undefined, map);
-
-        this.setContent("Route ID: " + this.routeId);
+    constructor(element: google.maps.MVCObject | google.maps.marker.AdvancedMarkerElement, map: google.maps.Map) {
+        super(element, undefined, map);
 
         this.getWindow().set("pixelOffset", new google.maps.Size(0, -15));
     }
