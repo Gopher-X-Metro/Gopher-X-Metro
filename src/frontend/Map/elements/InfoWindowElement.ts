@@ -1,5 +1,4 @@
 import InfoWindow from "./InfoWindow";
-import Element from './Element';
 
 class InfoWindowElement extends InfoWindow {
     /* Public */
