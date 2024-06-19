@@ -168,8 +168,8 @@ namespace Routes {
         });
 
         // console.log(await Realtime.getDirections(routeId));
-        // console.log(await Realtime.getVehicles(routeId));
-        // console.log(await Schedule.getRouteDetails(routeId));
+        console.log(await Realtime.getVehicles(routeId));
+        console.log(await Schedule.getSchedule(routeId));
         // console.log(await Schedule.getRoute(routeId));
         // console.log(await Realtime.getRoute(routeId));
         // console.log((await Schedule.getTimeTable(routeId, 1)))
