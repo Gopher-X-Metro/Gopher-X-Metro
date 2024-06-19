@@ -49,10 +49,21 @@ class Route extends Element {
      * @param stopId ID of the stop
      * @param color color of the stop
      * @param location location of the stop
+     * @deprecated
      */
     public addStop(stopId: string, routeID: string, color: string, location: google.maps.LatLng) : void {
         this.stops.set(stopId, new Stop(routeID, stopId, color, location, this.map));
         this.stops.get(stopId)?.getMarker().setVisible(this.visible);
+    }
+    /**
+     * Adds a stop to the route
+     * @param stop the stop to add
+     */
+    public addStopObject(stopId: string, stop: Stop | undefined) : void {
+        if (stop) {
+            this.stops.set(stopId, stop);
+            stop.getMarker().setVisible(this.visible);
+        }
     }
     /**
      * Adds a vehicle to the route

@@ -7,6 +7,7 @@ import URL from "../../backend/URL.ts";
 import Route from "./elements/Route.ts";
 import Realtime from "../../backend/Realtime.ts";
 import Plan from "../../backend/Plan.ts";
+import Stop from "./elements/Stop/Stop.ts";
 
 namespace Routes {
 
@@ -55,7 +56,6 @@ namespace Routes {
     export function setBolded(routeId: string, bolded: boolean) {
         getRoute(routeId)?.getPaths()?.forEach(paths => paths.getLine().set("strokeWeight", bolded ? process.env.REACT_APP_LINE_BOLD : process.env.REACT_APP_LINE_NORMAL));
     }
-
 
     /* Private */
 
@@ -123,9 +123,13 @@ namespace Routes {
                         if (stop.info) {
                             for (let data of stop.info.stops) {
                                 // Creates the stop if it has not been created yet
+                                if (!stops.has(stop.stop_id)) {
+                                    stops.set(stop.stop_id, new Stop(routeId, stop.stop_id, "0022FF", new google.maps.LatLng(Number(data.latitude), Number(data.longitude)), map));
+                                }
+
                                 if (!route.getStops().has(stop.stop_id)) {
-                                    // Create stop
-                                    route.addStop(stop.stop_id, routeId, "0022FF", new google.maps.LatLng(Number(data.latitude), Number(data.longitude)));
+                                    // Add stop
+                                    route.addStopObject(stop.stop_id, stops.get(stop.stop_id));
 
                                     // Stop Text
                                     route.getStops().get(stop.stop_id)?.setDescription(
@@ -151,11 +155,17 @@ namespace Routes {
             }
         }
         
-        // navigator.geolocation.getCurrentPosition(async position => {
-        // console.log(await Plan.serviceNearby(position.coords.latitude, position.coords.longitude, "", 0, 20))
-        // console.log(await Plan.serviceNearby(44.97369560732433, -93.2317259515601, "", 1, 10))
-        // console.log(await Plan.nearestLandmark(44.97369560732433, -93.2317259515601, "", 1, 10, ""))
-        // });
+        let center = { lat: 44.97369560732433, lng: -93.2317259515601 }; // UMN location
+
+        navigator.geolocation.getCurrentPosition(async position => {
+            // console.log(await Plan.serviceNearby(center.lat, center.lng, null, 1, 20))
+            // console.log(await Plan.routeLandmarks(routeId, null))
+            console.log(await Plan.serviceNearby(center.lat, center.lng, null, 902, 0))
+            // console.log(await Plan.nearestLandmark(center.lat, center.lng, null, 1, 10, null))
+            // console.log(await Plan.nearestParkAndRides(center.lat, center.lng, null, 1))
+            // console.log(await Plan.suggest("Blegen Hall", null))
+            // console.log(await Plan.findaddress("dHA9MCNsb2M9MjY4MCNsbmc9MCNwbD0zOTcwI2xicz0xNDozMTQ="))
+        });
 
         // console.log(await Realtime.getDirections(routeId));
         // console.log(await Realtime.getVehicles(routeId));
@@ -195,10 +205,11 @@ namespace Routes {
         )
     }
 
-    const routes = new Map<string, Route>();
-    let map: google.maps.Map;
-
     /* Private */
+
+    const routes = new Map<string, Route>();
+    const stops = new Map<string, Stop>();
+    let map: google.maps.Map;
 
     /**
      * Updates the current list of vehicles

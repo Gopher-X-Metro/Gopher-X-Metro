@@ -15,7 +15,6 @@ class Stop extends Element {
         super(stopId, color, map);
         this.routeId = routeId;
         this.location = location;
-        this.stopTimes = new Map<string, string | undefined>();
 
         this.marker = new window.google.maps.Circle({
             fillColor: this.getColor(),
@@ -39,16 +38,6 @@ class Stop extends Element {
      */
     public getMarker() : google.maps.Circle { return this.marker; }
     /**
-     * Gets the stop times hash
-     */
-    public getStopTimes() : Map<string, string | undefined> { return this.stopTimes; }
-    /**
-     * Adds a stop time to the stop times hash
-     * @param vehicleId id of the vehicle
-     * @param time time of the stop
-     */
-    public addStopTime(vehicleId: string, time: string | undefined) { this.stopTimes.set(vehicleId, time); }
-    /**
      * Sets the description of the info window
      * @param description   the html text for the info window
      */
@@ -56,7 +45,6 @@ class Stop extends Element {
 
     /* Private */
 
-    private stopTimes: Map<string, string | undefined>;
     private infoWindow: StopInfoWindow;
     private location: google.maps.LatLng;
     private marker: google.maps.Circle;
