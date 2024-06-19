@@ -229,3 +229,19 @@ div#title-bar > h1 > .city {
     background-color: rgb(30, 53, 53);
     margin: 0 auto;
   }
+
+
+
+  /* Styling for LoadingScreen.tsx */
+  @keyframes rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .rotate-wheel {
+    animation: rotate 0.5s linear infinite;
+  }
