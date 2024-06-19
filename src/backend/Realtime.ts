@@ -31,7 +31,8 @@ namespace Realtime {
      * @param routeId the route ID
      * @returns a list of vehicle data
      */
-    export async function getVehicles(routeId: string) : Promise<Array<any>> {
+    export async function getVehicles(routeId: string) : Promise<any> {
+        
         // Check if University Route
         if (Object.keys(UNIVERSITY_ROUTES).includes(routeId)) {
             let json = (await getRealtimeGTFSUniversity()).vehicles
@@ -47,6 +48,9 @@ namespace Realtime {
 
             return json;
         }
+
+        // Check if the route exists in Transit
+        if (!(await getRoute(routeId))) return 
 
         // Run on Metro Routes
         return await fetch("https://svc.metrotransit.org/nextrip/vehicles/"+routeId).then(async response => {
