@@ -3,12 +3,10 @@ export default class InfoWindow {
 
     /**
      * InfoWindow Constructor
-     * @param routeId   route ID the InfoWindow belongs to
      * @param location  location of the InfoWindow
      * @param map       map the InfoWindow displays on
      */
-    constructor(routeId: string, location: google.maps.LatLng | undefined, map: google.maps.Map) {
-        this.routeId = routeId;
+    constructor(location: google.maps.LatLng | undefined, map: google.maps.Map) {
         this.location = location;
         this.map = map;
         
@@ -41,7 +39,7 @@ export default class InfoWindow {
         if (this.window) this.window.open(this.map);
     }
     /**
-     * 
+     * If the info window is displaying on the map
      */
     public isOpen() {
         return this.window.get("map") != null;
@@ -61,7 +59,6 @@ export default class InfoWindow {
 
     /* Private */
 
-    protected routeId: string;
     protected location: google.maps.LatLng | undefined;
     protected window: google.maps.InfoWindow;
     protected map: google.maps.Map;

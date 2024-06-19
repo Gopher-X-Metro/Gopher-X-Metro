@@ -31,27 +31,35 @@ namespace Realtime {
      * @param routeId the route ID
      * @returns a list of vehicle data
      */
-    export async function getVehicles(routeId: string) : Promise<Array<any>> {
+    export async function getVehicles(routeId: string) : Promise<any> {
+        
+        // Check if University Route
+        if (Object.keys(UNIVERSITY_ROUTES).includes(routeId)) {
+            let json = (await getRealtimeGTFSUniversity()).vehicles
+            .filter(vehicle => UNIVERSITY_ROUTES[routeId] === vehicle.routeID);
+
+            json.forEach(vehicle => {
+                vehicle.trip_id = vehicle.tripID;
+                vehicle.latitude = vehicle.lat;
+                vehicle.longitude = vehicle.lng;
+                vehicle.timestamp = vehicle.positionUpdated;
+                vehicle.bearing = vehicle.linkBearing;
+            })
+
+            return json;
+        }
+
+        // Check if the route exists in Transit
+        if (!(await getRoute(routeId))) return 
+
+        // Run on Metro Routes
         return await fetch("https://svc.metrotransit.org/nextrip/vehicles/"+routeId).then(async response => {
             if (response.ok && response.status === 200){
                 let json = await response.json();
 
-                if (json.length === 0) {
-                    json = (await getRealtimeGTFSUniversity()).vehicles
-                    .filter(vehicle => UNIVERSITY_ROUTES[routeId] === vehicle.routeID);
-
-                    json.forEach(vehicle => {
-                        vehicle.trip_id = vehicle.tripID;
-                        vehicle.latitude = vehicle.lat;
-                        vehicle.longitude = vehicle.lng;
-                        vehicle.timestamp = vehicle.positionUpdated;
-                        vehicle.bearing = vehicle.linkBearing;
-                    })
-                } else {
-                    json.forEach(vehicle => {
-                        vehicle.timestamp = vehicle.location_time;
-                    })
-                }
+                json.forEach(vehicle => {
+                    vehicle.timestamp = vehicle.location_time;
+                })
             
                 return json;
             } else

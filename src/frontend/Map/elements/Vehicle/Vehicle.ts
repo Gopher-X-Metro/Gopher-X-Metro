@@ -1,7 +1,5 @@
 import Element from "../Element.ts";
 import VehicleInfoWindow from "./VehicleInfoWindow.ts";
-import { transit_realtime } from "gtfs-realtime-bindings";
-
 
 class Vehicle extends Element {
 
@@ -67,6 +65,15 @@ class Vehicle extends Element {
                 this.infoWindow.open();
         })
     }
+
+        this.infoWindow = new VehicleInfoWindow(this.marker, map);
+        
+        this.getInfoWindow().getWindow().set("pixelOffset", new google.maps.Size(0, -15));
+    }   
+    /**
+     * Gets the info window object on the map
+     */
+    public getInfoWindow() : VehicleInfoWindow { return this.infoWindow; }
 
     /**
      * Gets the length in ms of the time between when position was updated and now
@@ -143,10 +150,10 @@ class Vehicle extends Element {
     }
     
     /* Private */
+
     private tripId: string | undefined;
     private timestamp : number | undefined;
     private marker: google.maps.marker.AdvancedMarkerElement;
-    private stopTimeUpdates: transit_realtime.TripUpdate.IStopTimeUpdate[] | undefined | null;
     private bearing: number | undefined;
     private arrowImg: HTMLImageElement | null = null;
     private infoWindow: VehicleInfoWindow;
