@@ -57,18 +57,6 @@ class Vehicle extends Element {
         })
 
         this.infoWindow = new VehicleInfoWindow(this.marker, map);
-
-        this.marker.addListener("click", () => {
-            if (this.infoWindow.isOpen())
-                this.infoWindow.close();
-            else
-                this.infoWindow.open();
-        })
-    
-
-        this.infoWindow = new VehicleInfoWindow(this.marker, map);
-        
-        this.getInfoWindow().getWindow().set("pixelOffset", new google.maps.Size(0, -15));
     }   
     /**
      * Gets the info window object on the map
