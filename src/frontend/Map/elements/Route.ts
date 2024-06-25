@@ -51,8 +51,8 @@ class Route extends Element {
      * @param location location of the stop
      * @deprecated
      */
-    public addStop(stopId: string, routeID: string, color: string, location: google.maps.LatLng) : void {
-        this.stops.set(stopId, new Stop(routeID, stopId, color, location, this.map));
+    public addStop(stopId: string, color: string, location: google.maps.LatLng) : void {
+        this.stops.set(stopId, new Stop(stopId, color, location, this.map));
         this.stops.get(stopId)?.getMarker().setVisible(this.visible);
     }
     /**

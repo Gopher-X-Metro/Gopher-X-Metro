@@ -57,12 +57,7 @@ class Vehicle extends Element {
         })
 
         this.infoWindow = new VehicleInfoWindow(this.marker, map);
-    }   
-    /**
-     * Gets the info window object on the map
-     */
-    public getInfoWindow() : VehicleInfoWindow { return this.infoWindow; }
-
+    }
     /**
      * Gets the length in ms of the time between when position was updated and now
      */
@@ -114,13 +109,20 @@ class Vehicle extends Element {
             this.arrowImg.style.transform = `rotate(${bearing}deg)`;
         }
     }
-
     /**
      * Sets if the vehicle is visible
      * @param visible the visibility of the vehicle
      */
     public setVisible(visible: boolean) {
         this.marker.map = visible ? this.map : null
+    }
+    /**
+     * Updates the info window information
+     */
+    public updateInfoWindow() {
+        this.infoWindow.setContent(
+            String(Math.round(Number(this.getLastUpdated())))
+        );
     }
     
     /* Private */
