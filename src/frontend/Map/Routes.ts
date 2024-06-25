@@ -123,9 +123,9 @@ namespace Routes {
                         if (stop.info) {
                             for (let data of stop.info.stops) {
                                 // Creates the stop if it has not been created yet
-                                if (!stops.has(stop.stop_id)) {
-                                    stops.set(stop.stop_id, new Stop(routeId, stop.stop_id, "0022FF", new google.maps.LatLng(Number(data.latitude), Number(data.longitude)), map));
-                                }
+                                if (!stops.has(stop.stop_id))
+                                    stops.set(stop.stop_id, new Stop(stop.stop_id, "0022FF", new google.maps.LatLng(Number(data.latitude), Number(data.longitude)), map));
+                                
 
                                 if (!route.getStops().has(stop.stop_id)) {
                                     // Add stop
@@ -160,7 +160,7 @@ namespace Routes {
         navigator.geolocation.getCurrentPosition(async position => {
             // console.log(await Plan.serviceNearby(center.lat, center.lng, null, 1, 20))
             // console.log(await Plan.routeLandmarks(routeId, null))
-            console.log(await Plan.serviceNearby(center.lat, center.lng, null, 902, 0))
+            // console.log(await Plan.serviceNearby(center.lat, center.lng, null, 902, 0))
             // console.log(await Plan.nearestLandmark(center.lat, center.lng, null, 1, 10, null))
             // console.log(await Plan.nearestParkAndRides(center.lat, center.lng, null, 1))
             // console.log(await Plan.suggest("Blegen Hall", null))
@@ -168,7 +168,7 @@ namespace Routes {
         });
 
         // console.log(await Realtime.getDirections(routeId));
-        console.log(await Realtime.getVehicles(routeId));
+        // console.log(await Realtime.getVehicles(routeId));
         console.log(await Schedule.getSchedule(routeId));
         // console.log(await Schedule.getRoute(routeId));
         // console.log(await Realtime.getRoute(routeId));
@@ -178,6 +178,8 @@ namespace Routes {
         // console.log((await Realtime.getStops(routeId, 0)))
         // console.log((await Plan.routeLandmarks(routeId, "")).landmarks.landmark.filter(landmark => landmark.distance < 0.01))
         // console.log((await Realtime.getStopInfo(routeId, 1, "UNDA")))
+
+        console.log(stops);
     }
 
     /**
@@ -209,6 +211,7 @@ namespace Routes {
 
     const routes = new Map<string, Route>();
     const stops = new Map<string, Stop>();
+    // const vehicles = new Map<string, Vehicle>();
     let map: google.maps.Map;
 
     /**
@@ -239,9 +242,7 @@ namespace Routes {
 
             vehicle.setBusBearing(bearing);
 
-            vehicle.getInfoWindow().setContent(
-                String(Math.round(Number(vehicle.getLastUpdated())))
-            );
+            vehicle.updateInfoWindow();
         }
     }
 }
