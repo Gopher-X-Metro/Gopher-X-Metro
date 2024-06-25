@@ -39,6 +39,10 @@ class Stop extends Element {
     public updateInfoWindow() : void {
     }
     /**
+     * Updates the info window information
+     */
+    public closeInfoWindow() : void { this.infoWindow.close(); }
+    /**
      * Sets the description of the info window
      * @param description   the html text for the info window
      * @deprecated

@@ -17,12 +17,8 @@ function RouteButton({ routeId, text }) {
     // Get all markers associated with the routeId
     const stops = Routes.getRoute(routeId)?.getStops();
     // Iterate over markers and close their info windows
-    stops.forEach(stop => {
-        const infoWindow = stop.getInfoWindow();
-        if (infoWindow){
-            infoWindow.close();
-        }
-    });
+    if (stops)
+        stops.forEach(stop => { stop.closeInfoWindow(); });
 };
   return (
       <button className={`${isActive ? 'active' : ''} route-${routeId}`} onClick={() => {
