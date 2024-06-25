@@ -21,17 +21,12 @@ class Vehicle extends Element {
         // Create bus container
         const busContainer = document.createElement("div");
         busContainer.style.position = "absolute";
-        busContainer.style.left = "50%";
-        busContainer.style.top = "50%";
         busContainer.style.transform = "translate(-50%, -50%)";
 
         // Create arrow container
         const arrowContainer = document.createElement("div");
         arrowContainer.style.position = "absolute";
-        arrowContainer.style.left = "50%";
-        arrowContainer.style.top = "50%";
         arrowContainer.style.transform = "translate(-50%, -50%)";
-        arrowContainer.style.top = "-10px";
 
         // Create bus image
         const busImage = document.createElement("img")
@@ -45,8 +40,9 @@ class Vehicle extends Element {
         arrowImage.width = 40;
         arrowContainer.appendChild(arrowImage);
 
-        // Store reference to arrow image
+        // Store reference to arrow image and container
         this.arrowImg = arrowImage;
+        this.arrowCont = arrowContainer;
 
         contents.appendChild(busContainer);
         contents.appendChild(arrowContainer);
@@ -112,6 +108,7 @@ class Vehicle extends Element {
         this.bearing = bearing;
         if (this.arrowImg) {
             this.arrowImg.style.transform = `rotate(${bearing}deg)`;
+            this.setArrowImageOrientation(bearing);
         }
     }
 
@@ -122,6 +119,48 @@ class Vehicle extends Element {
     public setVisible(visible: boolean) {
         this.marker.map = visible ? this.map : null
     }
+
+    /**
+     * Sets position of bus arrow image around center of bus image
+     * @param bearing the orientation of the bus
+     */
+    public setArrowImageOrientation(bearing: number) : void {
+        if (this.arrowCont) {
+            if (bearing > 0 && bearing < 45) {
+                this.arrowCont.style.top = "-10px";
+                this.arrowCont.style.left = "5px";
+            } else if (bearing >= 45 && bearing < 90) {
+                this.arrowCont.style.top = "-5px";
+                this.arrowCont.style.left = "10px";
+            } else if (bearing === 90) {
+                this.arrowCont.style.left = "10px";
+            } else if (bearing > 90 && bearing < 135) {
+                this.arrowCont.style.top = "5px";
+                this.arrowCont.style.left = "10px";
+            } else if (bearing >= 135 && bearing < 180) {
+                this.arrowCont.style.top = "10px";
+                this.arrowCont.style.left = "5px";
+            } else if (bearing === 180) {
+                this.arrowCont.style.top = "10px";
+            } else if (bearing > 180 && bearing < 225) {
+                this.arrowCont.style.top = "10px";
+                this.arrowCont.style.left = "-5px";
+            } else if (bearing >= 225 && bearing < 270) {
+                this.arrowCont.style.top = "5px";
+                this.arrowCont.style.left = "-10px";
+            } else if (bearing === 270) {
+                this.arrowCont.style.left = "-10px";
+            } else if (bearing > 270 && bearing < 315) {
+                this.arrowCont.style.top = "-5px";
+                this.arrowCont.style.left = "-10px";
+            } else if (bearing >= 315 && bearing < 360) {
+                this.arrowCont.style.top = "-10px";
+                this.arrowCont.style.left = "-5px";
+            } else {
+                this.arrowCont.style.top = "-10px";
+            }
+        }
+    }
     
     /* Private */
 
@@ -130,6 +169,7 @@ class Vehicle extends Element {
     private marker: google.maps.marker.AdvancedMarkerElement;
     private bearing: number | undefined;
     private arrowImg: HTMLImageElement | null = null;
+    private arrowCont: HTMLDivElement;
     private infoWindow: VehicleInfoWindow;
 }
 
