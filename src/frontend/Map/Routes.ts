@@ -133,10 +133,14 @@ namespace Routes {
 
                                     // Stop Text
                                     route.getStops().get(stop.stop_id)?.setDescription(
-                                        "<div style=\"text-align:center\">" + timetable.direction + "<br />" 
-                                        + data.description + "<br /><br />"
-                                        + stop.info.departures.map(time => time.departure_text).join("<br />") +
-                                        "</div>");
+                                        "<div style=\"text-align:center; font-family: Arial, sans-serif;\">" +
+                                            "<h2 style=\"margin-bottom: 10px;\">" + timetable.direction + "</h2>" +
+                                            "<p style=\"margin-bottom: 20px; font-size: 16px;\">" + data.description + "</p>" +
+                                            "<div style=\"margin-top: 20px;\">" +
+                                                stop.info.departures.map(time => "<p style=\"margin: 5px 0; font-size: 14px;\">" + time.departure_text + "</p>").join("") +
+                                            "</div>" +
+                                        "</div>"
+                                    );
 
                                     // If the user hovers over the stop, change the width of the line
                                     route.getStops().get(stop.stop_id)?.getMarker().addListener("mouseover", () => {
