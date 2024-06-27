@@ -17,12 +17,12 @@ class Stop extends Element {
         this.location = location;
 
         this.marker = new window.google.maps.Circle({
-            fillColor: this.getColor(),
-            fillOpacity: 100,
-            strokeWeight: 10,
-            strokeColor: this.getColor(),
+            fillColor: color,
+            fillOpacity: 1,
+            strokeWeight: 8,
+            strokeColor: color,
             center: this.location,
-            radius: 5,
+            radius: 6.5,
             clickable: true,
             map: map
         });
