@@ -106,6 +106,34 @@ class Vehicle extends Element {
             this.setArrowImageOrientation(bearing);
         }
     }
+
+    /**
+     * Gets the direction the lightrail is heading
+     */
+    public getDirectionID(): number | undefined { return this.direction_id; }
+
+    /**
+     * Sets the direction the blueline lightrail is heading
+     * @param direction_id the orientation of the blueline lightrail
+     */
+    public setBlueDirectionID(direction_id: number): void {
+        this.direction_id = direction_id;
+        if (this.arrowImg) {
+            this.setArrowImageBluelineOrientation(direction_id);
+        }
+    }
+
+    /**
+     * Sets the direction the greenline lightrail is heading
+     * @param direction_id the orientation of the greenline lightrail
+     */
+    public setGreenDirectionID(direction_id: number): void {
+        this.direction_id = direction_id;
+        if (this.arrowImg) {
+            this.setArrowImageGreenlineOrientation(direction_id);
+        }
+    }
+
     /**
      * Sets if the vehicle is visible
      * @param visible the visibility of the vehicle
@@ -155,6 +183,39 @@ class Vehicle extends Element {
             }
         }
     }
+
+    /**
+     * Sets position of bus arrow image around center of bus image
+     * @param direction_id the orientation of the blueline lightrail
+     */
+    public setArrowImageBluelineOrientation(direction_id: number) : void {
+        if (this.arrowCont && this.arrowImg) {
+            if (direction_id === 0) {
+                this.arrowImg.style.transform = `rotate(${0}deg)`;
+                this.arrowCont.style.top = "-10px";
+            } else if (direction_id === 1) {
+                this.arrowImg.style.transform = `rotate(${180}deg)`;
+                this.arrowCont.style.top = "10px";
+            }
+        }
+    }
+
+    /**
+     * Sets position of bus arrow image around center of bus image
+     * @param direction_id the orientation of the greenline lightrail
+     */
+    public setArrowImageGreenlineOrientation(direction_id: number) : void {
+        if (this.arrowCont && this.arrowImg) {
+            if (direction_id === 0) {
+                this.arrowImg.style.transform = `rotate(${90}deg)`;
+                this.arrowCont.style.left = "10px";
+            } else if (direction_id === 1) {
+                this.arrowImg.style.transform = `rotate(${270}deg)`;
+                this.arrowCont.style.left = "-10px";
+            }
+        }
+    }
+
     /**
      * Updates the info window information
      */
@@ -170,6 +231,7 @@ class Vehicle extends Element {
     private timestamp : number | undefined;
     private marker: google.maps.marker.AdvancedMarkerElement;
     private bearing: number | undefined;
+    private direction_id: number | undefined;
     private arrowImg: HTMLImageElement | null = null;
     private arrowCont: HTMLDivElement;
     private infoWindow: VehicleInfoWindow;
