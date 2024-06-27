@@ -99,7 +99,8 @@ namespace Routes {
                             vehicle.trip_id,
                             vehicle.timestamp,
                             new google.maps.LatLng(vehicle.latitude as number, vehicle.longitude as number),
-                            vehicle.bearing
+                            vehicle.bearing,
+                            vehicle.direction_id
                         );
 
                         // If the user hovers over the vehicle, change the width of the line
@@ -203,7 +204,8 @@ namespace Routes {
                         vehicle.trip_id,
                         vehicle.timestamp,
                         new google.maps.LatLng(vehicle.latitude as number, vehicle.longitude as number),
-                        vehicle.bearing
+                        vehicle.bearing,
+                        vehicle.direction_id
                     );
                 })
             }
@@ -232,7 +234,8 @@ namespace Routes {
         tripId: string,
         timestamp: number,
         location: google.maps.LatLng,
-        bearing: number) {
+        bearing: number,
+        direction_id: number) {
 
         // Find the vehicle
         let vehicle = Routes.getRoute(routeId)?.getVehicles()?.get(vehicleId);
@@ -243,8 +246,13 @@ namespace Routes {
             vehicle.setPosition(location, timestamp);
 
             vehicle.setTripId(tripId);
-
-            vehicle.setBusBearing(bearing);
+            if (routeId === "901") {
+                vehicle.setBlueDirectionID(direction_id);
+            } else if (routeId === "902") {
+                vehicle.setGreenDirectionID(direction_id);
+            } else {
+                vehicle.setBusBearing(bearing);
+            }
 
             vehicle.updateInfoWindow();
         }
