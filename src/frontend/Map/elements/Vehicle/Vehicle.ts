@@ -147,40 +147,12 @@ class Vehicle extends Element {
      * @param bearing the orientation of the bus
      */
     public setArrowImageOrientation(bearing: number) : void {
+        const radius = 10;
+        const radians = (bearing + 90) / 180 * Math.PI;
+        
         if (this.arrowCont) {
-            if (bearing > 0 && bearing < 45) {
-                this.arrowCont.style.top = "-10px";
-                this.arrowCont.style.left = "5px";
-            } else if (bearing >= 45 && bearing < 90) {
-                this.arrowCont.style.top = "-5px";
-                this.arrowCont.style.left = "10px";
-            } else if (bearing === 90) {
-                this.arrowCont.style.left = "10px";
-            } else if (bearing > 90 && bearing < 135) {
-                this.arrowCont.style.top = "5px";
-                this.arrowCont.style.left = "10px";
-            } else if (bearing >= 135 && bearing < 180) {
-                this.arrowCont.style.top = "10px";
-                this.arrowCont.style.left = "5px";
-            } else if (bearing === 180) {
-                this.arrowCont.style.top = "10px";
-            } else if (bearing > 180 && bearing < 225) {
-                this.arrowCont.style.top = "10px";
-                this.arrowCont.style.left = "-5px";
-            } else if (bearing >= 225 && bearing < 270) {
-                this.arrowCont.style.top = "5px";
-                this.arrowCont.style.left = "-10px";
-            } else if (bearing === 270) {
-                this.arrowCont.style.left = "-10px";
-            } else if (bearing > 270 && bearing < 315) {
-                this.arrowCont.style.top = "-5px";
-                this.arrowCont.style.left = "-10px";
-            } else if (bearing >= 315 && bearing < 360) {
-                this.arrowCont.style.top = "-10px";
-                this.arrowCont.style.left = "-5px";
-            } else {
-                this.arrowCont.style.top = "-10px";
-            }
+            this.arrowCont.style.top = (-Math.sin(radians) * radius).toString() + "px";
+            this.arrowCont.style.left = (-Math.cos(radians) * radius).toString() + "px";
         }
     }
 
