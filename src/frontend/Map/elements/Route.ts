@@ -49,10 +49,10 @@ class Route extends Element {
      * @param stopId ID of the stop
      * @param color color of the stop
      * @param location location of the stop
-     * @deprecated
+     * @deprecated We no longer use addStop to create stops
      */
-    public addStop(stopId: string, color: string, location: google.maps.LatLng) : void {
-        this.stops.set(stopId, new Stop(stopId, color, location, this.map));
+    public addStop(stopId: string, color: string, name: string, location: google.maps.LatLng) : void {
+        this.stops.set(stopId, new Stop(stopId, color, name, location, this.map));
         this.stops.get(stopId)?.getMarker().setVisible(this.visible);
     }
     /**
@@ -70,10 +70,21 @@ class Route extends Element {
      * @param vehicleId ID of the vehicle
      * @param tripId trip ID of the vehicle
      * @param color color of the vehicle's marker
+     * @deprecated We no longer use addVehicle to create vehicles
      */
     public addVehicle(vehicleId: string, color: string, images: string[2]) : void {
         this.vehicles.set(vehicleId, new Vehicle(vehicleId, color, this.map, images));
         this.vehicles.get(vehicleId)?.setVisible(this.visible);
+    }
+    /**
+     * Adds a vehicle to the route
+     * @param vehicle   the vehicle to add
+     */
+    public addVehicleObject(vehicleId: string, vehicle: Vehicle | undefined) : void {
+        if (vehicle) {
+            this.vehicles.set(vehicleId, vehicle);
+            vehicle.setVisible(this.visible);
+        }
     }
     /**
      * Sets the visibility of the route

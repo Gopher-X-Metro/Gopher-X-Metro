@@ -13,12 +13,6 @@ import LoadingScreen from "./LoadingScreen.tsx";
 export default function Map() {
     const [mapLoaded, setMapLoaded] = useState(false);
 
-
-
-
-
-
-
     const init = async () => {
         let center = { lat: 44.97369560732433, lng: -93.2317259515601 }; // UMN location
         const zoom = 15;
@@ -56,10 +50,16 @@ export default function Map() {
 
         // Updates vehicle and marker postions every 0.5 seconds
         setInterval(() => {
+            console.log("refresh vehicles")
             Routes.refreshVehicles();
             Marker.update();
         }, 500); // ms of wait
 
+        // Updates stops every 30 seconds
+        setInterval(() => {
+            console.log("refresh stops")
+            Routes.refreshStops();
+        }, 30000); // ms of wait
 
     }
 
@@ -69,7 +69,6 @@ export default function Map() {
         const minimumDelay = 2000;
 
         const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
 
         // Initialize the map and wait for the minimum delay
         Promise.all([init(), delay(minimumDelay)]).then(() => {
