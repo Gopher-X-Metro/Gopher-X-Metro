@@ -53,16 +53,18 @@ class Stop extends Element {
             "<div style=\"text-align:center; font-family: Arial, sans-serif;\">" +
                 "<h2 style=\"margin-bottom: 10px;\">" + this.name + "</h2>" +
                 "<p style=\"margin-bottom: 20px; font-size: 16px;\">" + this.name + "</p>" +
-                "<div style=\"margin-top: 20px;\">" + this.infoWindowBody() +
-                "</div>" +
+                "<ul style=\"margin-top: 20px; list-style: none;\">" + this.infoWindowBody() +
+                "</ul>" +
             "</div>")
     }
     public infoWindowBody() {
         let output = ""
 
         for (const route of this.departures) {
+            output += "<li style=\"display: inline-block; margin-left: 10px; margin-right: 10px; vertical-align: text-top;\">"
             output += "<h3 style=\"margin-top: 10px;\">- " + route[0] + " -</h3>"
             output += route[1].map(departure => "<p style=\"margin: 5px 0; font-size: 14px;\">" + departure.departure_text + "</p>").join("")
+            output += "</li>"
         }
 
         return ( output )
