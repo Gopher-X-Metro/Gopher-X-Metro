@@ -20,7 +20,7 @@ class Stop extends Element {
      * @param location location of the stop
      * @param map map the stop displays on
      */
-    constructor(stopId: string, color: string, name: string, location: google.maps.LatLng, map: google.maps.Map) {
+    constructor(stopId: string, color: string, name: string, direction: string, location: google.maps.LatLng, map: google.maps.Map) {
         super(stopId, color, map);
         this.location = location;
 
@@ -40,6 +40,7 @@ class Stop extends Element {
         this.departures = new Map<string, Array<departure>>();
 
         this.name = name;
+        this.direction = direction;
     }
     /**
      * Gets the marker object on the map
@@ -51,7 +52,7 @@ class Stop extends Element {
     public updateInfoWindow(routeId: string) : void {
         this.infoWindow.setContent(
             "<div style=\"text-align:center; font-family: Arial, sans-serif;\">" +
-                "<h2 style=\"margin-bottom: 10px;\">" + this.name + "</h2>" +
+                "<h2 style=\"margin-bottom: 10px;\">" + this.direction + "</h2>" +
                 "<p style=\"margin-bottom: 20px; font-size: 16px;\">" + this.name + "</p>" +
                 "<ul style=\"margin-top: 20px; list-style: none;\">" + this.infoWindowBody() +
                 "</ul>" +
@@ -100,6 +101,7 @@ class Stop extends Element {
     private location: google.maps.LatLng;
     private marker: google.maps.Circle;
     private departures: Map<string, Array<departure>>;
+    private direction: string;
 }
 
 export default Stop;
