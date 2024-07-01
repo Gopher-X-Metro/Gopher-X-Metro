@@ -230,7 +230,7 @@ namespace Routes {
                                 for (let data of stop.info.stops) {
                                     // Creates the stop if it has not been created yet
                                     if (!stops.has(stop.stop_id)) {
-                                        stops.set(stop.stop_id, new Stop(stop.stop_id, "0022FF", data.description, new google.maps.LatLng(Number(data.latitude), Number(data.longitude)), map));
+                                        stops.set(stop.stop_id, new Stop(stop.stop_id, "0022FF", data.description, timetable.direction, new google.maps.LatLng(Number(data.latitude), Number(data.longitude)), map));
                                         
                                         const route = routes.get(routeId)
 
