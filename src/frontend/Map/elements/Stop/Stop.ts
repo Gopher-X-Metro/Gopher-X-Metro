@@ -1,6 +1,14 @@
 import Element from "../Element.ts";
 import StopInfoWindow from "./StopInfoWindow.ts";
 
+interface departure {
+    routeId: string;
+    tripId: string;
+    departure_text: string;
+    departure_time: number;
+    direction_text: string;
+    description: string;
+}
 
 class Stop extends Element {
     /* Public */
@@ -12,7 +20,7 @@ class Stop extends Element {
      * @param location location of the stop
      * @param map map the stop displays on
      */
-    constructor(stopId: string, color: string, location: google.maps.LatLng, map: google.maps.Map) {
+    constructor(stopId: string, color: string, name: string, location: google.maps.LatLng, map: google.maps.Map) {
         super(stopId, color, map);
         this.location = location;
 
@@ -28,6 +36,10 @@ class Stop extends Element {
         });
 
         this.infoWindow = new StopInfoWindow(this.marker, location, map);
+
+        this.departures = new Map<string, Array<departure>>();
+
+        this.name = name;
     }
     /**
      * Gets the marker object on the map
@@ -36,12 +48,43 @@ class Stop extends Element {
     /**
      * Updates the info window information
      */
-    public updateInfoWindow() : void {
+    public updateInfoWindow(routeId: string) : void {
+        this.infoWindow.setContent(
+            "<div style=\"text-align:center; font-family: Arial, sans-serif;\">" +
+                "<h2 style=\"margin-bottom: 10px;\">" + this.name + "</h2>" +
+                "<p style=\"margin-bottom: 20px; font-size: 16px;\">" + this.name + "</p>" +
+                "<div style=\"margin-top: 20px;\">" + this.infoWindowBody() +
+                "</div>" +
+            "</div>")
+    }
+    public infoWindowBody() {
+        let output = ""
+
+        for (const route of this.departures) {
+            output += "<h3 style=\"margin-top: 10px;\">- " + route[0] + " -</h3>"
+            output += route[1].map(departure => "<p style=\"margin: 5px 0; font-size: 14px;\">" + departure.departure_text + "</p>").join("")
+        }
+
+        return ( output )
     }
     /**
      * Updates the info window information
      */
     public closeInfoWindow() : void { this.infoWindow.close(); }
+    public addDeparture(routeId: string, tripId: string, departure_text: string, direction_text: string, description: string, departure_time: number) {
+        if (!this.departures.has(routeId))
+            this.departures.set(routeId, new Array<departure>())
+
+        this.departures.get(routeId)?.push({
+            routeId: routeId,
+            tripId: tripId,
+            departure_text: departure_text,
+            direction_text: direction_text,
+            description: description,
+            departure_time: departure_time
+        })
+    }
+    public clearDepartures() : void { this.departures.clear() }
     /**
      * Sets the description of the info window
      * @param description   the html text for the info window
@@ -50,9 +93,11 @@ class Stop extends Element {
     public setDescription(description: string) : void { this.infoWindow.setContent(description); }
 
     /* Private */
+    private name: string;
     private infoWindow: StopInfoWindow;
     private location: google.maps.LatLng;
     private marker: google.maps.Circle;
+    private departures: Map<string, Array<departure>>;
 }
 
 export default Stop;

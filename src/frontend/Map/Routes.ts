@@ -116,49 +116,52 @@ namespace Routes {
             }
         )
 
+        refreshStops();
+
         // Load Stops
-        for (let schedule of (await Schedule.getSchedule(routeId)).schedules) {
-            for (let timetable of schedule.timetables) {
-                if (timetable.stop_list) {
-                    for (let stop of timetable.stop_list) {
-                        if (stop.info) {
-                            for (let data of stop.info.stops) {
-                                // Creates the stop if it has not been created yet
-                                if (!stops.has(stop.stop_id))
-                                    stops.set(stop.stop_id, new Stop(stop.stop_id, "0022FF", new google.maps.LatLng(Number(data.latitude), Number(data.longitude)), map));
-                                
+        // for (let schedule of (await Schedule.getSchedule(routeId)).schedules) {
+        //     for (let timetable of schedule.timetables) {
+        //         if (timetable.stop_list) {
+        //             for (let stop of timetable.stop_list) {
+        //                 if (stop.info) {
+        //                     for (let data of stop.info.stops) {
+        //                         // Creates the stop if it has not been created yet
+        //                         if (!stops.has(stop.stop_id)){
+        //                             stops.set(stop.stop_id, new Stop(stop.stop_id, "0022FF", data.description, new google.maps.LatLng(Number(data.latitude), Number(data.longitude)), map));
+        //                             stops.get(stop.stop_id)?.updateInfoWindow();
+        //                         }
 
-                                if (!route.getStops().has(stop.stop_id)) {
-                                    // Add stop
-                                    route.addStopObject(stop.stop_id, stops.get(stop.stop_id));
+        //                         if (!route.getStops().has(stop.stop_id)) {
+        //                             // Add stop
+        //                             route.addStopObject(stop.stop_id, stops.get(stop.stop_id));
 
-                                    // Stop Text
-                                    route.getStops().get(stop.stop_id)?.setDescription(
-                                        "<div style=\"text-align:center; font-family: Arial, sans-serif;\">" +
-                                            "<h2 style=\"margin-bottom: 10px;\">" + timetable.direction + "</h2>" +
-                                            "<p style=\"margin-bottom: 20px; font-size: 16px;\">" + data.description + "</p>" +
-                                            "<div style=\"margin-top: 20px;\">" +
-                                                stop.info.departures.map(time => "<p style=\"margin: 5px 0; font-size: 14px;\">" + time.departure_text + "</p>").join("") +
-                                            "</div>" +
-                                        "</div>"
-                                    );
+        //                             // Stop Text
+        //                             // route.getStops().get(stop.stop_id)?.setDescription(
+        //                             //     "<div style=\"text-align:center; font-family: Arial, sans-serif;\">" +
+        //                             //         "<h2 style=\"margin-bottom: 10px;\">" + timetable.direction + "</h2>" +
+        //                             //         "<p style=\"margin-bottom: 20px; font-size: 16px;\">" + data.description + "</p>" +
+        //                             //         "<div style=\"margin-top: 20px;\">" +
+        //                             //             stop.info.departures.map(time => "<p style=\"margin: 5px 0; font-size: 14px;\">" + time.departure_text + "</p>").join("") +
+        //                             //         "</div>" +
+        //                             //     "</div>"
+        //                             // );
 
-                                    // If the user hovers over the stop, change the width of the line
-                                    route.getStops().get(stop.stop_id)?.getMarker().addListener("mouseover", () => {
-                                        setBolded(route.getId(), true)
-                                    });
+        //                             // If the user hovers over the stop, change the width of the line
+        //                             route.getStops().get(stop.stop_id)?.getMarker().addListener("mouseover", () => {
+        //                                 setBolded(route.getId(), true)
+        //                             });
 
-                                    // If the user stops hovering over the stop, return back
-                                    route.getStops().get(stop.stop_id)?.getMarker().addListener("mouseout", () => {
-                                        setBolded(route.getId(), false)
-                                    });
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        //                             // If the user stops hovering over the stop, return back
+        //                             route.getStops().get(stop.stop_id)?.getMarker().addListener("mouseout", () => {
+        //                                 setBolded(route.getId(), false)
+        //                             });
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
         
         let center = { lat: 44.97369560732433, lng: -93.2317259515601 }; // UMN location
 
@@ -184,11 +187,11 @@ namespace Routes {
         // console.log((await Plan.routeLandmarks(routeId, "")).landmarks.landmark.filter(landmark => landmark.distance < 0.01))
         // console.log((await Realtime.getStopInfo(routeId, 1, "UNDA")))
 
-        console.log(stops);
+        // console.log(stops);
     }
 
     /**
-     * Refreshes the Vehicles and calls the Data.getRealtimeGTFS
+     * Refreshes the vehicles
      */
     export async function refreshVehicles() {
         // Updates Vehicles
@@ -212,6 +215,57 @@ namespace Routes {
         }
         )
     }
+
+    /**
+     * Refresh the stops
+     */
+    export async function refreshStops() {
+        // Updates Stops
+        URL.getRoutes()?.forEach(async routeId => {
+            for (let schedule of (await Schedule.getSchedule(routeId)).schedules) {
+                for (let timetable of schedule.timetables) {
+                    if (timetable.stop_list) {
+                        for (let stop of timetable.stop_list) {
+                            if (stop.info) {
+                                for (let data of stop.info.stops) {
+                                    // Creates the stop if it has not been created yet
+                                    if (!stops.has(stop.stop_id)) {
+                                        stops.set(stop.stop_id, new Stop(stop.stop_id, "0022FF", data.description, new google.maps.LatLng(Number(data.latitude), Number(data.longitude)), map));
+                                        
+                                        const route = routes.get(routeId)
+
+                                        if (route) {
+                                            // Add stop
+                                            route.addStopObject(stop.stop_id, stops.get(stop.stop_id));
+
+                                            // If the user hovers over the stop, change the width of the line
+                                            route.getStops().get(stop.stop_id)?.getMarker().addListener("mouseover", () => {
+                                                setBolded(route.getId(), true)
+                                            });
+
+                                            // If the user stops hovering over the stop, return back
+                                            route.getStops().get(stop.stop_id)?.getMarker().addListener("mouseout", () => {
+                                                setBolded(route.getId(), false)
+                                            });
+                                        }
+                                    }
+
+                                    stops.get(stop.stop_id)?.clearDepartures();
+
+                                    for (const departure of stop.info.departures) {
+                                        stops.get(stop.stop_id)?.addDeparture(departure.route_id, departure.trip_id, departure.departure_text, departure.direction_text, departure.description, departure.departure_time);
+                                    }
+
+                                    stops.get(stop.stop_id)?.updateInfoWindow(routeId);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    }
+
 
     /* Private */
 
