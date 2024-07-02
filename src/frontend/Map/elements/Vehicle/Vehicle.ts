@@ -193,7 +193,7 @@ class Vehicle extends Element {
      */
     public updateInfoWindow() {
         this.infoWindow.setContent(
-            String(Math.round(Number(this.getLastUpdated())))
+            String(Math.ceil(Number(this.getLastUpdated())))
         );
     }
     
