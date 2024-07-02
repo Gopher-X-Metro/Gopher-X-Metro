@@ -25,10 +25,10 @@ class Stop extends Element {
         this.location = location;
 
         this.marker = new window.google.maps.Circle({
-            fillColor: "#4169e1",
+            fillColor: color,
             fillOpacity: 1,
             strokeWeight: 8,
-            strokeColor: "#4169e1",
+            strokeColor: color,
             center: this.location,
             radius: 6.5,
             clickable: true,
