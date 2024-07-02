@@ -65,7 +65,7 @@ namespace Routes {
      */
     export function setVisible(routeId : string, visible : boolean) {
         getRoute(routeId)?.getPaths().forEach(path => {
-            const shapeID = path.getShapeID();
+            const shapeID = path.getId();
             console.log(path)
             if (dateException().includes(shapeID.substring(2)) && visible) {
                 path.getLine().setVisible(true); 
