@@ -12,7 +12,7 @@ class Vehicle extends Element {
      * @param color color of vehicle image
      * @param map map the vehicle displays on
      */
-    constructor (vehicleId: string, color : string, map: google.maps.Map, images: string[2]) {
+    constructor (vehicleId: string, color : string, images: string[2], map: google.maps.Map) {
         super(vehicleId, color, map);
 
         const contents = document.createElement("div");

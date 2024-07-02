@@ -85,83 +85,10 @@ namespace Routes {
             )
 
         // Load Vehicles
-        Realtime.getVehicles(routeId)
-            .then(vehicles => {
-                if (vehicles === undefined) return; // If there are no vehicles, return, it's either an invalid request or invalid route. TODO: notify the user they are requesting an invalid route
-
-                vehicles.forEach(async vehicle => {
-                        // Add Vehicle
-                        route.addVehicle(vehicle.trip_id, await Resources.getColor(routeId), Resources.getRouteImages(routeId));
-
-                        // Goes through each trip update information 
-                        updateVehicle(routeId,
-                            vehicle.trip_id,
-                            vehicle.trip_id,
-                            vehicle.timestamp,
-                            new google.maps.LatLng(vehicle.latitude as number, vehicle.longitude as number),
-                            vehicle.bearing,
-                            vehicle.direction_id
-                        );
-
-                        // If the user hovers over the vehicle, change the width of the line
-                        route.getVehicles().get(vehicle.trip_id)?.getMarker().addListener("mouseover", () => {
-                            setBolded(route.getId(), true)
-                        });
-
-                        // If the user hovers over the vehicle, change the width of the line
-                        route.getVehicles().get(vehicle.trip_id)?.getMarker().addListener("mouseout", () => {
-                            setBolded(route.getId(), false)
-                        });
-                    })
-            }
-        )
-
-        refreshStops();
+        refreshVehicles();
 
         // Load Stops
-        // for (let schedule of (await Schedule.getSchedule(routeId)).schedules) {
-        //     for (let timetable of schedule.timetables) {
-        //         if (timetable.stop_list) {
-        //             for (let stop of timetable.stop_list) {
-        //                 if (stop.info) {
-        //                     for (let data of stop.info.stops) {
-        //                         // Creates the stop if it has not been created yet
-        //                         if (!stops.has(stop.stop_id)){
-        //                             stops.set(stop.stop_id, new Stop(stop.stop_id, "0022FF", data.description, new google.maps.LatLng(Number(data.latitude), Number(data.longitude)), map));
-        //                             stops.get(stop.stop_id)?.updateInfoWindow();
-        //                         }
-
-        //                         if (!route.getStops().has(stop.stop_id)) {
-        //                             // Add stop
-        //                             route.addStopObject(stop.stop_id, stops.get(stop.stop_id));
-
-        //                             // Stop Text
-        //                             // route.getStops().get(stop.stop_id)?.setDescription(
-        //                             //     "<div style=\"text-align:center; font-family: Arial, sans-serif;\">" +
-        //                             //         "<h2 style=\"margin-bottom: 10px;\">" + timetable.direction + "</h2>" +
-        //                             //         "<p style=\"margin-bottom: 20px; font-size: 16px;\">" + data.description + "</p>" +
-        //                             //         "<div style=\"margin-top: 20px;\">" +
-        //                             //             stop.info.departures.map(time => "<p style=\"margin: 5px 0; font-size: 14px;\">" + time.departure_text + "</p>").join("") +
-        //                             //         "</div>" +
-        //                             //     "</div>"
-        //                             // );
-
-        //                             // If the user hovers over the stop, change the width of the line
-        //                             route.getStops().get(stop.stop_id)?.getMarker().addListener("mouseover", () => {
-        //                                 setBolded(route.getId(), true)
-        //                             });
-
-        //                             // If the user stops hovering over the stop, return back
-        //                             route.getStops().get(stop.stop_id)?.getMarker().addListener("mouseout", () => {
-        //                                 setBolded(route.getId(), false)
-        //                             });
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+        refreshStops();
         
         let center = { lat: 44.97369560732433, lng: -93.2317259515601 }; // UMN location
 
@@ -176,7 +103,7 @@ namespace Routes {
         });
 
         // console.log(await Realtime.getDirections(routeId));
-        // console.log(await Realtime.getVehicles(routeId));
+        console.log(await Realtime.getVehicles(routeId));
         console.log(await Schedule.getSchedule(routeId));
         // console.log(await Schedule.getRoute(routeId));
         // console.log(await Realtime.getRoute(routeId));
@@ -193,27 +120,45 @@ namespace Routes {
     /**
      * Refreshes the vehicles
      */
-    export async function refreshVehicles() {
+    export async function refreshVehicles() 
+    {
         // Updates Vehicles
         URL.getRoutes()?.forEach(async routeId => {
-            const vehicles = await Realtime.getVehicles(routeId);
+            for (const info of (await Realtime.getVehicles(routeId))) {
+                if (!vehicles.has(info.trip_id)) {
+                    // Add Vehicle
+                    vehicles.set(info.trip_id, new Vehicle(info.trip_id, await Resources.getColor(routeId), Resources.getRouteImages(routeId), map))
+                    
+                    const route = routes.get(routeId)
 
-            if (vehicles) {
-                // Goes through each vehicle in the route
-                vehicles.forEach(vehicle => {
-                    // Goes through each trip update and gets the stop information    
-                    updateVehicle(routeId,
-                        vehicle.trip_id,
-                        vehicle.trip_id,
-                        vehicle.timestamp,
-                        new google.maps.LatLng(vehicle.latitude as number, vehicle.longitude as number),
-                        vehicle.bearing,
-                        vehicle.direction_id
-                    );
-                })
+                    if (route) {
+                        route.addVehicleObject(info.trip_id, vehicles.get(info.trip_id));
+
+                        // If the user hovers over the vehicle, change the width of the line
+                        route.getVehicles().get(info.trip_id)?.getMarker().addListener("mouseover", () => {
+                            setBolded(route.getId(), true)
+                        });
+
+                        // If the user hovers over the vehicle, change the width of the line
+                        route.getVehicles().get(info.trip_id)?.getMarker().addListener("mouseout", () => {
+                            setBolded(route.getId(), false)
+                        });
+                    }
+                }
+
+                // Modify the vehicle
+                if (routeId === "901") {
+                    vehicles.get(info.trip_id)?.setBlueDirectionID(info.direction_id);
+                } else if (routeId === "902") {
+                    vehicles.get(info.trip_id)?.setGreenDirectionID(info.direction_id);
+                } else {
+                    vehicles.get(info.trip_id)?.setBusBearing(info.bearing);
+                }
+
+                vehicles.get(info.trip_id)?.setPosition(new google.maps.LatLng(info.latitude as number, info.longitude as number), info.timestamp);
+                vehicles.get(info.trip_id)?.updateInfoWindow();
             }
-        }
-        )
+        })
     }
 
     /**
@@ -230,7 +175,7 @@ namespace Routes {
                                 for (let data of stop.info.stops) {
                                     // Creates the stop if it has not been created yet
                                     if (!stops.has(stop.stop_id)) {
-                                        stops.set(stop.stop_id, new Stop(stop.stop_id, "0022FF", data.description, timetable.direction, new google.maps.LatLng(Number(data.latitude), Number(data.longitude)), map));
+                                        stops.set(stop.stop_id, new Stop(stop.stop_id, "#4169e1", data.description, timetable.direction, new google.maps.LatLng(Number(data.latitude), Number(data.longitude)), map));
                                         
                                         const route = routes.get(routeId)
 
@@ -271,7 +216,7 @@ namespace Routes {
 
     const routes = new Map<string, Route>();
     const stops = new Map<string, Stop>();
-    // const vehicles = new Map<string, Vehicle>();
+    const vehicles = new Map<string, Vehicle>();
     let map: google.maps.Map;
 
     /**
@@ -281,6 +226,7 @@ namespace Routes {
      * @param tripId 
      * @param timestamp time of last update
      * @param location location of vehicle
+     * @deprecated We nolonger need to use this
      */
     async function updateVehicle(
         routeId: string,

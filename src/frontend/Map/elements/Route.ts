@@ -73,7 +73,7 @@ class Route extends Element {
      * @deprecated We no longer use addVehicle to create vehicles
      */
     public addVehicle(vehicleId: string, color: string, images: string[2]) : void {
-        this.vehicles.set(vehicleId, new Vehicle(vehicleId, color, this.map, images));
+        this.vehicles.set(vehicleId, new Vehicle(vehicleId, color, images, this.map));
         this.vehicles.get(vehicleId)?.setVisible(this.visible);
     }
     /**
