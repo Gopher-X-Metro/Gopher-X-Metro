@@ -97,6 +97,8 @@ class Route extends Element {
         this.vehicles.forEach(vehicle => vehicle.setVisible(visible));
     }
 
+    
+
     /* Private */
 
     private paths: Map<string, Path>;
