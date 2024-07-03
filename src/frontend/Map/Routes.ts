@@ -176,7 +176,12 @@ namespace Routes {
                                     // Creates the stop if it has not been created yet
                                     if (!stops.has(stop.stop_id)) {
                                         stops.set(stop.stop_id, new Stop(stop.stop_id, "#4169e1", data.description, timetable.direction, new google.maps.LatLng(Number(data.latitude), Number(data.longitude)), map));
-                                        
+                                        stops.get(stop.stop_id)?.getMarker().addListener("click", () => {
+                                            for (let s of stops) {
+                                                if (s[1].getId() !== stop.stop_id)
+                                                    s[1].closeInfoWindow();
+                                            }
+                                    })
                                         const route = routes.get(routeId)
 
                                         if (route) {
