@@ -27,7 +27,7 @@ namespace Marker {
         if (marker)
             navigator.geolocation.getCurrentPosition(position => { 
                 marker.position = { lat: position.coords.latitude, lng: position.coords.longitude }
-                marker.map = position.coords.accuracy < 1000 ? this.map : null // If accuraccy is too low, don't display
+                marker.map = position.coords.accuracy < 300 ? this.map : null // If accuracy is too low, don't display
             })
         else
             console.warn("The marker has not been created!")
