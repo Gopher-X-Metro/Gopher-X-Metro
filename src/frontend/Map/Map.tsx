@@ -38,15 +38,11 @@ export default function Map() {
         // Creates the search bar
         const input = document.getElementById("search-bar") as HTMLInputElement;
 
-        try {
-            const autocomplete = new google.maps.places.Autocomplete(input, {
-                fields: ["place_id", "geometry", "name", "formatted_address"],
-            });
+        const autocomplete = new google.maps.places.Autocomplete(input, {
+            fields: ["place_id", "geometry", "name", "formatted_address"],
+        });
 
-            autocomplete.bindTo("bounds", map);
-        } catch (error) {
-            console.log(error)
-        }
+        autocomplete.bindTo("bounds", map);
 
 
         map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
