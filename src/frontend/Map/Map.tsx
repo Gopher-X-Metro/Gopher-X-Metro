@@ -35,6 +35,21 @@ export default function Map() {
             mapId: process.env.REACT_APP_MAP_ID
         });
 
+        // Creates the search bar
+        const input = document.getElementById("search-bar") as HTMLInputElement;
+
+        try {
+            const autocomplete = new google.maps.places.Autocomplete(input, {
+                fields: ["place_id", "geometry", "name", "formatted_address"],
+            });
+
+            autocomplete.bindTo("bounds", map);
+        } catch (error) {
+            console.log(error)
+        }
+
+
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
 
         // Loads the Route's Resources
         await Resources.load()
@@ -75,6 +90,10 @@ export default function Map() {
     }, []);
 
 
-    return <><LoadingScreen hidden={mapLoaded}></LoadingScreen><div id="map"></div> </>;
+    return <>
+        <LoadingScreen hidden={mapLoaded}/>
+        <input id="search-bar" className="controls" type="text"/>
+        <div id="map"/> 
+    </>;
 }
 
