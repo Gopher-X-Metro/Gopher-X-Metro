@@ -6,6 +6,7 @@ import Resources from '../../backend/Resources.ts';
 import Marker from './Marker.ts';
 import Routes from './Routes.ts';
 import LoadingScreen from "./LoadingScreen.tsx";
+import SearchBar from "./elements/SearchBar.ts";
 
 /**
  * The map component
@@ -36,16 +37,7 @@ export default function Map() {
         });
 
         // Creates the search bar
-        const input = document.getElementById("search-bar") as HTMLInputElement;
-
-        const autocomplete = new google.maps.places.Autocomplete(input, {
-            fields: ["place_id", "geometry", "name", "formatted_address"],
-        });
-
-        autocomplete.bindTo("bounds", map);
-
-
-        map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
+        SearchBar.init(map);
 
         // Loads the Route's Resources
         await Resources.load()
