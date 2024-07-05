@@ -16,7 +16,8 @@ namespace SearchBar {
 
         geocoder = new google.maps.Geocoder();
         marker = new google.maps.marker.AdvancedMarkerElement({
-            map: map
+            map: map,
+            content: new window.google.maps.marker.PinElement({scale: 0.8}).element
         });
 
         autocomplete.addListener("place_changed", () => onPlaceChange());
