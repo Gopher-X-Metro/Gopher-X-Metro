@@ -1,3 +1,4 @@
+import Routes from "../Routes";
 import Plan from "../../../backend/Plan";
 
 namespace SearchBar {
@@ -48,9 +49,11 @@ namespace SearchBar {
 
             marker.position = location;
 
-            for (const stop of (await Plan.serviceNearby(location.lat(), location.lng(), null, 0, 0.3)).atstop) {
-                console.log(stop.stopid)
-            }
+            Plan.serviceNearby(location.lat(), location.lng(), null, 0, 0.3).then(nearest => {
+                if (nearest.version !== 0)
+                    for (const stop of nearest.atstop)
+                        Routes.loadStop(stop.stopid, "");
+            })
 
             console.log(await Plan.serviceNearby(location.lat(), location.lng(), null, 0, 0.3));
             console.log(await Plan.nearestLandmark(location.lat(), location.lng(), null, 3, 10, null));

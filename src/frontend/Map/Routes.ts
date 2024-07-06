@@ -197,28 +197,37 @@ namespace Routes {
             }
         })
     }
-
+    /**
+     * Loads a stop in routes
+     * @param stopId     the id of the stop
+     * @param direction  direction of the vehicle that passes through the stop
+     * @returns the stop is requested to be loaded
+     */
     export async function loadStop(stopId: string, direction: string) : Promise<Stop | undefined> {
         const info = await Realtime.getStop(stopId);
         let stop: Stop | undefined;
 
-        if (!stops.has(stopId)) {
-            stop = new Stop(stopId, "#4169e1", info.stops[0].description, direction, new google.maps.LatLng(info.stops[0].latitude, info.stops[0].longitude), map);
-            stops.set(stopId, stop);
+        if (info.status !== 400) {
+            if (!stops.has(stopId)) {
+                for (const infoStop of info.stops) {
+                    stop = new Stop(stopId, "#4169e1", infoStop.description, direction, new google.maps.LatLng(infoStop.latitude, infoStop.longitude), map);
+                    stops.set(stopId, stop);
+        
+                    stop.getMarker().addListener("click", () => {
+                        for (let s of stops) 
+                            if (s[1].getId() !== stopId)
+                                s[1].closeInfoWindow();
+                    })
+                }
+            } else stop = stops.get(stopId);
 
-            stop.getMarker().addListener("click", () => {
-                for (let s of stops) 
-                    if (s[1].getId() !== stopId)
-                        s[1].closeInfoWindow();
-            })
-        } else stop = stops.get(stopId);
+            stop?.clearDepartures();
 
-        stop?.clearDepartures();
+            for (const departure of info.departures)
+                stop?.addDeparture(departure.route_id, departure.trip_id, departure.departure_text, departure.direction_text, departure.description, departure.departure_time);
 
-        for (const departure of info.departures)
-            stop?.addDeparture(departure.route_id, departure.trip_id, departure.departure_text, departure.direction_text, departure.description, departure.departure_time);
-
-        stop?.updateInfoWindow("");
+            stop?.updateInfoWindow("");
+        }
 
         return stop;
     }
