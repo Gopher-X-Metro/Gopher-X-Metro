@@ -56,11 +56,12 @@ namespace SearchBar {
                         Routes.loadStop(stop.stopid, "");
             })
 
+            if (place.formatted_address)
+                console.log(await (await Plan.trip("Coffman Memorial Union, Washington Avenue Southeast, Minneapolis, MN, USA", place.formatted_address)).json())
+
             console.log(await Plan.serviceNearby(location.lat(), location.lng(), null, 0, 0.3));
             console.log(await Plan.nearestLandmark(location.lat(), location.lng(), null, 3, 10, null));
             console.log(await Plan.nearestParkAndRides(location.lat(), location.lng(), null, 1));
-            console.log(await (await Plan.trip("", "")).json())
-
             
             // console.log(await Plan.serviceNearby(center.lat, center.lng, null, 1, 20))
             // console.log(await Plan.routeLandmarks(routeId, null))

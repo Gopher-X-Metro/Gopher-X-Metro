@@ -1,37 +1,30 @@
 import proj4 from "proj4";
 
 namespace Plan {
-    export async function trip() {
-        let response = await fetch("https://svc.metrotransit.org/tripplanner/plantrip", {
-            method: "POST",
-            body: JSON.stringify({
-                "origin": {
-                  "description": "string",
-                  "point": {
-                    "x": 0,
-                    "y": 0
-                  },
-                  "landmarkid": 0
-                },
-                "destination": {
-                  "description": "string",
-                  "point": {
-                    "x": 0,
-                    "y": 0
-                  },
-                  "landmarkid": 0
-                },
-                "arrdep": "string",
-                "walkdist": 0,
-                "minimize": "string",
-                "accessible": true,
-                "xmode": "string",
-                "datetime": "2024-04-19T16:34:39.773Z"
-              }),
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
-            }
-        });
+    export async function trip(origin: string, destination: string) 
+      {
+        let response = await fetch("https://routes.googleapis.com/directions/v2:computeRoutes", {
+          method: "POST",
+          body: JSON.stringify({
+            "origin": {
+              "address": origin
+            },
+            "destination": {
+              "address": destination
+            },
+            "travelMode": "TRANSIT",
+            "computeAlternativeRoutes": true,
+            "transitPreferences": {
+               routingPreference: "LESS_WALKING",
+               allowedTravelModes: ["TRAIN"]
+            },
+          }),
+          headers: {
+              "Content-type": "application/json; charset=UTF-8",
+              "X-Goog-Api-Key": "AIzaSyAt_YxRDPqcDecujcr-Bmox8mETHLM8m7o",
+              "X-Goog-FieldMask": "routes.legs.steps.transitDetails"
+          }
+      });
 
         return response;
     }

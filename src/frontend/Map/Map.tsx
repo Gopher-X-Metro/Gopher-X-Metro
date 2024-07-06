@@ -12,6 +12,7 @@ import SearchBar from "./elements/SearchBar.ts";
  * The map component
  */
 export default function Map() {
+    let longpress: NodeJS.Timeout;
     const [mapLoaded, setMapLoaded] = useState(false);
 
     const init = async () => {
@@ -35,6 +36,16 @@ export default function Map() {
             zoom: zoom,
             mapId: process.env.REACT_APP_MAP_ID
         });
+
+        if (isMobile()) {
+            // Long press
+            google.maps.event.addListener(map, "mousedown", event => longpress = setTimeout(() => onSelectLocation(event), 500));
+            google.maps.event.addListener(map, "mouseup", () => clearTimeout(longpress));
+            google.maps.event.addListener(map, "drag", () => clearTimeout(longpress));
+        }
+        else
+            // Right click
+            google.maps.event.addListener(map, "rightclick", event => onSelectLocation(event));
 
         // Creates the search bar
         SearchBar.init(map);
@@ -85,3 +96,13 @@ export default function Map() {
     </>;
 }
 
+function isMobile() {
+    return 'ontouchstart' in window;
+}
+
+function onSelectLocation(event) {
+    var lat = event.latLng.lat();
+    var lng = event.latLng.lng();
+    // populate yor box/field with lat, lng
+    alert("Lat=" + lat + "; Lng=" + lng);
+}
