@@ -35,6 +35,7 @@ namespace SearchBar {
      * Sets the new location of the marker, and focuses on the spot
      */
     function onPlaceChange() : void {
+        let center = { lat: 44.97369560732433, lng: -93.2317259515601 }; // UMN location
         const place = autocomplete.getPlace();
 
         if (!place.place_id) return;
@@ -58,6 +59,16 @@ namespace SearchBar {
             console.log(await Plan.serviceNearby(location.lat(), location.lng(), null, 0, 0.3));
             console.log(await Plan.nearestLandmark(location.lat(), location.lng(), null, 3, 10, null));
             console.log(await Plan.nearestParkAndRides(location.lat(), location.lng(), null, 1));
+            console.log(await (await Plan.trip("", "")).json())
+
+            
+            // console.log(await Plan.serviceNearby(center.lat, center.lng, null, 1, 20))
+            // console.log(await Plan.routeLandmarks(routeId, null))
+            // console.log(await Plan.serviceNearby(center.lat, center.lng, null, 902, 0))
+            // console.log(await Plan.nearestLandmark(center.lat, center.lng, "3462", 1, 10, null))
+            // console.log(await Plan.nearestParkAndRides(center.lat, center.lng, null, 1))
+            // console.log(await Plan.suggest("Comst", null))
+            // console.log(await Plan.findaddress("dHA9MCNsb2M9MjY4MCNsbmc9MCNwbD0zOTcwI2xicz0xNDozMTQ="))
 
         }).catch((e) => window.alert("Geocoder failed due to: " + e));
     }
