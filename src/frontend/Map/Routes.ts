@@ -89,18 +89,6 @@ namespace Routes {
 
         // Load Stops
         refreshStops();
-        
-        let center = { lat: 44.97369560732433, lng: -93.2317259515601 }; // UMN location
-
-        navigator.geolocation.getCurrentPosition(async position => {
-            // console.log(await Plan.serviceNearby(center.lat, center.lng, null, 1, 20))
-            // console.log(await Plan.routeLandmarks(routeId, null))
-            // console.log(await Plan.serviceNearby(center.lat, center.lng, null, 902, 0))
-            // console.log(await Plan.nearestLandmark(center.lat, center.lng, null, 1, 10, null))
-            // console.log(await Plan.nearestParkAndRides(center.lat, center.lng, null, 1))
-            // console.log(await Plan.suggest("Blegen Hall", null))
-            // console.log(await Plan.findaddress("dHA9MCNsb2M9MjY4MCNsbmc9MCNwbD0zOTcwI2xicz0xNDozMTQ="))
-        });
 
         // console.log(await Realtime.getDirections(routeId));
         // console.log(await Realtime.getVehicles(routeId));
@@ -226,7 +214,12 @@ namespace Routes {
             for (const departure of info.departures)
                 stop?.addDeparture(departure.route_id, departure.trip_id, departure.departure_text, departure.direction_text, departure.description, departure.departure_time);
 
-            stop?.updateInfoWindow("");
+            if (info.departures.length === 0)
+                stop?.setColor("#F35708")
+            else
+                stop?.setColor("#4169e1")
+
+            stop?.updateInfoWindow();
         }
 
         return stop;

@@ -49,14 +49,15 @@ class Stop extends Element {
     /**
      * Updates the info window information
      */
-    public updateInfoWindow(routeId: string) : void {
+    public updateInfoWindow() : void {
         this.infoWindow.setContent(
             "<div style=\"text-align:center; font-family: Arial, sans-serif;\">" +
                 "<h2 style=\"margin-bottom: 10px;\">" + this.direction + "</h2>" +
                 "<p style=\"margin-bottom: 20px; font-size: 16px;\">" + this.name + "</p>" +
                 "<ul style=\"margin-top: 20px; list-style: none;\">" + this.infoWindowBody() +
                 "</ul>" +
-            "</div>")
+            "</div>"
+        )
     }
     /**
      * The body of the infowindow
@@ -77,7 +78,16 @@ class Stop extends Element {
      * Updates the info window information
      */
     public closeInfoWindow() : void { this.infoWindow.close(); }
-    public addDeparture(routeId: string, tripId: string, departure_text: string, direction_text: string, description: string, departure_time: number) {
+    /**
+     * Adds a departure to the route
+     * @param routeId            route the departure is for
+     * @param tripId             the trip id of the departure
+     * @param departure_text     text of the departure time
+     * @param direction_text     text of departure direction
+     * @param description        description of departure
+     * @param departure_time     time of departure epoch
+     */
+    public addDeparture(routeId: string, tripId: string, departure_text: string, direction_text: string, description: string, departure_time: number) : void {
         if (!this.departures.has(routeId))
             this.departures.set(routeId, new Array<departure>())
 
@@ -90,6 +100,9 @@ class Stop extends Element {
             departure_time: departure_time
         })
     }
+    /**
+     * Clears all departures
+     */
     public clearDepartures() : void { this.departures.clear() }
     /**
      * Sets the description of the info window
@@ -97,6 +110,10 @@ class Stop extends Element {
      * @deprecated
      */
     public setDescription(description: string) : void { this.infoWindow.setContent(description); }
+    public setColor(color: string) : void { 
+        this.marker.set("fillColor", color);
+        this.marker.set("strokeColor", color);
+    }
 
     /* Private */
     private name: string;
