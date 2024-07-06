@@ -103,16 +103,16 @@ namespace Routes {
         });
 
         // console.log(await Realtime.getDirections(routeId));
-        console.log(await Realtime.getVehicles(routeId));
-        console.log(await Schedule.getSchedule(routeId));
+        // console.log(await Realtime.getVehicles(routeId));
+        // console.log(await Schedule.getSchedule(routeId));
         // console.log(await Schedule.getRoute(routeId));
         // console.log(await Realtime.getRoute(routeId));
         // console.log((await Schedule.getTimeTable(routeId, 1)))
         // console.log(await Schedule.getStopList(routeId, 2))
         // console.log((await Realtime.getDirections(routeId)))
-        // console.log((await Realtime.getStops(routeId, 0)))
+        // console.log((await Realtime.getStops(routeId, 1)))
         // console.log((await Plan.routeLandmarks(routeId, "")).landmarks.landmark.filter(landmark => landmark.distance < 0.01))
-        // console.log((await Realtime.getStopInfo(routeId, 1, "UNDA")))
+        // console.log((await Realtime.getStopInfo(routeId, 1, "WGAT")))
 
         // console.log(stops);
     }
@@ -167,48 +167,30 @@ namespace Routes {
     export async function refreshStops() {
         // Updates Stops
         URL.getRoutes()?.forEach(async routeId => {
-            for (let schedule of (await Schedule.getSchedule(routeId)).schedules) {
-                for (let timetable of schedule.timetables) {
-                    if (timetable.stop_list) {
-                        for (let stop of timetable.stop_list) {
-                            if (stop.info) {
-                                for (let data of stop.info.stops) {
-                                    // Creates the stop if it has not been created yet
-                                    if (!stops.has(stop.stop_id)) {
-                                        stops.set(stop.stop_id, new Stop(stop.stop_id, "#4169e1", data.description, timetable.direction, new google.maps.LatLng(Number(data.latitude), Number(data.longitude)), map));
-                                        stops.get(stop.stop_id)?.getMarker().addListener("click", () => {
-                                            for (let s of stops) {
-                                                if (s[1].getId() !== stop.stop_id)
-                                                    s[1].closeInfoWindow();
-                                            }
-                                    })
-                                        const route = routes.get(routeId)
+            for (const schedule of (await Schedule.getRouteDetails(routeId)).schedules) {
+                if (schedule.schedule_type_name === Schedule.getWeekDate()) {
+                    for (const timetable of schedule.timetables) {
+                        for (const info of (await Schedule.getStopList(routeId, timetable.schedule_number))) {
+                            // Load the stop
+                            loadStop(info.stop_id, timetable.direction).then(stop => {
+                                // Adds the stop if it has not been added yet
+                                const route = routes.get(routeId)
 
-                                        if (route) {
-                                            // Add stop
-                                            route.addStopObject(stop.stop_id, stops.get(stop.stop_id));
+                                if (route && !route?.getStops().has(info.stop_id)) {
+                                    // Add stop
+                                    route.addStopObject(info.stop_id, stop);
 
-                                            // If the user hovers over the stop, change the width of the line
-                                            route.getStops().get(stop.stop_id)?.getMarker().addListener("mouseover", () => {
-                                                setBolded(route.getId(), true)
-                                            });
+                                    // If the user hovers over the stop, change the width of the line
+                                    stop?.getMarker().addListener("mouseover", () => {
+                                        setBolded(route.getId(), true)
+                                    });
 
-                                            // If the user stops hovering over the stop, return back
-                                            route.getStops().get(stop.stop_id)?.getMarker().addListener("mouseout", () => {
-                                                setBolded(route.getId(), false)
-                                            });
-                                        }
-                                    }
-
-                                    stops.get(stop.stop_id)?.clearDepartures();
-
-                                    for (const departure of stop.info.departures) {
-                                        stops.get(stop.stop_id)?.addDeparture(departure.route_id, departure.trip_id, departure.departure_text, departure.direction_text, departure.description, departure.departure_time);
-                                    }
-
-                                    stops.get(stop.stop_id)?.updateInfoWindow(routeId);
+                                    // If the user stops hovering over the stop, return back
+                                    stop?.getMarker().addListener("mouseout", () => {
+                                        setBolded(route.getId(), false)
+                                    });
                                 }
-                            }
+                            });
                         }
                     }
                 }
@@ -216,6 +198,30 @@ namespace Routes {
         })
     }
 
+    export async function loadStop(stopId: string, direction: string) : Promise<Stop | undefined> {
+        const info = await Realtime.getStop(stopId);
+        let stop: Stop | undefined;
+
+        if (!stops.has(stopId)) {
+            stop = new Stop(stopId, "#4169e1", info.stops[0].description, direction, new google.maps.LatLng(info.stops[0].latitude, info.stops[0].longitude), map);
+            stops.set(stopId, stop);
+
+            stop.getMarker().addListener("click", () => {
+                for (let s of stops) 
+                    if (s[1].getId() !== stopId)
+                        s[1].closeInfoWindow();
+            })
+        } else stop = stops.get(stopId);
+
+        stop?.clearDepartures();
+
+        for (const departure of info.departures)
+            stop?.addDeparture(departure.route_id, departure.trip_id, departure.departure_text, departure.direction_text, departure.description, departure.departure_time);
+
+        stop?.updateInfoWindow("");
+
+        return stop;
+    }
 
     /* Private */
 
@@ -223,6 +229,8 @@ namespace Routes {
     const stops = new Map<string, Stop>();
     const vehicles = new Map<string, Vehicle>();
     let map: google.maps.Map;
+
+    /* Depreciated */
 
     /**
      * Updates the current list of vehicles
