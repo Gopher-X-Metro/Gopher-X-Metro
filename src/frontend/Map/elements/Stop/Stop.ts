@@ -58,6 +58,9 @@ class Stop extends Element {
                 "</ul>" +
             "</div>")
     }
+    /**
+     * The body of the infowindow
+     */
     public infoWindowBody() {
         let output = ""
 
