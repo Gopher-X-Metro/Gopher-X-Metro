@@ -104,6 +104,24 @@ namespace Realtime {
                 console.warn(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${await response.text()}`);
         })
     }
+    
+
+    /* University Routes and ID */
+    export const UNIVERSITY_ROUTES = {
+        "120": 11324, 
+        "121": 11278, 
+        "122": 11279, 
+        "123": 11280, 
+        "124": 11281
+    };
+
+    const GTFS_REALTIME_URL_UMN = "https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=vehicles2&action=list&agencyID=88";
+    const GTFS_REALTIME_URL_VEHICLE_POSITIONS = 'https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb';
+    const GTFS_REALTIME_URL_TRIP_UPDATES = 'https://svc.metrotransit.org/mtgtfs/tripupdates.pb';
+    const GTFS_REALTIME_URL_SERVICE_ALERTS = 'https://svc.metrotransit.org/mtgtfs/alerts.pb';
+
+    /* Depreciated */
+    
     /**
      * Gets the fetched vehicle position data
      * @depreciated
@@ -125,21 +143,8 @@ namespace Realtime {
                 console.warn(`Data fetching encountered status code ${response.status} with Trip Updates.`);
         })
     }
-    
 
-    /* University Routes and ID */
-    export const UNIVERSITY_ROUTES = {
-        "120": 11324, 
-        "121": 11278, 
-        "122": 11279, 
-        "123": 11280, 
-        "124": 11281
-    };
 
-    const GTFS_REALTIME_URL_UMN = "https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=vehicles2&action=list&agencyID=88";
-    const GTFS_REALTIME_URL_VEHICLE_POSITIONS = 'https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb';
-    const GTFS_REALTIME_URL_TRIP_UPDATES = 'https://svc.metrotransit.org/mtgtfs/tripupdates.pb';
-    const GTFS_REALTIME_URL_SERVICE_ALERTS = 'https://svc.metrotransit.org/mtgtfs/alerts.pb';
 }
 
 export default Realtime;
