@@ -40,11 +40,22 @@ namespace SearchBar {
 
         geocoder
         .geocode({ placeId: place.place_id })
-        .then(({ results }) => {
-            map.setZoom(15);
-            map.setCenter(results[0].geometry.location);
+        .then(async ({ results }) => {
+            const location = results[0].geometry.location;
 
-            marker.position = results[0].geometry.location;
+            map.setZoom(15);
+            map.setCenter(location);
+
+            marker.position = location;
+
+            for (const stop of (await Plan.serviceNearby(location.lat(), location.lng(), null, 0, 0.3)).atstop) {
+                console.log(stop.stopid)
+            }
+
+            console.log(await Plan.serviceNearby(location.lat(), location.lng(), null, 0, 0.3));
+            console.log(await Plan.nearestLandmark(location.lat(), location.lng(), null, 3, 10, null));
+            console.log(await Plan.nearestParkAndRides(location.lat(), location.lng(), null, 1));
+
         }).catch((e) => window.alert("Geocoder failed due to: " + e));
     }
 }

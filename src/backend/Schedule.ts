@@ -44,10 +44,35 @@ namespace Schedule {
     export async function getStopList(routeId: string, scheduleId: number) : Promise<Array<any>> {
         return await (await fetch("https://svc.metrotransit.org/schedule/stoplist/"+routeId+"/"+scheduleId)).json()
     }
+
+    /* Private */
+
+    /**
+     * Gets the week of the date in terms of Sunday, Saturday, and Weekday
+     */
+    export function getWeekDate() : string | undefined {
+        const date = new Date();
+        switch (date.getDay()) {
+            case 0:
+                return "Sunday"
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                return "Weekday"
+            case 6:
+                return "Saturday"
+        }
+    }
+
+    /* Depreciated */
+    
     /**
      * Gets the current schedule of the route
      * @param routeId       route ID
      * @returns             a combination of all data from schedule
+     * @deprecated  This is nolonger used
      */
     export async function getSchedule(routeId: string) : Promise<any> {
         let detail = await getRouteDetails(routeId)
@@ -63,27 +88,6 @@ namespace Schedule {
         }
 
         return detail;
-    }
-
-    /* Private */
-
-    /**
-     * Gets the week of the date in terms of Sunday, Saturday, and Weekday
-     */
-    function getWeekDate() : string | undefined {
-        const date = new Date();
-        switch (date.getDay()) {
-            case 0:
-                return "Sunday"
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-                return "Weekday"
-            case 6:
-                return "Saturday"
-        }
     }
 }
 
