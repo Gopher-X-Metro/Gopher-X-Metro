@@ -4,9 +4,9 @@ function TitleBar() {
     return (
         <div id="title-bar">
             <h1>
-                <span className="gopher">Gopher Buses </span>
+                <span className="gopher">Gopher </span>
                 <span className="X"> X </span>
-                <span className="city"> Metro Buses</span>
+                <span className="city"> Metro</span>
             </h1>
         </div>
     );

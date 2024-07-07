@@ -36,6 +36,7 @@ div#title-bar > h1
   font-size: 20px;
   margin-left: 7vh;
   font-family: 'Neutraface Text', sans-serif;
+  padding: 0.75em;
   color: whitesmoke;
 }
 
@@ -182,7 +183,10 @@ div#title-bar > h1 > .city {
     cursor: pointer;
     background-color: transparent;
     color: white;
-    padding: 10px 15px;
+    padding-top: 0.75em;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-bottom: 1em;
     border: none;
     position: absolute;
     top: 0;
@@ -193,8 +197,12 @@ div#title-bar > h1 > .city {
     top: 0;
     right: 0;
     width: 5%;
-    padding: 17px 30px;
-    font-size: 33px;
+    padding-top: 0.75em;
+    padding-left: 1.5em;
+    padding-right: 1em;
+    padding-bottom: 1em;
+    font-size: 20px;
+    font-weight: bold;
     background-color: transparent;
     color: #ffffff;
     border: none;
@@ -204,62 +212,44 @@ div#title-bar > h1 > .city {
   padding: 0px;
 }
   
-.openbtn:hover {
-  background-color: transparent;
-}
+  .openbtn:hover {
+    background-color: transparent;
+  }
 
-/* Styling for the "Select Routes" header */
+  /* Styling for the "Select Routes" header */
 .nav-header {
-  text-align: center;
-  margin-top: 1px;
-  margin-bottom: 5px;
-  width: 285px;
+    text-align: center;
+    margin-top: 1px;
+    margin-bottom: 5px;
+    width: 285px;
 
-}
-
-.nav-header h3 {
-  color: black;
-  font-family: 'Neutraface Text', sans-serif;
-  white-space: nowrap;
-}
-
-.underline {
-  width: 200px;
-  height: 2px;
-  background-color: rgb(30, 53, 53);
-  margin: 0 auto;
-}
-
-
-
-/* Styling for LoadingScreen.tsx */
-@keyframes rotate {
-  0% {
-    transform: rotate(0deg);
   }
-  100% {
-    transform: rotate(360deg);
+  
+  .nav-header h3 {
+    color: black;
+    font-family: 'Neutraface Text', sans-serif;
+    white-space: nowrap;
   }
-}
 
-.rotate-wheel {
-  animation: rotate 0.5s linear infinite;
-}
+  .underline {
+    width: 200px;
+    height: 2px;
+    background-color: rgb(30, 53, 53);
+    margin: 0 auto;
+  }
 
-.controls {
-  background-color: #fff;
-  border-radius: 2px;
-  border: 1px solid transparent;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-  box-sizing: border-box;
-  font-family: Roboto;
-  font-size: 15px;
-  font-weight: 300;
-  height: 29px;
-  margin-left: 17px;
-  margin-top: 10px;
-  outline: none;
-  padding: 0 11px 0 13px;
-  text-overflow: ellipsis;
-  width: 400px;
-}
+
+
+  /* Styling for LoadingScreen.tsx */
+  @keyframes rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .rotate-wheel {
+    animation: rotate 0.5s linear infinite;
+  }
