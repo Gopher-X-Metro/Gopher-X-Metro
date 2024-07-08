@@ -193,21 +193,20 @@ namespace Routes {
      */
     export async function loadStop(stopId: string, direction: string) : Promise<Stop | undefined> {
         const info = await Realtime.getStop(stopId);
+        const properties = info.stops[0]
         let stop: Stop | undefined;
 
         if (info.status !== 400) {
-            if (!stops.has(stopId)) {
-                for (const infoStop of info.stops) {
-                    stop = new Stop(stopId, "#4169e1", infoStop.description, direction, new google.maps.LatLng(infoStop.latitude, infoStop.longitude), map);
-                    stops.set(stopId, stop);
-        
-                    stop.getMarker().addListener("click", () => {
-                        for (let s of stops) 
-                            if (s[1].getId() !== stopId)
-                                s[1].closeInfoWindow();
-                    })
-                }
-            } else stop = stops.get(stopId);
+            if (!stops.has(properties.stop_id)) {
+                stop = new Stop(stopId, "#4169e1", properties.description, direction, new google.maps.LatLng(properties.latitude, properties.longitude), map);
+                stops.set(properties.stop_id, stop);
+    
+                stop.getMarker().addListener("click", () => {
+                    for (let s of stops) 
+                        if (s[1].getId() !== properties.stop_id)
+                            s[1].closeInfoWindow();
+                })
+            } else stop = stops.get(properties.stop_id);
 
             stop?.clearDepartures();
 
