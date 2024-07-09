@@ -44,6 +44,7 @@ class Stop extends Element {
 
         this.name = name;
         this.direction = direction;
+        this.markerColor = color;
     }
 
     /**
@@ -79,6 +80,12 @@ class Stop extends Element {
 
         for (const [routeId, departures] of this.departures) {
             colorPromises.push(Resources.getColor(routeId).then(color => ({ routeId, color, departures })));
+        }
+
+        if (this.markerColor === "#F35708") {
+            output += `<p font-size: 12px; style='color: red;'>There are no buses for this stop at this time</p>
+                        <p font-size: 10px; style='color: red;'>Check the scheduling page for more information</p>`;
+            return output;
         }
 
         try {
@@ -143,8 +150,13 @@ class Stop extends Element {
     public setColor(color: string) : void { 
         this.marker.set("fillColor", color);
         this.marker.set("strokeColor", color);
+        this.markerColor = color;
     }
 
+    public getColor(): string {
+        return this.markerColor;
+    }
+ 
     /* Private */
     private name: string;
     private infoWindow: StopInfoWindow;
@@ -152,6 +164,7 @@ class Stop extends Element {
     private marker: google.maps.Circle;
     private departures: Map<string, Array<departure>>;
     private direction: string;
+    private markerColor: string;
 }
 
 export default Stop;
