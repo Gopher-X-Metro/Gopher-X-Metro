@@ -1,7 +1,6 @@
 import React from "react";
-import URL from '../../../../backend/URL.ts';
-import Routes from '../../../Map/Routes.ts'
-import Vehicles from '../../../Map/Vehicles.ts'
+import URL from 'src/backend/URL.ts';
+import Routes from 'src/frontend/Map/Routes.ts'
 
 import { 
     MenuItemOption,
@@ -65,7 +64,7 @@ export default function RouteMenuItem({routeId, text}) {
       
     
       Routes.refresh();
-      Vehicles.refresh();
+      Routes.refreshVehicles();
     }}>
       {text}
     </MenuItemOption> 

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 
-import URL from '../../../backend/URL.ts';
-import Routes from '../../Map/Routes.ts';
+import URL from 'src/backend/URL.ts';
+import Routes from 'src/frontend/Map/Routes.ts';
 
 /**
  * Creates a route button with the route that the button leads to and the route that it leads to

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import Schedule from "../../../backend/Schedule";
+import Schedule from "src/backend/Schedule";
 
 const route = "3";
 
