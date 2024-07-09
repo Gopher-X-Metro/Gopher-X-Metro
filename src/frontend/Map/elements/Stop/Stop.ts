@@ -55,37 +55,47 @@ class Stop extends Element {
      * Updates the info window information
      */
     public async updateInfoWindow() : Promise<void> {
-        const content = await this.infoWindowBody();
-        this.infoWindow.setContent(
+        const generateContent = (content: string, errorMessage?: string): string =>
             `<div style="text-align:center; font-family: Arial, sans-serif;">
                 <h2 style="margin-bottom: 10px; font-weight: bold; border-bottom: 2px solid #000;">${this.direction}</h2>
                 <p style="margin-bottom: 20px; font-size: 16px;">${this.name}</p>
-                <ul style="margin-top: 20px; list-style: none;">${content}</ul>
-            </div>`
-        );
+                ${errorMessage ? `<p style="color: red;">${errorMessage}</p>` : `<ul style="margin-top: 20px; list-style: none;">${content}</ul>`}
+            </div>`;
+        try {
+            const content = await this.infoWindowBody();
+            this.infoWindow.setContent(generateContent(content));
+        } catch (e) {
+            console.error(`Failed to update info window:`, e);
+            this.infoWindow.setContent(generateContent("", "Failed to load departure information."));
+        }
     }
 
     /**
      * The body of the infowindow
      */
     public async infoWindowBody() : Promise<string> {
-        let output = ""
+        let output = "";
         const colorPromises: Promise<{ routeId: string; color: string; departures: departure[]; }>[] = [];
 
         for (const [routeId, departures] of this.departures) {
             colorPromises.push(Resources.getColor(routeId).then(color => ({ routeId, color, departures })));
         }
 
-        const colorResults = await Promise.all(colorPromises);
+        try {
+            const colorResults = await Promise.all(colorPromises);
 
-        for (const { routeId, color, departures } of colorResults) {
-            output += `<li style="display: inline-block; margin-left: 10px; margin-right: 10px; vertical-align: text-top;">
-                        <svg width="12" height="12" style="display: block; margin: 0 auto 5px;">
-                            <circle cx="6" cy="6" r="6" fill="#${color}" />
-                        </svg>
-                        <h3 style="margin-top: 10px;">- ${routeId} -</h3>`;
-            output += departures.map(departure => `<p style="margin: 5px 0; font-size: 14px;">${departure.departure_text}</p>`).join("");
-            output += "</li>";
+            for (const { routeId, color, departures } of colorResults) {
+                output += `<li style="display: inline-block; margin-left: 10px; margin-right: 10px; vertical-align: text-top;">
+                            <svg width="12" height="12" style="display: block; margin: 0 auto 5px;">
+                                <circle cx="6" cy="6" r="6" fill="#${color}" />
+                            </svg>
+                            <h3 style="margin-top: 10px;">- ${routeId} -</h3>`;
+                output += departures.map(departure => `<p style="margin: 5px 0; font-size: 14px;">${departure.departure_text}</p>`).join("");
+                output += "</li>";
+            }
+        } catch (e) {
+            console.error(`Failed to fetch colors:`, e);
+            output = "<p style='color: red;'>Failed to load route colors.</p>";
         }
 
         return output;
