@@ -1,6 +1,6 @@
-import URL from '../../../backend/URL.ts';
-import Routes from '../../Map/Routes.ts';
-import Vehicles from '../../Map/Vehicles.ts';
+import URL from 'src/backend/URL.ts';
+import Routes from 'src/frontend/Map/Routes.ts';
+import Vehicles from 'src/frontend/Map/elements/Vehicle/Vehicle.ts';
 
 namespace SearchFeature {
     export function searchRoute() {
@@ -33,7 +33,7 @@ namespace SearchFeature {
             }
 
             Routes.refresh();
-            Vehicles.refresh();
+            Routes.refreshVehicles();
         } else {
             console.log("error input is NULL");
         }
