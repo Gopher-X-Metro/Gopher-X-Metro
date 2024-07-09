@@ -21,7 +21,7 @@ function RouteButton({ routeId, text }) {
         stops.forEach(stop => { stop.closeInfoWindow(); });
 };
   return (
-      <button className={`${isActive ? 'active' : ''} route-${routeId}`} onClick={() => {
+      <button className={`route-btn ${isActive ? 'active' : ''} route-${routeId}`} onClick={() => {
           // selects specific route depending on button pressed
           if (!URL.getRoutes().has(routeId))
               URL.addRoute(routeId);
