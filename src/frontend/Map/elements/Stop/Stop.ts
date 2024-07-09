@@ -1,6 +1,9 @@
 import Element from "../Element.ts";
 import StopInfoWindow from "./StopInfoWindow.ts";
 
+import Resources from '../../../../backend/Resources.ts';
+
+
 interface departure {
     routeId: string;
     tripId: string;
@@ -42,43 +45,75 @@ class Stop extends Element {
 
         this.name = name;
         this.direction = direction;
+        this.markerColor = color;
     }
+
     /**
      * Gets the marker object on the map
      */
     public getMarker() : google.maps.Circle { return this.marker; }
+
     /**
      * Updates the info window information
      */
-    public updateInfoWindow() : void {
-        this.infoWindow.setContent(
-            "<div style=\"text-align:center; font-family: Arial, sans-serif;\">" +
-                "<h2 style=\"margin-bottom: 10px;\">" + this.direction + "</h2>" +
-                "<p style=\"margin-bottom: 20px; font-size: 16px;\">" + this.name + "</p>" +
-                "<ul style=\"margin-top: 20px; list-style: none;\">" + this.infoWindowBody() +
-                "</ul>" +
-            "</div>"
-        )
+    public async updateInfoWindow() : Promise<void> {
+        const generateContent = (content: string, errorMessage?: string): string =>
+            `<div style="text-align:center; font-family: Arial, sans-serif;">
+                <h2 style="margin-bottom: 10px; font-weight: bold; border-bottom: 2px solid #000;">${this.direction}</h2>
+                <p style="margin-bottom: 20px; font-size: 16px;">${this.name}</p>
+                ${errorMessage ? `<p style="color: red;">${errorMessage}</p>` : `<ul style="margin-top: 20px; list-style: none;">${content}</ul>`}
+            </div>`;
+        try {
+            const content = await this.infoWindowBody();
+            this.infoWindow.setContent(generateContent(content));
+        } catch (e) {
+            console.error(`Failed to update info window:`, e);
+            this.infoWindow.setContent(generateContent("", "Failed to load departure information."));
+        }
     }
+
     /**
      * The body of the infowindow
      */
-    public infoWindowBody() {
-        let output = ""
+    public async infoWindowBody() : Promise<string> {
+        let output = "";
+        const colorPromises: Promise<{ routeId: string; color: string; departures: departure[]; }>[] = [];
 
-        for (const route of this.departures) {
-            output += "<li style=\"display: inline-block; margin-left: 10px; margin-right: 10px; vertical-align: text-top;\">"
-            output += "<h3 style=\"margin-top: 10px;\">- " + route[0] + " -</h3>"
-            output += route[1].map(departure => "<p style=\"margin: 5px 0; font-size: 14px;\">" + departure.departure_text + "</p>").join("")
-            output += "</li>"
+        for (const [routeId, departures] of this.departures) {
+            colorPromises.push(Resources.getColor(routeId).then(color => ({ routeId, color, departures })));
         }
 
-        return ( output )
+        if (this.markerColor === "#F35708") {
+            output += `<p font-size: 12px; style='color: red;'>There are no buses for this stop at this time</p>
+                        <p font-size: 10px; style='color: red;'>Check the scheduling page for more information</p>`;
+            return output;
+        }
+
+        try {
+            const colorResults = await Promise.all(colorPromises);
+
+            for (const { routeId, color, departures } of colorResults) {
+                output += `<li style="display: inline-block; margin-left: 10px; margin-right: 10px; vertical-align: text-top;">
+                            <svg width="12" height="12" style="display: block; margin: 0 auto 5px;">
+                                <circle cx="6" cy="6" r="6" fill="#${color}" />
+                            </svg>
+                            <h3 style="margin-top: 10px;">- ${routeId} -</h3>`;
+                output += departures.map(departure => `<p style="margin: 5px 0; font-size: 14px;">${departure.departure_text}</p>`).join("");
+                output += "</li>";
+            }
+        } catch (e) {
+            console.error(`Failed to fetch colors:`, e);
+            output = "<p style='color: red;'>Failed to load route colors.</p>";
+        }
+
+        return output;
     }
+
     /**
      * Updates the info window information
      */
     public closeInfoWindow() : void { this.infoWindow.close(); }
+
     /**
      * Adds a departure to the route
      * @param routeId            route the departure is for
@@ -105,6 +140,7 @@ class Stop extends Element {
      * Clears all departures
      */
     public clearDepartures() : void { this.departures.clear() }
+
     /**
      * Sets the description of the info window
      * @param description   the html text for the info window
@@ -115,9 +151,11 @@ class Stop extends Element {
      * Changes the color of the stop
      * @param color  the new color
      */
+
     public setColor(color: string) : void { 
         this.marker.set("fillColor", color);
         this.marker.set("strokeColor", color);
+        this.markerColor = color;
     }
     /**
      * Sets the visibility of the stop
@@ -125,6 +163,10 @@ class Stop extends Element {
      */
     public setVisible(visible: boolean) : void { this.getMarker().setMap(visible ? this.map : null); }
 
+    public getColor(): string {
+        return this.markerColor;
+    }
+ 
     /* Private */
     private name: string;
     private infoWindow: StopInfoWindow;
@@ -132,6 +174,7 @@ class Stop extends Element {
     private marker: google.maps.Circle;
     private departures: Map<string, Array<departure>>;
     private direction: string;
+    private markerColor: string;
 }
 
 export default Stop;
