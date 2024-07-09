@@ -198,7 +198,7 @@ namespace Routes {
 
         if (info.status !== 400) {
             if (!stops.has(properties.stop_id)) {
-                stop = new Stop(stopId, "#4169e1", properties.description, direction, new google.maps.LatLng(properties.latitude, properties.longitude), map);
+                stop = new Stop(properties.stop_id, "#4169e1", properties.description, direction, new google.maps.LatLng(properties.latitude, properties.longitude), map);
                 stops.set(properties.stop_id, stop);
     
                 stop.getMarker().addListener("click", () => {
