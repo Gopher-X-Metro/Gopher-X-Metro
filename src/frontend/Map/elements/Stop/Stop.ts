@@ -1,6 +1,9 @@
 import Element from "../Element.ts";
 import StopInfoWindow from "./StopInfoWindow.ts";
 
+import Resources from '../../../../backend/Resources.ts';
+
+
 interface departure {
     routeId: string;
     tripId: string;
@@ -42,42 +45,57 @@ class Stop extends Element {
         this.name = name;
         this.direction = direction;
     }
+
     /**
      * Gets the marker object on the map
      */
     public getMarker() : google.maps.Circle { return this.marker; }
+
     /**
      * Updates the info window information
      */
-    public updateInfoWindow() : void {
+    public async updateInfoWindow() : Promise<void> {
+        const content = await this.infoWindowBody();
         this.infoWindow.setContent(
-            "<div style=\"text-align:center; font-family: Arial, sans-serif;\">" +
-                "<h2 style=\"margin-bottom: 10px;\">" + this.direction + "</h2>" +
-                "<p style=\"margin-bottom: 20px; font-size: 16px;\">" + this.name + "</p>" +
-                "<ul style=\"margin-top: 20px; list-style: none;\">" + this.infoWindowBody() +
-                "</ul>" +
-            "</div>"
-        )
+            `<div style="text-align:center; font-family: Arial, sans-serif;">
+                <h2 style="margin-bottom: 10px;">${this.direction}</h2>
+                <p style="margin-bottom: 20px; font-size: 16px;">${this.name}</p>
+                <ul style="margin-top: 20px; list-style: none;">${content}</ul>
+            </div>`
+        );
     }
+
     /**
      * The body of the infowindow
      */
-    public infoWindowBody() {
+    public async infoWindowBody() : Promise<string> {
         let output = ""
+        const colorPromises: Promise<{ routeId: string; color: string; departures: departure[]; }>[] = [];
 
-        for (const route of this.departures) {
-            output += "<li style=\"display: inline-block; margin-left: 10px; margin-right: 10px; vertical-align: text-top;\">"
-            output += "<h3 style=\"margin-top: 10px;\">- " + route[0] + " -</h3>"
-            output += route[1].map(departure => "<p style=\"margin: 5px 0; font-size: 14px;\">" + departure.departure_text + "</p>").join("")
-            output += "</li>"
+        for (const [routeId, departures] of this.departures) {
+            colorPromises.push(Resources.getColor(routeId).then(color => ({ routeId, color, departures })));
         }
 
-        return ( output )
+        const colorResults = await Promise.all(colorPromises);
+
+        for (const { routeId, color, departures } of colorResults) {
+            output += `<li style="display: inline-block; margin-left: 10px; margin-right: 10px; vertical-align: text-top;">
+                        <svg width="12" height="12" style="display: block; margin: 0 auto 5px;">
+                            <circle cx="6" cy="6" r="6" fill="#${color}" />
+                        </svg>
+                        <h3 style="margin-top: 10px;">- ${routeId} -</h3>`;
+            output += departures.map(departure => `<p style="margin: 5px 0; font-size: 14px;">${departure.departure_text}</p>`).join("");
+            output += "</li>";
+        }
+
+        return output;
     }
+
     /**
      * Updates the info window information
      */
     public closeInfoWindow() : void { this.infoWindow.close(); }
+
     /**
      * Adds a departure to the route
      * @param routeId            route the departure is for
@@ -104,12 +122,14 @@ class Stop extends Element {
      * Clears all departures
      */
     public clearDepartures() : void { this.departures.clear() }
+
     /**
      * Sets the description of the info window
      * @param description   the html text for the info window
      * @deprecated
      */
     public setDescription(description: string) : void { this.infoWindow.setContent(description); }
+
     public setColor(color: string) : void { 
         this.marker.set("fillColor", color);
         this.marker.set("strokeColor", color);
