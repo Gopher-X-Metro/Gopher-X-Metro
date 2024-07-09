@@ -4,7 +4,6 @@ import {
     Button,
 } from '@chakra-ui/react'
 import TitleBar from './components/TitleBar.tsx';
-import SideBar from './components/SideBar/SideBar.tsx';
 
 /**
  * Navbar Component
@@ -20,7 +19,6 @@ export default function NavBar() {
             </div>
             
             <div id = "nav-bar" >
-                <SideBar /> 
             </div>
 
             <div id = "main">
