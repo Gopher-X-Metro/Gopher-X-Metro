@@ -58,7 +58,7 @@ class Stop extends Element {
         const content = await this.infoWindowBody();
         this.infoWindow.setContent(
             `<div style="text-align:center; font-family: Arial, sans-serif;">
-                <h2 style="margin-bottom: 10px;">${this.direction}</h2>
+                <h2 style="margin-bottom: 10px; font-weight: bold; border-bottom: 2px solid #000;">${this.direction}</h2>
                 <p style="margin-bottom: 20px; font-size: 16px;">${this.name}</p>
                 <ul style="margin-top: 20px; list-style: none;">${content}</ul>
             </div>`
