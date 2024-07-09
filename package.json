@@ -7,14 +7,14 @@
     "@babel/plugin-transform-private-property-in-object": "^7.23.4",
     "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/react": "^2.8.2",
-    "@emotion/react": "^11.11.3",
-    "@emotion/styled": "^11.11.0",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
     "@googlemaps/js-api-loader": "^1.16.2",
     "@react-google-maps/api": "^2.19.2",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "framer-motion": "^11.0.5",
+    "framer-motion": "^11.2.14",
     "gtfs-realtime-bindings": "^1.1.1",
     "jszip": "^3.10.1",
     "proj4": "^2.11.0",
@@ -50,8 +50,8 @@
   },
   "devDependencies": {
     "file-loader": "^6.2.0",
-    "typescript": "^5.3.3",
-    "tailwindcss": "^3.4.1"
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3"
   },
   "overrides": {
     "react-scripts": {
