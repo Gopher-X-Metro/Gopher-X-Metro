@@ -102,19 +102,30 @@ namespace Resources {
 
         return stopsInfo;
     }
-
-    /**
-     * Gets the the stop locations from a tripId
-     * @param tripId the id of the trip
-     */
     
     /**
      * Gets the color of a route as a string
      * @param routeId ID of the route
      */
     export async function getColor(routeId: string) : Promise<string> {
-        // It defaults to the colors manually defined. If the color is not defined, it defaults to the one if found. 
-        return ROUTE_COLORS[routeId] ? ROUTE_COLORS[routeId] : await Static.getRoutes(routeId).then(result => result[0].route_color !== "" ? result[0].route_color : "444444");
+        try {
+            // Check if color is defined in ROUTE_COLORS
+            if (ROUTE_COLORS[routeId]) {
+                return ROUTE_COLORS[routeId];
+            }
+    
+            // Fetch route color from Static.getRoutes
+            const result = await Static.getRoutes(routeId);
+            if (result && result[0] && result[0].route_color && result[0].route_color !== "") {
+                return result[0].route_color;
+            }
+    
+            // Default color if no valid route color found
+            return "444444";
+        } catch (e) {
+            console.error(`Failed to fetch colors for routeId ${routeId}:`, e);
+            return "444444";
+        }
     }
 
     /**
