@@ -32,6 +32,7 @@ class Stop extends Element {
             center: this.location,
             radius: 6.5,
             clickable: true,
+            strokeOpacity: 0.5,
             map: map
         });
 
@@ -110,10 +111,19 @@ class Stop extends Element {
      * @deprecated
      */
     public setDescription(description: string) : void { this.infoWindow.setContent(description); }
+    /**
+     * Changes the color of the stop
+     * @param color  the new color
+     */
     public setColor(color: string) : void { 
         this.marker.set("fillColor", color);
         this.marker.set("strokeColor", color);
     }
+    /**
+     * Sets the visibility of the stop
+     * @param visible   if the stop should be visible
+     */
+    public setVisible(visible: boolean) : void { this.getMarker().setMap(visible ? this.map : null); }
 
     /* Private */
     private name: string;
