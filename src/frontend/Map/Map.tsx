@@ -89,11 +89,11 @@ export default function Map() {
     }, []);
 
 
-    return <>
+    return <div>
         <LoadingScreen hidden={mapLoaded}/>
         <input id="search-bar" className="controls" type="text"/>
         <div id="map"/> 
-    </>;
+    </div>;
 }
 
 function isMobile() {
