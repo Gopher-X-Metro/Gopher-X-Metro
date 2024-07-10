@@ -9,8 +9,6 @@ function Pages() {
     return (
         <Routes>
             <Route path="/" element={<Map />} />
-            {/* TODO: complete deprecation */}
-            {/* <Route path="/schedules" element={<Schedules />} /> */}
             <Route path="/about" element={<About />} />
             <Route path="/schedules" element={<Schedules />} />
         </Routes>
