@@ -29,20 +29,19 @@ export default function NavBar() {
                         Schedules
                     </Button>
                 </Link>
-                {/* TODO: figure out what the views do here */}
-                {/* <view width={50}></view> */}
                 <a href='https://pts.umn.edu/sites/pts.umn.edu/files/2020-07/bus_outline_map_printable.jpg' target="_blank" rel="noreferrer">
                     <Button pos="absolute" top="5" right="150" colorScheme='yellow'>
                         Campus Bus Map
                     </Button>
                 </a>
-                {/* <view width={50}></view> */}
 
                 <a href='https://umn.rider.peaktransit.com' target="_blank" rel="noreferrer">
                     <Button pos="absolute" top="5" right="335" colorScheme='yellow'>
                         GopherTrip Map
                     </Button>
                 </a>
+
+
             </div>
         </div>
     );
