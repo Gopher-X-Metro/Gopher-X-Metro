@@ -4,6 +4,7 @@ import {
     Button,
 } from '@chakra-ui/react'
 import TitleBar from './components/TitleBar.tsx';
+import SideBar from './components/Sidebar.tsx';
 
 /**
  * Navbar Component
@@ -19,6 +20,7 @@ export default function NavBar() {
             </div>
             
             <div id = "nav-bar" >
+                <SideBar/>
             </div>
 
             <div id = "main">
@@ -27,13 +29,14 @@ export default function NavBar() {
                         Schedules
                     </Button>
                 </Link>
-                <view width={50}></view>
+                {/* TODO: figure out what the views do here */}
+                {/* <view width={50}></view> */}
                 <a href='https://pts.umn.edu/sites/pts.umn.edu/files/2020-07/bus_outline_map_printable.jpg' target="_blank" rel="noreferrer">
                     <Button pos="absolute" top="5" right="150" colorScheme='yellow'>
                         Campus Bus Map
                     </Button>
                 </a>
-                <view width={50}></view>
+                {/* <view width={50}></view> */}
 
                 <a href='https://umn.rider.peaktransit.com' target="_blank" rel="noreferrer">
                     <Button pos="absolute" top="5" right="335" colorScheme='yellow'>
