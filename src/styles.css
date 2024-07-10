@@ -2,26 +2,22 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-html, body 
-{
+html, body  {
     margin: 0;
     height: 100%;
 }
 
-div#map
-{
+div#map {
   height: 90%;
   width: 100%;
 }
 
-div#root
-{
+div#root {
     margin: 0vh;
     height: 100%;
 }
 
-#title-bar
-{
+#title-bar {
   display: flex;
   height: 10%;
   background-color: #7a0019;
@@ -60,80 +56,80 @@ div#title-bar > h1 > .city {
 
 /* The sidebar container */
 .sidebar {
-    height: 100%;
-    position: fixed;
-    z-index: 1;
-    top: 10vh;
-    left: 0;
-    background-color: rgb(226, 226, 226);
-    overflow-x: clip;
-    padding-top: 15px;
-    transition: 0.5s;
-  }
-  
-  /* The sidebar container when it's open */
-  .sidebar.open {
-    width: 100%;
-  }
+  height: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 10vh;
+  left: 0;
+  background-color: rgb(226, 226, 226);
+  overflow-x: clip;
+  padding-top: 15px;
+  transition: 0.5s;
+}
 
-  .sidebar-content {
-    width: 100%;
-  }
-  
-  /* The sidebar links */
-  /* .sidebar a {
-    padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    font-size: 17px;
-    color: #100202;
-    display: block;
-    font-family: 'Neutraface Text', sans-serif;
-    transition: 0.3s;
-    white-space: nowrap;
-  } */
-  
-  /* When you mouse over the navigation links, change their color */
-  /* .sidebar a:hover {
-    color: #a71010;
-  } */
+/* The sidebar container when it's open */
+.sidebar.open {
+  width: 100%;
+}
 
-  .sidebar-content button {
-    background-color: transparent;
-    text-align: left;
-    color: #160f0f;
-    border: none;
-    padding: 8px 8px 8px 32px;
-    font-size: 17px;
-    font-family: 'Neutraface Text', sans-serif;
-    white-space: nowrap;
-    width: 100%;
-    display: block;
-    transition: background-color 0.3s;
-    position: relative;
-  }
+.sidebar-content {
+  width: 100%;
+}
+
+/* The sidebar links */
+/* .sidebar a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 17px;
+  color: #100202;
+  display: block;
+  font-family: 'Neutraface Text', sans-serif;
+  transition: 0.3s;
+  white-space: nowrap;
+} */
+
+/* When you mouse over the navigation links, change their color */
+/* .sidebar a:hover {
+  color: #a71010;
+} */
+
+.sidebar-content button {
+  background-color: transparent;
+  text-align: left;
+  color: #160f0f;
+  border: none;
+  padding: 8px 8px 8px 32px;
+  font-size: 17px;
+  font-family: 'Neutraface Text', sans-serif;
+  white-space: nowrap;
+  width: 100%;
+  display: block;
+  transition: background-color 0.3s;
+  position: relative;
+}
   
-  /* Add these styles to darken the buttons on hover */
-  .sidebar-content button:hover {
-    background-color: #d3d3d3; 
-    color: #a71010;
-  }
+/* Add these styles to darken the buttons on hover */
+.sidebar-content button:hover {
+  background-color: #d3d3d3; 
+  color: #a71010;
+}
 
-  .sidebar-content button.active {
-    background-color: #9f9090; 
-    color: #a71010;
-  }
+.sidebar-content button.active {
+  background-color: #9f9090; 
+  color: #a71010;
+}
 
-  .sidebar-content button::before {
-    content: '';
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    display: inline-block;
-    background-color: transparent;
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
+.sidebar-content button::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  background-color: transparent;
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 /* Define colors for each route */
@@ -177,21 +173,22 @@ div#title-bar > h1 > .city {
   background-color: #003DA5; /* Color for route "901" */
 }
   
-  /* The button used to open the sidebar */
-  .openbtn {
-    font-size: 20px;
-    cursor: pointer;
-    background-color: transparent;
-    color: white;
-    padding-top: 0.75em;
-    padding-left: 1em;
-    padding-right: 1em;
-    padding-bottom: 1em;
-    border: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
+/* The button used to open the sidebar */
+.openbtn {
+  font-size: 20px;
+  cursor: pointer;
+  background-color: transparent;
+  color: white;
+  padding-top: 0.75em;
+  padding-left: 1em;
+  padding-right: 1em;
+  padding-bottom: 1em;
+  border: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 .AboutButton {
     position: absolute;
     top: 0;
@@ -208,48 +205,67 @@ div#title-bar > h1 > .city {
     border: none;
     cursor: pointer;
 }
+
 #main {
   padding: 0px;
 }
-  
-  .openbtn:hover {
-    background-color: transparent;
-  }
+
+.openbtn:hover {
+  background-color: transparent;
+}
 
   /* Styling for the "Select Routes" header */
 .nav-header {
-    text-align: center;
-    margin-top: 1px;
-    margin-bottom: 5px;
-    width: 285px;
+  text-align: center;
+  margin-top: 1px;
+  margin-bottom: 5px;
+  width: 285px;
 
-  }
-  
-  .nav-header h3 {
-    color: black;
-    font-family: 'Neutraface Text', sans-serif;
-    white-space: nowrap;
-  }
+}
 
-  .underline {
-    width: 200px;
-    height: 2px;
-    background-color: rgb(30, 53, 53);
-    margin: 0 auto;
-  }
+.nav-header h3 {
+  color: black;
+  font-family: 'Neutraface Text', sans-serif;
+  white-space: nowrap;
+}
+
+.underline {
+  width: 200px;
+  height: 2px;
+  background-color: rgb(30, 53, 53);
+  margin: 0 auto;
+}
 
 
 
-  /* Styling for LoadingScreen.tsx */
-  @keyframes rotate {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
+/* Styling for LoadingScreen.tsx */
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
   }
-  
-  .rotate-wheel {
-    animation: rotate 0.5s linear infinite;
+  100% {
+    transform: rotate(360deg);
   }
+}
+
+.rotate-wheel {
+  animation: rotate 0.5s linear infinite;
+}
+
+.controls {
+  background-color: #fff;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+  font-family: Roboto;
+  font-size: 15px;
+  font-weight: 300;
+  height: 29px;
+  margin-left: 17px;
+  margin-top: 10px;
+  outline: none;
+  padding: 0 11px 0 13px;
+  text-overflow: ellipsis;
+  width: 400px;
+}
