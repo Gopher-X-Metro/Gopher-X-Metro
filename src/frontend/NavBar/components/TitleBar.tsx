@@ -3,7 +3,7 @@ import { Heading, Box } from "@chakra-ui/react"
 
 
 export default function TitleBar(){
-
+    //TODO: find out if we wanted to keep the older title bar
     const xStyle = {
         'background': "linear-gradient(to right, #FFCC33 50%, #0053A0 50%)",
         'backgroundClip': 'text',
