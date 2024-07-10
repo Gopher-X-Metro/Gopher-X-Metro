@@ -13,18 +13,17 @@ import {
   } from '@chakra-ui/react';
 
 export default function Schedule({selectedName, scheduleTimes}){
-
     const renderRows = (scheduleTimes) => {
-        return scheduleTimes.map((row) => {
-            return(
-                <Tr>
-                    <Td>{row[0]}</Td>
-                    <Td>{row[1]}</Td>
-                    <Td>{row[2]}</Td>
-                </Tr>
-            )
-          })
-    }
+        return scheduleTimes.map((row, index) => {
+            return (  
+            <Tr key={"table-row-" + index}>
+              <Td>{row[0]}</Td>
+              <Td>{row[1]}</Td>
+              <Td>{row[2]}</Td>
+            </Tr>
+          );
+        });
+      };
 
     return(
         <div>
