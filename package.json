@@ -28,7 +28,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "knip": "knip"
   },
   "eslintConfig": {
     "extends": [
@@ -49,9 +50,11 @@
     ]
   },
   "devDependencies": {
+    "@types/node": "^20.14.10",
     "file-loader": "^6.2.0",
+    "knip": "^5.25.1",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.5.3"
   },
   "overrides": {
     "react-scripts": {
