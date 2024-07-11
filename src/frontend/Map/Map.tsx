@@ -1,7 +1,7 @@
 import { Loader } from "@googlemaps/js-api-loader"
 import React, { useEffect, useState } from 'react';
 
-import Resources from '../../backend/Resources.ts';
+import Resources from 'src/backend/Resources.ts';
 
 import Marker from './Marker.ts';
 import Routes from './Routes.ts';
@@ -89,11 +89,11 @@ export default function Map() {
     }, []);
 
 
-    return <>
+    return (<div className="h-[90%] w-full bg-black">
         <LoadingScreen hidden={mapLoaded}/>
         <input id="search-bar" className="controls" type="text"/>
         <div id="map"/> 
-    </>;
+    </div>);
 }
 
 function isMobile() {
