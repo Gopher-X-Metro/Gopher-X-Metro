@@ -4,6 +4,8 @@ import StopInfoWindow from "./StopInfoWindow.ts";
 import Resources from 'src/backend/Resources.ts';
 import URL from 'src/backend/URL.ts';
 
+import Routes from "../../Routes.ts"; // I DON"T LIKE THIS!!!
+
 
 interface departure {
     routeId: string;
@@ -103,7 +105,13 @@ class Stop extends Element {
 
                         const buttonElement = document.createElement("button");
                         buttonElement.innerHTML = `<svg width="12" height="12" style="display: block; margin: 0 auto 5px;"><circle cx="6" cy="6" r="6" fill="#${await Resources.getColor(routeId)}"/></svg>`
-                        buttonElement.addEventListener("click", () => URL.addRoute(routeId));
+                        buttonElement.addEventListener("click", () => {
+                            if (!URL.getRoutes().has(routeId))
+                                URL.addRoute(routeId);
+                            else
+                                URL.removeRoute(routeId);
+                            Routes.refresh();
+                        });
 
                         const routeIdElement = document.createElement("h3");
                         routeIdElement.innerHTML = `- ${routeId} -`;
