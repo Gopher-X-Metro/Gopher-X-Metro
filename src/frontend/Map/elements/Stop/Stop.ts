@@ -1,7 +1,7 @@
 import Element from "../Element.ts";
 import StopInfoWindow from "./StopInfoWindow.ts";
 
-import Resources from '../../../../backend/Resources.ts';
+import Resources from 'src/backend/Resources.ts';
 
 
 interface departure {

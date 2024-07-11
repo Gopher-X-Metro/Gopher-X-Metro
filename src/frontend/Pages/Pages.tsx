@@ -3,14 +3,14 @@ import { Route, Routes } from "react-router-dom";
 
 import Map from '../Map/Map.tsx';
 import About from './About/About.tsx';
-import Schedule from './Schedule/Schedule.tsx';
+import Schedules from 'src/frontend/Pages/Schedules.tsx';
 
 function Pages() {
     return (
         <Routes>
             <Route path="/" element={<Map />} />
             <Route path="/about" element={<About />} />
-            <Route path="/schedule" element={<Schedule />} />
+            <Route path="/schedules" element={<Schedules />} />
         </Routes>
     )
 }
