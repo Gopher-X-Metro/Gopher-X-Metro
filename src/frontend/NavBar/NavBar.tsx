@@ -4,6 +4,7 @@ import {
     Button,
     HStack,
     Box,
+    Icon,
 } from '@chakra-ui/react'
 import TitleBar from './components/TitleBar.tsx';
 import SideBar from './components/Sidebar.tsx';
@@ -24,8 +25,8 @@ export default function NavBar() {
                         <TitleBar />
                     </Link>
                 </Box>
-                <div className="flex-grow"></div>
-                <div className="w-[40%] flex flex-row justify-between max-md:hidden ">
+                <div className="flex-grow"/>
+                <div className=" flex flex-row gap-2 max-lg:hidden ">
 
                     <Link to="/schedules" >
                         <Button colorScheme='yellow'>
@@ -45,12 +46,12 @@ export default function NavBar() {
                     </a>
 
                     <Link to="/about" >
-                        <Button colorScheme='yellow'>
-                            About
+                        <Button rounded='full' colorScheme='yellow'>
+                            ?
                         </Button>
                     </Link>
 
-
+                {/* TODO: implement an alternative button that can expand to include the elements above when the user is mobile */}
                 </div>
             </HStack>
 
