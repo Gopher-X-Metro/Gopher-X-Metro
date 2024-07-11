@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import RouteButton from './RouteButton.tsx';
 import RouteButtonAddons from './RouteButtonAddons.tsx';
-import { Image } from '@chakra-ui/react';
+import { Icon, Image } from '@chakra-ui/react';
+import { ChevronDownIcon, HamburgerIcon } from '@chakra-ui/icons';
 
 function SideBar() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -10,11 +11,7 @@ function SideBar() {
         <>
             <div id="nav-bar">
                 <button className="openbtn" onClick={() => setSidebarOpen(!sidebarOpen)}>
-                    <Image
-                        boxSize="40px"
-                        src="/hamburgermenu.svg"
-                        alt="?"
-                    />
+                    <Icon as={ HamburgerIcon} w={6} h={6} />
                 </button>
             </div>
 
