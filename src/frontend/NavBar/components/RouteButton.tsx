@@ -19,7 +19,8 @@ function RouteButton({ routeId, text }) {
     // Iterate over markers and close their info windows
     if (stops)
         stops.forEach(stop => { stop.closeInfoWindow(); });
-};
+  };
+  
   return (
       <button className={`route-btn ${isActive ? 'active' : ''} route-${routeId}`} onClick={() => {
           // selects specific route depending on button pressed
@@ -28,11 +29,8 @@ function RouteButton({ routeId, text }) {
           else
               URL.removeRoute(routeId);
 
-
-          Routes.refresh();
-          Routes.refreshVehicles();
-            // Remove info windows associated with the routeId
-            removeInfoWindows();
+          // Remove info windows associated with the routeId
+          removeInfoWindows();
           setForceUpdate(Math.random()); // updates color of button click immediately
       }}>
           {text}

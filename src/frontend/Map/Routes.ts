@@ -29,6 +29,12 @@ namespace Routes {
             }
             setVisible(routeId, true)
         })
+
+        // Load Vehicles
+        refreshVehicles();
+
+        // Load Stops
+        refreshStops();
     }
     /**
      * Gets a route object
@@ -36,10 +42,17 @@ namespace Routes {
      */
     export function getRoute(routeId: string): Route | undefined { return routes.get(routeId); }
     /**
-     * Sets the map for the routes
+     * Initalzes Routes
      * @param _map map object
      */
-    export function setMap(_map: google.maps.Map): void { map = _map; }
+    export function init(_map: google.maps.Map) : void {
+        map = _map;
+        
+        // Loads the static routes
+        refresh()
+
+        URL.addListener(() => refresh());
+    }
     /**
      * Sets a route's visibility
      * @param routeId ID of route
@@ -56,55 +69,6 @@ namespace Routes {
     export function setBolded(routeId: string, bolded: boolean) {
         getRoute(routeId)?.getPaths()?.forEach(paths => paths.getLine().set("strokeWeight", bolded ? process.env.REACT_APP_LINE_BOLD : process.env.REACT_APP_LINE_NORMAL));
     }
-
-    /* Private */
-
-    /**
-     * Loads a route into the routes hash
-     * @param routeId ID of the route
-     */
-    async function loadRoute(routeId: string) {
-        const route = new Route(routeId, map);
-
-        routes.set(routeId, route);
-
-        // Load paths
-        Resources.getShapeIds(routeId)
-            .then(shapeIds => shapeIds
-                .forEach(async shapeId => {
-                    // Add path
-                    route.addPath(shapeId, await Resources.getColor(routeId), await Resources.getShapeLocations(shapeId))
-
-                    // If the user hovers over the line, change the width
-                    route.getPaths().get(shapeId)?.getLine().addListener("mouseover", () => setBolded(route.getId(), true));
-
-                    // If the user stops hovering over the line, return back
-                    route.getPaths().get(shapeId)?.getLine().addListener("mouseout", () => setBolded(route.getId(), false));
-
-                })
-            )
-
-        // Load Vehicles
-        refreshVehicles();
-
-        // Load Stops
-        refreshStops();
-
-        // console.log(await Realtime.getDirections(routeId));
-        // console.log(await Realtime.getVehicles(routeId));
-        // console.log(await Schedule.getSchedule(routeId));
-        // console.log(await Schedule.getRoute(routeId));
-        // console.log(await Realtime.getRoute(routeId));
-        // console.log((await Schedule.getTimeTable(routeId, 1)))
-        // console.log(await Schedule.getStopList(routeId, 2))
-        // console.log((await Realtime.getDirections(routeId)))
-        // console.log((await Realtime.getStops(routeId, 1)))
-        // console.log((await Plan.routeLandmarks(routeId, "")).landmarks.landmark.filter(landmark => landmark.distance < 0.01))
-        // console.log((await Realtime.getStopInfo(routeId, 1, "WGAT")))
-
-        // console.log(stops);
-    }
-
     /**
      * Refreshes the vehicles
      */
@@ -148,7 +112,6 @@ namespace Routes {
             }
         })
     }
-
     /**
      * Refresh the stops
      */
@@ -226,6 +189,31 @@ namespace Routes {
     const vehicles = new Map<string, Vehicle>();
     let map: google.maps.Map;
 
+    /**
+     * Loads a route into the routes hash
+     * @param routeId ID of the route
+     */
+    async function loadRoute(routeId: string) {
+        const route = new Route(routeId, map);
+
+        routes.set(routeId, route);
+
+        // Load paths
+        Resources.getShapeIds(routeId)
+        .then(shapeIds => shapeIds
+        .forEach(async shapeId => {
+            // Add path
+            route.addPath(shapeId, await Resources.getColor(routeId), await Resources.getShapeLocations(shapeId))
+
+            // If the user hovers over the line, change the width
+            route.getPaths().get(shapeId)?.getLine().addListener("mouseover", () => setBolded(route.getId(), true));
+
+            // If the user stops hovering over the line, return back
+            route.getPaths().get(shapeId)?.getLine().addListener("mouseout", () => setBolded(route.getId(), false));
+
+        }))
+    }
+
     /* Depreciated */
 
     /**
@@ -266,6 +254,12 @@ namespace Routes {
             vehicle.updateInfoWindow();
         }
     }
+    /**
+     * Sets the map for the routes
+     * @param _map map object
+     * @deprecated  Use init() instead
+     */
+    export function setMap(_map: google.maps.Map): void { map = _map; }
 }
 
 export default Routes;

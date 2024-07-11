@@ -54,10 +54,7 @@ export default function Map() {
         await Resources.load()
 
         // Sets the Routes map to this map
-        Routes.setMap(map)
-
-        // Loads the static routes
-        Routes.refresh()
+        Routes.init(map)
 
         // Initalizes the user's marker
         Marker.init(map);
