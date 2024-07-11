@@ -16,10 +16,10 @@ export default function NavBar() {
     return (
         <div id="title-bar">
             <HStack padding="24px" gap="30px" width="100%" className="items-center justify-content">
-                <div className="bg-black">
+
                 <SideBar />
-                </div>
-                <Box className='bg-black'>
+
+                <Box>
                     <Link to="/" >
                         <TitleBar />
                     </Link>
