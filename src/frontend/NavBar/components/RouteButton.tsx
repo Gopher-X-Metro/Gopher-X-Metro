@@ -11,10 +11,8 @@ import Routes from 'src/frontend/Map/Routes.ts';
  */
 function RouteButton({ routeId, text }) {
   useEffect(() => {
-    URL.addListener(() => {
-      setActive(URL.getRoutes().has(routeId)); // updates color of button click immediately
-    })
-    
+    // updates color of button click immediately
+    URL.addListener(() => setActive(URL.getRoutes().has(routeId)))
     setActive(URL.getRoutes().has(routeId));
   }, [])
 
