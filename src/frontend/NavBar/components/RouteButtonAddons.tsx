@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-import URL from '../../../backend/URL.ts';
+import URL from 'src/backend/URL.ts';
 import RouteButton from './RouteButton.tsx';
 
 /**

@@ -1,5 +1,5 @@
 import Routes from "../Routes";
-import Plan from "../../../backend/Plan";
+import Plan from "src/backend/Plan";
 import Search from "./Search/Search";
 
 namespace SearchBar {
