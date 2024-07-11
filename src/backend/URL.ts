@@ -11,7 +11,8 @@ namespace URL {
      * @param routeId route ID to add
      */
     export function addRoute(routeId: string) : void {
-        window.history.replaceState({}, getQuerySelectorTextContext(), "./?route=" + ((getRoutes().size === 0) ? routeId : (Array.from(getRoutes()).join(",") + "," + (routeId)))); 
+        if (!URL.getRoutes().has(routeId))
+            window.history.replaceState({}, getQuerySelectorTextContext(), "./?route=" + ((getRoutes().size === 0) ? routeId : (Array.from(getRoutes()).join(",") + "," + (routeId)))); 
     }
     /**
      * Removes the specified route from the URL

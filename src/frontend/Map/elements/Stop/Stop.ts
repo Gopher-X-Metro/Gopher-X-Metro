@@ -2,6 +2,9 @@ import Element from "../Element.ts";
 import StopInfoWindow from "./StopInfoWindow.ts";
 
 import Resources from 'src/backend/Resources.ts';
+import URL from 'src/backend/URL.ts';
+
+import Routes from "../../Routes.ts"; // I DON"T LIKE THIS!!!
 
 
 interface departure {
@@ -57,56 +60,91 @@ class Stop extends Element {
      * Updates the info window information
      */
     public async updateInfoWindow() : Promise<void> {
-        const generateContent = (content: string, errorMessage?: string): string =>
-            `<div style="text-align:center; font-family: Arial, sans-serif;">
-                <h2 style="margin-bottom: 10px; font-weight: bold; border-bottom: 2px solid #000;">${this.direction}</h2>
-                <p style="margin-bottom: 20px; font-size: 16px;">${this.name}</p>
-                ${errorMessage ? `<p style="color: red;">${errorMessage}</p>` : `<ul style="margin-top: 20px; list-style: none;">${content}</ul>`}
-            </div>`;
+        this.setColor(this.departures.size === 0 ? "#F35708" : "#4169e1");
+
+        /**
+         * Generate the content of the infowindow
+         * @param errorMessage  the error message to replace the content
+         */
+        const generateContent = async (errorMessage?: string) => {
+            const divElement = document.createElement("div");
+            divElement.style.cssText = "text-align:center; font-family: Arial, sans-serif;";
+
+            const directionElement = document.createElement("h2");
+            directionElement.textContent = this.direction
+            directionElement.style.cssText = "margin-bottom: 10px; font-weight: bold; border-bottom: 2px solid #000;";
+
+            const nameElement = document.createElement("p");
+            nameElement.textContent = this.name;
+            nameElement.style.cssText = "margin-bottom: 20px; font-size: 16px;";
+
+            divElement.appendChild(directionElement);
+            divElement.appendChild(nameElement);
+            
+            if (errorMessage) {
+                const errorElement = document.createElement("p");
+                errorElement.innerHTML = errorMessage;
+                errorElement.style.cssText = "color: red;";
+
+                divElement.appendChild(errorElement);
+            } else {
+                if (this.departures.size === 0) {
+                    const warningElement = document.createElement("p");
+                    warningElement.innerHTML = "There are no buses for this stop at this time<br>Check the scheduling page for more information"
+                    warningElement.style.cssText = 'color: red;';
+                    warningElement.style.fontSize = "12px";
+
+                    divElement.appendChild(warningElement);
+                } else {
+                    const listElement = document.createElement("ul")
+                    listElement.style.cssText = "margin-top: 20px; list-style: none;";
+
+                    for (const [routeId, departures] of this.departures) {
+                        const listItemElement = document.createElement("li");
+                        listItemElement.style.cssText = "display: inline-block; margin-left: 10px; margin-right: 10px; vertical-align: text-top;";
+
+                        const buttonElement = document.createElement("button");
+                        buttonElement.innerHTML = `<svg width="12" height="12" style="display: block; margin: 0 auto 5px;"><circle cx="6" cy="6" r="6" fill="#${await Resources.getColor(routeId)}"/></svg>`
+                        buttonElement.addEventListener("click", () => {
+                            if (!URL.getRoutes().has(routeId))
+                                URL.addRoute(routeId);
+                            else
+                                URL.removeRoute(routeId);
+                            Routes.refresh();
+                        });
+
+                        const routeIdElement = document.createElement("h3");
+                        routeIdElement.innerHTML = `- ${routeId} -`;
+                        routeIdElement.style.cssText = "margin-top: 10px;";
+                        
+                        listItemElement.appendChild(buttonElement);
+                        listItemElement.appendChild(routeIdElement);
+
+                        departures.forEach(departure => {
+                            const timeElement = document.createElement("p");
+                            timeElement.innerHTML = departure.departure_text;
+                            timeElement.style.cssText = "margin: 5px 0; font-size: 14px;";
+                            
+                            listItemElement.appendChild(timeElement);
+                        })
+
+                        listElement.append(listItemElement);
+                    }
+                    
+                    divElement.appendChild(listElement);
+                }
+            }
+
+            return divElement;
+        }
+
+        // Load infowindow
         try {
-            const content = await this.infoWindowBody();
-            this.infoWindow.setContent(generateContent(content));
+            this.infoWindow.setContent(await generateContent());
         } catch (e) {
             console.error(`Failed to update info window:`, e);
-            this.infoWindow.setContent(generateContent("", "Failed to load departure information."));
+            this.infoWindow.setContent(await generateContent("Failed to load departure information."));
         }
-    }
-
-    /**
-     * The body of the infowindow
-     */
-    public async infoWindowBody() : Promise<string> {
-        let output = "";
-        const colorPromises: Promise<{ routeId: string; color: string; departures: departure[]; }>[] = [];
-
-        for (const [routeId, departures] of this.departures) {
-            colorPromises.push(Resources.getColor(routeId).then(color => ({ routeId, color, departures })));
-        }
-
-        if (this.markerColor === "#F35708") {
-            output += `<p font-size: 12px; style='color: red;'>There are no buses for this stop at this time</p>
-                        <p font-size: 10px; style='color: red;'>Check the scheduling page for more information</p>`;
-            return output;
-        }
-
-        try {
-            const colorResults = await Promise.all(colorPromises);
-
-            for (const { routeId, color, departures } of colorResults) {
-                output += `<li style="display: inline-block; margin-left: 10px; margin-right: 10px; vertical-align: text-top;">
-                            <svg width="12" height="12" style="display: block; margin: 0 auto 5px;">
-                                <circle cx="6" cy="6" r="6" fill="#${color}" />
-                            </svg>
-                            <h3 style="margin-top: 10px;">- ${routeId} -</h3>`;
-                output += departures.map(departure => `<p style="margin: 5px 0; font-size: 14px;">${departure.departure_text}</p>`).join("");
-                output += "</li>";
-            }
-        } catch (e) {
-            console.error(`Failed to fetch colors:`, e);
-            output = "<p style='color: red;'>Failed to load route colors.</p>";
-        }
-
-        return output;
     }
 
     /**
