@@ -15,16 +15,16 @@ export default function NavBar() {
 
     return (
         <div id="title-bar">
-            <HStack padding="24px" gap="30px">
-
+            <HStack padding="24px" gap="30px" width="100%" className="items-center justify-content">
                 <SideBar />
                 <Box>
                     <Link to="/" >
                         <TitleBar />
                     </Link>
                 </Box>
-                <div className="max-md:hidden">
-                    
+                <div className="flex-grow"></div>
+                <div className="w-[40%] flex flex-row justify-between max-md:hidden ">
+
                     <Link to="/schedules" >
                         <Button colorScheme='yellow'>
                             Schedules
