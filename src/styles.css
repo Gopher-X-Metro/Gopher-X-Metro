@@ -292,14 +292,6 @@ right: 0;
 padding: 1px 3px;
 }
 
-
-
-
-
- 
- 
-
-
 #searchButton:hover{
   background-color: darkgrey;
 }
@@ -310,3 +302,21 @@ padding: 1px 3px;
   transform: translateY(1px);
 }
 
+
+
+.AboutButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5%;
+  padding-top: 0.75em;
+  padding-left: 1.5em;
+  padding-right: 1em;
+  padding-bottom: 1em;
+  font-size: 20px;
+  font-weight: bold;
+  background-color: transparent;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+}
