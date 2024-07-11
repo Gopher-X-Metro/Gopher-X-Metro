@@ -11,8 +11,10 @@ namespace URL {
      * @param routeId route ID to add
      */
     export function addRoute(routeId: string) : void {
-        if (!URL.getRoutes().has(routeId))
-            window.history.replaceState({}, getQuerySelectorTextContext(), "./?route=" + ((getRoutes().size === 0) ? routeId : (Array.from(getRoutes()).join(",") + "," + (routeId)))); 
+        if (!URL.getRoutes().has(routeId)) {
+            window.history.replaceState({}, getQuerySelectorTextContext(), "./?route=" + ((getRoutes().size === 0) ? routeId : (Array.from(getRoutes()).join(",") + "," + (routeId))));
+            onChange(); 
+        }
     }
     /**
      * Removes the specified route from the URL
@@ -23,10 +25,26 @@ namespace URL {
             const routes = getRoutes();
             routes.delete(routeId);
             window.history.replaceState({}, getQuerySelectorTextContext(), (routes.size === 0) ? "./" : ("./?route=" + Array.from(routes).join(",")));
+            onChange();
         }
+    }
+    /**
+     * Runs functions to when the URL is updated
+     * @param callbackfn function to run
+     */
+    export function addListener(callbackfn: () => void) : void {
+        functions.push(callbackfn);
     }
 
     /* Private */
+    const functions = new Array<() => void>();
+
+    /**
+     * Runs the listeners that were added
+     */
+    function onChange() {
+        functions.forEach(f => f());
+    }
 
     /**
      * Gets the url

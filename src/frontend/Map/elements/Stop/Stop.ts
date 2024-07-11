@@ -4,8 +4,6 @@ import StopInfoWindow from "./StopInfoWindow.ts";
 import Resources from 'src/backend/Resources.ts';
 import URL from 'src/backend/URL.ts';
 
-import Routes from "../../Routes.ts"; // I DON"T LIKE THIS!!!
-
 
 interface departure {
     routeId: string;
@@ -110,7 +108,6 @@ class Stop extends Element {
                                 URL.addRoute(routeId);
                             else
                                 URL.removeRoute(routeId);
-                            Routes.refresh();
                         });
 
                         const routeIdElement = document.createElement("h3");
