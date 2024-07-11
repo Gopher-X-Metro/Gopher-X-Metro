@@ -179,14 +179,10 @@ div#title-bar > h1 > .city {
   
   /* The button used to open the sidebar */
   .openbtn {
-    font-size: 20px;
+    font-size: 35px;
     cursor: pointer;
     background-color: transparent;
     color: white;
-    padding-top: 0.75em;
-    padding-left: 1em;
-    padding-right: 1em;
-    padding-bottom: 1em;
     border: none;
   }
 .PageButton {
@@ -205,9 +201,7 @@ div#title-bar > h1 > .city {
     border: none;
     cursor: pointer;
 }
-#main {
-  padding: 0px;
-}
+
   
   .openbtn:hover {
     background-color: transparent;

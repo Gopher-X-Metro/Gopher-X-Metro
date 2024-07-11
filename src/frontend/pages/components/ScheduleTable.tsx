@@ -28,6 +28,10 @@ import Schedule from './Schedule.tsx';
             ["Thursday-Friday", "10:00 pm – 2:00 am", "every 20 minutes"],
             ["Saturday", "9:30 am – 2:00 am", "every 20 minutes"],
             ["Sunday", "9:30 am – 12:15 am", "every 20 minutes"],
+            ["Sunday", "9:30 am – 12:15 am", "every 20 minutes"],
+            ["Sunday", "9:30 am – 12:15 am", "every 20 minutes"],
+            ["Sunday", "9:30 am – 12:15 am", "every 20 minutes"],
+            ["Sunday", "9:30 am – 12:15 am", "every 20 minutes"],
           ]);
           break;
         case 122:
