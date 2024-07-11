@@ -213,11 +213,6 @@ namespace Routes {
             for (const departure of info.departures)
                 stop?.addDeparture(departure.route_id, departure.trip_id, departure.departure_text, departure.direction_text, departure.description, departure.departure_time);
 
-            if (info.departures.length === 0)
-                stop?.setColor("#F35708")
-            else
-                stop?.setColor("#4169e1")
-
             stop?.updateInfoWindow();
         }
 
