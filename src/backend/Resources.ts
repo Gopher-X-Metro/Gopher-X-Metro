@@ -110,22 +110,24 @@ namespace Resources {
     export async function getColor(routeId: string) : Promise<string> {
         try {
             // Check if color is defined in ROUTE_COLORS
-            if (ROUTE_COLORS[routeId]) {
-                return ROUTE_COLORS[routeId];
-            }
+            if (ROUTE_COLORS[routeId]) return ROUTE_COLORS[routeId];
     
+            // Check existing colors
+            if (colors.has(routeId)) return colors.get(routeId) as string;
+
             // Fetch route color from Static.getRoutes
             const result = await Static.getRoutes(routeId);
             if (result && result[0] && result[0].route_color && result[0].route_color !== "") {
+                colors.set(routeId, result[0].route_color);
                 return result[0].route_color;
             }
-    
-            // Default color if no valid route color found
-            return "444444";
         } catch (e) {
-            console.error(`Failed to fetch colors for routeId ${routeId}:`, e);
-            return "444444";
+            console.error(`Failed to fetch colors for routeId ${routeId}:`, e);  
         }
+
+        // Default color if no valid route color found
+        colors.set(routeId, "444444");
+        return "444444";
     }
 
     /**
@@ -164,6 +166,8 @@ namespace Resources {
         "902": "00843D",
         "901": "003DA5"
     };
+
+    const colors = new Map<string, string>();
 }
 
 export default Resources;

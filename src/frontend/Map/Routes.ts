@@ -24,9 +24,7 @@ namespace Routes {
 
         // Goes through each route that is on the URL, and unhides it or creates it
         URL.getRoutes().forEach(routeId => {
-            if (!routes.has(routeId)) {
-                loadRoute(routeId);
-            }
+            if (!routes.has(routeId)) loadRoute(routeId);
             setVisible(routeId, true)
         })
 
