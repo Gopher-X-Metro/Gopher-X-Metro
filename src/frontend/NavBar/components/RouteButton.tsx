@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 
-import URL from '../../../backend/URL.ts';
-import Routes from '../../Map/Routes.ts';
+import URL from 'src/backend/URL.ts';
+import Routes from 'src/frontend/Map/Routes.ts';
 
 /**
  * Creates a route button with the route that the button leads to and the route that it leads to
@@ -21,7 +21,7 @@ function RouteButton({ routeId, text }) {
         stops.forEach(stop => { stop.closeInfoWindow(); });
 };
   return (
-      <button className={`${isActive ? 'active' : ''} route-${routeId}`} onClick={() => {
+      <button className={`route-btn ${isActive ? 'active' : ''} route-${routeId}`} onClick={() => {
           // selects specific route depending on button pressed
           if (!URL.getRoutes().has(routeId))
               URL.addRoute(routeId);
