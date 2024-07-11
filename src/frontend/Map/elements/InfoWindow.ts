@@ -23,7 +23,7 @@ export default class InfoWindow {
     /**
      * Changes the content of the info window on the map
      */
-    public setContent(content: string) {
+    public setContent(content: string | Element | null | Text) {
         this.window.setContent(content);
     }
     /**
