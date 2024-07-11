@@ -11,13 +11,11 @@ export default function TitleBar(){
     }
 
     return(
-        <div>
-            <Box pos='absolute' top='1.5' left='200'>
+            <Box>
                 <Heading display='inline-block' color='#FFCC33' margin='1'>Gopher </Heading>
                 <Heading display='inline-block' margin='1' style={xStyle}> X </Heading>
                 <Heading display='inline-block' color ='#0053A0' margin='1'> Metro </Heading>
             </Box>
-        </div>
         
     )
 }

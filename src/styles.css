@@ -188,9 +188,6 @@ div#title-bar > h1 > .city {
     padding-right: 1em;
     padding-bottom: 1em;
     border: none;
-    position: absolute;
-    top: 0;
-    left: 0;
   }
 .PageButton {
     position: absolute;
