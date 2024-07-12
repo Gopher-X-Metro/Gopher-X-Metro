@@ -65,7 +65,7 @@ namespace Routes {
      * @param bolded should the route be boolded
      */
     export function setBolded(routeId: string, bolded: boolean) {
-        getRoute(routeId)?.getPaths()?.forEach(paths => paths.getLine().set("strokeWeight", bolded ? process.env.REACT_APP_LINE_BOLD : process.env.REACT_APP_LINE_NORMAL));
+        getRoute(routeId)?.getPaths()?.forEach(paths => (paths.getMarker() as google.maps.MVCObject).set("strokeWeight", bolded ? process.env.REACT_APP_LINE_BOLD : process.env.REACT_APP_LINE_NORMAL));
     }
     /**
      * Refreshes the vehicles
@@ -211,10 +211,10 @@ namespace Routes {
             route.addPath(shapeId, await Resources.getColor(routeId), await Resources.getShapeLocations(shapeId))
 
             // If the user hovers over the line, change the width
-            route.getPaths().get(shapeId)?.getLine().addListener("mouseover", () => setBolded(route.getId(), true));
+            route.getPaths().get(shapeId)?.getMarker().addListener("mouseover", () => setBolded(route.getId(), true));
 
             // If the user stops hovering over the line, return back
-            route.getPaths().get(shapeId)?.getLine().addListener("mouseout", () => setBolded(route.getId(), false));
+            route.getPaths().get(shapeId)?.getMarker().addListener("mouseout", () => setBolded(route.getId(), false));
 
         }))
     }

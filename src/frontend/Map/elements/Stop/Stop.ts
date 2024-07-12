@@ -24,20 +24,17 @@ class Stop extends Element {
      * @param map map the stop displays on
      */
     constructor(stopId: string, color: string, name: string, direction: string, location: google.maps.LatLng, map: google.maps.Map) {
-        super(stopId, color, map);
-        this.location = location;
-
-        this.marker = new window.google.maps.Circle({
+        super(stopId, color, map, new window.google.maps.Circle({
             fillColor: color,
             fillOpacity: 1,
             strokeWeight: 8,
             strokeColor: color,
-            center: this.location,
+            center: location,
             radius: 6.5,
             clickable: true,
             strokeOpacity: 0.5,
             map: map
-        });
+        }));
 
         this.infoWindow = new StopInfoWindow(this.marker, location, map);
 
@@ -46,11 +43,6 @@ class Stop extends Element {
         this.name = name;
         this.direction = direction;
     }
-
-    /**
-     * Gets the marker object on the map
-     */
-    public getMarker() : google.maps.Circle { return this.marker; }
 
     /**
      * Updates the info window information
@@ -184,21 +176,19 @@ class Stop extends Element {
      * Changes the color of the stop
      * @param color  the new color
      */
-    public setColor(color: string) : void { 
-        this.marker.set("fillColor", color);
-        this.marker.set("strokeColor", color);
+    public setColor(color: string) : void {
+        (this.marker as google.maps.Circle).set("fillColor", color);
+        (this.marker as google.maps.Circle).set("strokeColor", color);
     }
     /**
      * Sets the visibility of the stop
      * @param visible   if the stop should be visible
      */
-    public setVisible(visible: boolean) : void { this.getMarker().setMap(visible ? this.map : null); }
+    public setVisible(visible: boolean) : void { (this.marker as google.maps.Circle).setMap(visible ? this.map : null); }
  
     /* Private */
     private name: string;
     private infoWindow: StopInfoWindow;
-    private location: google.maps.LatLng;
-    private marker: google.maps.Circle;
     private departures: Map<string, Array<departure>>;
     private direction: string;
 }
