@@ -119,9 +119,9 @@ namespace Routes {
             for (const schedule of (await Schedule.getRouteDetails(routeId)).schedules) {
                 if (schedule.schedule_type_name === Schedule.getWeekDate()) {
                     for (const timetable of schedule.timetables) {
-                        for (const info of (await Schedule.getStopList(routeId, timetable.schedule_number))) {
+                        for (const info of await Schedule.getStopList(routeId, timetable.schedule_number)) {
                             // Load the stop
-                            loadStop(info.stop_id, timetable.direction).then(stop => {
+                            loadStop(info.stop_id, timetable.direction)?.then(stop => {
                                 // Adds the stop if it has not been added yet
                                 const route = routes.get(routeId)
 
@@ -139,7 +139,7 @@ namespace Routes {
                                         setBolded(route.getId(), false)
                                     });
                                 }
-                            });
+                            })
                         }
                     }
                 }
@@ -153,37 +153,44 @@ namespace Routes {
      * @returns the stop is requested to be loaded
      */
     export async function loadStop(stopId: string, direction: string) : Promise<Stop | undefined> {
-        const info = await Realtime.getStop(stopId);
-        const properties = info.stops[0]
-        let stop: Stop | undefined;
+        
+        if (!stops.has(stopId)) {
+            stops.set(stopId, (async () => {
+                const info = await Realtime.getStop(stopId);
+                const properties = info.stops[0]
+                let stop: Stop | undefined;
 
-        if (info.status !== 400) {
-            if (!stops.has(properties.stop_id)) {
-                stop = new Stop(properties.stop_id, "#4169e1", properties.description, direction, new google.maps.LatLng(properties.latitude, properties.longitude), map);
-                stops.set(properties.stop_id, stop);
-    
-                stop.getMarker().addListener("click", () => {
-                    for (let s of stops) 
-                        if (s[1].getId() !== properties.stop_id)
-                            s[1].closeInfoWindow();
-                })
-            } else stop = stops.get(properties.stop_id);
+                if (info.status !== 400) {
+                    if (properties.stop_id === stopId || !stops.has(properties.stop_id)) {
+                        stop = new Stop(properties.stop_id, "#4169e1", properties.description, direction, new google.maps.LatLng(properties.latitude, properties.longitude), map);
+                        stops.set(properties.stop_id, Promise.resolve(stop));
 
-            stop?.clearDepartures();
+                        stop.getMarker().addListener("click", async () => {
+                            for (let s of stops) 
+                                if ((await s[1])?.getId() !== properties.stop_id)
+                                    (await s[1])?.closeInfoWindow();
+                        })
 
-            for (const departure of info.departures)
-                stop?.addDeparture(departure.route_id, departure.trip_id, departure.departure_text, departure.direction_text, departure.description, departure.departure_time);
+                        stop?.clearDepartures();
 
-            stop?.updateInfoWindow();
+                        for (const departure of info.departures)
+                            stop?.addDeparture(departure.route_id, departure.trip_id, departure.departure_text, departure.direction_text, departure.description, departure.departure_time);
+
+                        stop?.updateInfoWindow();
+                    } else stop = await stops.get(properties.stop_id);
+                }
+
+                return stop;
+            })());
         }
 
-        return stop;
+        return stops.get(stopId);
     }
 
     /* Private */
 
     const routes = new Map<string, Route>();
-    const stops = new Map<string, Stop>();
+    const stops = new Map<string, Promise<Stop | undefined>>();
     const vehicles = new Map<string, Vehicle>();
     let map: google.maps.Map;
 
