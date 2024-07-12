@@ -43,13 +43,12 @@ namespace SearchBar {
         .then(async ({ results }) => {
             const location = results[0].geometry.location;
 
-            searches.add(new Search(place.place_id as string, place.name, location, map));
+            searches.add(new Search(place.place_id as string, "", place.name, location, map));
 
             map.setZoom(15);
             map.setCenter(location);
 
             Plan.serviceNearby(location.lat(), location.lng(), null, 0, 0.3).then(async nearest => {
-                console.log(nearest)
                 if (nearest.version !== 0)
                     for (const stop of nearest.atstop)
                         Routes.loadStop(stop.stopid, "").then(s => s?.setVisible(true));

@@ -1,34 +1,45 @@
+import Primative from "./Primative";
+
 /**
  * Builds Map Elements
  */
-abstract class Element {
+abstract class Element extends Primative {
     /* Public */
 
     /**
      * Element Constructor
-     * @param Id ID of the element
+     * @param id ID of the element
      * @param color color of the element
      * @param map map the element displays on 
      */
-    constructor(Id: string, color: string, map: google.maps.Map) {
-        this.Id = Id;
+    constructor(id: string, color: string, map: google.maps.Map, marker: google.maps.MVCObject | google.maps.marker.AdvancedMarkerElement) {
+        super(id, map);
+        this.marker = marker;
         this.color = "#" + color;
-        this.map = map;
     }
     /**
      * Gets the Element's Color
      */
     public getColor() : string { return this.color; }
     /**
-     * Gets the Element's ID
+     * Gets the marker object on the map
      */
-    public getId() : string { return this.Id; }
+    public getMarker() : google.maps.MVCObject | google.maps.marker.AdvancedMarkerElement { return this.marker; }
+    /**
+     * Sets the visibility of the marker
+     * @param visible if the marker should be visible
+     */
+    public setVisible(visible: boolean) : void {
+        if (this.marker instanceof google.maps.MVCObject)
+            this.marker.set("map", visible ? this.map : undefined);
+
+        if (this.marker instanceof google.maps.marker.AdvancedMarkerElement)
+            this.marker.map = visible ? this.map : undefined;
+    }
 
     /* Private */
-
-    private readonly Id: string;
     private readonly color: string;
-    protected readonly map: google.maps.Map;
+    protected readonly marker: google.maps.MVCObject | google.maps.marker.AdvancedMarkerElement;
 }
 
 export default Element;
