@@ -4,7 +4,6 @@ import StopInfoWindow from "./StopInfoWindow.ts";
 import Resources from 'src/backend/Resources.ts';
 import URL from 'src/backend/URL.ts';
 
-
 interface departure {
     routeId: string;
     tripId: string;
@@ -46,7 +45,6 @@ class Stop extends Element {
 
         this.name = name;
         this.direction = direction;
-        this.markerColor = color;
     }
 
     /**
@@ -186,21 +184,15 @@ class Stop extends Element {
      * Changes the color of the stop
      * @param color  the new color
      */
-
     public setColor(color: string) : void { 
         this.marker.set("fillColor", color);
         this.marker.set("strokeColor", color);
-        this.markerColor = color;
     }
     /**
      * Sets the visibility of the stop
      * @param visible   if the stop should be visible
      */
     public setVisible(visible: boolean) : void { this.getMarker().setMap(visible ? this.map : null); }
-
-    public getColor(): string {
-        return this.markerColor;
-    }
  
     /* Private */
     private name: string;
@@ -209,7 +201,6 @@ class Stop extends Element {
     private marker: google.maps.Circle;
     private departures: Map<string, Array<departure>>;
     private direction: string;
-    private markerColor: string;
 }
 
 export default Stop;
