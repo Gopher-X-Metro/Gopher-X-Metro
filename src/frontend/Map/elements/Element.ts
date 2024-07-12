@@ -12,15 +12,10 @@ abstract class Element extends Primative {
      * @param color color of the element
      * @param map map the element displays on 
      */
-    constructor(id: string, color: string, map: google.maps.Map, marker: google.maps.MVCObject | google.maps.marker.AdvancedMarkerElement) {
+    constructor(id: string, map: google.maps.Map, marker: google.maps.MVCObject | google.maps.marker.AdvancedMarkerElement) {
         super(id, map);
         this.marker = marker;
-        this.color = "#" + color;
     }
-    /**
-     * Gets the Element's Color
-     */
-    public getColor() : string { return this.color; }
     /**
      * Gets the marker object on the map
      */
@@ -38,7 +33,6 @@ abstract class Element extends Primative {
     }
 
     /* Private */
-    private readonly color: string;
     protected readonly marker: google.maps.MVCObject | google.maps.marker.AdvancedMarkerElement;
 }
 

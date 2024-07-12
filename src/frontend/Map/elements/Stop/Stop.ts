@@ -24,7 +24,7 @@ class Stop extends Element {
      * @param map map the stop displays on
      */
     constructor(stopId: string, color: string, name: string, direction: string, location: google.maps.LatLng, map: google.maps.Map) {
-        super(stopId, color, map, new window.google.maps.Circle({
+        super(stopId, map, new window.google.maps.Circle({
             fillColor: color,
             fillOpacity: 1,
             strokeWeight: 8,

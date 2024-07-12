@@ -13,7 +13,7 @@ class Path extends Element{
      * @param map map that the line is displayed on
      */
     constructor(shapeId: string, color: string, locations: Array<google.maps.LatLng>, map: google.maps.Map) {
-        super(shapeId, color, map, new window.google.maps.Polyline({
+        super(shapeId, map, new window.google.maps.Polyline({
             path: locations,
             geodesic: true,
             strokeColor: "#" + color,

@@ -3,8 +3,8 @@ import SearchInfoWindow from "./SearchInfoWindow";
 
 class Search extends Element {
     /* Public */
-    constructor(searchId: string, color: string, name: string | undefined, location: google.maps.LatLng, map: google.maps.Map) {
-        super(searchId, color, map, new google.maps.marker.AdvancedMarkerElement({
+    constructor(searchId: string, name: string | undefined, location: google.maps.LatLng, map: google.maps.Map) {
+        super(searchId, map, new google.maps.marker.AdvancedMarkerElement({
             map: map,
             content: new window.google.maps.marker.PinElement({scale: 0.8}).element,
             position: location

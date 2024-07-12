@@ -45,7 +45,7 @@ namespace SearchBar {
             .then(async ({ results }) => {
                 const location = results[0].geometry.location;
 
-                searches.set(place.place_id as string, new Search(place.place_id as string, "", place.name, location, map));
+                searches.set(place.place_id as string, new Search(place.place_id as string, place.name, location, map));
 
                 map.setZoom(15);
                 map.setCenter(location);
