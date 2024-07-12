@@ -33,9 +33,8 @@ class Search extends Element {
         buttonElement.textContent = "Remove";
         buttonElement.style.cssText = "width: 50px; height: 10px;";
         buttonElement.onclick = () => {
-            (this.marker as google.maps.marker.AdvancedMarkerElement).map = null;
+            this.setVisible(false);
             this.infoWindow.close();
-            this.elements.forEach(element => element)
         };
         
         divElement.appendChild(nameElement);
@@ -49,6 +48,10 @@ class Search extends Element {
      */
     public addElement(element: Element) : void {
         this.elements.add(element);
+    }
+    public setVisible(visible: boolean): void {
+        (this.marker as google.maps.marker.AdvancedMarkerElement).map = visible ? this.map : undefined;
+        this.elements.forEach(element => element.setVisible(visible));
     }
 
     /* Private */
