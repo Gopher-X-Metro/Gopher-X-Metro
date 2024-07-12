@@ -77,7 +77,7 @@ namespace Routes {
             for (const info of (await Realtime.getVehicles(routeId))) {
                 if (!vehicles.has(info.trip_id)) {
                     // Add Vehicle
-                    vehicles.set(info.trip_id, new Vehicle(info.trip_id, await Resources.getColor(routeId), Resources.getRouteImages(routeId), map))
+                    vehicles.set(info.trip_id, new Vehicle(info.trip_id, Resources.getRouteImages(routeId), map))
                     
                     const route = routes.get(routeId)
 
