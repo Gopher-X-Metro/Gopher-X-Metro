@@ -49,34 +49,35 @@ namespace SearchBar {
             map.setCenter(location);
 
             Plan.serviceNearby(location.lat(), location.lng(), null, 0, 0.3).then(async nearest => {
+                console.log(nearest)
                 if (nearest.version !== 0)
                     for (const stop of nearest.atstop)
                         Routes.loadStop(stop.stopid, "").then(s => s?.setVisible(true));
             })
 
-            if (place.formatted_address) {
-                const plan = await (await Plan.trip("Coffman Memorial Union, Washington Avenue Southeast, Minneapolis, MN, USA", place.formatted_address)).json();
-                console.log(plan.routes);
-                plan.routes.forEach(route => {
-                    const steps = route.legs[0].steps;
-                    steps.forEach(step => {
-                        if (step.transitDetails) {
-                            const stopDetails = step.transitDetails.stopDetails;
-                            const transitLine = step.transitDetails.transitLine;
-                            const arrivalLocation = stopDetails.arrivalStop.location.latLng;
-                            const departureLocation = stopDetails.departureStop.location.latLng;
+            // if (place.formatted_address) {
+            //     const plan = await (await Plan.trip("Coffman Memorial Union, Washington Avenue Southeast, Minneapolis, MN, USA", place.formatted_address)).json();
+            //     console.log(plan.routes);
+            //     plan.routes.forEach(route => {
+            //         const steps = route.legs[0].steps;
+            //         steps.forEach(step => {
+            //             if (step.transitDetails) {
+            //                 const stopDetails = step.transitDetails.stopDetails;
+            //                 const transitLine = step.transitDetails.transitLine;
+            //                 const arrivalLocation = stopDetails.arrivalStop.location.latLng;
+            //                 const departureLocation = stopDetails.departureStop.location.latLng;
 
-                            console.log(transitLine);
-                            console.log(departureLocation);
-                            console.log(arrivalLocation);
-                        }
-                    });
-                });
-            }
+            //                 console.log(transitLine);
+            //                 console.log(departureLocation);
+            //                 console.log(arrivalLocation);
+            //             }
+            //         });
+            //     });
+            // }
 
-            console.log(await Plan.serviceNearby(location.lat(), location.lng(), null, 0, 0.3));
-            console.log(await Plan.nearestLandmark(location.lat(), location.lng(), null, 3, 10, null));
-            console.log(await Plan.nearestParkAndRides(location.lat(), location.lng(), null, 1));
+            // console.log(await Plan.serviceNearby(location.lat(), location.lng(), null, 0, 0.3));
+            // console.log(await Plan.nearestLandmark(location.lat(), location.lng(), null, 3, 10, null));
+            // console.log(await Plan.nearestParkAndRides(location.lat(), location.lng(), null, 1));
             
             // console.log(await Plan.serviceNearby(center.lat, center.lng, null, 1, 20))
             // console.log(await Plan.routeLandmarks(routeId, null))
