@@ -1,5 +1,5 @@
  # Gopher Buses X Metro Buses
-##### *By: Adam, Ken, Riley, Will*
+##### *By: Adam, Ken, Riley, Will, Babacar, Alex, Mike, and Andy*
 Our website includes maps of live-location **Gopher Buses along with Metro Buses and Lightrails** in the area surrounding campus. 
 Our motivation is to **increase the accessibility** of campus transportation for students. The primary goal is to include Metro Buses and Light Rails
 in a format visually similar to the [Gopher Trip Website](https://umn.rider.peaktransit.com/).
