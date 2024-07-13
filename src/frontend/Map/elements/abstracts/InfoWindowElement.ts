@@ -25,7 +25,7 @@ abstract class InfoWindowElement extends Element {
      */
     abstract updateWindow() : void;
 
-    protected readonly infoWindow: InfoWindow | undefined;
+    public readonly infoWindow: InfoWindow | undefined;
 }
 
 export default InfoWindowElement;

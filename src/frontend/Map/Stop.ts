@@ -134,12 +134,6 @@ class Stop extends InfoWindowElement {
     }
 
     /**
-     * Updates the info window information
-     * @deprecated
-     */
-    public closeInfoWindow() : void { this.infoWindow?.setVisible(false); }
-
-    /**
      * Adds a departure to the route
      * @param routeId            route the departure is for
      * @param tripId             the trip id of the departure
@@ -165,13 +159,6 @@ class Stop extends InfoWindowElement {
      * Clears all departures
      */
     public clearDepartures() : void { this.departures.clear() }
-
-    /**
-     * Sets the description of the info window
-     * @param description   the html text for the info window
-     * @deprecated
-     */
-    public setDescription(description: string) : void { this.infoWindow?.setContent(description); }
     /**
      * Changes the color of the stop
      * @param color  the new color
@@ -185,6 +172,21 @@ class Stop extends InfoWindowElement {
     private name: string;
     private departures: Map<string, Array<departure>>;
     private direction: string;
+
+    /* Depreciated */
+    
+    /**
+     * Sets the description of the info window
+     * @param description   the html text for the info window
+     * @deprecated
+     */
+    public setDescription(description: string) : void { this.infoWindow?.setContent(description); }
+    /**
+     * Updates the info window information
+     * @deprecated
+     */
+    public closeInfoWindow() : void { this.infoWindow?.setVisible(false); }
+
 }
 
 export default Stop;
