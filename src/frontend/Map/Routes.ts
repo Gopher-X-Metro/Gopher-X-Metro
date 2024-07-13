@@ -18,14 +18,14 @@ namespace Routes {
      */
     export function refresh() {
         // Goes through each route that is not on the URL, and hides it
-        routes.forEach(routeId => {
-            if (!URL.getRoutes().has(routeId.getId())) setVisible(routeId.getId(), false);
+        routes.forEach(route => {
+            if (!URL.getRoutes().has(route.getId())) route.setVisible(false);
         })
 
         // Goes through each route that is on the URL, and unhides it or creates it
         URL.getRoutes().forEach(routeId => {
             if (!routes.has(routeId)) loadRoute(routeId);
-            setVisible(routeId, true)
+            getRoute(routeId)?.setVisible(true);
         })
 
         // Load Vehicles
@@ -46,15 +46,16 @@ namespace Routes {
     export function init(_map: google.maps.Map) : void {
         map = _map;
         
+        URL.addListener(() => refresh());
+
         // Loads the static routes
         refresh()
-
-        URL.addListener(() => refresh());
     }
     /**
      * Sets a route's visibility
      * @param routeId ID of route
      * @param visible should the route be visible
+     * @deprecated
      */
     export function setVisible(routeId: string, visible: boolean) {
         getRoute(routeId)?.setVisible(visible);
@@ -168,7 +169,7 @@ namespace Routes {
                         stop.getMarker().addListener("click", async () => {
                             for (let s of stops) 
                                 if ((await s[1])?.getId() !== properties.stop_id)
-                                    (await s[1])?.closeInfoWindow();
+                                    (await s[1])?.infoWindow?.setVisible(false);
                         })
 
                         stop?.clearDepartures();
