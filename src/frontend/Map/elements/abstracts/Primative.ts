@@ -1,5 +1,5 @@
 
-class Primative {
+abstract class Primative {
     /**
      * Constructor for the Primative class
      * @param id   id of the primative object

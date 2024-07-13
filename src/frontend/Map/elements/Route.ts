@@ -1,8 +1,8 @@
-import Primative from "./Primative.ts";
+import Primative from "./abstracts/Primative.ts";
 
 import Path from "./Path.ts";
-import Stop from "./Stop/Stop.ts";
-import Vehicle from "./Vehicle/Vehicle.ts";
+import Stop from "../Stop.ts";
+import Vehicle from "./Vehicle.ts";
 
 class Route extends Primative {
 

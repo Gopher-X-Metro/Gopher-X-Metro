@@ -22,7 +22,7 @@ function RouteButton({ routeId, text }) {
     // Get all markers associated with the routeId
     const stops = Routes.getRoute(routeId)?.getStops();
     // Iterate over markers and close their info windows
-    stops?.forEach(stop => { stop.closeInfoWindow(); });
+    stops?.forEach(stop => { stop.setVisible(false); });
   };
 
   const buttonElement = React.createElement("button", {

@@ -1,8 +1,6 @@
-import Element from "../Element.ts";
-import VehicleInfoWindow from "./VehicleInfoWindow.ts";
+import InfoWindowElement from "./abstracts/InfoWindowElement";
 
-class Vehicle extends Element {
-
+class Vehicle extends InfoWindowElement {
     /* Public */
 
     /**
@@ -50,7 +48,15 @@ class Vehicle extends Element {
         contents.appendChild(busContainer);
         contents.appendChild(arrowContainer);
 
-        this.infoWindow = new VehicleInfoWindow(this.marker, map);
+        this.infoWindow?.getWindow().set("pixelOffset", new google.maps.Size(0, -15));
+    }
+    /**
+     * Updates the info window information
+     */
+    public updateWindow() {
+        this.infoWindow?.setContent(
+            String(Math.ceil(Number(this.getLastUpdated())))
+        );
     }
     /**
      * Gets the length in ms of the time between when position was updated and now
@@ -76,7 +82,7 @@ class Vehicle extends Element {
      */
     public setPosition(position : google.maps.LatLng, timestamp : number) : void {
         if (!((this.marker as google.maps.marker.AdvancedMarkerElement).position?.toString() === position.toString())) {
-            this.infoWindow.setPosition(position);
+            this.infoWindow?.setPosition(position);
             (this.marker as google.maps.marker.AdvancedMarkerElement).position = position;
             this.timestamp = timestamp;
         }
@@ -170,15 +176,6 @@ class Vehicle extends Element {
             }
         }
     }
-
-    /**
-     * Updates the info window information
-     */
-    public updateInfoWindow() {
-        this.infoWindow.setContent(
-            String(Math.ceil(Number(this.getLastUpdated())))
-        );
-    }
     
     /* Private */
 
@@ -188,7 +185,6 @@ class Vehicle extends Element {
     private direction_id: number | undefined;
     private arrowImg: HTMLImageElement | null = null;
     private arrowCont: HTMLDivElement;
-    private infoWindow: VehicleInfoWindow;
 }
 
 export default Vehicle;
