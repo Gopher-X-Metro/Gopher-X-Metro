@@ -152,7 +152,6 @@ namespace Routes {
      * @returns the stop is requested to be loaded
      */
     export async function loadStop(stopId: string, direction: string) : Promise<Stop | undefined> {
-        
         if (!stops.has(stopId)) {
             stops.set(stopId, (async () => {
                 const info = await Realtime.getStop(stopId);
@@ -168,7 +167,7 @@ namespace Routes {
                             for (let s of stops) 
                                 if ((await s[1])?.getId() !== properties.stop_id)
                                     (await s[1])?.infoWindow?.setVisible(false);
-                        })
+                        });
 
                         stop?.clearDepartures();
 
@@ -214,7 +213,6 @@ namespace Routes {
 
             // If the user stops hovering over the line, return back
             route.getPaths().get(shapeId)?.getMarker().addListener("mouseout", () => setBolded(route.getId(), false));
-
         }))
     }
 
