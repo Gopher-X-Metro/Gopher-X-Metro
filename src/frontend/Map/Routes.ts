@@ -1,12 +1,12 @@
 import Resources from "src/backend/Resources.ts";
 import Schedule from "src/backend/Schedule.ts";
 import Static from "src/backend/Static.ts";
-import Vehicle from "./elements/Vehicle/Vehicle.ts";
+import Vehicle from "./elements/Vehicle.ts";
 import URL from "src/backend/URL.ts";
 import Route from "./elements/Route.ts";
 import Realtime from "src/backend/Realtime.ts";
 import Plan from "src/backend/Plan.ts";
-import Stop from "./elements/Stop/Stop.ts";
+import Stop from "./Stop.ts";
 
 
 namespace Routes {
@@ -106,7 +106,7 @@ namespace Routes {
                 }
 
                 vehicles.get(info.trip_id)?.setPosition(new google.maps.LatLng(info.latitude as number, info.longitude as number), info.timestamp);
-                vehicles.get(info.trip_id)?.updateInfoWindow();
+                vehicles.get(info.trip_id)?.updateWindow();
             }
         })
     }
@@ -176,7 +176,7 @@ namespace Routes {
                         for (const departure of info.departures)
                             stop?.addDeparture(departure.route_id, departure.trip_id, departure.departure_text, departure.direction_text, departure.description, departure.departure_time);
 
-                        stop?.updateInfoWindow();
+                        stop?.updateWindow();
                     } else stop = await stops.get(properties.stop_id);
                 }
 
@@ -256,7 +256,7 @@ namespace Routes {
                 vehicle.setBusBearing(bearing);
             }
 
-            vehicle.updateInfoWindow();
+            vehicle.updateWindow();
         }
     }
     /**

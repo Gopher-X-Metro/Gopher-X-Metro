@@ -1,5 +1,4 @@
-import Element from "../Element.ts";
-import StopInfoWindow from "./StopInfoWindow.ts";
+import InfoWindowElement from './elements/abstracts/InfoWindowElement';
 
 import Resources from 'src/backend/Resources.ts';
 import URL from 'src/backend/URL.ts';
@@ -13,7 +12,7 @@ interface departure {
     description: string;
 }
 
-class Stop extends Element {
+class Stop extends InfoWindowElement {
     /* Public */
 
     /**
@@ -36,18 +35,18 @@ class Stop extends Element {
             map: map
         }));
 
-        this.infoWindow = new StopInfoWindow(this.marker, location, map);
-
         this.departures = new Map<string, Array<departure>>();
 
         this.name = name;
         this.direction = direction;
+
+        this.updateWindow();
     }
 
     /**
      * Updates the info window information
      */
-    public async updateInfoWindow() : Promise<void> {
+    public async updateWindow() : Promise<void> {
         this.setColor(this.departures.size === 0 ? "#F35708" : "#4169e1");
 
         /**
@@ -127,17 +126,18 @@ class Stop extends Element {
 
         // Load infowindow
         try {
-            this.infoWindow.setContent(await generateContent());
+            this.infoWindow?.setContent(await generateContent());
         } catch (e) {
             console.error(`Failed to update info window:`, e);
-            this.infoWindow.setContent(await generateContent("Failed to load departure information."));
+            this.infoWindow?.setContent(await generateContent("Failed to load departure information."));
         }
     }
 
     /**
      * Updates the info window information
+     * @deprecated
      */
-    public closeInfoWindow() : void { this.infoWindow.close(); }
+    public closeInfoWindow() : void { this.infoWindow?.setVisible(false); }
 
     /**
      * Adds a departure to the route
@@ -171,7 +171,7 @@ class Stop extends Element {
      * @param description   the html text for the info window
      * @deprecated
      */
-    public setDescription(description: string) : void { this.infoWindow.setContent(description); }
+    public setDescription(description: string) : void { this.infoWindow?.setContent(description); }
     /**
      * Changes the color of the stop
      * @param color  the new color
@@ -180,15 +180,9 @@ class Stop extends Element {
         (this.marker as google.maps.Circle).set("fillColor", color);
         (this.marker as google.maps.Circle).set("strokeColor", color);
     }
-    /**
-     * Sets the visibility of the stop
-     * @param visible   if the stop should be visible
-     */
-    public setVisible(visible: boolean) : void { (this.marker as google.maps.Circle).setMap(visible ? this.map : null); }
  
     /* Private */
     private name: string;
-    private infoWindow: StopInfoWindow;
     private departures: Map<string, Array<departure>>;
     private direction: string;
 }

@@ -1,6 +1,6 @@
 import URL from 'src/backend/URL.ts';
 import Routes from 'src/frontend/Map/Routes.ts';
-import Vehicles from 'src/frontend/Map/elements/Vehicle/Vehicle.ts';
+import Vehicles from 'src/frontend/Map/elements/Vehicle';
 
 namespace SearchFeature {
     export function searchRoute() {

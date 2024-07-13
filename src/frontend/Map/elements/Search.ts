@@ -1,7 +1,7 @@
-import Element from "../Element";
-import SearchInfoWindow from "./SearchInfoWindow";
+import Element from "./abstracts/Element";
+import InfoWindowElement from "./abstracts/InfoWindowElement";
 
-class Search extends Element {
+class Search extends InfoWindowElement {
     /* Public */
     constructor(searchId: string, name: string | undefined, location: google.maps.LatLng, map: google.maps.Map) {
         super(searchId, map, new google.maps.marker.AdvancedMarkerElement({
@@ -13,15 +13,13 @@ class Search extends Element {
         this.name = name;
         
         this.elements = new Set<Element>();
-        this.infoWindow = new SearchInfoWindow(this.marker, location, map);
 
-        this.updateInfoWindow();
+        this.infoWindow?.getWindow().set("pixelOffset", new google.maps.Size(0, -15));
+        
+        this.updateWindow();
     }
 
-    /**
-     * Updates the info window information
-     */
-    public async updateInfoWindow() : Promise<void> {
+    public async updateWindow() : Promise<void> {
         const divElement = document.createElement("div");
         divElement.style.cssText = "text-align:center; font-family: Arial, sans-serif;";
 
@@ -34,13 +32,13 @@ class Search extends Element {
         buttonElement.style.cssText = "width: 50px; height: 10px;";
         buttonElement.onclick = () => {
             this.setVisible(false);
-            this.infoWindow.close();
+            this.infoWindow?.setVisible(false);
         };
         
         divElement.appendChild(nameElement);
         divElement.appendChild(buttonElement);
 
-        this.infoWindow.setContent(divElement);
+        this.infoWindow?.setContent(divElement);
     }
     /**
      * Adds an element to the elements set
@@ -50,12 +48,11 @@ class Search extends Element {
         this.elements.add(element);
     }
     public setVisible(visible: boolean): void {
-        (this.marker as google.maps.marker.AdvancedMarkerElement).map = visible ? this.map : undefined;
+        (this.marker as google.maps.marker.AdvancedMarkerElement).map = (visible ? this.map : undefined);
         this.elements.forEach(element => element.setVisible(visible));
     }
 
     /* Private */
-    private infoWindow: SearchInfoWindow;
     private name: string | undefined;
     private elements: Set<Element>;
 }
