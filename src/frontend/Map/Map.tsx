@@ -37,15 +37,15 @@ export default function Map() {
             mapId: process.env.REACT_APP_MAP_ID
         });
 
-        if (isMobile()) {
+        //if (isMobile()) {
             // Long press
-            google.maps.event.addListener(map, "mousedown", event => longpress = setTimeout(() => onSelectLocation(event), 500));
-            google.maps.event.addListener(map, "mouseup", () => clearTimeout(longpress));
-            google.maps.event.addListener(map, "drag", () => clearTimeout(longpress));
-        }
-        else
+            // google.maps.event.addListener(map, "mousedown", event => longpress = setTimeout(() => onSelectLocation(event), 500));
+            // google.maps.event.addListener(map, "mouseup", () => clearTimeout(longpress));
+            // google.maps.event.addListener(map, "drag", () => clearTimeout(longpress));
+        //}
+        // else
             // Right click
-            google.maps.event.addListener(map, "rightclick", event => onSelectLocation(event));
+            //google.maps.event.addListener(map, "rightclick", event => onSelectLocation(event));
 
         // Creates the search bar
         SearchBar.init(map);
