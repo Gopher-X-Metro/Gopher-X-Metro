@@ -1,8 +1,6 @@
-import Element from "../Element.ts";
-import VehicleInfoWindow from "./VehicleInfoWindow.ts";
+import InfoWindowElement from "./abstracts/InfoWindowElement";
 
-class Vehicle extends Element {
-
+class Vehicle extends InfoWindowElement {
     /* Public */
 
     /**
@@ -12,11 +10,14 @@ class Vehicle extends Element {
      * @param color color of vehicle image
      * @param map map the vehicle displays on
      */
-    constructor (vehicleId: string, color : string, images: string[2], map: google.maps.Map) {
-        super(vehicleId, color, map);
-
+    constructor (vehicleId: string, images: string[2], map: google.maps.Map) {
         const contents = document.createElement("div");
         contents.style.position = "relative";
+
+        super(vehicleId, map, new window.google.maps.marker.AdvancedMarkerElement({
+            map: map,
+            content: contents,
+        }));
 
         // Create bus container
         const busContainer = document.createElement("div");
@@ -47,12 +48,15 @@ class Vehicle extends Element {
         contents.appendChild(busContainer);
         contents.appendChild(arrowContainer);
 
-        this.marker = new window.google.maps.marker.AdvancedMarkerElement({
-            map: map,
-            content: contents,
-        })
-
-        this.infoWindow = new VehicleInfoWindow(this.marker, map);
+        this.infoWindow?.getWindow().set("pixelOffset", new google.maps.Size(0, -15));
+    }
+    /**
+     * Updates the info window information
+     */
+    public updateWindow() {
+        this.infoWindow?.setContent(
+            String(Math.ceil(Number(this.getLastUpdated())))
+        );
     }
     /**
      * Gets the length in ms of the time between when position was updated and now
@@ -65,12 +69,6 @@ class Vehicle extends Element {
      * Get the trip ID
      */
     public getTripId() : string | undefined { return this.tripId; }
-
-    /**
-     * Get the marker object of this vehicle on the map
-     */
-    public getMarker() : google.maps.marker.AdvancedMarkerElement { return this.marker; }
-
     /**
      * Sets the trip ID
      * @param tripId trip ID
@@ -83,9 +81,9 @@ class Vehicle extends Element {
      * @param timestamp when this position was updated
      */
     public setPosition(position : google.maps.LatLng, timestamp : number) : void {
-        if (!(this.getMarker().position?.toString() === position.toString())) {
-            this.infoWindow.setPosition(position);
-            this.getMarker().position = position;
+        if (!((this.marker as google.maps.marker.AdvancedMarkerElement).position?.toString() === position.toString())) {
+            this.infoWindow?.setPosition(position);
+            (this.marker as google.maps.marker.AdvancedMarkerElement).position = position;
             this.timestamp = timestamp;
         }
     }
@@ -133,15 +131,6 @@ class Vehicle extends Element {
             this.setArrowImageGreenlineOrientation(direction_id);
         }
     }
-
-    /**
-     * Sets if the vehicle is visible
-     * @param visible the visibility of the vehicle
-     */
-    public setVisible(visible: boolean) {
-        this.marker.map = visible ? this.map : null
-    }
-
     /**
      * Sets position of bus arrow image around center of bus image
      * @param bearing the orientation of the bus
@@ -187,26 +176,15 @@ class Vehicle extends Element {
             }
         }
     }
-
-    /**
-     * Updates the info window information
-     */
-    public updateInfoWindow() {
-        this.infoWindow.setContent(
-            String(Math.ceil(Number(this.getLastUpdated())))
-        );
-    }
     
     /* Private */
 
     private tripId: string | undefined;
     private timestamp : number | undefined;
-    private marker: google.maps.marker.AdvancedMarkerElement;
     private bearing: number | undefined;
     private direction_id: number | undefined;
     private arrowImg: HTMLImageElement | null = null;
     private arrowCont: HTMLDivElement;
-    private infoWindow: VehicleInfoWindow;
 }
 
 export default Vehicle;
