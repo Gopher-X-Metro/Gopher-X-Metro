@@ -14,6 +14,10 @@ abstract class Primative {
      * Gets the id
      */
     public getId() : string { return this.id; }
+    /**
+     * Tells if the primative is visible
+     */
+    abstract isVisible() : boolean;
 
     protected readonly id: string;
     protected readonly map: google.maps.Map;

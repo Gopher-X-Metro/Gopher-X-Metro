@@ -52,8 +52,9 @@ namespace SearchBar {
                     if (nearest.version !== 0) {
                         for (const stop of nearest.atstop) {
                             Routes.loadStop(stop.stopid, "").then(s => {
-                                s?.setVisible(true);
                                 if (s) searches.get(place.place_id as string)?.addElement(s);
+                                s?.addElement(searches.get(place.place_id as string) as Search);
+                                s?.updateVisibility();
                             });
                         }
                     }

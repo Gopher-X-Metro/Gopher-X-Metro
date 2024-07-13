@@ -27,9 +27,18 @@ abstract class Element extends Primative {
     public setVisible(visible: boolean) : void {
         if (this.marker instanceof google.maps.MVCObject)
             this.marker.set("map", visible ? this.map : undefined);
-
-        if (this.marker instanceof google.maps.marker.AdvancedMarkerElement)
+        else if (this.marker instanceof google.maps.marker.AdvancedMarkerElement)
             this.marker.map = visible ? this.map : undefined;
+    }
+    /**
+     * Tells if the marker is visible
+     */
+    public isVisible() : boolean {
+        if (this.marker instanceof google.maps.MVCObject)
+            return this.marker.get("map") !== undefined;
+        else if (this.marker instanceof google.maps.marker.AdvancedMarkerElement)
+            return this.marker.map !== undefined;
+        return false;
     }
 
     /* Private */

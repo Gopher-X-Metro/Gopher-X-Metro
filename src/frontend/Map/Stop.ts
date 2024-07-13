@@ -2,6 +2,7 @@ import InfoWindowElement from './elements/abstracts/InfoWindowElement';
 
 import Resources from 'src/backend/Resources.ts';
 import URL from 'src/backend/URL.ts';
+import Primative from './elements/abstracts/Primative';
 
 interface departure {
     routeId: string;
@@ -36,13 +37,13 @@ class Stop extends InfoWindowElement {
         }));
 
         this.departures = new Map<string, Array<departure>>();
+        this.elements = new Set<Primative>();
 
         this.name = name;
         this.direction = direction;
 
         this.updateWindow();
     }
-
     /**
      * Updates the info window information
      */
@@ -132,7 +133,6 @@ class Stop extends InfoWindowElement {
             this.infoWindow?.setContent(await generateContent("Failed to load departure information."));
         }
     }
-
     /**
      * Adds a departure to the route
      * @param routeId            route the departure is for
@@ -167,11 +167,33 @@ class Stop extends InfoWindowElement {
         (this.marker as google.maps.Circle).set("fillColor", color);
         (this.marker as google.maps.Circle).set("strokeColor", color);
     }
+    /**
+     * Adds an element to the set of elements
+     * @param element   the element to add
+     */
+    public addElement(element: Primative) : void { this.elements.add(element); }
+    /**
+     * Updates the visibility baised on which elements are visible
+     */
+    public updateVisibility() : void {
+        let visible = false;
+
+        this.elements.forEach(element => {
+            if (element.isVisible()) {
+                visible = true
+                return;
+            }
+        })
+
+        this.setVisible(visible); 
+    }
  
     /* Private */
+
     private name: string;
     private departures: Map<string, Array<departure>>;
     private direction: string;
+    private elements: Set<Primative>;
 
     /* Depreciated */
     
@@ -185,8 +207,7 @@ class Stop extends InfoWindowElement {
      * Updates the info window information
      * @deprecated
      */
-    public closeInfoWindow() : void { this.infoWindow?.setVisible(false); }
-
+    public closeInfoWindow() : void { this.infoWindow?.setVisible(false); }   
 }
 
 export default Stop;

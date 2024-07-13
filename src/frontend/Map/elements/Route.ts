@@ -51,7 +51,8 @@ class Route extends Primative {
     public addStopObject(stopId: string, stop: Stop | undefined) : void {
         if (stop) {
             this.stops.set(stopId, stop);
-            stop.setVisible(this.visible);
+            stop.addElement(this);
+            stop.updateVisibility();
         }
     }
     /**
@@ -70,10 +71,11 @@ class Route extends Primative {
      */
     public setVisible(visible: boolean) {
         this.visible = visible;
-        this.stops.forEach(stop => stop.setVisible(visible));
         this.paths.forEach(path => path.setVisible(visible));
         this.vehicles.forEach(vehicle => vehicle.setVisible(visible));
+        this.stops.forEach(stop => stop.updateVisibility());
     }
+    public isVisible() : boolean { return this.visible; }
 
     /* Private */
 
