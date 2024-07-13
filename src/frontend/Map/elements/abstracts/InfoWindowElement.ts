@@ -26,6 +26,14 @@ abstract class InfoWindowElement extends Element {
     abstract updateWindow() : void;
 
     public readonly infoWindow: InfoWindow | undefined;
+
+    /* Depreciated */
+
+    /**
+     * Updates the info window information
+     * @deprecated
+     */
+    public updateInfoWindow() { this.updateWindow(); }
 }
 
 export default InfoWindowElement;
