@@ -1,11 +1,9 @@
 import Resources from "src/backend/Resources.ts";
 import Schedule from "src/backend/Schedule.ts";
-import Static from "src/backend/Static.ts";
 import Vehicle from "./elements/Vehicle.ts";
 import URL from "src/backend/URL.ts";
 import Route from "./elements/Route.ts";
 import Realtime from "src/backend/Realtime.ts";
-import Plan from "src/backend/Plan.ts";
 import Stop from "./Stop.ts";
 
 

@@ -1,6 +1,6 @@
-import Routes from "../Routes";
+import Routes from "src/frontend/Map/Routes";
 import Plan from "src/backend/Plan";
-import Search from "./Search";
+import Search from "src/frontend/Map/elements/Search";
 
 namespace SearchBar {
     /**
@@ -9,21 +9,19 @@ namespace SearchBar {
      */
     export function init(_map: google.maps.Map) : void {
         map = _map;
+
         input = document.getElementById("search-bar") as HTMLInputElement;
-
         autocomplete = new google.maps.places.Autocomplete(input, { fields: ["place_id", "geometry", "name", "formatted_address"] });
-        autocomplete.bindTo("bounds", map);
-
-        map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
-
         geocoder = new google.maps.Geocoder();
-        searches = new Map<string, Search>();
+
+        autocomplete.bindTo("bounds", map);
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
 
         autocomplete.addListener("place_changed", () => onPlaceChange());
     }
 
     /* Private */
-    let searches: Map<string, Search>;
+    const searches = new Map<string, Search>();
     let input: HTMLInputElement;
     let autocomplete: google.maps.places.Autocomplete;
     let geocoder: google.maps.Geocoder;

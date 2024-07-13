@@ -6,7 +6,7 @@ import Resources from 'src/backend/Resources.ts';
 import Marker from './Marker.ts';
 import Routes from './Routes.ts';
 import LoadingScreen from "./LoadingScreen.tsx";
-import SearchBar from "./elements/SearchBar.ts";
+import SearchBar from "src/frontend/NavBar/components/SearchBar.ts";
 
 /**
  * The map component
@@ -71,7 +71,6 @@ export default function Map() {
         }, 30000); // ms of wait
 
     }
-
 
     useEffect(() => {
         // Minimum delay in milliseconds
