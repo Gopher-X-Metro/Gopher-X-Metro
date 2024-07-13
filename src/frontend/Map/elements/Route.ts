@@ -1,10 +1,10 @@
-import Element from "./Element.ts";
+import Primative from "./abstracts/Primative.ts";
 
 import Path from "./Path.ts";
-import Stop from "./Stop/Stop.ts";
-import Vehicle from "./Vehicle/Vehicle.ts";
+import Stop from "src/frontend/Map/Stop.ts";
+import Vehicle from "./Vehicle.ts";
 
-class Route extends Element {
+class Route extends Primative {
 
     /* Public */
 
@@ -14,7 +14,7 @@ class Route extends Element {
      * @param map map to display the route
      */
     constructor(routeId: string, map: google.maps.Map) {
-        super(routeId, "", map);
+        super(routeId, map);
 
         this.paths = new Map<string, Path>();
         this.stops = new Map<string, Stop>();
@@ -42,18 +42,7 @@ class Route extends Element {
      */
     public addPath(shapeId: string, color: string, locations: Array<google.maps.LatLng>) : void {
         this.paths.set(shapeId, new Path(shapeId, color, locations, this.map));
-        this.paths.get(shapeId)?.getLine().setVisible(this.visible);
-    }
-    /**
-     * Adds a stop to the route
-     * @param stopId ID of the stop
-     * @param color color of the stop
-     * @param location location of the stop
-     * @deprecated We no longer use addStop to create stops
-     */
-    public addStop(stopId: string, color: string, name: string, direction: string, location: google.maps.LatLng) : void {
-        this.stops.set(stopId, new Stop(stopId, color, name, direction, location, this.map));
-        this.stops.get(stopId)?.getMarker().setVisible(this.visible);
+        this.paths.get(shapeId)?.setVisible(this.visible);
     }
     /**
      * Adds a stop to the route
@@ -62,19 +51,9 @@ class Route extends Element {
     public addStopObject(stopId: string, stop: Stop | undefined) : void {
         if (stop) {
             this.stops.set(stopId, stop);
-            stop.getMarker().setVisible(this.visible);
+            stop.addElement(this);
+            stop.updateVisibility();
         }
-    }
-    /**
-     * Adds a vehicle to the route
-     * @param vehicleId ID of the vehicle
-     * @param tripId trip ID of the vehicle
-     * @param color color of the vehicle's marker
-     * @deprecated We no longer use addVehicle to create vehicles
-     */
-    public addVehicle(vehicleId: string, color: string, images: string[2]) : void {
-        this.vehicles.set(vehicleId, new Vehicle(vehicleId, color, images, this.map));
-        this.vehicles.get(vehicleId)?.setVisible(this.visible);
     }
     /**
      * Adds a vehicle to the route
@@ -92,10 +71,11 @@ class Route extends Element {
      */
     public setVisible(visible: boolean) {
         this.visible = visible;
-        this.stops.forEach(stop => stop.getMarker().setVisible(visible));
-        this.paths.forEach(path => path.getLine().setVisible(visible));
+        this.paths.forEach(path => path.setVisible(visible));
         this.vehicles.forEach(vehicle => vehicle.setVisible(visible));
+        this.stops.forEach(stop => stop.updateVisibility());
     }
+    public isVisible() : boolean { return this.visible; }
 
     /* Private */
 
@@ -104,6 +84,31 @@ class Route extends Element {
     private vehicles: Map<string, Vehicle>;
 
     private visible: boolean;
+
+    /* Depreciated */
+
+    /**
+     * Adds a stop to the route
+     * @param stopId ID of the stop
+     * @param color color of the stop
+     * @param location location of the stop
+     * @deprecated We no longer use addStop to create stops
+     */
+    public addStop(stopId: string, color: string, name: string, direction: string, location: google.maps.LatLng) : void {
+        this.stops.set(stopId, new Stop(stopId, color, name, direction, location, this.map));
+        this.stops.get(stopId)?.setVisible(this.visible);
+    }
+    /**
+     * Adds a vehicle to the route
+     * @param vehicleId ID of the vehicle
+     * @param tripId trip ID of the vehicle
+     * @param color color of the vehicle's marker
+     * @deprecated We no longer use addVehicle to create vehicles
+     */
+    public addVehicle(vehicleId: string, color: string, images: string[2]) : void {
+        this.vehicles.set(vehicleId, new Vehicle(vehicleId, images, this.map));
+        this.vehicles.get(vehicleId)?.setVisible(this.visible);
+    }
 }
 
 export default Route;

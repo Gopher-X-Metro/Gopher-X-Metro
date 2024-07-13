@@ -5,7 +5,6 @@ import { ChevronDownIcon, HamburgerIcon } from '@chakra-ui/icons';
 import URL from 'src/backend/URL.ts';
 
 function SideBar() {
-    
     const [_, forceReload] = useState(0);
 
     const [routes, setRoutes] = useState(new Map<string, string>());
@@ -32,7 +31,9 @@ function SideBar() {
             setRoutes(routes);
             forceReload(Math.random());
         }
-        URL.addListener(() => change())
+
+        URL.addListener(() => change());
+
         change();
     }, [])
 

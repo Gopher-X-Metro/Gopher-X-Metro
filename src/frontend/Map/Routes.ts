@@ -1,12 +1,10 @@
 import Resources from "src/backend/Resources.ts";
 import Schedule from "src/backend/Schedule.ts";
-import Static from "src/backend/Static.ts";
-import Vehicle from "./elements/Vehicle/Vehicle.ts";
+import Vehicle from "./elements/Vehicle.ts";
 import URL from "src/backend/URL.ts";
 import Route from "./elements/Route.ts";
 import Realtime from "src/backend/Realtime.ts";
-import Plan from "src/backend/Plan.ts";
-import Stop from "./elements/Stop/Stop.ts";
+import Stop from "./Stop.ts";
 
 
 namespace Routes {
@@ -18,14 +16,14 @@ namespace Routes {
      */
     export function refresh() {
         // Goes through each route that is not on the URL, and hides it
-        routes.forEach(routeId => {
-            if (!URL.getRoutes().has(routeId.getId())) setVisible(routeId.getId(), false);
+        routes.forEach(route => {
+            if (!URL.getRoutes().has(route.getId())) route.setVisible(false);
         })
 
         // Goes through each route that is on the URL, and unhides it or creates it
         URL.getRoutes().forEach(routeId => {
             if (!routes.has(routeId)) loadRoute(routeId);
-            setVisible(routeId, true)
+            getRoute(routeId)?.setVisible(true);
         })
 
         // Load Vehicles
@@ -46,15 +44,16 @@ namespace Routes {
     export function init(_map: google.maps.Map) : void {
         map = _map;
         
+        URL.addListener(() => refresh());
+
         // Loads the static routes
         refresh()
-
-        URL.addListener(() => refresh());
     }
     /**
      * Sets a route's visibility
      * @param routeId ID of route
      * @param visible should the route be visible
+     * @deprecated
      */
     export function setVisible(routeId: string, visible: boolean) {
         getRoute(routeId)?.setVisible(visible);
@@ -65,7 +64,7 @@ namespace Routes {
      * @param bolded should the route be boolded
      */
     export function setBolded(routeId: string, bolded: boolean) {
-        getRoute(routeId)?.getPaths()?.forEach(paths => paths.getLine().set("strokeWeight", bolded ? process.env.REACT_APP_LINE_BOLD : process.env.REACT_APP_LINE_NORMAL));
+        getRoute(routeId)?.getPaths()?.forEach(paths => (paths.getMarker() as google.maps.MVCObject).set("strokeWeight", bolded ? process.env.REACT_APP_LINE_BOLD : process.env.REACT_APP_LINE_NORMAL));
     }
     /**
      * Refreshes the vehicles
@@ -77,7 +76,7 @@ namespace Routes {
             for (const info of (await Realtime.getVehicles(routeId))) {
                 if (!vehicles.has(info.trip_id)) {
                     // Add Vehicle
-                    vehicles.set(info.trip_id, new Vehicle(info.trip_id, await Resources.getColor(routeId), Resources.getRouteImages(routeId), map))
+                    vehicles.set(info.trip_id, new Vehicle(info.trip_id, Resources.getRouteImages(routeId), map))
                     
                     const route = routes.get(routeId)
 
@@ -106,7 +105,7 @@ namespace Routes {
                 }
 
                 vehicles.get(info.trip_id)?.setPosition(new google.maps.LatLng(info.latitude as number, info.longitude as number), info.timestamp);
-                vehicles.get(info.trip_id)?.updateInfoWindow();
+                vehicles.get(info.trip_id)?.updateWindow();
             }
         })
     }
@@ -153,7 +152,6 @@ namespace Routes {
      * @returns the stop is requested to be loaded
      */
     export async function loadStop(stopId: string, direction: string) : Promise<Stop | undefined> {
-        
         if (!stops.has(stopId)) {
             stops.set(stopId, (async () => {
                 const info = await Realtime.getStop(stopId);
@@ -168,15 +166,15 @@ namespace Routes {
                         stop.getMarker().addListener("click", async () => {
                             for (let s of stops) 
                                 if ((await s[1])?.getId() !== properties.stop_id)
-                                    (await s[1])?.closeInfoWindow();
-                        })
+                                    (await s[1])?.infoWindow?.setVisible(false);
+                        });
 
                         stop?.clearDepartures();
 
                         for (const departure of info.departures)
                             stop?.addDeparture(departure.route_id, departure.trip_id, departure.departure_text, departure.direction_text, departure.description, departure.departure_time);
 
-                        stop?.updateInfoWindow();
+                        stop?.updateWindow();
                     } else stop = await stops.get(properties.stop_id);
                 }
 
@@ -211,11 +209,10 @@ namespace Routes {
             route.addPath(shapeId, await Resources.getColor(routeId), await Resources.getShapeLocations(shapeId))
 
             // If the user hovers over the line, change the width
-            route.getPaths().get(shapeId)?.getLine().addListener("mouseover", () => setBolded(route.getId(), true));
+            route.getPaths().get(shapeId)?.getMarker().addListener("mouseover", () => setBolded(route.getId(), true));
 
             // If the user stops hovering over the line, return back
-            route.getPaths().get(shapeId)?.getLine().addListener("mouseout", () => setBolded(route.getId(), false));
-
+            route.getPaths().get(shapeId)?.getMarker().addListener("mouseout", () => setBolded(route.getId(), false));
         }))
     }
 
@@ -256,7 +253,7 @@ namespace Routes {
                 vehicle.setBusBearing(bearing);
             }
 
-            vehicle.updateInfoWindow();
+            vehicle.updateWindow();
         }
     }
     /**

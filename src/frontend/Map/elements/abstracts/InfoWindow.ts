@@ -10,16 +10,10 @@ export default class InfoWindow {
         this.location = location;
         this.map = map;
         
-        // this.window = new window.google.maps.InfoWindow({
-        //     maxWidth: 200, // Set the maximum width of the info window
-        //     //maxHeight: 200, // Set the maximum height of the info window
-        // });
-
         this.window = new window.google.maps.InfoWindow();
         
         this.window.setPosition(location);
     }   
-    
     /**
      * Changes the content of the info window on the map
      */
@@ -27,23 +21,18 @@ export default class InfoWindow {
         this.window.setContent(content);
     }
     /**
-     * Closes the info window on the map
+     * Sets the visibility of the info window
      */
-    public close() {
-        if (this.window) this.window.close();
-    }
-    /**
-     * Opens the info window on the map
-     */
-    public open() {
-        if (this.window) this.window.open(this.map);
+    public setVisible(visible: boolean) : void {
+        if (visible)
+            this.window.open(this.map);
+        else
+            this.window.close();
     }
     /**
      * If the info window is displaying on the map
-     */
-    public isOpen() {
-        return this.window.get("map") != null;
-    }
+     */ 
+    public isVisible() : boolean { return this.window.get("map") != null; }
     /**
      * Gets the info window object on the map
      */
@@ -62,4 +51,28 @@ export default class InfoWindow {
     protected location: google.maps.LatLng | undefined;
     protected window: google.maps.InfoWindow;
     protected map: google.maps.Map;
+
+    /* Depreciated */
+
+    /**
+     * Closes the info window on the map
+     * @deprecated
+     */
+    public close() {
+        if (this.window) this.window.close();
+    }
+    /**
+     * Opens the info window on the map
+     * @deprecated
+     */
+    public open() {
+        if (this.window) this.window.open(this.map);
+    }
+    /**
+     * If the info window is displaying on the map
+     * @deprecated
+     */
+    public isOpen() {
+        return this.window.get("map") != null;
+    }
 }

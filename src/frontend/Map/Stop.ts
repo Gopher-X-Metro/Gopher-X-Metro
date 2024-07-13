@@ -1,8 +1,8 @@
-import Element from "../Element.ts";
-import StopInfoWindow from "./StopInfoWindow.ts";
+import InfoWindowElement from './elements/abstracts/InfoWindowElement';
 
 import Resources from 'src/backend/Resources.ts';
 import URL from 'src/backend/URL.ts';
+import Primative from './elements/abstracts/Primative';
 
 interface departure {
     routeId: string;
@@ -13,7 +13,7 @@ interface departure {
     description: string;
 }
 
-class Stop extends Element {
+class Stop extends InfoWindowElement {
     /* Public */
 
     /**
@@ -24,38 +24,30 @@ class Stop extends Element {
      * @param map map the stop displays on
      */
     constructor(stopId: string, color: string, name: string, direction: string, location: google.maps.LatLng, map: google.maps.Map) {
-        super(stopId, color, map);
-        this.location = location;
-
-        this.marker = new window.google.maps.Circle({
+        super(stopId, map, new window.google.maps.Circle({
             fillColor: color,
             fillOpacity: 1,
             strokeWeight: 8,
             strokeColor: color,
-            center: this.location,
+            center: location,
             radius: 6.5,
             clickable: true,
             strokeOpacity: 0.5,
             map: map
-        });
-
-        this.infoWindow = new StopInfoWindow(this.marker, location, map);
+        }));
 
         this.departures = new Map<string, Array<departure>>();
+        this.elements = new Set<Primative>();
 
         this.name = name;
         this.direction = direction;
+
+        this.updateWindow();
     }
-
-    /**
-     * Gets the marker object on the map
-     */
-    public getMarker() : google.maps.Circle { return this.marker; }
-
     /**
      * Updates the info window information
      */
-    public async updateInfoWindow() : Promise<void> {
+    public async updateWindow() : Promise<void> {
         this.setColor(this.departures.size === 0 ? "#F35708" : "#4169e1");
 
         /**
@@ -135,18 +127,12 @@ class Stop extends Element {
 
         // Load infowindow
         try {
-            this.infoWindow.setContent(await generateContent());
+            this.infoWindow?.setContent(await generateContent());
         } catch (e) {
             console.error(`Failed to update info window:`, e);
-            this.infoWindow.setContent(await generateContent("Failed to load departure information."));
+            this.infoWindow?.setContent(await generateContent("Failed to load departure information."));
         }
     }
-
-    /**
-     * Updates the info window information
-     */
-    public closeInfoWindow() : void { this.infoWindow.close(); }
-
     /**
      * Adds a departure to the route
      * @param routeId            route the departure is for
@@ -173,34 +159,55 @@ class Stop extends Element {
      * Clears all departures
      */
     public clearDepartures() : void { this.departures.clear() }
+    /**
+     * Changes the color of the stop
+     * @param color  the new color
+     */
+    public setColor(color: string) : void {
+        (this.marker as google.maps.Circle).set("fillColor", color);
+        (this.marker as google.maps.Circle).set("strokeColor", color);
+    }
+    /**
+     * Adds an element to the set of elements
+     * @param element   the element to add
+     */
+    public addElement(element: Primative) : void { this.elements.add(element); }
+    /**
+     * Updates the visibility baised on which elements are visible
+     */
+    public updateVisibility() : void {
+        let visible = false;
 
+        this.elements.forEach(element => {
+            if (element.isVisible()) {
+                visible = true
+                return;
+            }
+        })
+
+        this.setVisible(visible); 
+    }
+ 
+    /* Private */
+
+    private name: string;
+    private departures: Map<string, Array<departure>>;
+    private direction: string;
+    private elements: Set<Primative>;
+
+    /* Depreciated */
+    
     /**
      * Sets the description of the info window
      * @param description   the html text for the info window
      * @deprecated
      */
-    public setDescription(description: string) : void { this.infoWindow.setContent(description); }
+    public setDescription(description: string) : void { this.infoWindow?.setContent(description); }
     /**
-     * Changes the color of the stop
-     * @param color  the new color
+     * Updates the info window information
+     * @deprecated
      */
-    public setColor(color: string) : void { 
-        this.marker.set("fillColor", color);
-        this.marker.set("strokeColor", color);
-    }
-    /**
-     * Sets the visibility of the stop
-     * @param visible   if the stop should be visible
-     */
-    public setVisible(visible: boolean) : void { this.getMarker().setMap(visible ? this.map : null); }
- 
-    /* Private */
-    private name: string;
-    private infoWindow: StopInfoWindow;
-    private location: google.maps.LatLng;
-    private marker: google.maps.Circle;
-    private departures: Map<string, Array<departure>>;
-    private direction: string;
+    public closeInfoWindow() : void { this.infoWindow?.setVisible(false); }   
 }
 
 export default Stop;
