@@ -1,4 +1,4 @@
-import Stop from "../Stop";
+import Stop from "./Stop";
 import InfoWindowElement from "./abstracts/InfoWindowElement";
 
 class Search extends InfoWindowElement {
