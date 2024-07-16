@@ -139,6 +139,24 @@ namespace Resources {
         return ROUTE_IMAGES[routeId] ? ROUTE_IMAGES[routeId] : [busImage, ""];
     }
 
+    export function createInactiveRoutePopup() {
+        const popup = document.createElement('div');
+        popup.classList.add('inactive-route-popup');
+      
+        const content = document.createElement('p');
+        content.innerText = `This route is not active right now, please check the scheduling page for more information.`;
+      
+        const closeButton = document.createElement('button');
+        closeButton.textContent = 'x';
+        closeButton.classList.add('close-button');
+        closeButton.addEventListener('click', () => popup.remove());
+      
+        popup.appendChild(content);
+        popup.appendChild(closeButton);
+      
+        document.body.appendChild(popup);
+      }
+
     /* Override Bus Images */
     const ROUTE_IMAGES = {
         "120": [busImage120, arrowImage120], 
