@@ -1,6 +1,17 @@
 import Element from "../Element.ts";
 import VehicleInfoWindow from "./VehicleInfoWindow.ts";
 
+import Resources from "../../../../backend/Resources.ts";
+import Schedule from "../../../../backend/Schedule.ts";
+import Static from "../../../../backend/Static.ts";
+// import Vehicle from "./elements/Vehicle/Vehicle.ts";
+
+import URL from "../../../../backend/URL.ts";
+import Route from "../../elements/Route.ts";
+import Realtime from "../../../../backend/Realtime.ts";
+import Plan from "../../../../backend/Plan.ts";
+import Stop from "../../elements/Stop/Stop.ts";
+
 class Vehicle extends Element {
 
     /* Public */
@@ -191,12 +202,113 @@ class Vehicle extends Element {
     /**
      * Updates the info window information
      */
-    public updateInfoWindow() {
-        this.infoWindow.setContent(
-            String(Math.ceil(Number(this.getLastUpdated())))
-        );
+    public async updateInfoWindow(busId: string, routeId: string, schedule_number: number) {
+        const generateContent = (content: string, errorMessage?: string): string =>
+            `<div style="text-align:center; font-family: Arial, sans-serif;">
+                <h2 style="margin-bottom: 10px; font-weight: bold; border-bottom: 2px solid #000;">${this.direction_id}</h2>
+                <p style="margin-bottom: 20px; font-size: 16px;">${busId}</p>
+                ${errorMessage ? `<p style="color: red;">${errorMessage}</p>` : `<ul style="margin-top: 20px; list-style: none;">${content}</ul>`}
+            </div>`;
+        try {
+            let content;
+            if (busId.length > 10) {
+                const stopList = await Schedule.getStopList(routeId, schedule_number);
+                content = await this.MTInfoWindowBody(busId, stopList);
+            }
+            else {
+                content = await this.UMNInfoWindowBody(busId);
+            }
+            this.infoWindow.setContent(generateContent(content));
+        } catch (e) {
+            console.error(`Failed to update info window:`, e);
+            this.infoWindow.setContent(generateContent("", "Failed to load departure information."));
+        }
+    }
+
+
+    public async MTInfoWindowBody(trip_id : string, stop_list: Array<any>) : Promise<string> {
+        let output = "";
+        try {
+            const feedMessage = await Realtime.getRealtimeGTFSTripUpdates();
+            
+            // if (feedMessage) {
+                // Accessing the list of entities in the feed message
+                const entities = feedMessage.entity;
+                
+                // Looping through each entity to access its properties
+                entities.forEach(async entity => {
+                    const entityIdParts = entity.id.split('_');
+                    const tripID = entityIdParts[1];
+                    
+                    if (trip_id == tripID) {
+                        if (entity.tripUpdate) {
+                            let arrival = this.getTime(entity.tripUpdate.stopTimeUpdate[0].departure.time);
+                            // let direction_id = entity.tripUpdate.trip.direction_id;
+                            // let route_id = entity.tripUpdate.trip.route_id;
+                            let stopName;
+
+                            // const stopList = await Schedule.getStopList(route_id, direction_id);
+
+                            if (Array.isArray(stop_list)) {
+                                stop_list.forEach(nextStop => {
+                                    if (entity.tripUpdate.stopTimeUpdate[0].stopId === nextStop.stop_id) {
+                                        stopName = nextStop.stop_name;
+                                    }
+                                });
+                                output += `<p>The Trip_ID is: ${tripID}<br>It will arrive at ${arrival} at ${stopName}<p>`;
+                            } else {
+                                console.warn('Expected an array but got:', stop_list);
+                            }
+                        }
+                    // } else {
+                    //     console.warn('No feed message received.');
+                    // }
+                    }
+                });
+        } catch (error) {
+            console.error('Error processing trip updates:', error);
+        }
+        return output;
+    }
+
+
+    public async UMNInfoWindowBody(trip_id : string) : Promise<string> {
+        let output = "";
+        try {
+            const vehicles = await Realtime.getRealtimeGTFSUniversity();
+            
+            // if (vehicles) {
+                const vehicleData = vehicles.vehicles;
+
+                vehicleData.forEach(vehicle => {
+                    if (vehicle.tripID === trip_id) {
+                        output += `<p> This is the next stop: ${vehicle.nextStopID}`
+                    }
+                })
+                output += "<p> you idiot <p>";
+                // Accessing the list of entities in the feed message
+
+            // } else {
+            //     console.warn('No feed message received.');
+            // }
+        } catch (error) {
+            console.error('Error processing trip updates:', error);
+        }
+        return output;
     }
     
+    public getTime(arrival : number) {
+        const date = new Date(arrival * 1000); // Convert seconds to milliseconds
+        let hours = date.getHours();
+        const minutes = date.getMinutes();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // The hour '0' should be '12'
+        const strMinutes = minutes < 10 ? '0' + minutes : minutes;
+        const strTime = `${hours}:${strMinutes} ${ampm}`;
+        return strTime;
+    }
+
     /* Private */
 
     private tripId: string | undefined;
@@ -207,6 +319,8 @@ class Vehicle extends Element {
     private arrowImg: HTMLImageElement | null = null;
     private arrowCont: HTMLDivElement;
     private infoWindow: VehicleInfoWindow;
+
+
 }
 
 export default Vehicle;

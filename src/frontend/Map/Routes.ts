@@ -95,8 +95,10 @@ namespace Routes {
         // console.log(await Schedule.getSchedule(routeId));
         // console.log(await Schedule.getRoute(routeId));
         // console.log(await Realtime.getRoute(routeId));
+        // console.log(await Realtime.getRealtimeGTFSTripUpdates());
+        // console.log(await Realtime.getRealtimeGTFSUniversity());
         // console.log((await Schedule.getTimeTable(routeId, 1)))
-        // console.log(await Schedule.getStopList(routeId, 2))
+        console.log(await Schedule.getStopList(routeId, 2));
         // console.log((await Realtime.getDirections(routeId)))
         // console.log((await Realtime.getStops(routeId, 1)))
         // console.log((await Plan.routeLandmarks(routeId, "")).landmarks.landmark.filter(landmark => landmark.distance < 0.01))
@@ -110,9 +112,17 @@ namespace Routes {
      */
     export async function refreshVehicles() 
     {
+        let schedule_number;
         // Updates Vehicles
         URL.getRoutes()?.forEach(async routeId => {
             for (const info of (await Realtime.getVehicles(routeId))) {
+                
+                const schedule = await Schedule.getRouteDetails(routeId);
+                    if (schedule.schedule_type_name === Schedule.getWeekDate()) {
+                        schedule_number = schedule.timetables.schedule_number;
+                    }
+                    console.log(schedule_number);
+
                 if (!vehicles.has(info.trip_id)) {
                     // Add Vehicle
                     vehicles.set(info.trip_id, new Vehicle(info.trip_id, await Resources.getColor(routeId), Resources.getRouteImages(routeId), map))
@@ -144,7 +154,8 @@ namespace Routes {
                 }
 
                 vehicles.get(info.trip_id)?.setPosition(new google.maps.LatLng(info.latitude as number, info.longitude as number), info.timestamp);
-                vehicles.get(info.trip_id)?.updateInfoWindow();
+                
+                vehicles.get(info.trip_id)?.updateInfoWindow(info.trip_id, routeId, schedule_number);
             }
         })
     }
@@ -268,7 +279,7 @@ namespace Routes {
                 vehicle.setBusBearing(bearing);
             }
 
-            vehicle.updateInfoWindow();
+            // vehicle.updateInfoWindow();
         }
     }
 }
