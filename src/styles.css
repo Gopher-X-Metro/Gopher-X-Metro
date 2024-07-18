@@ -2,7 +2,15 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-html, body  {
+
+html {
+
+  margin: 0;
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+body  {
     margin: 0;
     height: 100%;
 }
