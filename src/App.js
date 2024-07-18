@@ -9,8 +9,10 @@ import "./styles.css"
 export default function App() {
   return (
     <BrowserRouter>
-      <NavBar/>
-      <Pages/>
+      <html>
+        <NavBar />
+        <Pages />
+      </html>
     </BrowserRouter>
   );
 }
