@@ -78,12 +78,13 @@ class Stop extends InfoWindowElement {
             } else {
                 if (this.departures.size === 0) {
                     const warningElement = document.createElement("p");
-                    warningElement.innerHTML = "There are no buses for this stop at this time<br>Check the scheduling page for more information"
+                    warningElement.innerHTML = `There are no buses for this stop at this time<br><a href="./schedules" rel="noopener noreferrer">Check the scheduling page for more information</a>`;
                     warningElement.style.cssText = 'color: red;';
                     warningElement.style.fontSize = "12px";
-
+                
                     divElement.appendChild(warningElement);
-                } else {
+                }
+                else {
                     const listElement = document.createElement("ul")
                     listElement.style.cssText = "margin-top: 20px; list-style: none;";
 
