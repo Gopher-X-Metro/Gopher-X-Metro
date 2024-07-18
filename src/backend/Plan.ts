@@ -21,7 +21,7 @@ namespace Plan {
           }),
           headers: {
               "Content-type": "application/json; charset=UTF-8",
-              "X-Goog-Api-Key": "AIzaSyAt_YxRDPqcDecujcr-Bmox8mETHLM8m7o",
+              "X-Goog-Api-Key": process.env.REACT_APP_API_KEY ? process.env.REACT_APP_API_KEY : "",
               "X-Goog-FieldMask": "routes.legs.steps.transitDetails"
           }
       });
