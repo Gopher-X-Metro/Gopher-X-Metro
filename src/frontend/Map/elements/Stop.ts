@@ -1,8 +1,8 @@
-import InfoWindowElement from './elements/abstracts/InfoWindowElement';
+import InfoWindowElement from './abstracts/InfoWindowElement';
 
 import Resources from 'src/backend/Resources.ts';
 import URL from 'src/backend/URL.ts';
-import Primative from './elements/abstracts/Primative';
+import Primative from './abstracts/Primative';
 
 interface departure {
     routeId: string;

@@ -4,7 +4,7 @@ import Vehicle from "./elements/Vehicle.ts";
 import URL from "src/backend/URL.ts";
 import Route from "./elements/Route.ts";
 import Realtime from "src/backend/Realtime.ts";
-import Stop from "./Stop.ts";
+import Stop from "./elements/Stop.ts";
 
 
 namespace Routes {
@@ -171,7 +171,7 @@ namespace Routes {
 
                         stop?.clearDepartures();
 
-                        for (const departure of info.departures)
+                        for (const departure of info.departures) 
                             stop?.addDeparture(departure.route_id, departure.trip_id, departure.departure_text, departure.direction_text, departure.description, departure.departure_time);
 
                         stop?.updateWindow();
