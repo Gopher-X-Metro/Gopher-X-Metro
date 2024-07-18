@@ -18,7 +18,9 @@ namespace Peak {
         const shapeData = await (await getPeakShapes(shapeId));
 
         // Assuming 'points' is a property within the response data
-        const pointsString = shapeData.shape[0].points;
+        const pointsString = shapeData.shape.points;
+
+        
 
         const shapeLocations = pointsString.split(';').map((point) => {
             const [lat, lng] = point.split(',');
@@ -33,17 +35,10 @@ namespace Peak {
      * @param routeId ID of the route
      */
     export async function getPeakTrips(routeId: string) : Promise<any> {
-        const url = new URL('https://api.peaktransit.com/v5/index.php')
-        url.searchParams.set('app_id', '_RIDER')
-        url.searchParams.set('key', 'c620b8fe5fdbd6107da8c8381f4345b4')
-        url.searchParams.set('controller', 'shape2')
-        url.searchParams.set('action', 'list')
-        url.searchParams.set('agencyID', '88')
-        url.searchParams.set('routeID', routeId)
         if (!trips.has(routeId))
             // Load Trips
-            await fetch(url)
-            .then(async response => trips.set(routeId, await response.json()));
+            await fetch("https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=route2&action=list&agencyID=88")
+            .then(async response => trips.set(routeId, (await response.json()).routes));
 
         return trips.get(routeId)
     }
@@ -53,17 +48,12 @@ namespace Peak {
      * @param shapeId ID of the shape
      */
     export async function getPeakShapes(shapeId: string) : Promise<any> {
-        const url = new URL('https://api.peaktransit.com/v5/index.php')
-        url.searchParams.set('app_id', '_RIDER')
-        url.searchParams.set('key', 'c620b8fe5fdbd6107da8c8381f4345b4')
-        url.searchParams.set('controller', 'shape2')
-        url.searchParams.set('action', 'view')
-        url.searchParams.set('agencyID', '88')
-        url.searchParams.set('shapeID', shapeId)
         if (!shapes.has(shapeId))
-            await fetch(url)
+            await fetch("https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=shape2&action=list&agencyID=88")
             .then(async response => shapes.set(shapeId, await response.json()));
         
+        console.log(shapes.get(shapeId));
+
         return shapes.get(shapeId); 
     }
 
