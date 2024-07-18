@@ -6,7 +6,7 @@ namespace Peak {
      * @returns list of routes data
      */
     export async function getPeakShapeIds(routeId: string) : Promise<Set<string>> {
-        return new Set(await (await getPeakTrips(routeId))
+        return new Set((await (await getPeakTrips(routeId)))
         .map((trip: { shapeID: any; }) => trip.shapeID));
     }
 
