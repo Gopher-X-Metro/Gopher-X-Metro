@@ -78,7 +78,7 @@ class Stop extends InfoWindowElement {
             } else {
                 if (this.departures.size === 0) {
                     const warningElement = document.createElement("p");
-                    warningElement.innerHTML = `There are no buses for this stop at this time<br><a href="https://gopher-x-metro-git-dev-cubetoplays-projects.vercel.app/schedules" target="_blank" rel="noopener noreferrer">Check the scheduling page for more information</a>`;
+                    warningElement.innerHTML = `There are no buses for this stop at this time<br><a href="./schedules" rel="noopener noreferrer">Check the scheduling page for more information</a>`;
                     warningElement.style.cssText = 'color: red;';
                     warningElement.style.fontSize = "12px";
                 
