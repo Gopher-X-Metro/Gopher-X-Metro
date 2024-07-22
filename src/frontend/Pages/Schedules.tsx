@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 
 import { ChevronDownIcon } from '@chakra-ui/icons';
 
+import { Link } from 'react-router-dom';
+
+
 import {
     Menu,
     MenuButton,
@@ -36,6 +39,11 @@ export default function Schedules() {
                     </MenuOptionGroup>
                 </MenuList>
             </Menu>
+            <Link to="/" >
+                <Button colorScheme='yellow'>
+                    Back to Map
+                </Button>
+            </Link>
             <ScheduleTable selectedSchedule={selectedSchedule} />
         </div>
     )
