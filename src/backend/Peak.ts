@@ -17,15 +17,29 @@ namespace Peak {
     export async function getPeakShapeLocations(shapeId: string) : Promise<Array<google.maps.LatLng>> {
         const shapeData = await (await getPeakShapes(shapeId));
 
-        // Assuming 'points' is a property within the response data
-        const pointsString = shapeData.shape.points;
+        const shapeArray = shapeData.shape;
+        const shapeLocations: Array<google.maps.LatLng> = [];
 
-        
+        shapeArray.forEach((shape: { points: string; }) => {
+            const pointString = shape.points;
+            const pointArray = pointString.split(';');
 
-        const shapeLocations = pointsString.split(';').map((point) => {
-            const [lat, lng] = point.split(',');
-            return new google.maps.LatLng(Number(lat), Number(lng));
-        });
+            console.log("Points array: ", pointArray);
+            pointArray.forEach(point => {
+                const [latStr, lngStr] = point.split(',');
+
+                if (latStr && lngStr) {
+                    const lat = Number(latStr.trim().replace('/', ''));
+                    const lng = Number(lngStr.trim().replace('/', ''));
+                    // console.log("Points: ", point);
+                    // console.log("Lat and Longs", lat, lng);
+
+                    shapeLocations.push(new google.maps.LatLng(lat, lng));
+                } else {
+                    console.warn(`Invalid latitude/longitude pair: ${latStr}, ${lngStr}`);
+                }
+            })
+        })
 
         return shapeLocations;
     }
@@ -39,6 +53,8 @@ namespace Peak {
             // Load Trips
             await fetch("https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=route2&action=list&agencyID=88")
             .then(async response => trips.set(routeId, (await response.json()).routes));
+
+        console.log("Trips: ", trips.get(routeId));
 
         return trips.get(routeId)
     }
