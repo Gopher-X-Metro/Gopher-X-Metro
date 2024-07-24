@@ -71,6 +71,11 @@ namespace Routes {
      */
     export async function refreshVehicles() 
     {
+        // 
+        vehicles.forEach(vehicle => {
+
+        })
+
         // Updates Vehicles
         URL.getRoutes()?.forEach(async routeId => {
             for (const info of (await Realtime.getVehicles(routeId))) {
@@ -214,6 +219,8 @@ namespace Routes {
             // If the user stops hovering over the line, return back
             route.getPaths().get(shapeId)?.getMarker().addListener("mouseout", () => setBolded(route.getId(), false));
         }))
+
+        console.log(await Realtime.getVehicles(routeId));
     }
 
     /* Depreciated */
