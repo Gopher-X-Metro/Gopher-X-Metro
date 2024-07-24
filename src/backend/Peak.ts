@@ -1,5 +1,3 @@
-import Static from "./Static.ts";
-
 namespace Peak {
     /**
      * Gets the running routes
