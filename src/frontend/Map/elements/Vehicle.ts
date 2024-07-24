@@ -19,6 +19,8 @@ class Vehicle extends InfoWindowElement {
             content: contents,
         }));
 
+        this.updated = true;
+
         // Create bus container
         const busContainer = document.createElement("div");
         busContainer.style.position = "absolute";
@@ -74,7 +76,6 @@ class Vehicle extends InfoWindowElement {
      * @param tripId trip ID
      */
     public setTripId(tripId : string) : void { this.tripId = tripId; }
-
     /**
      * Sets the position of the vehicle on the map
      * @param position position of the vehicle
@@ -86,13 +87,13 @@ class Vehicle extends InfoWindowElement {
             (this.marker as google.maps.marker.AdvancedMarkerElement).position = position;
             this.timestamp = timestamp;
         }
-    }
 
+        this.updated = true;
+    }
     /**
      * Gets the direction the bus is heading
      */
     public getBusBearing(): number | undefined { return this.bearing; }
-
     /**
      * Sets the direction the bus is heading
      * @param bearing the orientation of the bus
@@ -104,12 +105,14 @@ class Vehicle extends InfoWindowElement {
             this.setArrowImageOrientation(bearing);
         }
     }
-
     /**
      * Gets the direction the lightrail is heading
      */
     public getDirectionID(): number | undefined { return this.direction_id; }
-
+    /**
+     * Returns if the vehicle had been updated
+     */
+    public isUpdated(): boolean { return this.updated; }
     /**
      * Sets the direction the blueline lightrail is heading
      * @param direction_id the orientation of the blueline lightrail
@@ -120,7 +123,6 @@ class Vehicle extends InfoWindowElement {
             this.setArrowImageBluelineOrientation(direction_id);
         }
     }
-
     /**
      * Sets the direction the greenline lightrail is heading
      * @param direction_id the orientation of the greenline lightrail
@@ -144,7 +146,6 @@ class Vehicle extends InfoWindowElement {
             this.arrowCont.style.left = (-Math.cos(radians) * radius).toString() + "px";
         }
     }
-
     /**
      * Sets position of bus arrow image around center of bus image
      * @param direction_id the orientation of the blueline lightrail
@@ -160,7 +161,6 @@ class Vehicle extends InfoWindowElement {
             }
         }
     }
-
     /**
      * Sets position of bus arrow image around center of bus image
      * @param direction_id the orientation of the greenline lightrail
@@ -178,7 +178,7 @@ class Vehicle extends InfoWindowElement {
     }
     
     /* Private */
-
+    private updated: boolean;
     private tripId: string | undefined;
     private timestamp : number | undefined;
     private bearing: number | undefined;
