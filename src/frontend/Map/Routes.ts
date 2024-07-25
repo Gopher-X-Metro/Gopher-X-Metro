@@ -72,10 +72,13 @@ namespace Routes {
      */
     export async function refreshVehicles() 
     {
-        // 
-        vehicles.forEach(vehicle => {
-
-        })
+        // Sets all vehicles to be un-updated
+        vehicles.forEach(vehicle => 
+            {
+                vehicle.setVisible(vehicle.isVisible());
+                vehicle.setUpdated(false);
+            }
+        );
 
         // Updates Vehicles
         URL.getRoutes()?.forEach(async routeId => {
@@ -112,6 +115,7 @@ namespace Routes {
 
                 vehicles.get(info.trip_id)?.setPosition(new google.maps.LatLng(info.latitude as number, info.longitude as number), info.timestamp);
                 vehicles.get(info.trip_id)?.updateWindow();
+                vehicles.get(info.trip_id)?.setUpdated(true);
             }
         })
     }
@@ -241,8 +245,6 @@ namespace Routes {
             // If the user stops hovering over the line, return back
             route.getPaths().get(shapeId)?.getMarker().addListener("mouseout", () => setBolded(route.getId(), false));
         }
-
-        console.log(await Realtime.getVehicles(routeId));
     }
 
     /* Depreciated */
