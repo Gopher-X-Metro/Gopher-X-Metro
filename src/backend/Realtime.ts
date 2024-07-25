@@ -1,4 +1,5 @@
 import GtfsRealtimeBindings from 'gtfs-realtime-bindings';
+import Peak from "src/backend/Peak.ts";
 
 namespace Realtime {
     /**
@@ -34,9 +35,9 @@ namespace Realtime {
     export async function getVehicles(routeId: string) : Promise<any> {
         
         // Check if University Route
-        if (Object.keys(UNIVERSITY_ROUTES).includes(routeId)) {
+        if (Object.keys(Peak.UNIVERSITY_ROUTES).includes(routeId)) {
             let json = (await getRealtimeGTFSUniversity()).vehicles
-            .filter(vehicle => UNIVERSITY_ROUTES[routeId] === vehicle.routeID);
+            .filter(vehicle => Peak.UNIVERSITY_ROUTES[routeId] === vehicle.routeID);
 
             json.forEach(vehicle => {
                 vehicle.trip_id = vehicle.tripID;
@@ -104,16 +105,6 @@ namespace Realtime {
                 console.warn(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${await response.text()}`);
         })
     }
-    
-
-    /* University Routes and ID */
-    export const UNIVERSITY_ROUTES = {
-        "120": 11324, 
-        "121": 11278, 
-        "122": 11279, 
-        "123": 11280, 
-        "124": 11281
-    };
 
     const GTFS_REALTIME_URL_UMN = "https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=vehicles2&action=list&agencyID=88";
     const GTFS_REALTIME_URL_VEHICLE_POSITIONS = 'https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb';
