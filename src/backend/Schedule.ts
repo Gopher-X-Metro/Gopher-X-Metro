@@ -17,7 +17,7 @@ namespace Schedule {
         for (const route of await getRoutes())
             if (route.route_id === routeId) 
                 return route
-        return undefined
+        return null
     }
     /**
      * Gets more specified details about the route
