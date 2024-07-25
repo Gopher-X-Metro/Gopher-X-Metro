@@ -203,7 +203,7 @@ namespace Routes {
 
         if (Peak.UNIVERSITY_ROUTES[routeId]) {
             // Peak Campus Bus
-            Peak.getPeakShapeIds(routeId)
+            Peak.getPeakShapeIds(Peak.UNIVERSITY_ROUTES[routeId])
                 .then(shapeIds => shapeIds
                     .forEach(async shapeId => {
                         loadPath(routeId, shapeId, await Resources.getColor(routeId), await Peak.getPeakShapeLocations(shapeId))

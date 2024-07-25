@@ -7,41 +7,30 @@ namespace Peak {
         return new Set((await (await getPeakTrips(routeId)))
         .map((trip: { shapeID: any; }) => trip.shapeID));
     }
-
     /**
      * Gets the location of each point on a shape line as an Array
      * @param shapeId ID of the shape
      */
     export async function getPeakShapeLocations(shapeId: string) : Promise<Array<google.maps.LatLng>> {
-        const shapeData = await (await getPeakShapes(shapeId));
-
-        const shapeArray = shapeData.shape;
+        const shape = await getPeakShapes(shapeId);
         const shapeLocations: Array<google.maps.LatLng> = [];
 
-        shapeArray.forEach((shape: { points: string; }) => {
-            const pointString = shape.points;
-            const pointArray = pointString.split(';');
+        const pointString = shape.points;
+        const pointArray = pointString.split(';');
 
-            console.log("Points array: ", pointArray);
-            pointArray.forEach(point => {
-                const [latStr, lngStr] = point.split(',');
+        // console.log("Points array: ", pointArray);
+        pointArray.forEach(point => {
+            const [latStr, lngStr] = point.split(',');
 
-                if (latStr && lngStr) {
-                    const lat = Number(latStr.trim().replace('/', ''));
-                    const lng = Number(lngStr.trim().replace('/', ''));
-                    // console.log("Points: ", point);
-                    // console.log("Lat and Longs", lat, lng);
-
-                    shapeLocations.push(new google.maps.LatLng(lat, lng));
-                } else {
-                    console.warn(`Invalid latitude/longitude pair: ${latStr}, ${lngStr}`);
-                }
-            })
+            if (latStr && lngStr)
+                shapeLocations.push(new google.maps.LatLng(latStr, lngStr));
+            else
+                console.warn(`Invalid latitude/longitude pair: ${latStr}, ${lngStr}`);
         })
+        
 
         return shapeLocations;
     }
-
     /**
      * Gets the trips of a route
      * @param routeId ID of the route
@@ -50,13 +39,11 @@ namespace Peak {
         if (!trips.has(routeId))
             // Load Trips
             await fetch("https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=route2&action=list&agencyID=88")
-            .then(async response => trips.set(routeId, (await response.json()).routes));
+            .then(async response => response.json()
+            .then(data => data.routes?.forEach(route => trips.set(route.routeID, route))));
 
-        console.log("Trips: ", trips.get(routeId));
-
-        return trips.get(routeId)
+        return new Array(trips.get(routeId));
     }
-
     /**
      * Gets the shape data of a shapeId
      * @param shapeId ID of the shape
@@ -64,9 +51,8 @@ namespace Peak {
     export async function getPeakShapes(shapeId: string) : Promise<any> {
         if (!shapes.has(shapeId))
             await fetch("https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=shape2&action=list&agencyID=88")
-            .then(async response => shapes.set(shapeId, await response.json()));
-        
-        console.log(shapes.get(shapeId));
+            .then(async response => response.json()
+            .then(data => data.shape?.forEach(shape => shapes.set(shape.shapeID, shape))))
 
         return shapes.get(shapeId); 
     }
