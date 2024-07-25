@@ -16,7 +16,8 @@ namespace Schedule {
     export async function getRoute(routeId: string) : Promise<any> {
         for (const route of await getRoutes())
             if (route.route_id === routeId) 
-                return route;
+                return route
+        return undefined
     }
     /**
      * Gets more specified details about the route
@@ -24,7 +25,10 @@ namespace Schedule {
      * @returns the specified data about the route
      */
     export async function getRouteDetails(routeId: string) : Promise<any> {
-        return await (await fetch("https://svc.metrotransit.org/schedule/routedetails/"+(await getRoute(routeId)).route_url_param)).json()
+        const route = await getRoute(routeId)
+        if (!route)
+            throw new Error(`Route with ID ${routeId} not found.`)
+        return await (await fetch(`https://svc.metrotransit.org/schedule/routedetails/${route.route_url_param}`)).json()
     }
     /**
      * Gets the time table for the route and schedule
