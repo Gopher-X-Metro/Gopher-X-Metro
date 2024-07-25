@@ -4,6 +4,7 @@ import Vehicle from "./elements/Vehicle.ts";
 import URL from "src/backend/URL.ts";
 import Route from "./elements/Route.ts";
 import Realtime from "src/backend/Realtime.ts";
+import Peak from "src/backend/Peak.ts";
 import Stop from "./elements/Stop.ts";
 
 
@@ -203,22 +204,43 @@ namespace Routes {
      */
     async function loadRoute(routeId: string) {
         const route = new Route(routeId, map);
-
         routes.set(routeId, route);
 
-        // Load paths
-        Resources.getShapeIds(routeId)
-        .then(shapeIds => shapeIds
-        .forEach(async shapeId => {
-            // Add path
-            route.addPath(shapeId, await Resources.getColor(routeId), await Resources.getShapeLocations(shapeId))
+        if (Peak.UNIVERSITY_ROUTES[routeId]) {
+            // Peak Campus Bus
+            Peak.getPeakShapeIds(Peak.UNIVERSITY_ROUTES[routeId])
+                .then(shapeIds => shapeIds
+                    .forEach(async shapeId => {
+                        loadPath(routeId, shapeId, await Resources.getColor(routeId), await Peak.getPeakShapeLocations(shapeId))
+                    })
+                )
+        } else if ((await Schedule.getRoute(routeId)) !== undefined) {
+            // Metro Bus
+            Resources.getShapeIds(routeId)
+                .then(shapeIds => shapeIds
+                    .forEach(async shapeId => {
+                        loadPath(routeId, shapeId, await Resources.getColor(routeId), await Resources.getShapeLocations(shapeId))
+                    })
+                )
+        } else {
+            // Does not exist
+            console.warn(`Route with ID: ${routeId} not found`);
+            Resources.createInactiveRoutePopup();
+        }
+    }
+
+    export async function loadPath(routeId: string, shapeId: string, color: string, locations: Array<google.maps.LatLng>) {
+        const route = getRoute(routeId);
+
+        if (route) {
+            route.addPath(shapeId, color, locations)
 
             // If the user hovers over the line, change the width
             route.getPaths().get(shapeId)?.getMarker().addListener("mouseover", () => setBolded(route.getId(), true));
 
             // If the user stops hovering over the line, return back
             route.getPaths().get(shapeId)?.getMarker().addListener("mouseout", () => setBolded(route.getId(), false));
-        }))
+        }
 
         console.log(await Realtime.getVehicles(routeId));
     }
