@@ -87,8 +87,6 @@ class Vehicle extends InfoWindowElement {
             (this.marker as google.maps.marker.AdvancedMarkerElement).position = position;
             this.timestamp = timestamp;
         }
-
-        this.updated = true;
     }
     /**
      * Gets the direction the bus is heading
@@ -109,6 +107,11 @@ class Vehicle extends InfoWindowElement {
      * Gets the direction the lightrail is heading
      */
     public getDirectionID(): number | undefined { return this.direction_id; }
+    /**
+     * Sets the updated status of the vehicle
+     * @param bool the new updated status
+     */
+    public setUpdated( bool : boolean) : void { this.updated = bool; }
     /**
      * Returns if the vehicle had been updated
      */
