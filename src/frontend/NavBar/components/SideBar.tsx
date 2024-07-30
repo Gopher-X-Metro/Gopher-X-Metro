@@ -15,13 +15,13 @@ function SideBar() {
                 </button>
             </div>
 
-            <div id="nav-bar" className={`sidebar flex flex-col items-center ${sidebarOpen ? "bg-grey w-[100%] md:w-[40%] lg:w-[30%] p-1" : "w-0"}`}>
+            <div id="nav-bar" className={sidebarOpen ? 'sidebar open' : 'sidebar'}>
                 <div className="nav-header">
                     <h3>Select Routes</h3>
                     <div className="underline"></div>
                 </div>
                 <div className='sidebar-content flex flex-col items-center'>
-                    <RouteButton routeId={"121"} text={"121 Campus Connector"} />
+                    <RouteButton routeId={"121"} text={"121 Campus Connector"} />   
                     <RouteButton routeId={"122"} text={"122 University Avenue Circulator"} />
                     <RouteButton routeId={"123"} text={"123 4th Street Circulator"} />
                     <RouteButton routeId={"124"} text={"124 St. Paul Campus Circulator"} />
@@ -34,8 +34,9 @@ function SideBar() {
                     {/* <RouteButtonAddons/> */}
                 </div>
 
+
             <div className = "nav-header"> 
-                <h1> Search routes </h1>
+                <h1> Search Routes </h1>
                 <div className="underline"></div><br></br>
                 </div> 
                 <div className = "searchContainer">
@@ -43,17 +44,14 @@ function SideBar() {
                 <button onClick = {SearchFeature.searchRoute} id = "searchButton">
                 <img className = "busImg" height = "50" alt = "error" width = "50" src={SearchIcon}></img>
                 </button>
-                <div className= "error"></div>
             </div>
-
+                <div id= "error_text"></div>
         </div>
 
            
 
 
         </>
-
-
 
     )
 }
