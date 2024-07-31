@@ -1,5 +1,9 @@
 import GtfsRealtimeBindings from 'gtfs-realtime-bindings';
 
+import GtfsRealtimeBindings from 'gtfs-realtime-bindings';
+import Peak from "src/backend/Peak.ts";
+
+
 namespace Realtime {
     /**
      * Gets the running routes
@@ -22,21 +26,16 @@ namespace Realtime {
      * Gets the data of the specific stop
      * @param stopId the stop ID
      * @returns the stop data
-     */
-    export async function getStop(stopId: string) : Promise<any> {
-        return await (await fetch("https://svc.metrotransit.org/nextrip/"+stopId)).json()
-    }
-    /**
-     * Gets the current vehicles running on the route
-     * @param routeId the route ID
-     * @returns a list of vehicle data
-     */
+
+	@@ -34,9 +35,9 @@
     export async function getVehicles(routeId: string) : Promise<any> {
-        
+
+
         // Check if University Route
-        if (Object.keys(UNIVERSITY_ROUTES).includes(routeId)) {
+        if (Object.keys(Peak.UNIVERSITY_ROUTES).includes(routeId)) {
             let json = (await getRealtimeGTFSUniversity()).vehicles
-            .filter(vehicle => UNIVERSITY_ROUTES[routeId] === vehicle.routeID);
+            .filter(vehicle => Peak.UNIVERSITY_ROUTES[routeId] === vehicle.routeID);
+
 
             json.forEach(vehicle => {
                 vehicle.trip_id = vehicle.tripID;
@@ -104,6 +103,17 @@ namespace Realtime {
                 console.warn(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${await response.text()}`);
         })
     }
+
+
+    const GTFS_REALTIME_URL_UMN = "https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=vehicles2&action=list&agencyID=88";
+    const GTFS_REALTIME_URL_VEHICLE_POSITIONS = 'https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb';
+    const GTFS_REALTIME_URL_TRIP_UPDATES = 'https://svc.metrotransit.org/mtgtfs/tripupdates.pb';
+    const GTFS_REALTIME_URL_SERVICE_ALERTS = 'https://svc.metrotransit.org/mtgtfs/alerts.pb';
+
+
+    /* Depreciated */
+
+
     /**
      * Gets the fetched vehicle position data
      * @depreciated
@@ -125,21 +135,24 @@ namespace Realtime {
                 console.warn(`Data fetching encountered status code ${response.status} with Trip Updates.`);
         })
     }
-    
 
-    /* University Routes and ID */
-    export const UNIVERSITY_ROUTES = {
-        "120": 11324, 
-        "121": 11278, 
-        "122": 11279, 
-        "123": 11280, 
-        "124": 11281
-    };
 
-    const GTFS_REALTIME_URL_UMN = "https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=vehicles2&action=list&agencyID=88";
-    const GTFS_REALTIME_URL_VEHICLE_POSITIONS = 'https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb';
-    const GTFS_REALTIME_URL_TRIP_UPDATES = 'https://svc.metrotransit.org/mtgtfs/tripupdates.pb';
-    const GTFS_REALTIME_URL_SERVICE_ALERTS = 'https://svc.metrotransit.org/mtgtfs/alerts.pb';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
+
 
 export default Realtime;

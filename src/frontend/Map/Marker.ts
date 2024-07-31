@@ -5,7 +5,7 @@ namespace Marker {
 
     /**
      * Initalizes the marker on the map
-     * @param map map the user marker will display on
+     * @param _map map the user marker will display on
      */
     export function init(_map: google.maps.Map) : void {
         this.map = _map;
@@ -26,11 +26,19 @@ namespace Marker {
     export function update() : void {
         if (marker)
             navigator.geolocation.getCurrentPosition(position => { 
-                marker.position = { lat: position.coords.latitude, lng: position.coords.longitude }
-                marker.map = position.coords.accuracy < 1000 ? this.map : null // If accuraccy is too low, don't display
+                setLocation(position.coords.latitude, position.coords.longitude) 
+                marker.map = position.coords.accuracy < 300 ? this.map : null // If accuracy is too low, don't display
             })
         else
             console.warn("The marker has not been created!")
+    }
+    /**
+     * Location to set the marker to
+     * @param latitude      latitude of new location
+     * @param longitude     longitude of new location
+     */
+    export function setLocation(latitude: number, longitude: number) : void {
+        marker.position = new google.maps.LatLng(latitude, longitude);
     }
 
     /* Private */

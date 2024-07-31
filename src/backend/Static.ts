@@ -46,7 +46,7 @@ namespace Data {
     export async function getTrips(routeId: string) : Promise<any> {
         if (!trips.has(routeId))
             // Load Trips
-            await fetch(API_URL + "/get-trips?route_id=" + routeId + "&date=" + date())
+            await fetch(API_URL + "/get-trips?route_id=" + routeId )
             .then(async response => trips.set(routeId, await response.json()));
 
         return trips.get(routeId)

@@ -44,12 +44,13 @@ export namespace Schedule {
     export async function getStopList(routeId: string, scheduleId: number) : Promise<Array<any>> {
         return await (await fetch("https://svc.metrotransit.org/schedule/stoplist/"+routeId+"/"+scheduleId)).json()
     }
-    /**
+
+      /**
      * Gets the current schedule of the route
      * @param routeId       route ID
      * @returns             a combination of all data from schedule
      */
-    export async function getSchedule(routeId: string) : Promise<any> {
+      export async function getSchedule(routeId: string) : Promise<any> {
         let detail = await getRouteDetails(routeId)
 
         for (let schedule of detail.schedules) {
@@ -64,6 +65,8 @@ export namespace Schedule {
 
         return detail;
     }
+
+    
 
     /**
      * This function checks to make sure that the inputted route on 
@@ -95,12 +98,12 @@ export namespace Schedule {
     } 
     }
 
-    /* Private */
+   /* Private */
 
     /**
      * Gets the week of the date in terms of Sunday, Saturday, and Weekday
      */
-    function getWeekDate() : string | undefined {
+    export function getWeekDate() : string | undefined {
         const date = new Date();
         switch (date.getDay()) {
             case 0:
@@ -117,8 +120,12 @@ export namespace Schedule {
     }
 
 
+
+  
+
+
+
+
 export default Schedule;
 
-function then(arg0: (details: any) => void) {
-    throw new Error("Function not implemented.");
-}
+

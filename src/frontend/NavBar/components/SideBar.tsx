@@ -1,17 +1,50 @@
 import React, {useState} from 'react';
 import RouteButton from './RouteButton.tsx';
-import RouteButtonAddons from './RouteButtonAddons.tsx';
+import { Icon, Image } from '@chakra-ui/react';
+import { ChevronDownIcon, HamburgerIcon } from '@chakra-ui/icons';
+import URL from 'src/backend/URL.ts';
+
+
 import SearchFeature from './SearchFeature.tsx';
 import SearchIcon from "../../../img/CustomBus.png";
 
 function SideBar() {
+
+    const [_, forceReload] = useState(0);
+    const [routes, setRoutes] = useState(new Map<string, string>());
     const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    routes.set("121", "121 Campus Connector");
+    routes.set("122", "122 University Avenue Circulator");
+    routes.set("123", "123 4th Street Circulator");
+    routes.set("124", "124 St. Paul Campus Circulator");
+    routes.set("120", "120 East Bank Circulator");
+    routes.set("2", "2 Franklin Av / To Hennepin");
+    routes.set("6", "6U 27Av-Univ / Via France");
+    routes.set("3", "3 U of M / Como Av / Dwtn Mpls");
+    routes.set("902", "Metro Green Line");
+    routes.set("901", "Metro Blue Line");
+
+    useEffect(() => {
+        /**
+         * Updates the displayed routes on the sidebar
+         */
+        const change = () => {
+            URL.getRoutes().forEach(routeId => { if (!routes.has(routeId)) routes.set(routeId, routeId); })
+            setRoutes(routes);
+            forceReload(Math.random());
+        }
+
+        URL.addListener(() => change());
+
+        change();
+    }, [])
     
     return (
         <>
             <div id="nav-bar">
                 <button className="openbtn" onClick={() => setSidebarOpen(!sidebarOpen)}>
-                    &#9776;
+                    <Icon as={ HamburgerIcon} w={6} h={6} />
                 </button>
             </div>
 
@@ -21,17 +54,7 @@ function SideBar() {
                     <div className="underline"></div>
                 </div>
                 <div className='sidebar-content flex flex-col items-center'>
-                    <RouteButton routeId={"121"} text={"121 Campus Connector"} />   
-                    <RouteButton routeId={"122"} text={"122 University Avenue Circulator"} />
-                    <RouteButton routeId={"123"} text={"123 4th Street Circulator"} />
-                    <RouteButton routeId={"124"} text={"124 St. Paul Campus Circulator"} />
-                    <RouteButton routeId={"120"} text={"120 East Bank Circulator"} />
-                    <RouteButton routeId={"2"} text={"2 Franklin Av / To Hennepin"} />
-                    <RouteButton routeId={"6"} text={"6U 27Av-Univ / Via France"} />
-                    <RouteButton routeId={"3"} text={"3 U of M / Como Av / Dwtn Mpls"} />
-                    <RouteButton routeId={"902"} text={"Metro Green Line"} />
-                    <RouteButton routeId={"901"} text={"Metro Blue Line"} />
-                    {/* <RouteButtonAddons/> */}
+                    {Array.from(routes.keys()).map(routeId => (<RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)}/>)) }
                 </div>
 
 

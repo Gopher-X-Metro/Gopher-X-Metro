@@ -1,8 +1,6 @@
-import Element from "../Element.ts";
-import VehicleInfoWindow from "./VehicleInfoWindow.ts";
+import InfoWindowElement from "./abstracts/InfoWindowElement";
 
-class Vehicle extends Element {
-
+class Vehicle extends InfoWindowElement {
     /* Public */
 
     /**
@@ -12,11 +10,14 @@ class Vehicle extends Element {
      * @param color color of vehicle image
      * @param map map the vehicle displays on
      */
-    constructor (vehicleId: string, color : string, map: google.maps.Map, images: string[2]) {
-        super(vehicleId, color, map);
-
+    constructor (vehicleId: string, images: string[2], map: google.maps.Map) {
         const contents = document.createElement("div");
         contents.style.position = "relative";
+
+        super(vehicleId, map, new window.google.maps.marker.AdvancedMarkerElement({
+            map: map,
+            content: contents,
+        }));
 
         // Create bus container
         const busContainer = document.createElement("div");
@@ -47,12 +48,15 @@ class Vehicle extends Element {
         contents.appendChild(busContainer);
         contents.appendChild(arrowContainer);
 
-        this.marker = new window.google.maps.marker.AdvancedMarkerElement({
-            map: map,
-            content: contents,
-        })
-
-        this.infoWindow = new VehicleInfoWindow(this.marker, map);
+        this.infoWindow?.getWindow().set("pixelOffset", new google.maps.Size(0, -15));
+    }
+    /**
+     * Updates the info window information
+     */
+    public updateWindow() {
+        this.infoWindow?.setContent(
+            String(Math.ceil(Number(this.getLastUpdated())))
+        );
     }
     /**
      * Gets the length in ms of the time between when position was updated and now
@@ -65,12 +69,6 @@ class Vehicle extends Element {
      * Get the trip ID
      */
     public getTripId() : string | undefined { return this.tripId; }
-
-    /**
-     * Get the marker object of this vehicle on the map
-     */
-    public getMarker() : google.maps.marker.AdvancedMarkerElement { return this.marker; }
-
     /**
      * Sets the trip ID
      * @param tripId trip ID
@@ -83,9 +81,9 @@ class Vehicle extends Element {
      * @param timestamp when this position was updated
      */
     public setPosition(position : google.maps.LatLng, timestamp : number) : void {
-        if (!(this.getMarker().position?.toString() === position.toString())) {
-            this.infoWindow.setPosition(position);
-            this.getMarker().position = position;
+        if (!((this.marker as google.maps.marker.AdvancedMarkerElement).position?.toString() === position.toString())) {
+            this.infoWindow?.setPosition(position);
+            (this.marker as google.maps.marker.AdvancedMarkerElement).position = position;
             this.timestamp = timestamp;
         }
     }
@@ -106,73 +104,87 @@ class Vehicle extends Element {
             this.setArrowImageOrientation(bearing);
         }
     }
+
     /**
-     * Sets if the vehicle is visible
-     * @param visible the visibility of the vehicle
+     * Gets the direction the lightrail is heading
      */
-    public setVisible(visible: boolean) {
-        this.marker.map = visible ? this.map : null
+    public getDirectionID(): number | undefined { return this.direction_id; }
+
+    /**
+     * Sets the direction the blueline lightrail is heading
+     * @param direction_id the orientation of the blueline lightrail
+     */
+    public setBlueDirectionID(direction_id: number): void {
+        this.direction_id = direction_id;
+        if (this.arrowImg) {
+            this.setArrowImageBluelineOrientation(direction_id);
+        }
     }
 
+    /**
+     * Sets the direction the greenline lightrail is heading
+     * @param direction_id the orientation of the greenline lightrail
+     */
+    public setGreenDirectionID(direction_id: number): void {
+        this.direction_id = direction_id;
+        if (this.arrowImg) {
+            this.setArrowImageGreenlineOrientation(direction_id);
+        }
+    }
     /**
      * Sets position of bus arrow image around center of bus image
      * @param bearing the orientation of the bus
      */
     public setArrowImageOrientation(bearing: number) : void {
+        const radius = 10;
+        const radians = (bearing + 90) / 180 * Math.PI;
+        
         if (this.arrowCont) {
-            if (bearing > 0 && bearing < 45) {
+            this.arrowCont.style.top = (-Math.sin(radians) * radius).toString() + "px";
+            this.arrowCont.style.left = (-Math.cos(radians) * radius).toString() + "px";
+        }
+    }
+
+    /**
+     * Sets position of bus arrow image around center of bus image
+     * @param direction_id the orientation of the blueline lightrail
+     */
+    public setArrowImageBluelineOrientation(direction_id: number) : void {
+        if (this.arrowCont && this.arrowImg) {
+            if (direction_id === 0) {
+                this.arrowImg.style.transform = `rotate(${0}deg)`;
                 this.arrowCont.style.top = "-10px";
-                this.arrowCont.style.left = "5px";
-            } else if (bearing >= 45 && bearing < 90) {
-                this.arrowCont.style.top = "-5px";
-                this.arrowCont.style.left = "10px";
-            } else if (bearing === 90) {
-                this.arrowCont.style.left = "10px";
-            } else if (bearing > 90 && bearing < 135) {
-                this.arrowCont.style.top = "5px";
-                this.arrowCont.style.left = "10px";
-            } else if (bearing >= 135 && bearing < 180) {
+            } else if (direction_id === 1) {
+                this.arrowImg.style.transform = `rotate(${180}deg)`;
                 this.arrowCont.style.top = "10px";
-                this.arrowCont.style.left = "5px";
-            } else if (bearing === 180) {
-                this.arrowCont.style.top = "10px";
-            } else if (bearing > 180 && bearing < 225) {
-                this.arrowCont.style.top = "10px";
-                this.arrowCont.style.left = "-5px";
-            } else if (bearing >= 225 && bearing < 270) {
-                this.arrowCont.style.top = "5px";
-                this.arrowCont.style.left = "-10px";
-            } else if (bearing === 270) {
-                this.arrowCont.style.left = "-10px";
-            } else if (bearing > 270 && bearing < 315) {
-                this.arrowCont.style.top = "-5px";
-                this.arrowCont.style.left = "-10px";
-            } else if (bearing >= 315 && bearing < 360) {
-                this.arrowCont.style.top = "-10px";
-                this.arrowCont.style.left = "-5px";
-            } else {
-                this.arrowCont.style.top = "-10px";
             }
         }
     }
+
     /**
-     * Updates the info window information
+     * Sets position of bus arrow image around center of bus image
+     * @param direction_id the orientation of the greenline lightrail
      */
-    public updateInfoWindow() {
-        this.infoWindow.setContent(
-            String(Math.round(Number(this.getLastUpdated())))
-        );
+    public setArrowImageGreenlineOrientation(direction_id: number) : void {
+        if (this.arrowCont && this.arrowImg) {
+            if (direction_id === 0) {
+                this.arrowImg.style.transform = `rotate(${90}deg)`;
+                this.arrowCont.style.left = "10px";
+            } else if (direction_id === 1) {
+                this.arrowImg.style.transform = `rotate(${270}deg)`;
+                this.arrowCont.style.left = "-10px";
+            }
+        }
     }
     
     /* Private */
 
     private tripId: string | undefined;
     private timestamp : number | undefined;
-    private marker: google.maps.marker.AdvancedMarkerElement;
     private bearing: number | undefined;
+    private direction_id: number | undefined;
     private arrowImg: HTMLImageElement | null = null;
     private arrowCont: HTMLDivElement;
-    private infoWindow: VehicleInfoWindow;
 }
 
 export default Vehicle;

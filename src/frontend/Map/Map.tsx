@@ -1,23 +1,19 @@
 import { Loader } from "@googlemaps/js-api-loader"
 import React, { useEffect, useState } from 'react';
 
-import Resources from '../../backend/Resources.ts';
+import Resources from 'src/backend/Resources.ts';
 
 import Marker from './Marker.ts';
 import Routes from './Routes.ts';
 import LoadingScreen from "./LoadingScreen.tsx";
+import SearchBar from "src/frontend/NavBar/components/SearchBar.ts";
 
 /**
  * The map component
  */
 export default function Map() {
+    let longpress: NodeJS.Timeout;
     const [mapLoaded, setMapLoaded] = useState(false);
-
-
-
-
-
-
 
     const init = async () => {
         let center = { lat: 44.97369560732433, lng: -93.2317259515601 }; // UMN location
@@ -41,15 +37,24 @@ export default function Map() {
             mapId: process.env.REACT_APP_MAP_ID
         });
 
+        //if (isMobile()) {
+            // Long press
+            // google.maps.event.addListener(map, "mousedown", event => longpress = setTimeout(() => onSelectLocation(event), 500));
+            // google.maps.event.addListener(map, "mouseup", () => clearTimeout(longpress));
+            // google.maps.event.addListener(map, "drag", () => clearTimeout(longpress));
+        //}
+        // else
+            // Right click
+            //google.maps.event.addListener(map, "rightclick", event => onSelectLocation(event));
+
+        // Creates the search bar
+        SearchBar.init(map);
 
         // Loads the Route's Resources
         await Resources.load()
 
         // Sets the Routes map to this map
-        Routes.setMap(map)
-
-        // Loads the static routes
-        Routes.refresh()
+        Routes.init(map)
 
         // Initalizes the user's marker
         Marker.init(map);
@@ -60,16 +65,18 @@ export default function Map() {
             Marker.update();
         }, 500); // ms of wait
 
+        // Updates stops every 30 seconds
+        setInterval(() => {
+            Routes.refreshStops();
+        }, 30000); // ms of wait
 
     }
-
 
     useEffect(() => {
         // Minimum delay in milliseconds
         const minimumDelay = 2000;
 
         const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
 
         // Initialize the map and wait for the minimum delay
         Promise.all([init(), delay(minimumDelay)]).then(() => {
@@ -78,6 +85,20 @@ export default function Map() {
     }, []);
 
 
-    return <><LoadingScreen hidden={mapLoaded}></LoadingScreen><div id="map"></div> </>;
+    return (<div className="h-[90%] w-full bg-black">
+        <LoadingScreen hidden={mapLoaded}/>
+        <input id="search-bar" className="controls" type="text"/>
+        <div id="map"/> 
+    </div>);
 }
 
+function isMobile() {
+    return 'ontouchstart' in window;
+}
+
+function onSelectLocation(event) {
+    var lat = event.latLng.lat();
+    var lng = event.latLng.lng();
+    // populate yor box/field with lat, lng
+    alert("Lat=" + lat + "; Lng=" + lng);
+}
