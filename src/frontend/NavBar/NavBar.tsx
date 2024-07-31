@@ -7,7 +7,7 @@ import {
     Icon,
 } from '@chakra-ui/react'
 import TitleBar from './components/TitleBar.tsx';
-import SideBar from './components/Sidebar.tsx';
+import SideBar from "../../frontend/NavBar/components/SideBar.tsx";
 
 /**
  * Navbar Component

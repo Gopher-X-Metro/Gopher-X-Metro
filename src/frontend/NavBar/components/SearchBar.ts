@@ -1,6 +1,6 @@
-import Routes from "src/frontend/Map/Routes";
-import Plan from "src/backend/Plan";
-import Search from "src/frontend/Map/elements/Search";
+import Routes from "../../../frontend/Map/Routes";
+import Plan from "../../../backend/Plan";
+import Search from "../../../frontend/Map/elements/Search";
 
 namespace SearchBar {
     /**

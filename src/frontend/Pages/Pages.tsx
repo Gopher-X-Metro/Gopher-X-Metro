@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 
 import Map from '../Map/Map.tsx';
 import About from './About/About.tsx';
-import Schedules from 'src/frontend/Pages/Schedules.tsx';
+import Schedules from "../../frontend/Pages/components/Schedule.tsx";
 
 function Pages() {
     return (

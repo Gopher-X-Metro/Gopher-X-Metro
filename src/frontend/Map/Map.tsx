@@ -1,12 +1,12 @@
 import { Loader } from "@googlemaps/js-api-loader"
 import React, { useEffect, useState } from 'react';
 
-import Resources from 'src/backend/Resources.ts';
+import Resources from "../../backend/Resources.ts"
 
 import Marker from './Marker.ts';
 import Routes from './Routes.ts';
 import LoadingScreen from "./LoadingScreen.tsx";
-import SearchBar from "src/frontend/NavBar/components/SearchBar.ts";
+import SearchBar from "../../frontend/NavBar/components/SearchBar.ts";
 
 /**
  * The map component

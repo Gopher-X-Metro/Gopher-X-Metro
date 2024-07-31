@@ -1,7 +1,6 @@
 import GtfsRealtimeBindings from 'gtfs-realtime-bindings';
 
-import GtfsRealtimeBindings from 'gtfs-realtime-bindings';
-import Peak from "src/backend/Peak.ts";
+import Peak from "../backend/Peak";
 
 
 namespace Realtime {

@@ -1,7 +1,7 @@
 import InfoWindowElement from './abstracts/InfoWindowElement';
 
-import Resources from 'src/backend/Resources.ts';
-import URL from 'src/backend/URL.ts';
+import Resources from "../../../backend/Resources";
+import URL from "../../../backend/URL";
 import Primative from './abstracts/Primative';
 
 interface departure {

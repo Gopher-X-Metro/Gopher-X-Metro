@@ -1,10 +1,10 @@
-import Resources from "src/backend/Resources.ts";
-import Schedule from "src/backend/Schedule.ts";
+import Resources from "../../backend/Resources.ts";
+import Schedule from "../../backend/Schedule.ts";
 import Vehicle from "./elements/Vehicle.ts";
-import URL from "src/backend/URL.ts";
+import URL from "../../backend/URL.ts";
 import Route from "./elements/Route.ts";
-import Realtime from "src/backend/Realtime.ts";
-import Peak from "src/backend/Peak.ts";
+import Realtime from "../../backend/Realtime.ts"
+import Peak from "../../backend/Peak.ts";
 import Stop from "./elements/Stop.ts";
 
 
