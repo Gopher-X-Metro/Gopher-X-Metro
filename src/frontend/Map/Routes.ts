@@ -74,7 +74,7 @@ namespace Routes {
     {
         // Sets all vehicles to be un-updated
         vehicles.forEach(vehicle => {
-                vehicle.setVisible(vehicle.isVisible());
+                vehicle.setVisible(vehicle.isUpdated());
                 vehicle.setUpdated(false);
             }
         );
