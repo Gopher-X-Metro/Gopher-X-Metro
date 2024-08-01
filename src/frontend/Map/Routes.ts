@@ -76,11 +76,6 @@ namespace Routes {
         URL.getRoutes()?.forEach(async routeId => {
             const route = routes.get(routeId)
 
-            // Sets all vehicles to be un-updated and set their visibility
-            route?.getVehicles().forEach(vehicle => {
-                vehicle.setVisible(vehicle.isUpdated() && route.isVisible());
-            });
-
             for (const info of (await Realtime.getVehicles(routeId))) {
                 if (!vehicles.has(info.trip_id)) {
                     // Add Vehicle
@@ -114,6 +109,11 @@ namespace Routes {
                 vehicles.get(info.trip_id)?.updateWindow();
                 vehicles.get(info.trip_id)?.update();
             }
+            
+            // Sets all vehicles to be un-updated and set their visibility
+            route?.getVehicles().forEach(vehicle => {
+                vehicle.setVisible(vehicle.isUpdated() && route.isVisible());
+            });
         })
     }
     /**
