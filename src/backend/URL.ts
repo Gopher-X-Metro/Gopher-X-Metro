@@ -42,9 +42,7 @@ namespace URL {
     /**
      * Runs the listeners that were added
      */
-    function onChange() {
-        functions.forEach(f => f());
-    }
+    function onChange() { functions.forEach(f => f()); }
 
     /**
      * Gets the url
