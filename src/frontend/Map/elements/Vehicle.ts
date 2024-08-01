@@ -113,7 +113,7 @@ class Vehicle extends InfoWindowElement {
     /**
      * Returns if the vehicle had been updated
      */
-    public isUpdated(): boolean { return this.updated ? (Date.now() - this.updated < 500) : false; }
+    public isUpdated(): boolean { return (this.updated && (this.getLastUpdated() as number < 300)) ? (Date.now() - this.updated < 500) : false; }
     /**
      * Sets the direction the blueline lightrail is heading
      * @param direction_id the orientation of the blueline lightrail
