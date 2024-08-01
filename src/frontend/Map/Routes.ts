@@ -73,8 +73,7 @@ namespace Routes {
     export async function refreshVehicles() 
     {
         // Sets all vehicles to be un-updated
-        vehicles.forEach(vehicle => 
-            {
+        vehicles.forEach(vehicle => {
                 vehicle.setVisible(vehicle.isVisible());
                 vehicle.setUpdated(false);
             }
