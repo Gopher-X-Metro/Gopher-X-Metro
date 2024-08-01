@@ -23,7 +23,8 @@ import arrowImage6 from "../img/6_arrow.png"
 import arrowImage902 from "../img/902_greenline_arrow.png"
 import arrowImage901 from "../img/901_blueline_arrow.png"
 
-import busImage from "../img/bus.png"
+import defaultBusImage from "../img/default_bus.png"
+import defaultArrowImage from "../img/default_arrow.png"
 
 // Backend and Frontend interface
 namespace Resources {
@@ -136,7 +137,7 @@ namespace Resources {
      */
     export function getRouteImages(routeId: string) : string[2] {
         // It defaults to the colors manually defined. If the color is not defined, it defaults to the one if found. 
-        return ROUTE_IMAGES[routeId] ? ROUTE_IMAGES[routeId] : [busImage, ""];
+        return ROUTE_IMAGES[routeId] ? ROUTE_IMAGES[routeId] : [defaultBusImage, defaultArrowImage];
     }
 
     export function createInactiveRoutePopup() {
