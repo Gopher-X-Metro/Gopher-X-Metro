@@ -19,8 +19,6 @@ class Vehicle extends InfoWindowElement {
             content: contents,
         }));
 
-        this.updated = true;
-
         // Create bus container
         const busContainer = document.createElement("div");
         busContainer.style.position = "absolute";
@@ -111,11 +109,11 @@ class Vehicle extends InfoWindowElement {
      * Sets the updated status of the vehicle
      * @param bool the new updated status
      */
-    public setUpdated( bool : boolean) : void { this.updated = bool; }
+    public update() : void { this.updated = Date.now(); }
     /**
      * Returns if the vehicle had been updated
      */
-    public isUpdated(): boolean { return this.updated; }
+    public isUpdated(): boolean { return this.updated ? (Date.now() - this.updated < 500) : false; }
     /**
      * Sets the direction the blueline lightrail is heading
      * @param direction_id the orientation of the blueline lightrail
@@ -181,7 +179,7 @@ class Vehicle extends InfoWindowElement {
     }
     
     /* Private */
-    private updated: boolean;
+    private updated: number | undefined;
     private tripId: string | undefined;
     private timestamp : number | undefined;
     private bearing: number | undefined;
