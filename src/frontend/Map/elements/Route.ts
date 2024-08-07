@@ -72,9 +72,13 @@ class Route extends Primative {
     public setVisible(visible: boolean) {
         this.visible = visible;
         this.paths.forEach(path => path.setVisible(visible));
-        this.vehicles.forEach(vehicle => vehicle.setVisible(visible));
+        this.vehicles.forEach(vehicle => vehicle.setVisible(visible && vehicle.isPositionUpdated()));
         this.stops.forEach(stop => stop.updateVisibility());
     }
+    /**
+     * 
+     * @returns 
+     */
     public isVisible() : boolean { return this.visible; }
 
     /* Private */
