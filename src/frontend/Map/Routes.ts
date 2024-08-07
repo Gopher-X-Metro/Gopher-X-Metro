@@ -24,7 +24,7 @@ namespace Routes {
         // Goes through each route that is on the URL, and unhides it or creates it
         URL.getRoutes().forEach(routeId => {
             if (!routes.has(routeId)) loadRoute(routeId);
-            getRoute(routeId)?.setVisible(true);
+            if (!getRoute(routeId)?.isVisible()) getRoute(routeId)?.setVisible(true);
         })
 
         // Load Vehicles
@@ -74,13 +74,13 @@ namespace Routes {
     {
         // Updates Vehicles
         URL.getRoutes()?.forEach(async routeId => {
+            const route = routes.get(routeId)
+
             for (const info of (await Realtime.getVehicles(routeId))) {
                 if (!vehicles.has(info.trip_id)) {
                     // Add Vehicle
                     vehicles.set(info.trip_id, new Vehicle(info.trip_id, Resources.getRouteImages(routeId), map))
                     
-                    const route = routes.get(routeId)
-
                     if (route) {
                         route.addVehicleObject(info.trip_id, vehicles.get(info.trip_id));
 
@@ -107,7 +107,13 @@ namespace Routes {
 
                 vehicles.get(info.trip_id)?.setPosition(new google.maps.LatLng(info.latitude as number, info.longitude as number), info.timestamp);
                 vehicles.get(info.trip_id)?.updateWindow();
+                vehicles.get(info.trip_id)?.updateTimestamp();
             }
+            
+            // Sets all vehicles to be un-updated and set their visibility
+            route?.getVehicles().forEach(vehicle => {
+                vehicle.setVisible(vehicle.isUpdated() && route.isVisible());
+            });
         })
     }
     /**
