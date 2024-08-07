@@ -107,7 +107,7 @@ namespace Routes {
 
                 vehicles.get(info.trip_id)?.setPosition(new google.maps.LatLng(info.latitude as number, info.longitude as number), info.timestamp);
                 vehicles.get(info.trip_id)?.updateWindow();
-                vehicles.get(info.trip_id)?.update();
+                vehicles.get(info.trip_id)?.updateTimestamp();
             }
             
             // Sets all vehicles to be un-updated and set their visibility
