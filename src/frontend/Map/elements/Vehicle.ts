@@ -62,8 +62,8 @@ class Vehicle extends InfoWindowElement {
      * Gets the length in ms of the time between when position was updated and now
      */
     public getLastUpdated() : number | undefined {
-        if (this.timestamp)
-            return (Date.now()/1000) - this.timestamp; 
+        if (this.positionTimestamp)
+            return (Date.now()/1000) - this.positionTimestamp; 
     }
     /**
      * Get the trip ID
@@ -83,7 +83,7 @@ class Vehicle extends InfoWindowElement {
         if (!((this.marker as google.maps.marker.AdvancedMarkerElement).position?.toString() === position.toString())) {
             this.infoWindow?.setPosition(position);
             (this.marker as google.maps.marker.AdvancedMarkerElement).position = position;
-            this.timestamp = timestamp;
+            this.positionTimestamp = timestamp;
         }
     }
     /**
@@ -106,14 +106,18 @@ class Vehicle extends InfoWindowElement {
      */
     public getDirectionID(): number | undefined { return this.direction_id; }
     /**
+     * Returns if the vehicle position has been updated
+     */
+    public isPositionUpdated(): boolean { return this.getLastUpdated() as number < 300 }
+    /**
      * Sets the updated status of the vehicle
      * @param bool the new updated status
      */
-    public update() : void { this.updated = Date.now(); }
+    public updateTimestamp() : void { this.updatedTimestamp = Date.now(); }
     /**
      * Returns if the vehicle had been updated
      */
-    public isUpdated(): boolean { return (this.updated && (this.getLastUpdated() as number < 300)) ? (Date.now() - this.updated < 500) : false; }
+    public isUpdated(): boolean { return (this.updatedTimestamp && this.isPositionUpdated()) ? (Date.now() - this.updatedTimestamp < 500) : false; }
     /**
      * Sets the direction the blueline lightrail is heading
      * @param direction_id the orientation of the blueline lightrail
@@ -179,9 +183,9 @@ class Vehicle extends InfoWindowElement {
     }
     
     /* Private */
-    private updated: number | undefined;
+    private updatedTimestamp: number | undefined;
     private tripId: string | undefined;
-    private timestamp : number | undefined;
+    private positionTimestamp : number | undefined;
     private bearing: number | undefined;
     private direction_id: number | undefined;
     private arrowImg: HTMLImageElement | null = null;
