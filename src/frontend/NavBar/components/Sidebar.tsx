@@ -3,6 +3,8 @@ import RouteButton from './RouteButton.tsx';
 import { Icon, Image } from '@chakra-ui/react';
 import { ChevronDownIcon, HamburgerIcon } from '@chakra-ui/icons';
 import URL from 'src/backend/URL.ts';
+import SearchIcon from "src/img/CustomBus.png";
+import SearchFeature from 'src/frontend/NavBar/components/SearchFeature.tsx';
 
 function SideBar() {
     const [_, forceReload] = useState(0);
@@ -45,14 +47,30 @@ function SideBar() {
                 </button>
             </div>
 
-            <div id="nav-bar" className={`sidebar flex flex-col items-center ${sidebarOpen ? "bg-grey w-[100%] md:w-[40%] lg:w-[30%] p-1" : "w-0"}`}>
+            <div id="nav-bar" className={sidebarOpen ? 'sidebar open' : 'sidebar'}>
                 <div className="nav-header">
                     <h3>Select Routes</h3>
                     <div className="underline"></div>
                 </div>
+                
                 <div className='sidebar-content flex flex-col items-center'>
                     {Array.from(routes.keys()).map(routeId => (<RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)}/>)) }
                 </div>
+
+                <div className = "nav-header"> 
+                    <h1> Search routes </h1>
+                    <div className="underline"></div>
+                    <br></br>
+                </div> 
+                
+                <div className = "searchContainer">
+                    <input type = "text" id = "search_route" placeholder = "123"></input>
+                    <button onClick = {SearchFeature.searchRoute} id = "searchButton">
+                    <img className = "busImg" height = "50" alt = "error" width = "50" src={SearchIcon}></img>
+                    </button>
+                </div>
+                
+                <div className= "error_text" id = 'error_text'></div>
             </div>
         </>
     )
