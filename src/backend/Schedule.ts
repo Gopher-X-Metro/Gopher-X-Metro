@@ -45,6 +45,35 @@ namespace Schedule {
         return await (await fetch("https://svc.metrotransit.org/schedule/stoplist/"+routeId+"/"+scheduleId)).json()
     }
 
+
+
+    /**
+     * This function checks to make sure that the inputted route on 
+     * the searchfeature is a valid route
+     * @param route route that is passed in
+     * @returns true or false
+     */
+    export async function checkRoute(route:string){
+        const url = 'https://svc.metrotransit.org/NexTrip/Routes';
+         try{
+          const response = await fetch(url);
+  
+          if(!response.ok){
+              throw new Error("error with fetch");
+          }
+          const data = await response.json();
+          for(let i = 0; i < data.length; i++){
+              if(data[i].route_id === route){
+                  return true;
+              }
+          }
+          return false;
+  
+         }catch(error){
+          console.log(error);
+         }
+      } 
+
     /* Private */
 
     /**
