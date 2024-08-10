@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import RouteButton from './RouteButton.tsx';
-import { Icon, Image } from '@chakra-ui/react';
-import { ChevronDownIcon, HamburgerIcon } from '@chakra-ui/icons';
+import { Icon } from '@chakra-ui/react';
+import { HamburgerIcon } from '@chakra-ui/icons';
 import URL from 'src/backend/URL.ts';
 import SearchIcon from "src/img/CustomBus.png";
 import SearchFeature from 'src/frontend/NavBar/components/SearchFeature.tsx';
+import Schedule from 'src/backend/Schedule.ts';
 
 function SideBar() {
     const [_, forceReload] = useState(0);
-
     const [routes, setRoutes] = useState(new Map<string, string>());
-
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     routes.set("121", "121 Campus Connector");
@@ -25,11 +24,33 @@ function SideBar() {
     routes.set("901", "Metro Blue Line");
 
     useEffect(() => {
+        // Allows the user to hit "Enter" to enter a route
+        const searchBox = document.getElementById("search_route");
+        searchBox?.addEventListener("keydown", event => event.code === "Enter" ? SearchFeature.searchRoute() : null);
+
+        /**
+         * Convert a string to a properly cased title
+         * @param input input string
+         */
+        const toTitleCase = (input : string) => { 
+            return input.replace( 
+                /\w\S*/g, 
+                text => text.charAt(0).toUpperCase() + text.substring(1).toLowerCase() 
+            ); 
+        }
+
         /**
          * Updates the displayed routes on the sidebar
-         */
-        const change = () => {
-            URL.getRoutes().forEach(routeId => { if (!routes.has(routeId)) routes.set(routeId, routeId); })
+         */ 
+        const change = async () => {
+            for (const routeId of URL.getRoutes()) {
+                if (!routes.has(routeId)) {
+                    const info = await Schedule.getRoute(routeId);
+                    const name = info ? info.route_label : routeId;
+                    routes.set(routeId, toTitleCase(name));
+                }
+            }
+
             setRoutes(routes);
             forceReload(Math.random());
         }
@@ -64,9 +85,9 @@ function SideBar() {
                 </div> 
                 
                 <div className = "searchContainer">
-                    <input type = "text" id = "search_route" placeholder = "123"></input>
+                    <input type = "text" id = "search_route" placeholder = "902"></input>
                     <button onClick = {SearchFeature.searchRoute} id = "searchButton">
-                    <img className = "busImg" height = "50" alt = "error" width = "50" src={SearchIcon}></img>
+                        <img className = "busImg" height = "50" alt = "error" width = "50" src={SearchIcon}></img>
                     </button>
                 </div>
                 
