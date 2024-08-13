@@ -6,11 +6,12 @@ import URL from 'src/backend/URL.ts';
 import SearchIcon from "src/img/CustomBus.png";
 import SearchFeature from 'src/frontend/NavBar/components/SearchFeature.tsx';
 import Schedule from 'src/backend/Schedule.ts';
+import { useSidebar } from '../../Pages/components/SidebarContext.tsx'; // checks if Sidebar is opened
 
 function SideBar() {
     const [_, forceReload] = useState(0);
     const [routes, setRoutes] = useState(new Map<string, string>());
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const { sidebarOpen, setSidebarOpen } = useSidebar(); // checks if Sidebar is opened
 
     routes.set("121", "121 Campus Connector");
     routes.set("122", "122 University Avenue Circulator");
