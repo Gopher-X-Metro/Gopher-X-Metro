@@ -23,7 +23,7 @@ export default function NavBar() {
                     </Link>
                 </Box>
                 <div className="flex-grow"/>
-                <div className=" flex flex-row gap-2 max-lg:hidden ">
+                <div className="flex flex-row gap-2 max-lg:hidden ">
 
                     <Link to="/schedules" >
                         <Button colorScheme='yellow'>
