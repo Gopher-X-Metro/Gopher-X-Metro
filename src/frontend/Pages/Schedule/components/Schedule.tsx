@@ -1,5 +1,4 @@
-import React from 'react';
-
+import React, { useEffect } from 'react';
 import {
     Table,
     Thead,
@@ -10,33 +9,33 @@ import {
     TableCaption,
     TableContainer,
     Heading,
-  } from '@chakra-ui/react';
+} from '@chakra-ui/react';
 
-export default function Schedule({selectedName, scheduleTimes}){
+export default function Schedule({ selectedName, scheduleTimes }) {
     const renderRows = (scheduleTimes) => {
         return scheduleTimes.map((row, index) => {
-            return (  
-            <Tr key={"table-row-" + index}>
-              <Td>{row[0]}</Td>
-              <Td>{row[1]}</Td>
-              <Td>{row[2]}</Td>
-            </Tr>
-          );
+            return (
+                <Tr key={"table-row-" + index}>
+                    <Td>{row[0]}</Td>
+                    <Td>{row[1]}</Td>
+                    <Td>{row[2]}</Td>
+                </Tr>
+            );
         });
-      };
+    };
 
-    return(
+    return (
         <div>
-            <Heading as='h1' size='md' margin = '5'>{selectedName}</Heading>
+            <Heading as='h1' size='md' margin='5'>{selectedName}</Heading>
             <TableContainer>
                 <Table variant='striped'>
                     <TableCaption>Only for Fall/Spring Semesters and Finals</TableCaption>
                     <Thead>
-                    <Tr>
-                        <Th>Days</Th>
-                        <Th>Times</Th>
-                        <Th>Frequency</Th>
-                    </Tr>
+                        <Tr>
+                            <Th>Days</Th>
+                            <Th>Times</Th>
+                            <Th>Frequency</Th>
+                        </Tr>
                     </Thead>
                     <Tbody>
                         {renderRows(scheduleTimes)}
@@ -44,6 +43,5 @@ export default function Schedule({selectedName, scheduleTimes}){
                 </Table>
             </TableContainer>
         </div>
-    )
-
+    );
 }

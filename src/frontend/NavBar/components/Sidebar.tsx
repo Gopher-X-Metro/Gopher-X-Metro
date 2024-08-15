@@ -7,7 +7,7 @@ import SearchIcon from "src/img/CustomBus.png";
 import SearchFeature from 'src/frontend/NavBar/components/SearchFeature.tsx';
 import Schedule from 'src/backend/Schedule.ts';
 
-function SideBar() {
+export default function SideBar() {
     const [_, forceReload] = useState(0);
     const [routes, setRoutes] = useState(new Map<string, string>());
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -96,5 +96,3 @@ function SideBar() {
         </>
     )
 }
-
-export default SideBar;
