@@ -7,6 +7,7 @@ import Routes from "./components/Routes";
 import SearchBar from "src/frontend/NavBar/components/SearchBar";
 
 import LoadingScreen from "./components/LoadingScreen";
+import NavBar from "src/frontend/NavBar/NavBar";
 
 const APIKey = process.env.REACT_APP_API_KEY; // Comes from the .env.local file, just for security. Won't appear in main -- all api keys should be added to Vercel console. 
 const UMNLocation = { lat: 44.97369560732433, lng: -93.2317259515601 };
@@ -35,11 +36,15 @@ export default function Map() {
         });
     }, [])
 
-    return (<div className="h-[90%] w-full bg-black">
-        <LoadingScreen hidden={mapLoaded}/>
-        <input id="search-bar" className="controls" type="text"/>
-        <div id="map"/> 
-    </div>);
+    return (
+    <>
+        <NavBar/>
+        <div className="h-[90%] w-full bg-black">
+            <LoadingScreen hidden={mapLoaded}/>
+            <input id="search-bar" className="controls" type="text"/>
+            <div id="map"/> 
+        </div>
+    </>);
 }
 
 async function initalize() {
