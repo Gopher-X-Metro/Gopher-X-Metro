@@ -8,6 +8,8 @@ import Routes from './Routes.ts';
 import LoadingScreen from "./LoadingScreen.tsx";
 import SearchBar from "src/frontend/NavBar/components/SearchBar.ts";
 
+import NavBar from "../NavBar/NavBar.tsx";
+
 /**
  * The map component
  */
@@ -74,9 +76,14 @@ export default function Map() {
     }, []);
 
 
-    return (<div className="h-[90%] w-full bg-black">
-        <LoadingScreen hidden={mapLoaded}/>
-        <input id="search-bar" className="controls" type="text"/>
-        <div id="map"/> 
-    </div>);
+    return (
+    <>
+        <NavBar/>
+        <div className="h-[90%] w-full bg-black">
+            <LoadingScreen hidden={mapLoaded}/>
+            <input id="search-bar" className="controls" type="text"/>
+            <div id="map"/> 
+        </div>
+    </>
+    );
 }

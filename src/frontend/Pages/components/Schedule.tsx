@@ -10,16 +10,8 @@ import {
     TableContainer,
     Heading,
 } from '@chakra-ui/react';
-import { useSidebar } from './SidebarContext'; 
 
 export default function Schedule({ selectedName, scheduleTimes }) {
-    const { setSidebarOpen } = useSidebar(); // checks sidebar state
-
-    // Close the sidebar when this component is rendered
-    useEffect(() => {
-        setSidebarOpen(false);
-    }, [setSidebarOpen]);
-
     const renderRows = (scheduleTimes) => {
         return scheduleTimes.map((row, index) => {
             return (
