@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 import {
     Button,
     HStack,
-    Box,
-    Icon,
+    Box
 } from '@chakra-ui/react'
 import TitleBar from './components/TitleBar.tsx';
 import SideBar from './components/Sidebar.tsx';
@@ -13,11 +12,9 @@ import SideBar from './components/Sidebar.tsx';
  * Navbar Component
  */
 export default function NavBar() {
-
     return (
         <div id="title-bar">
             <HStack padding="24px" gap="30px" width="100%" className="items-center justify-content">
-
                 <SideBar />
 
                 <Box>

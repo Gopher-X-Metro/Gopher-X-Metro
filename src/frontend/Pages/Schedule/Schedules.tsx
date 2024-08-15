@@ -39,11 +39,11 @@ export default function Schedules() {
                     </MenuOptionGroup>
                 </MenuList>
             </Menu>
-            <Link to="/" >
+            <a href='./'>
                 <Button colorScheme='yellow'>
                     Back to Map
                 </Button>
-            </Link>
+            </a>
             <ScheduleTable selectedSchedule={selectedSchedule} />
         </div>
     )
