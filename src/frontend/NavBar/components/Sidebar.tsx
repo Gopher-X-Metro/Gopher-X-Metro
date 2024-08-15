@@ -79,7 +79,7 @@ export default function SideBar() {
                 </div>
 
                 <div className = "nav-header"> 
-                    <h1> Search routes </h1>
+                    <h1> Search Routes </h1>
                     <div className="underline"></div>
                     <br></br>
                 </div> 
