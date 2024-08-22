@@ -4,13 +4,14 @@ import { Link } from 'react-router-dom';
 import { ChevronDownIcon } from '@chakra-ui/icons'; 
 
 const ResponsiveDropdown = () => {
+    // Check if the screen width is 768px or less (common mobile sizing cutoff)
     const [isMobile] = useMediaQuery("(max-width: 768px)");
 
     return (
         <>
         {isMobile && (
             <Menu>
-                <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                <MenuButton as={Button} rightIcon={<ChevronDownIcon />} colorScheme='yellow'>
                 </MenuButton>
                 <MenuList>
                     <MenuItem as={Link} to='/schedules'> 

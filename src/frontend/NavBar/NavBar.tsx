@@ -19,7 +19,7 @@ export default function NavBar() {
 
     return (
         <div id="title-bar">
-            <HStack padding="24px" gap="30px" width="100%" className="items-center justify-content">
+            <HStack padding="2%" gap="3%" width="100%" className="items-center justify-content">
                 <SideBar />
 
                 <Box>
@@ -28,8 +28,8 @@ export default function NavBar() {
                     </Link>
                 </Box>
                 <div className="flex-grow"/>
-                
-                {/*Conditionally render the ResponsiveDropdown, or buttons depending on the screen size*/}
+
+                {/*Display NavBar buttons or drop-down menu depending if the user is on mobile or not*/}
                 {isMobile ? (
                     <ResponsiveDropdown />
                 ) : (
