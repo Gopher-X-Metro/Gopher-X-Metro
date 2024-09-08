@@ -67,11 +67,11 @@ async function initalize() {
     // Initalizes the user's marker
     Marker.init(map);
 
-    // Updates vehicle and marker postions every 0.5 seconds
+    // Updates vehicle and marker postions every 10 seconds
     setInterval(() => {
         Routes.refreshVehicles();
         Marker.update();
-    }, 500); // ms of wait
+    }, 10000); // ms of wait
 
     // Updates stops every 30 seconds
     setInterval(() => {

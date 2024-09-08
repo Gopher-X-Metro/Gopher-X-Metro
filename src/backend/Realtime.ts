@@ -124,7 +124,6 @@ namespace Realtime {
     }
     /**
      * Gets the fetched trip updates data
-     * @deprecated
      */
     export async function getRealtimeGTFSTripUpdates() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage | undefined> {
         return await fetch(GTFS_REALTIME_URL_TRIP_UPDATES).then(async response => {

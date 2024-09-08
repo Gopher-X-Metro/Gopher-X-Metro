@@ -1,4 +1,6 @@
 import InfoWindowElement from "./abstracts/InfoWindowElement";
+import Realtime from "../../../../backend/Realtime.ts";
+import Schedule from "../../../../backend/Schedule.ts";
 
 class Vehicle extends InfoWindowElement {
     /* Public */
@@ -63,7 +65,7 @@ class Vehicle extends InfoWindowElement {
      */
     public getLastUpdated() : number | undefined {
         if (this.positionTimestamp)
-            return (Date.now()/1000) - this.positionTimestamp; 
+            return (Date.now()/1000) - this.positionTimestamp;
     }
     /**
      * Get the trip ID
@@ -145,7 +147,7 @@ class Vehicle extends InfoWindowElement {
     public setArrowImageOrientation(bearing: number) : void {
         const radius = 10;
         const radians = (bearing + 90) / 180 * Math.PI;
-        
+
         if (this.arrowCont) {
             this.arrowCont.style.top = (-Math.sin(radians) * radius).toString() + "px";
             this.arrowCont.style.left = (-Math.cos(radians) * radius).toString() + "px";
@@ -181,7 +183,150 @@ class Vehicle extends InfoWindowElement {
             }
         }
     }
-    
+    /**
+     * Updates the info window information
+     * @param busId the orientation of the greenline lightrail
+     * @param routeId
+     * @param schedule_number
+     */
+    public async updateBusWindow(busId: string, routeId: string, schedule_number: number) {
+        const generateContent = (content: string, errorMessage?: string): string =>
+            `<div style="text-align:center; font-family: Arial, sans-serif;">
+                    <h2 style="margin-bottom: 10px; font-weight: bold; border-bottom: 2px solid #000;">${this.direction_id}</h2>
+                    <p style="margin-bottom: 20px; font-size: 16px;">${busId}</p>
+                    ${errorMessage ? `<p style="color: red;">${errorMessage}</p>` : `<ul style="margin-top: 20px; list-style: none;">${content}</ul>`}
+                </div>`;
+        try {
+            let content;
+            if (busId.length > 10) {
+                const stopList = await Schedule.getStopList(routeId, schedule_number);
+                content = await this.MTInfoWindowBody(busId, stopList);
+            }
+            else {
+                content = await this.UMNInfoWindowBody(busId);
+            }
+            this.infoWindow?.setContent(generateContent(content));
+        } catch (e) {
+            console.error(`Failed to update info window:`, e);
+            this.infoWindow?.setContent(generateContent("", "Failed to load departure information."));
+        }
+    }
+
+    /**
+     * Fills in Metro Transit bus info window
+     * @param trip_id the orientation of the greenline lightrail
+     * @param stop_list
+     */
+    public async MTInfoWindowBody(trip_id: string, stop_list: Array<any>): Promise<string> {
+        let output = "";
+        try {
+            const feedMessage = await Realtime.getRealtimeGTFSTripUpdates();
+
+            // Check if feedMessage is undefined or if entities are not present
+            if (!feedMessage || !feedMessage.entity) {
+                console.warn('No valid feed message received.');
+                return output; // Exit early if there's no valid data
+            }
+
+            // Accessing the list of entities in the feed message
+            const entities = feedMessage.entity;
+            // console.log(entities);
+            // Looping through each entity to access its properties
+            for (const entity of entities) {
+                const entityIdParts = entity.id.split('_');
+                const tripID = entityIdParts[1];
+                // console.log(entity);
+
+                if (trip_id === tripID) {
+                    // Ensure tripUpdate and stopTimeUpdate are not undefined or null
+                    if (entity.tripUpdate && entity.tripUpdate.stopTimeUpdate && entity.tripUpdate.stopTimeUpdate.length > 0) {
+                        const theStop = entity.tripUpdate.stopTimeUpdate[0].stopId;
+                        // console.log(theStop);
+                        let departureTime = entity.tripUpdate.stopTimeUpdate[0].departure?.time;
+
+                        if (!departureTime) {
+                            departureTime = entity.tripUpdate.stopTimeUpdate[1].departure?.time;
+                        }
+                        if (departureTime) {
+                            const timeInSeconds = typeof departureTime === 'number' ? departureTime : departureTime.toNumber();
+                            const arrival = this.getTime(timeInSeconds);
+
+                            if (Array.isArray(stop_list)) {
+                                console.log(stop_list);
+                                console.log(theStop);
+                                stop_list.forEach((nextStop, index) => {
+                                    // console.log(nextStop);
+                                    if (theStop == nextStop.stop_id) {
+                                        const stopName = nextStop.stop_name;
+                                        output += `<p>Bus ${tripID}<br> will arrive at ${arrival} at ${stopName}<p>`;
+                                    }
+                                    // Check if this is the last element
+                                    else if (index === stop_list.length - 1 && theStop != nextStop.stop_id) {
+                                        output += `<p>Bus ${tripID}<br> Bruh is not found mane: STOP: ${theStop}<p>`;
+                                    }
+                                });
+                            } else {
+                                console.warn('Expected an array but got:', stop_list);
+                            }
+                        } else {
+                            console.log(tripID);
+                            console.warn('Departure time is missing.');
+                        }
+                    } else {
+                        console.warn('tripUpdate or stopTimeUpdate is missing or empty.');
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error processing trip updates:', error);
+        }
+
+        return output;
+    }
+
+    /**
+    * Fills in peak transit bus info window
+    * @param trip_id the orientation of the greenline lightrail
+    */
+    public async UMNInfoWindowBody(trip_id: string): Promise<string> {
+        let output = "";
+        try {
+            const vehicles = await Realtime.getRealtimeGTFSUniversity();
+
+            // if (vehicles) {
+            const vehicleData = vehicles.vehicles;
+            console.log(vehicles);
+            vehicleData.forEach(vehicle => {
+                if (vehicle.tripID === trip_id) {
+                    output += `<p> This is the next stop: ${vehicle.nextStopID}`
+                }
+            })
+            output += "<p> you idiot <p>";
+            // } else {
+            //     console.warn('No feed message received.');
+            // }
+        } catch (error) {
+            console.error('Error processing trip updates:', error);
+        }
+        return output;
+    }
+    /**
+    * Sets position of bus arrow image around center of bus image
+    * @param arrival the orientation of the greenline lightrail
+    */
+    public getTime(arrival: number) {
+        const date = new Date(arrival * 1000); // Convert seconds to milliseconds
+        let hours = date.getHours();
+        const minutes = date.getMinutes();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // The hour '0' should be '12'
+        const strMinutes = minutes < 10 ? '0' + minutes : minutes;
+        const strTime = `${hours}:${strMinutes} ${ampm}`;
+        return strTime;
+    }
+
+
     /* Private */
     private updatedTimestamp: number | undefined;
     private tripId: string | undefined;

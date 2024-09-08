@@ -106,7 +106,7 @@ namespace Routes {
                 }
 
                 vehicles.get(info.trip_id)?.setPosition(new google.maps.LatLng(info.latitude as number, info.longitude as number), info.timestamp);
-                vehicles.get(info.trip_id)?.updateWindow();
+                vehicles.get(info.trip_id)?.updateBusWindow(info.trip_id, routeId, 1);
                 vehicles.get(info.trip_id)?.updateTimestamp();
             }
             
