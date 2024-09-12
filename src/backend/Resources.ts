@@ -6,6 +6,7 @@ import busImage121 from "../img/121_bus.png"
 import busImage122 from "../img/122_bus.png"
 import busImage123 from "../img/123_bus.png"
 import busImage124 from "../img/124_bus.png"
+import busImage125 from "../img/125_bus.png"
 import busImage2 from "../img/2_bus.png"
 import busImage3 from "../img/3_bus.png"
 import busImage6 from "../img/6_bus.png"
@@ -17,6 +18,7 @@ import arrowImage121 from "../img/121_arrow.png"
 import arrowImage122 from "../img/122_arrow.png"
 import arrowImage123 from "../img/123_arrow.png"
 import arrowImage124 from "../img/124_arrow.png"
+import arrowImage125 from "../img/125_arrow.png"
 import arrowImage2 from "../img/2_arrow.png"
 import arrowImage3 from "../img/3_arrow.png"
 import arrowImage6 from "../img/6_arrow.png"
@@ -165,6 +167,7 @@ namespace Resources {
         "122": [busImage122, arrowImage122],
         "123": [busImage123, arrowImage123], 
         "124": [busImage124, arrowImage124],
+        "125": [busImage125, arrowImage125],
         "2": [busImage2, arrowImage2],
         "3": [busImage3, arrowImage3],
         "6": [busImage6, arrowImage6],
@@ -177,8 +180,9 @@ namespace Resources {
         "120": "FFC0CB", 
         "121": "FF0000", 
         "122": "800080", 
-        "123": "00FFFF", 
+        "123": "1ab7b7", 
         "124": "90EE90",
+        "125": "c727e2",
         "2": "bab832",
         "3": "d18528",
         "6": "236918",
