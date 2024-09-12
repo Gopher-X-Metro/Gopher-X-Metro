@@ -152,11 +152,15 @@ div#title-bar > h1 > .city {
 }
 
 .sidebar-content button.route-123::before {
-    background-color: #00FFFF; /* Cyan */
+    background-color: #1ab7b7; /* Cyan */
 }
 
 .sidebar-content button.route-124::before {
     background-color: #90EE90; /* Light Green */
+}
+
+.sidebar-content button.route-125::before {
+  background-color: #c727e2; /* Light Green */
 }
 
 .sidebar-content button.route-120::before {
