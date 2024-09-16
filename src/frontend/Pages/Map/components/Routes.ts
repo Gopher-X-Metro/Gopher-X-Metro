@@ -127,7 +127,7 @@ namespace Routes {
                     for (const timetable of schedule.timetables) {
                         for (const info of await Schedule.getStopList(routeId, timetable.schedule_number)) {
                             // Load the stop
-                            loadStop(info.stop_id, timetable.direction)?.then(stop => {
+                            loadStop(info.stop_id, timetable.direction)?.then(async stop => {
                                 // Adds the stop if it has not been added yet
                                 const route = routes.get(routeId)
 
@@ -145,6 +145,8 @@ namespace Routes {
                                         setBolded(route.getId(), false)
                                     });
                                 }
+
+                                refreshDepartures(stop);
                             })
                         }
                     }
@@ -176,12 +178,7 @@ namespace Routes {
                                     (await s[1])?.infoWindow?.setVisible(false);
                         });
 
-                        stop?.clearDepartures();
-
-                        for (const departure of info.departures) 
-                            stop?.addDeparture(departure.route_id, departure.trip_id, departure.departure_text, departure.direction_text, departure.description, departure.departure_time);
-
-                        stop?.updateWindow();
+                        refreshDepartures(stop);
                     } else stop = await stops.get(properties.stop_id);
                 }
 
@@ -230,7 +227,7 @@ namespace Routes {
         }
     }
 
-    export async function loadPath(routeId: string, shapeId: string, color: string, locations: Array<google.maps.LatLng>) {
+    async function loadPath(routeId: string, shapeId: string, color: string, locations: Array<google.maps.LatLng>) {
         const route = getRoute(routeId);
 
         if (route) {
@@ -243,6 +240,22 @@ namespace Routes {
             route.getPaths().get(shapeId)?.getMarker().addListener("mouseout", () => setBolded(route.getId(), false));
         }
     }
+
+    async function refreshDepartures(stop: Stop | undefined) : Promise<void> {
+        if (stop)
+            Realtime.getStop(stop.getId())
+            .then( response => 
+            {
+                if (response.status !== 400) {
+                    stop.clearDepartures();
+                    
+                    for (const departure of response.departures) 
+                        stop?.addDeparture(departure.route_id, departure.trip_id, departure.departure_text, departure.direction_text, departure.description, departure.departure_time);
+
+                    stop.updateWindow();
+                }
+            })
+    } 
 
     /* Depreciated */
 
