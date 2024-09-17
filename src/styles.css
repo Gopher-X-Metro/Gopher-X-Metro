@@ -4,15 +4,17 @@
 
 
 html {
-
+  padding: 0;
   margin: 0;
   height: 100%;
   overscroll-behavior: none;
+  
 }
 
 body  {
     margin: 0;
     height: 100%;
+    padding: 0;  
 }
 
 div#map
@@ -33,6 +35,10 @@ div#root {
   margin: 0vh;
   padding: 0vh;
   list-style: none;
+  top: 0;
+  position:fixed; /** prevents title bar from moving when sidebar is active */
+  width: 100%;
+  z-index:1001; /** makes sure that the titlebar stays on top */ 
 }
 
 div#title-bar > h1 
@@ -65,17 +71,40 @@ div#title-bar > h1 > .city {
 
 /* The sidebar container */
 .sidebar {
-  height: 100%;
+  height: 90%;
   width: 0px;
   position: fixed;
   z-index: 1;
   top: 10vh;
-  left: 0;
-  background-color: rgb(226, 226, 226);
+  left:0;
+  background-color: #f9f9f9;
   overflow-x: clip;
   padding-top: 15px;
   transition: 0.5s;
+  overflow-y: scroll;
+  scrollbar-color:  black; /* only works for firefox */
+  scrollbar-width: thin;
 }
+
+/* WebKit-based browsers (Chrome, Safari, Edge) */
+.sidebar::-webkit-scrollbar {
+  width:8px; 
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 10px; 
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+/** css sidebar color options
+soft mustard: #f0c75e
+off-white: #f9f9f9
+*/
+
 
 /* The sidebar container when it's open */
 .sidebar.open {
@@ -102,6 +131,10 @@ div#title-bar > h1 > .city {
 /* .sidebar a:hover {
   color: #a71010;
 } */
+
+/* * sideebar scrollbar */ 
+
+
 
 .sidebar-content button {
   background-color: transparent;
