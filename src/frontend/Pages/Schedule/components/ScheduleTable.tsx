@@ -9,10 +9,10 @@ import Schedule from './Schedule.tsx';
       ["Monday-Friday", "7:00 am – 7:30 am", "every 10 minutes"],
       ["Monday-Friday", "7:30 am – 6:30 pm", "every 5 minutes"],
       ["Monday-Friday", "6:30 pm – 10:00 pm", "every 15 minutes"],
-      ["Monday-Wednesday", "10:00 pm – 12:15 am", "every 20 minutes"],
+      ["Monday-Wednesday", "10:00 pm – 12:00 am", "every 20 minutes"],
       ["Thursday-Friday", "10:00 pm – 2:00 am", "every 20 minutes"],
-      ["Saturday", "9:30 am – 2:00 am", "every 20 minutes"],
-      ["Sunday", "9:30 am – 12:15 am", "every 20 minutes"],
+      ["Saturday", "8:00 am – 2:00 am", "every 20 minutes"],
+      ["Sunday", "8:00 am – 12:00 am", "every 20 minutes"]
     ]);
 
 
@@ -22,38 +22,42 @@ import Schedule from './Schedule.tsx';
           setSelectedName('121 Campus Connector');
           setScheduleTimes([
             ["Monday-Friday", "7:00 am – 7:30 am", "every 10 minutes"],
-            ["Monday-Friday", "7:30 am – 6:30 pm", "every 5 minutes"],
-            ["Monday-Friday", "6:30 pm – 10:00 pm", "every 15 minutes"],
-            ["Monday-Wednesday", "10:00 pm – 12:15 am", "every 20 minutes"],
+            ["Monday-Friday", "7:30 am – 6:00 pm", "every 5 minutes"],
+            ["Monday-Friday", "6:00 pm – 10:00 pm", "every 15 minutes"],
+            ["Monday-Wednesday", "10:00 pm – 12:00 am", "every 20 minutes"],
             ["Thursday-Friday", "10:00 pm – 2:00 am", "every 20 minutes"],
-            ["Saturday", "9:30 am – 2:00 am", "every 20 minutes"],
-            ["Sunday", "9:30 am – 12:15 am", "every 20 minutes"],
-            ["Sunday", "9:30 am – 12:15 am", "every 20 minutes"],
-            ["Sunday", "9:30 am – 12:15 am", "every 20 minutes"],
-            ["Sunday", "9:30 am – 12:15 am", "every 20 minutes"],
-            ["Sunday", "9:30 am – 12:15 am", "every 20 minutes"],
+            ["Saturday", "8:00 am – 2:00 am", "every 20 minutes"],
+            ["Sunday", "8:00 am – 12:00 am", "every 20 minutes"]
           ]);
           break;
         case 122:
           setSelectedName('122 University Avenue Circulator');
           setScheduleTimes([
-            ["Monday-Friday", "7:00 am – 6:30 pm", "every 10 minutes"],
-            ["Monday-Wednesday", "6:30 pm – 12:15 am", "every 15 minutes"],
-            ["Thursday-Friday", "6:30 pm – 2:00 am", "every 15 minutes"],
-            ["Saturday", "9:30 am – 2:00 am", "every 15 minutes"],
-            ["Sunday", "9:30 am – 12:15 am", "every 15 minutes"],
+            ["Monday-Friday", "7:00 am – 12:00 pm", "every 15 minutes"],
+            ["Monday-Friday", "12:00 am – 6:00 pm", "every 10 minutes"],
+            ["Monday-Wednesday", "6:00 pm – 12:00 am", "every 20 minutes"],
+            ["Thursday-Friday", "6:00 pm – 2:00 am", "every 20 minutes"],
+            ["Saturday", "8:00 am – 2:00 am", "every 20 minutes"],
+            ["Sunday", "8:00 am – 12:00 am", "every 20 minutes"]
           ]);
           break;
         case 123:
           setSelectedName('123 4th Street Circulator');
           setScheduleTimes([
-            ["Monday-Friday", "7:00 am – 6:00 pm", "every 10 minutes"]
+            ["Monday-Friday", "7:00 am – 12:00 pm", "every 10 minutes"],
+            ["Monday-Friday", "12:00 pm – 6:00 pm", "every 15 minutes"]
           ]);
           break;
         case 124:
-          setSelectedName('124 St. Paul Campus Circulator');
+          setSelectedName('124 St. Paul Circulator');
           setScheduleTimes([
             ["Monday-Friday", "7:00 am – 6:00 pm", "every 20 minutes"]
+          ]);
+          break;
+        case 125:
+          setSelectedName('125 Dinkytown Connector');
+          setScheduleTimes([
+            ["Monday-Friday", "7:10 am – 3:10 pm", "every 15 minutes"]
           ]);
           break;
         case 120:
