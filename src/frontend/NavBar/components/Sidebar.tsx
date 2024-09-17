@@ -8,6 +8,7 @@ import SearchFeature from 'src/frontend/NavBar/components/SearchFeature.tsx';
 import Schedule from 'src/backend/Schedule.ts';
 
 export default function SideBar() {
+    
     const [_, forceReload] = useState(0);
     const [routes, setRoutes] = useState(new Map<string, string>());
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -75,7 +76,7 @@ export default function SideBar() {
                 </div>
                 
                 <div className='sidebar-content flex flex-col items-center'>
-                    {Array.from(routes.keys()).map(routeId => (<RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)}/>)) }
+                    {Array.from(routes.keys()).map(routeId => (<RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)}/>))}
                 </div>
 
                 <div className = "nav-header"> 
@@ -95,4 +96,5 @@ export default function SideBar() {
             </div>
         </>
     )
+    
 }

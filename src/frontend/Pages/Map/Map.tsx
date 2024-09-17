@@ -1,4 +1,4 @@
-import { Loader } from "@googlemaps/js-api-loader"
+import { Loader } from "@googlemaps/js-api-loader";
 import { useState, useEffect } from "react";
 
 import Resources from "src/backend/Resources";
@@ -39,7 +39,7 @@ export default function Map() {
     return (
     <>
         <NavBar/>
-        <div className="h-[90%] w-full bg-black">
+        <div className="h-[100%] w-full bg-black">
             <LoadingScreen hidden={mapLoaded}/>
             <input id="search-bar" className="controls" type="text"/>
             <div id="map"/> 
