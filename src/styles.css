@@ -88,7 +88,7 @@ div#title-bar > h1 > .city {
 
 /* WebKit-based browsers (Chrome, Safari, Edge) */
 .sidebar::-webkit-scrollbar {
-  width:8px; 
+  width: 8px; 
 }
 
 .sidebar::-webkit-scrollbar-thumb {
