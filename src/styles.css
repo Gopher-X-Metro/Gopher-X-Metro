@@ -76,7 +76,7 @@ div#title-bar > h1 > .city {
   position: fixed;
   z-index: 1;
   top: 10vh;
-  left:0;
+  left: 0;
   background-color: #f9f9f9;
   overflow-x: clip;
   padding-top: 15px;
@@ -86,9 +86,9 @@ div#title-bar > h1 > .city {
   scrollbar-width: thin;
 }
 
-/* WebKit-based browsers (Chrome, Safari, Edge) */
+/* WebKit-based browsers (Chrome, Safari, Edge) sidebar scrollbar */
 .sidebar::-webkit-scrollbar {
-  width:8px; 
+  width: 8px; 
 }
 
 .sidebar::-webkit-scrollbar-thumb {
@@ -100,15 +100,9 @@ div#title-bar > h1 > .city {
   background-color: transparent;
 }
 
-/** css sidebar color options
-soft mustard: #f0c75e
-off-white: #f9f9f9
-*/
-
-
 /* The sidebar container when it's open */
 .sidebar.open {
-  width: 285px;
+  width: 290px;
 }
 
 .sidebar-content {
@@ -131,10 +125,6 @@ off-white: #f9f9f9
 /* .sidebar a:hover {
   color: #a71010;
 } */
-
-/* * sideebar scrollbar */ 
-
-
 
 .sidebar-content button {
   background-color: transparent;
@@ -240,7 +230,6 @@ off-white: #f9f9f9
     cursor: pointer;
 }
 
-  
   .openbtn:hover {
     background-color: transparent;
   }
@@ -251,7 +240,6 @@ off-white: #f9f9f9
   margin-top: 1px;
   margin-bottom: 5px;
   width: 285px;
-
 }
 
 .nav-header h3 {
@@ -349,7 +337,6 @@ padding: 1px 3px;
   text-align: center;
   font-weight: bold; 
 }
-
 
 .AboutButton {
   position: absolute;
