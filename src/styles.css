@@ -76,7 +76,7 @@ div#title-bar > h1 > .city {
   position: fixed;
   z-index: 1;
   top: 10vh;
-  left:0;
+  left: 0;
   background-color: #f9f9f9;
   overflow-x: clip;
   padding-top: 15px;
