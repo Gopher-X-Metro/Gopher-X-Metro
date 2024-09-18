@@ -88,7 +88,7 @@ div#title-bar > h1 > .city {
 
 /* WebKit-based browsers (Chrome, Safari, Edge) sidebar scrollbar */
 .sidebar::-webkit-scrollbar {
-  width: 8px; 
+  width:  8px; 
 }
 
 .sidebar::-webkit-scrollbar-thumb {
@@ -125,6 +125,10 @@ div#title-bar > h1 > .city {
 /* .sidebar a:hover {
   color: #a71010;
 } */
+
+/* * sidebar scrollbar */ 
+
+
 
 .sidebar-content button {
   background-color: transparent;
