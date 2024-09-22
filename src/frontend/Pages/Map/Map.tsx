@@ -13,6 +13,7 @@ const APIKey = process.env.REACT_APP_API_KEY; // Comes from the .env.local file,
 const UMNLocation = { lat: 44.97369560732433, lng: -93.2317259515601 };
 const defaultZoom = 15;
 
+const isMobile = window.innerWidth < 768;
 if (!APIKey) throw new Error("API Key was not loaded, or was not found!");
 
 const googleMapsLoader = new Loader({
