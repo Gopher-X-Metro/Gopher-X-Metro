@@ -9,7 +9,7 @@ import LoadingScreen from "./components/LoadingScreen";
 import NavBar from "src/frontend/NavBar/NavBar";
 import ScheduleTable from 'src/frontend/Pages/Schedule/components/ScheduleTable.tsx'; 
 
-const APIKey = process.env.REACT_APP_API_KEY; 
+const APIKey = process.env.REACT_APP_API_KEY; // Comes from the .env.local file, just for security. Won't appear in main -- all api keys should be added to Vercel console. 
 const UMNLocation = { lat: 44.97369560732433, lng: -93.2317259515601 };
 const defaultZoom = 15;
 
@@ -26,6 +26,7 @@ export default function Map() {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [selectedSchedule, setSelectedSchedule] = useState(121);
     
+    // Initalizes Map Component
     const handleScheduleChange = (scheduleId) => {
         setSelectedSchedule(scheduleId);
     };
@@ -83,17 +84,23 @@ async function initalize() {
         })
     )
 
+    // Loads the Route's Resources
     await Resources.load();
+    // Creates the search bar
     SearchBar.init(map);
+    // Sets the Routes map to this map
     Routes.init(map);
+    // Initalizes the user's marker
     Marker.init(map);
 
+    // Updates vehicle and marker postions every 0.5 seconds
     setInterval(() => {
         Routes.refreshVehicles();
         Marker.update();
-    }, 500);
+    }, 500); // ms of wait
 
+    // Updates stops every 30 seconds
     setInterval(() => {
         Routes.refreshStops();
-    }, 30000);
+    }, 30000); // ms of wait
 }

@@ -14,6 +14,7 @@ import ResponsiveDropdown from './components/MobileDropdown.tsx';
  * Navbar Component
  */
 export default function NavBar({ openScheduleModal }) {
+    // Check if screen width is 768px or less (mobile)
     const [isMobile] = useMediaQuery("(max-width: 768px)");
 
     return (
@@ -26,7 +27,7 @@ export default function NavBar({ openScheduleModal }) {
                     </Link>
                 </Box>
                 <div className="flex-grow"/>
-
+                {/*Display NavBar buttons or drop-down menu depending if the user is on mobile or not*/}
                 {isMobile ? (
                     <ResponsiveDropdown />
                 ) : (
