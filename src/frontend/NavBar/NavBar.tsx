@@ -31,7 +31,7 @@ export default function NavBar({ setPage }) {
 
                 {/*Display NavBar buttons or drop-down menu depending if the user is on mobile or not*/}
                 {isMobile ? (
-                    <ResponsiveDropdown />
+                    <ResponsiveDropdown setPage={setPage} />
                 ) : (
                     <div className="flex flex-row gap-2 max-lg:hidden ">
 
