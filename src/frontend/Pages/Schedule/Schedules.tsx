@@ -19,12 +19,11 @@ import {
 
 import ScheduleTable from './components/ScheduleTable.tsx';
 
-export default function Schedules() {
-
+export default function Schedules({ hidden, setPage }) {
     const [selectedSchedule, setSelectedSchedule] = useState(121);
 
     return (
-        <div>
+        <div hidden={hidden}>
             <Menu>
                 <MenuButton as={Button} rightIcon={<ChevronDownIcon />} margin='5'>
                     Schedules
@@ -40,11 +39,9 @@ export default function Schedules() {
                     </MenuOptionGroup>
                 </MenuList>
             </Menu>
-            <a href='./'>
-                <Button colorScheme='yellow'>
-                    Back to Map
-                </Button>
-            </a>
+            <Button colorScheme='yellow' onClick={() => setPage("map")}>
+                Back to Map
+            </Button>
             <ScheduleTable selectedSchedule={selectedSchedule} />
         </div>
     )

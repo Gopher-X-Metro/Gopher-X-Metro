@@ -23,7 +23,7 @@ const googleMapsLoader = new Loader({
     libraries: ["places", "geometry", "marker"]
 }); 
 
-export default function Map() {
+export default function Map({ hidden, setPage }) {
     const [mapLoaded, setMapLoaded] = useState(false);
     
     // Initalizes Map Component
@@ -40,8 +40,8 @@ export default function Map() {
 
     return (
     <>
-        <NavBar/>
-        <div className="h-[100%] w-full bg-black">
+        <div className="h-[100%] w-full bg-black" hidden={hidden}>
+            <NavBar setPage={setPage}/>
             <LoadingScreen hidden={mapLoaded}/>
             <input id="search-bar" className="controls" type="text"/>
             <div id="map"/> 
