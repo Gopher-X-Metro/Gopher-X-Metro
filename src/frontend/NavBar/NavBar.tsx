@@ -13,7 +13,7 @@ import ResponsiveDropdown from './components/MobileDropdown.tsx';
 /**
  * Navbar Component
  */
-export default function NavBar() {
+export default function NavBar({ setPage }) {
     // Check if screen width is 768px or less (mobile)
     const [isMobile] = useMediaQuery("(max-width: 768px)");
 
@@ -31,15 +31,13 @@ export default function NavBar() {
 
                 {/*Display NavBar buttons or drop-down menu depending if the user is on mobile or not*/}
                 {isMobile ? (
-                    <ResponsiveDropdown />
+                    <ResponsiveDropdown setPage={setPage} />
                 ) : (
                     <div className="flex flex-row gap-2 max-lg:hidden ">
 
-                        <Link to="/schedules" >
-                            <Button colorScheme='yellow'>
-                                Schedules
-                            </Button>
-                        </Link>
+                        <Button colorScheme='yellow' onClick={() => setPage("schedules")}>
+                            Schedules
+                        </Button>
                         <a href='https://pts.umn.edu/sites/pts.umn.edu/files/2020-07/bus_outline_map_printable.jpg' target="_blank" rel="noreferrer">
                             <Button colorScheme='yellow'>
                                 Campus Bus Map
@@ -52,11 +50,9 @@ export default function NavBar() {
                             </Button>
                         </a>
 
-                        <Link to="/about" >
-                            <Button rounded='full' colorScheme='yellow'>
-                                ?
-                            </Button>
-                        </Link>
+                        <Button rounded='full' colorScheme='yellow' onClick={() => setPage("about")}>
+                            ?
+                        </Button>
 
                     </div>
                 )}
