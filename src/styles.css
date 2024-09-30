@@ -387,7 +387,7 @@ padding: 1px 3px;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #fff;
-  border: 1px solid #ddd;
+  border: 1px solid red;
   padding: 10px;
   z-index: 10;
 }
@@ -396,5 +396,5 @@ padding: 1px 3px;
   float: right;
   cursor: pointer;
   border: none;
-  background: none;
+  padding-right: 10px;
 }
