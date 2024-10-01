@@ -71,7 +71,7 @@ async function initalize() {
     setInterval(() => {
         Routes.refreshVehicles();
         Marker.update();
-    }, 10000); // ms of wait
+    }, 5000); // ms of wait
 
     // Updates stops every 30 seconds
     setInterval(() => {

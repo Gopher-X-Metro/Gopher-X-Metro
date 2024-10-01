@@ -105,8 +105,12 @@ namespace Routes {
                     vehicles.get(info.trip_id)?.setBusBearing(info.bearing);
                 }
 
+                if (info.direction_id) {
+                    vehicles.get(info.trip_id)?.setDirectionID(info.direction_id);
+                }
+
                 vehicles.get(info.trip_id)?.setPosition(new google.maps.LatLng(info.latitude as number, info.longitude as number), info.timestamp);
-                vehicles.get(info.trip_id)?.updateBusWindow(info.trip_id, routeId, 1);
+                vehicles.get(info.trip_id)?.updateBusWindow(info.trip_id, routeId);
                 vehicles.get(info.trip_id)?.updateTimestamp();
             }
             
@@ -123,6 +127,7 @@ namespace Routes {
         // Updates Stops
         URL.getRoutes()?.forEach(async routeId => {
             for (const schedule of (await Schedule.getRouteDetails(routeId)).schedules) {
+                console.log(schedule);
                 if (schedule.schedule_type_name === Schedule.getWeekDate()) {
                     for (const timetable of schedule.timetables) {
                         for (const info of await Schedule.getStopList(routeId, timetable.schedule_number)) {
@@ -169,6 +174,7 @@ namespace Routes {
                     if (properties.stop_id === stopId || !stops.has(properties.stop_id)) {
                         stop = new Stop(properties.stop_id, "#4169e1", properties.description, direction, new google.maps.LatLng(properties.latitude, properties.longitude), map);
                         stops.set(properties.stop_id, Promise.resolve(stop));
+                        // stops2.set(properties)
 
                         stop.getMarker().addListener("click", async () => {
                             for (let s of stops) 
@@ -196,6 +202,7 @@ namespace Routes {
 
     const routes = new Map<string, Route>();
     const stops = new Map<string, Promise<Stop | undefined>>();
+    const stops2 = new Map<string, Promise<Stop | undefined>>();
     const vehicles = new Map<string, Vehicle>();
     let map: google.maps.Map;
 

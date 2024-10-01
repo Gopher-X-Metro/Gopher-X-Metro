@@ -56,6 +56,42 @@ namespace Peak {
 
         return shapes.get(shapeId); 
     }
+    /**
+     * Gets the stops data/eta of a route
+     * @param routeId ID of the route
+     */
+    export async function getPeakStops(stop_id: string) : Promise<any> {
+        let myStop;
+        // if (!stops.has(stop_id)) {
+            await fetch("https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=eta&action=list&agencyID=88")
+            .then(async response => response.json())
+            .then(data => {
+                data.stop?.forEach(theStop => {
+                    if (theStop.stopID == stop_id) {
+                        myStop = theStop
+                    }
+                });
+            });
+        // }
+        return myStop
+    }
+    /**
+    * Gets the stops data/eta of a route
+    * @param routeId ID of the route
+    */
+   export async function getPeakStopName(stop_id: string) : Promise<any> {
+       let myStop;
+           await fetch("https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=stop2&action=list&agencyID=88")
+           .then(async response => response.json())
+           .then(data => {
+               data.stop?.forEach(theStop => {
+                   if (theStop.stopID == stop_id) {
+                       myStop = theStop.longName
+                   }
+               });
+           });
+       return myStop
+   }
 
     const shapes : Map<string, any> = new Map<string, any>();
     const trips : Map<string, any> = new Map<string, any>();    
