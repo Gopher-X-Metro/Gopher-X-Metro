@@ -4,15 +4,17 @@
 
 
 html {
-
+  padding: 0;
   margin: 0;
   height: 100%;
   overscroll-behavior: none;
+  
 }
 
 body  {
     margin: 0;
     height: 100%;
+    padding: 0;  
 }
 
 div#map
@@ -33,6 +35,10 @@ div#root {
   margin: 0vh;
   padding: 0vh;
   list-style: none;
+  top: 0;
+  position:fixed; /** prevents title bar from moving when sidebar is active */
+  width: 100%;
+  z-index:1001; /** makes sure that the titlebar stays on top */ 
 }
 
 div#title-bar > h1 
@@ -65,21 +71,38 @@ div#title-bar > h1 > .city {
 
 /* The sidebar container */
 .sidebar {
-  height: 100%;
+  height: 90%;
   width: 0px;
   position: fixed;
   z-index: 1;
-  top: 10vh;
+  top: 10%;
   left: 0;
-  background-color: rgb(226, 226, 226);
+  background-color: #f9f9f9;
   overflow-x: clip;
   padding-top: 15px;
   transition: 0.5s;
+  overflow-y: scroll;
+  scrollbar-color:  black; /* only works for firefox */
+  scrollbar-width: thin;
+}
+
+/* WebKit-based browsers (Chrome, Safari, Edge) sidebar scrollbar */
+.sidebar::-webkit-scrollbar {
+  width:  8px; 
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 10px; 
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background-color: transparent;
 }
 
 /* The sidebar container when it's open */
 .sidebar.open {
-  width: 285px;
+  width: 290px;
 }
 
 .sidebar-content {
@@ -102,6 +125,10 @@ div#title-bar > h1 > .city {
 /* .sidebar a:hover {
   color: #a71010;
 } */
+
+/* * sidebar scrollbar */ 
+
+
 
 .sidebar-content button {
   background-color: transparent;
@@ -211,7 +238,6 @@ div#title-bar > h1 > .city {
     cursor: pointer;
 }
 
-  
   .openbtn:hover {
     background-color: transparent;
   }
@@ -222,7 +248,6 @@ div#title-bar > h1 > .city {
   margin-top: 1px;
   margin-bottom: 5px;
   width: 285px;
-
 }
 
 .nav-header h3 {
@@ -321,7 +346,6 @@ padding: 1px 3px;
   font-weight: bold; 
 }
 
-
 .AboutButton {
   position: absolute;
   top: 0;
@@ -363,7 +387,7 @@ padding: 1px 3px;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #fff;
-  border: 1px solid #ddd;
+  border: 1px solid red;
   padding: 10px;
   z-index: 10;
 }
@@ -372,5 +396,5 @@ padding: 1px 3px;
   float: right;
   cursor: pointer;
   border: none;
-  background: none;
+  padding-right: 10px;
 }

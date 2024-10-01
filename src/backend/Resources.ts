@@ -146,16 +146,17 @@ namespace Resources {
         const popup = document.createElement('div');
         popup.classList.add('inactive-route-popup');
       
-        const content = document.createElement('p');
-        content.innerText = `This route is not active right now, please check the scheduling page for more information.`;
-      
         const closeButton = document.createElement('button');
         closeButton.textContent = 'x';
         closeButton.classList.add('close-button');
         closeButton.addEventListener('click', () => popup.remove());
+
+        const content = document.createElement('p');
+        content.innerText = `Sorry, this route is not active right now, please check the scheduling page for more information.`;
       
-        popup.appendChild(content);
         popup.appendChild(closeButton);
+        popup.appendChild(content);
+        
       
         document.body.appendChild(popup);
       }

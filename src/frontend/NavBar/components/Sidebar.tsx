@@ -76,7 +76,7 @@ export default function SideBar() {
                 </div>
                 
                 <div className='sidebar-content flex flex-col items-center'>
-                    {Array.from(routes.keys()).map(routeId => (<RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)}/>)) }
+                    {Array.from(routes.keys()).map(routeId => (<RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)}/>))}
                 </div>
 
                 <div className = "nav-header"> 
@@ -96,4 +96,5 @@ export default function SideBar() {
             </div>
         </>
     )
+    
 }
