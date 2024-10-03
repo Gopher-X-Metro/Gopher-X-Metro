@@ -1,4 +1,4 @@
-import { Loader } from "@googlemaps/js-api-loader"
+import { Loader } from "@googlemaps/js-api-loader";
 import { useState, useEffect } from "react";
 
 import Resources from "src/backend/Resources";
@@ -13,6 +13,8 @@ const APIKey = process.env.REACT_APP_API_KEY; // Comes from the .env.local file,
 const UMNLocation = { lat: 44.97369560732433, lng: -93.2317259515601 };
 const defaultZoom = 15;
 
+const isMobile = window.innerWidth < 768;
+
 if (!APIKey) throw new Error("API Key was not loaded, or was not found!"); 
 
 const googleMapsLoader = new Loader({
@@ -21,7 +23,7 @@ const googleMapsLoader = new Loader({
     libraries: ["places", "geometry", "marker"]
 }); 
 
-export default function Map() {
+export default function Map({ hidden, setPage }) {
     const [mapLoaded, setMapLoaded] = useState(false);
     
     // Initalizes Map Component
@@ -38,8 +40,8 @@ export default function Map() {
 
     return (
     <>
-        <NavBar/>
-        <div className="h-[90%] w-full bg-black">
+        <div className="h-[100%] w-full bg-black" hidden={hidden}>
+            <NavBar setPage={setPage}/>
             <LoadingScreen hidden={mapLoaded}/>
             <input id="search-bar" className="controls" type="text"/>
             <div id="map"/> 
@@ -54,7 +56,10 @@ async function initalize() {
         new Map(document.getElementById("map") as HTMLElement, {
             center: UMNLocation,
             zoom: defaultZoom,
-            mapId: process.env.REACT_APP_MAP_ID
+            mapId: process.env.REACT_APP_MAP_ID,
+            streetViewControl: !isMobile,
+            fullscreenControl: false,
+            mapTypeControl: false,
         })
     )
 

@@ -15,7 +15,8 @@ export default function SideBar() {
     routes.set("121", "121 Campus Connector");
     routes.set("122", "122 University Avenue Circulator");
     routes.set("123", "123 4th Street Circulator");
-    routes.set("124", "124 St. Paul Campus Circulator");
+    routes.set("124", "124 St. Paul Circulator");
+    routes.set("125", "125 Dinkytown Connector");
     routes.set("120", "120 East Bank Circulator");
     routes.set("2", "2 Franklin Av / To Hennepin");
     routes.set("6", "6U 27Av-Univ / Via France");
@@ -75,7 +76,7 @@ export default function SideBar() {
                 </div>
                 
                 <div className='sidebar-content flex flex-col items-center'>
-                    {Array.from(routes.keys()).map(routeId => (<RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)}/>)) }
+                    {Array.from(routes.keys()).map(routeId => (<RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)}/>))}
                 </div>
 
                 <div className = "nav-header"> 
@@ -95,4 +96,5 @@ export default function SideBar() {
             </div>
         </>
     )
+    
 }

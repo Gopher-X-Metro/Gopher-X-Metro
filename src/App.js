@@ -6,7 +6,7 @@ import "./styles.css";
 export default function App() {
   return (
     <BrowserRouter>
-        <Pages />
+        <Pages/>
     </BrowserRouter>
   );
 }

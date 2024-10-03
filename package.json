@@ -53,6 +53,7 @@
     "@types/node": "^20.14.10",
     "file-loader": "^6.2.0",
     "knip": "^5.25.1",
+    "tailwind-scrollbar": "^3.1.0",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.5.3"
   },
