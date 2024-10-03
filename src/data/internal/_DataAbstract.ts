@@ -3,7 +3,5 @@ export default abstract class _DataAbstract {
         this.id = id;
     }
     
-    public getId() : unknown { return this.id; }
-
-    private id: unknown;
+    public readonly id: unknown;
 }

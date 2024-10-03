@@ -5,6 +5,7 @@ import _Place from "./internal/_Place";
 import _Vehicle from "./internal/_Vehicle";
 import _Departure from "./internal/_Departure";
 import _ExistsError from "./internal/_ExistsError";
+
 import Realtime from "src/backend/Realtime";
 
 namespace Data {
@@ -12,21 +13,9 @@ namespace Data {
         static async create(routeId: string) : Promise<Data.Route> {
             const route = new Data.Route(routeId);
     
-            route.vehicles.clear();
-            await Realtime.getVehicles(routeId).then(response => {
-                for (const vehicle of response)
-                    route.vehicles.set(String(vehicle.trip_id), Data.Vehicle.create(vehicle.trip_id, routeId, vehicle))
-            })
+            await route.loadVehicles();
     
-            for (const direction of await Realtime.getDirections(routeId)) {
-                route.directions.set(
-                    direction.direction_id, 
-                    Data.Direction.create(
-                        direction.direction_id,
-                        routeId
-                    )
-                );
-            }
+            await route.loadDirections();
             
             return route;
         }
@@ -55,8 +44,22 @@ namespace Data {
     export class Direction extends _Direction {
         static async create(directionId: number, routeId: string) : Promise<Data.Direction> {
             const direction = new Data.Direction(directionId, routeId);
-            await direction.reload();
+            await direction.load();
             return direction;
+        }
+
+        static async reload() : Promise<void>
+        static async reload(routeId: string) : Promise<void>
+        static async reload(routeId: string, directionId: number) : Promise<void>
+        static async reload(routeId?: string, directionId?: number) : Promise<void> {
+            if (routeId !== undefined && directionId !== undefined)
+                await (await Direction.get(routeId, directionId)).load();
+            else if (routeId !== undefined)
+                for (const direction of await Direction.all(routeId))
+                    await Direction.reload(routeId, direction.id as number);
+            else 
+                for (const route of await Route.all())
+                    await Direction.reload(route.id as string);
         }
 
         static async get(routeId: string, directionId: number) : Promise<Direction> {
@@ -73,32 +76,6 @@ namespace Data {
                 return Promise.all(Array.from((await Route.get(routeId)).directions.values()));
             else
                 return Promise.all((await Route.all()).map(route => Array.from(route.directions.values())).flat());
-        }
-    };
-    export class Place extends _Place {
-        static async create(placeCode: string, directionId: number, routeId: string, description: string) : Promise<Data.Place> {
-            const place = new Data.Place(placeCode, directionId, routeId, description);
-            await place.reload();
-            return place;
-        }
-
-        static async get(routeId: string, directionId: number, placeId: string) : Promise<Place> {
-            if (!(await Direction.get(routeId, directionId)).places.has(placeId))
-                throw new ExistsError(`Place '${placeId}' does not exist in direction '${directionId}' in route '${routeId}'`)
-            
-            return (await Direction.get(routeId, directionId)).places.get(placeId) as Promise<Place>;
-        }
-
-        static async all() : Promise<Array<Place>>
-        static async all(routeId: string) : Promise<Array<Place>>
-        static async all(routeId: string, directionId: number) : Promise<Array<Place>>
-        static async all(routeId?: string, directionId?: number) : Promise<Array<Place>> {
-            if (directionId !== undefined && routeId !== undefined)
-                return Promise.all(Array.from((await Direction.get(routeId, directionId)).places.values()));
-            else if (routeId !== undefined)
-                return Promise.all((await Direction.all(routeId)).map(direction => Array.from(direction.places.values())).flat());
-            else
-                return Promise.all((await Direction.all()).map(direction => Array.from(direction.places.values())).flat());
         }
     };
     export class Vehicle extends _Vehicle {
@@ -126,17 +103,79 @@ namespace Data {
         static async reload() : Promise<void>;
         static async reload(routeId: string) : Promise<void>
         static async reload(routeId?: string) : Promise<void> {
-            if (routeId !== undefined) {
-                (await Route.get(routeId))
-            } else {
-                (await Route.all())
-            }
+            if (routeId !== undefined)
+                await (await Route.get(routeId)).loadVehicles();
+            else 
+                for (const route of await Route.all())
+                    await route.loadVehicles();
+        }
+    };
+    export class Place extends _Place {
+        static async create(placeId: string, directionId: number, routeId: string, description: string) : Promise<Data.Place> {
+            const place = new Data.Place(placeId, directionId, routeId, description);
+            await place.load();
+            return place;
+        }
+
+        static async reload() : Promise<void>
+        static async reload(routeId: string) : Promise<void>
+        static async reload(routeId: string, directionId: number) : Promise<void>
+        static async reload(routeId: string, directionId: number, placeId: string) : Promise<void>
+        static async reload(routeId?: string, directionId?: number, placeId?: string) : Promise<void> {
+            if (routeId !== undefined && directionId !== undefined && placeId !== undefined)
+                await (await Place.get(routeId, directionId, placeId)).load()
+            else if (routeId !== undefined && directionId !== undefined)
+                for (const place of await Place.all(routeId, directionId))
+                    await Place.reload(routeId, directionId, place.id as string);
+            else if (routeId !== undefined)
+                for (const direction of await Direction.all(routeId))
+                    await Place.reload(routeId, direction.id as number);
+            else 
+                for (const route of await Route.all())
+                    await Place.reload(route.id as string);
+        }
+
+        static async get(routeId: string, directionId: number, placeId: string) : Promise<Place> {
+            if (!(await Direction.get(routeId, directionId)).places.has(placeId))
+                throw new ExistsError(`Place '${placeId}' does not exist in direction '${directionId}' in route '${routeId}'`)
+            
+            return (await Direction.get(routeId, directionId)).places.get(placeId) as Promise<Place>;
+        }
+
+        static async all() : Promise<Array<Place>>
+        static async all(routeId: string) : Promise<Array<Place>>
+        static async all(routeId: string, directionId: number) : Promise<Array<Place>>
+        static async all(routeId?: string, directionId?: number) : Promise<Array<Place>> {
+            if (directionId !== undefined && routeId !== undefined)
+                return Promise.all(Array.from((await Direction.get(routeId, directionId)).places.values()));
+            else if (routeId !== undefined)
+                return Promise.all((await Direction.all(routeId)).map(direction => Array.from(direction.places.values())).flat());
+            else
+                return Promise.all((await Direction.all()).map(direction => Array.from(direction.places.values())).flat());
         }
     };
     export class Departure extends _Departure {
         static async create(departureId: string, placeId: string, directionId: number, routeId: string, data: any) : Promise<Data.Departure> {
             const departure = new Data.Departure(departureId, placeId, directionId, routeId, data);
             return departure;
+        }
+
+        static async reload() : Promise<void>
+        static async reload(routeId: string) : Promise<void>
+        static async reload(routeId: string, directionId: number) : Promise<void>
+        static async reload(routeId: string, directionId: number, placeId: string) : Promise<void>
+        static async reload(routeId?: string, directionId?: number, placeId?: string) : Promise<void> {
+            if (routeId !== undefined && directionId !== undefined && placeId !== undefined)
+                await (await Place.get(routeId, directionId, placeId)).loadDepartures();
+            else if (routeId !== undefined && directionId !== undefined)
+                for (const place of await Place.all(routeId, directionId))
+                    await place.loadDepartures();
+            else if (routeId !== undefined)
+                for (const place of await Place.all(routeId))
+                    await place.loadDepartures();
+            else
+                for (const place of await Place.all())
+                    await place.loadDepartures();
         }
 
         static async get(routeId: string, directionId: number, placeId: string, departureId: string) : Promise<Departure> {

@@ -61,37 +61,30 @@ class Vehicle extends InfoWindowElement {
      * Updates the info window information
      */
     public updateWindow() {
-        if (this.direction_id) {
-            try {
-                // Data.Departure.getAll(this.routeId as string, this.direction_id)
-                // .then(departures => 
-                //     departures.filter(departure => departure.getId() === this.id && departure.data.actual)
-                //     .forEach(departure => {
-                //         Data.Place.get(this.routeId as string, this.direction_id as number, departure.stopId)
-                //         .then(info => console.log(info))
-                //     })
-                // )
+        
+        const generateContent = (content: string, errorMessage?: string): string =>
+            `<div style="text-align:center; font-family: Arial, sans-serif;">
+                <h2 style="margin-bottom: 10px; font-weight: bold; border-bottom: 2px solid #000;">${this.routeId}</h2>
+                ${errorMessage ? `<p style="color: red;">${errorMessage}</p>` : `<ul style="margin-top: 20px; list-style: none;">${content}</ul>`}
+            </div>`;
+                // <p style="margin-bottom: 20px; font-size: 16px;">${busId}</p>
+        try {
+            let content : string = "";
 
-                // Data.Direction.get(this.routeId as string, this.direction_id)
-                // .then(direction => 
-                //     console.log(Promise.all(Array.from(direction.stops.values())).then(result => result.filter(stop => stop.departures.has(this.id))))
-                // )
+            if (this.direction_id) {
+                const departures = Data.Departure.all(this.routeId as string, this.direction_id as number)
+                .then(departures => departures.filter(departure => departure.data.actual && departure.id === this.id));
 
-                // Realtime.getStops(this.routeId as string, this.direction_id)
-                // .then( stops => stops.forEach( stop => {
-                //     if (stop.place_code) 
-                //         Data.Stop.get(this.routeId as string, this.direction_id as number, stop.place_code)
-                //         .then(info => console.log(info))
-                // }))
-            } catch (error) {
-                console.error(error);
+                console.log(departures);
             }
+
+            content += "";
+
+            this.infoWindow?.setContent(generateContent(content));
+        } catch (e) {
+            console.error(`Failed to update info window:`, e);
+            this.infoWindow?.setContent(generateContent("", "Failed to load departure information."));
         }
-        // console.log(this.id);
-        // console.log(this.routeId);
-        // this.infoWindow?.setContent(
-        //     String(Math.ceil(Number(this.getLastUpdated())))
-        // );
     }
     /**
      * Gets the length in ms of the time between when position was updated and now
@@ -229,7 +222,7 @@ class Vehicle extends InfoWindowElement {
      * @param schedule_number
      */
     public async updateBusWindow(busId: string, routeId: string) {
-        console.log(busId);
+        // console.log(busId);
         const generateContent = (content: string, errorMessage?: string): string =>
             `<div style="text-align:center; font-family: Arial, sans-serif;">
                 <h2 style="margin-bottom: 10px; font-weight: bold; border-bottom: 2px solid #000;">${routeId}</h2>

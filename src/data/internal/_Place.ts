@@ -13,20 +13,30 @@ export default class _Place extends _DataAbstract {
         this.departures = new Map<string, Data.Departure>();
     }
 
-    public readonly stops: Map<string, Data.Stop>;
-    public readonly departures: Map<string, Data.Departure>;
-
-    public async reload() {
+    public async load() {
         this.departures.clear();
-
-        await Realtime.getStopInfo(this.routeId, this.directionId, this.getId() as string).then(async info => {
+        this.stops.clear();
+        
+        await Realtime.getStopInfo(this.routeId, this.directionId, this.id as string).then(async info => {
             for (const stop of info.stops)
-                this.stops.set(stop.stop_id, await Data.Stop.create(stop.stop_id, this.getId() as string, this.directionId, this.routeId, stop))
+                this.stops.set(stop.stop_id, await Data.Stop.create(stop.stop_id, this.id as string, this.directionId, this.routeId, stop))
 
             for (const departure of info.departures)
-                this.departures.set(departure.trip_id, await Data.Departure.create(departure.trip_id, this.getId() as string, this.directionId, this.routeId, departure))
+                this.departures.set(departure.trip_id, await Data.Departure.create(departure.trip_id, this.id as string, this.directionId, this.routeId, departure))
         })
     }
+
+    public async loadDepartures() {
+        this.departures.clear();
+
+        await Realtime.getStopInfo(this.routeId, this.directionId, this.id as string).then(async info => {
+            for (const departure of info.departures)
+                this.departures.set(departure.trip_id, await Data.Departure.create(departure.trip_id, this.id as string, this.directionId, this.routeId, departure))
+        })
+    }
+
+    public readonly stops: Map<string, Data.Stop>;
+    public readonly departures: Map<string, Data.Departure>;
 
     public readonly description: string;
     public readonly directionId: number;

@@ -71,6 +71,14 @@ namespace Routes {
      */
     export async function refreshVehicles() 
     {
+        for (const routeId of URL.getRoutes()) {
+            await Data.Vehicle.reload(routeId)
+            // for (const vehicle of await Data.Vehicle.all(routeId)) {
+            //     console.log(vehicle);
+            // }
+        }
+
+
         // Updates Vehicles
         URL.getRoutes()?.forEach(async routeId => {
             const route = routes.get(routeId)
@@ -129,6 +137,14 @@ namespace Routes {
      * Refresh the stops
      */
     export async function refreshStops() {
+        for (const routeId of URL.getRoutes()) {
+            await Data.Departure.reload(routeId);
+            // console.log((await Data.Departure.all(routeId)).filter(departure => departure.data.actual));
+            // for (const vehicle of await Data.Vehicle.all(routeId)) {
+            //     console.log(vehicle);
+            // }
+        }
+
         // Updates Stops
         URL.getRoutes()?.forEach(async routeId => {
             for (const schedule of (await Schedule.getRouteDetails(routeId)).schedules) {
@@ -211,6 +227,8 @@ namespace Routes {
      * @param routeId ID of the route
      */
     async function loadRoute(routeId: string) {
+        Data.Route.load(routeId);
+
         const route = new Route(routeId, map);
         routes.set(routeId, route);
 
@@ -235,12 +253,6 @@ namespace Routes {
             console.warn(`Route with ID: ${routeId} not found`);
             Resources.createInactiveRoutePopup();
         }
-
-        Data.Route.load(routeId);
-        // Data.Place.all(routeId, 1)
-        // Data.Stop.all(routeId)
-        Data.Vehicle.all(routeId)
-        .then(s => console.log(s));
     }
 
     async function loadPath(routeId: string, shapeId: string, color: string, locations: Array<google.maps.LatLng>) {
