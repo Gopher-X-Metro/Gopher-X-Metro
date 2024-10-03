@@ -18,13 +18,13 @@ export default class _Vehicle extends _DataAbstract {
 
     public readonly data : any;
 
-    private readonly bearing: number;
-    private readonly direction: string;
-    private readonly latitude: number;
-    private readonly longitude: number;
-    private readonly speed: number;
-    private readonly timestamp: number;
+    public readonly bearing: number;
+    public readonly direction: string;
+    public readonly latitude: number;
+    public readonly longitude: number;
+    public readonly speed: number;
+    public readonly timestamp: number;
 
-    private readonly directionId: number;
-    private readonly routeId: string;
+    public readonly directionId: number;
+    public readonly routeId: string;
 }

@@ -6,6 +6,7 @@ import Route from "./Route.ts";
 import Static from "../../../../backend/Static.ts";
 import Stop from "./Stop.ts"
 import Data from "src/data/Data.ts";
+import Resources from "src/backend/Resources.ts";
 
 class Vehicle extends InfoWindowElement {
     /* Public */
@@ -61,30 +62,95 @@ class Vehicle extends InfoWindowElement {
      * Updates the info window information
      */
     public updateWindow() {
-        
-        const generateContent = (content: string, errorMessage?: string): string =>
-            `<div style="text-align:center; font-family: Arial, sans-serif;">
-                <h2 style="margin-bottom: 10px; font-weight: bold; border-bottom: 2px solid #000;">${this.routeId}</h2>
-                ${errorMessage ? `<p style="color: red;">${errorMessage}</p>` : `<ul style="margin-top: 20px; list-style: none;">${content}</ul>`}
-            </div>`;
-                // <p style="margin-bottom: 20px; font-size: 16px;">${busId}</p>
-        try {
-            let content : string = "";
+        const generateContent = async (errorMessage?: string) => {
+            const divElement = document.createElement("div");
+            divElement.style.cssText = "text-align:center; font-family: Arial, sans-serif;";
 
-            if (this.direction_id) {
-                const departures = Data.Departure.all(this.routeId as string, this.direction_id as number)
-                .then(departures => departures.filter(departure => departure.data.actual && departure.id === this.id));
+            const vehicle = await Data.Vehicle.get(this.routeId as string, String(this.id));
+            console.log(vehicle);
 
-                console.log(departures);
+            const directionElement = document.createElement("h2");
+            directionElement.textContent = String(vehicle.direction)
+            directionElement.style.cssText = "margin-bottom: 10px; font-weight: bold; border-bottom: 2px solid #000;";
+
+            const nameElement = document.createElement("p");
+            nameElement.textContent = this.tripId as string;
+            nameElement.style.cssText = "margin-bottom: 20px; font-size: 16px;";
+
+            divElement.appendChild(directionElement);
+            divElement.appendChild(nameElement);
+            
+            if (errorMessage) {
+                const errorElement = document.createElement("p");
+                errorElement.innerHTML = errorMessage;
+                errorElement.style.cssText = "color: red;";
+
+                divElement.appendChild(errorElement);
+            } else {
+                if (this.direction_id !== undefined) {
+                    const departures = await Data.Departure.all(this.routeId as string, this.direction_id as number)
+                    .then(departures => departures.filter(departure => departure.data.actual && departure.id === this.id));
+
+                    if (departures.length === 0) {
+                        const warningElement = document.createElement("p");
+                        warningElement.innerHTML = `There are no buses for this stop at this time<br><a href="./schedules" rel="noopener noreferrer">Check the scheduling page for more information</a>`;
+                        warningElement.style.cssText = 'color: red;';
+                        warningElement.style.fontSize = "12px";
+                    
+                        divElement.appendChild(warningElement);
+                    }
+                    else {
+                        const listElement = document.createElement("ul")
+                        listElement.style.cssText = "margin-top: 20px; list-style: none;";
+
+                        const listItemElement = document.createElement("li");
+                        listItemElement.style.cssText = "display: inline-block; margin-left: 10px; margin-right: 10px; vertical-align: text-top;";
+
+                        const buttonElement = document.createElement("button");
+                        buttonElement.innerHTML = `<svg width="12" height="12" style="display: block; margin: 0 auto 5px;"><circle cx="6" cy="6" r="6" fill="#${await Resources.getColor(this.routeId as string)}"/></svg>`
+                        // buttonElement.addEventListener("click", () => {
+                        //     if (!URL.getRoutes().has(routeId))
+                        //         URL.addRoute(routeId);
+                        //     else
+                        //         URL.removeRoute(routeId);
+                        // });
+
+                        const routeIdElement = document.createElement("h3");
+                        routeIdElement.innerHTML = `- ${this.routeId} -`;
+                        routeIdElement.style.cssText = "margin-top: 10px;";
+                        
+                        listItemElement.appendChild(buttonElement);
+                        listItemElement.appendChild(routeIdElement);
+
+                        departures.slice(0, 3).forEach(departure => {
+                            const timeElement = document.createElement("p");
+                            timeElement.innerHTML = departure.placeId + ": " + departure.data.departure_text;
+                            timeElement.style.cssText = "margin: 5px 0; font-size: 14px;";
+                            
+                            listItemElement.appendChild(timeElement);
+                        })
+
+                        listElement.append(listItemElement);
+                        
+                        divElement.appendChild(listElement);
+                    }
+                }
             }
 
-            content += "";
-
-            this.infoWindow?.setContent(generateContent(content));
-        } catch (e) {
-            console.error(`Failed to update info window:`, e);
-            this.infoWindow?.setContent(generateContent("", "Failed to load departure information."));
+            return divElement;
         }
+
+        const update = async () =>{
+            // Load infowindow
+            try {
+                this.infoWindow?.setContent((await generateContent()) as HTMLDivElement);
+            } catch (e) {
+                console.error(`Failed to update info window:`, e);
+                this.infoWindow?.setContent((await generateContent("Failed to load departure information.")) as HTMLDivElement);
+            }
+        }
+
+        update();
     }
     /**
      * Gets the length in ms of the time between when position was updated and now
