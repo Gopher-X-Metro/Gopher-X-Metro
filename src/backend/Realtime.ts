@@ -83,7 +83,7 @@ namespace Realtime {
      * @param placeCode the place code of the stop
      * @returns the description of the stop
      */
-    export async function getStopInfo(routeId: string, directionId: number, placeCode: string) : Promise<Array<any>> {
+    export async function getStopInfo(routeId: string, directionId: number, placeCode: string) : Promise<any> {
         return await (await fetch("https://svc.metrotransit.org/nextrip/"+routeId+"/"+directionId+"/"+placeCode)).json()
     }
     /**

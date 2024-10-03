@@ -6,10 +6,9 @@ import Route from "../elements/Route.ts";
 import Realtime from "src/backend/Realtime.ts";
 import Peak from "src/backend/Peak.ts";
 import Stop from "../elements/Stop.ts";
-
+import Data from "src/data/Data.ts";
 
 namespace Routes {
-
     /* Public */
 
     /**
@@ -97,6 +96,11 @@ namespace Routes {
                 }
 
                 // Modify the vehicle
+                vehicles.get(info.trip_id)?.setRouteId(routeId);
+
+                // console.log(await Realtime.getStops(routeId, 1))
+                // console.log(await Realtime.getVehicles(routeId));
+
                 if (routeId === "901") {
                     vehicles.get(info.trip_id)?.setBlueDirectionID(info.direction_id);
                 } else if (routeId === "902") {
@@ -110,7 +114,8 @@ namespace Routes {
                 }
 
                 vehicles.get(info.trip_id)?.setPosition(new google.maps.LatLng(info.latitude as number, info.longitude as number), info.timestamp);
-                vehicles.get(info.trip_id)?.updateBusWindow(info.trip_id, routeId);
+                // vehicles.get(info.trip_id)?.updateBusWindow(info.trip_id, routeId);
+                vehicles.get(info.trip_id)?.updateWindow();
                 vehicles.get(info.trip_id)?.updateTimestamp();
             }
             
@@ -127,7 +132,6 @@ namespace Routes {
         // Updates Stops
         URL.getRoutes()?.forEach(async routeId => {
             for (const schedule of (await Schedule.getRouteDetails(routeId)).schedules) {
-                console.log(schedule);
                 if (schedule.schedule_type_name === Schedule.getWeekDate()) {
                     for (const timetable of schedule.timetables) {
                         for (const info of await Schedule.getStopList(routeId, timetable.schedule_number)) {
@@ -202,7 +206,6 @@ namespace Routes {
 
     const routes = new Map<string, Route>();
     const stops = new Map<string, Promise<Stop | undefined>>();
-    const stops2 = new Map<string, Promise<Stop | undefined>>();
     const vehicles = new Map<string, Vehicle>();
     let map: google.maps.Map;
 
@@ -235,6 +238,12 @@ namespace Routes {
             console.warn(`Route with ID: ${routeId} not found`);
             Resources.createInactiveRoutePopup();
         }
+
+        Data.Route.load(routeId);
+        // Data.Departure.getAll()
+        // .then(r => console.log(r));
+        // console.log(Data.Stop.getAll(routeId))
+        // console.log(await Data.Route.get(routeId));
     }
 
     export async function loadPath(routeId: string, shapeId: string, color: string, locations: Array<google.maps.LatLng>) {

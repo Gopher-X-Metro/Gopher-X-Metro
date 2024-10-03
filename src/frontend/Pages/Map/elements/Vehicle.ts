@@ -5,6 +5,7 @@ import Peak from "../../../../backend/Peak.ts";
 import Route from "./Route.ts";
 import Static from "../../../../backend/Static.ts";
 import Stop from "./Stop.ts"
+import Data from "src/data/Data.ts";
 
 class Vehicle extends InfoWindowElement {
     /* Public */
@@ -60,9 +61,37 @@ class Vehicle extends InfoWindowElement {
      * Updates the info window information
      */
     public updateWindow() {
-        this.infoWindow?.setContent(
-            String(Math.ceil(Number(this.getLastUpdated())))
-        );
+        if (this.direction_id) {
+            try {
+                Data.Departure.getAll(this.routeId as string, this.direction_id)
+                .then(departures => 
+                    departures.filter(departure => departure.getId() === this.id && departure.data.actual)
+                    .forEach(departure => {
+                        Data.Place.get(this.routeId as string, this.direction_id as number, departure.stopId)
+                        .then(info => console.log(info))
+                    })
+                )
+
+                // Data.Direction.get(this.routeId as string, this.direction_id)
+                // .then(direction => 
+                //     console.log(Promise.all(Array.from(direction.stops.values())).then(result => result.filter(stop => stop.departures.has(this.id))))
+                // )
+
+                // Realtime.getStops(this.routeId as string, this.direction_id)
+                // .then( stops => stops.forEach( stop => {
+                //     if (stop.place_code) 
+                //         Data.Stop.get(this.routeId as string, this.direction_id as number, stop.place_code)
+                //         .then(info => console.log(info))
+                // }))
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        // console.log(this.id);
+        // console.log(this.routeId);
+        // this.infoWindow?.setContent(
+        //     String(Math.ceil(Number(this.getLastUpdated())))
+        // );
     }
     /**
      * Gets the length in ms of the time between when position was updated and now
@@ -80,6 +109,11 @@ class Vehicle extends InfoWindowElement {
      * @param tripId trip ID
      */
     public setTripId(tripId : string) : void { this.tripId = tripId; }
+    /**
+     * Sets the route ID
+     * @param routeID route ID
+     */
+    public setRouteId(routeId: string) : void { this.routeId = routeId; }
     /**
      * Sets the position of the vehicle on the map
      * @param position position of the vehicle
@@ -195,6 +229,7 @@ class Vehicle extends InfoWindowElement {
      * @param schedule_number
      */
     public async updateBusWindow(busId: string, routeId: string) {
+        console.log(busId);
         const generateContent = (content: string, errorMessage?: string): string =>
             `<div style="text-align:center; font-family: Arial, sans-serif;">
                 <h2 style="margin-bottom: 10px; font-weight: bold; border-bottom: 2px solid #000;">${routeId}</h2>
@@ -202,7 +237,7 @@ class Vehicle extends InfoWindowElement {
             </div>`;
                 // <p style="margin-bottom: 20px; font-size: 16px;">${busId}</p>
         try {
-            let content;
+            let content : string = "";
             if (busId.length > 10) {
                 // const schedules = (await Schedule.getRouteDetails(routeId)).schedules;
                 // console.log(schedules);
@@ -272,7 +307,7 @@ class Vehicle extends InfoWindowElement {
                                         //     // console.log(stop)
                                         // }
                                         if (theStop.stopId == nextStop.stop_id) {
-                                            console.log(theStop.stopId)
+                                            // console.log(theStop.stopId)
                                             const stopName = nextStop.stop_name;
                                             output += `<p>Arriving to ${stopName} at ${arrival}<p>`;
                                             
@@ -282,7 +317,7 @@ class Vehicle extends InfoWindowElement {
                                     console.warn('Expected an array but got:', stop_list);
                                 }
                             } else {
-                                console.log(tripID);
+                                // console.log(tripID);
                                 console.warn('Departure time is missing.');
                             }
                         }
@@ -343,8 +378,9 @@ class Vehicle extends InfoWindowElement {
 
 
     /* Private */
-    private updatedTimestamp: number | undefined;
+    private routeId: string | undefined;
     private tripId: string | undefined;
+    private updatedTimestamp: number | undefined;
     private positionTimestamp : number | undefined;
     private bearing: number | undefined;
     private direction_id: number | undefined;
