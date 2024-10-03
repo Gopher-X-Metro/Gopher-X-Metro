@@ -63,14 +63,14 @@ class Vehicle extends InfoWindowElement {
     public updateWindow() {
         if (this.direction_id) {
             try {
-                Data.Departure.getAll(this.routeId as string, this.direction_id)
-                .then(departures => 
-                    departures.filter(departure => departure.getId() === this.id && departure.data.actual)
-                    .forEach(departure => {
-                        Data.Place.get(this.routeId as string, this.direction_id as number, departure.stopId)
-                        .then(info => console.log(info))
-                    })
-                )
+                // Data.Departure.getAll(this.routeId as string, this.direction_id)
+                // .then(departures => 
+                //     departures.filter(departure => departure.getId() === this.id && departure.data.actual)
+                //     .forEach(departure => {
+                //         Data.Place.get(this.routeId as string, this.direction_id as number, departure.stopId)
+                //         .then(info => console.log(info))
+                //     })
+                // )
 
                 // Data.Direction.get(this.routeId as string, this.direction_id)
                 // .then(direction => 

@@ -28,12 +28,6 @@ export default class _Place extends _DataAbstract {
         })
     }
 
-    static async create(placeCode: string, directionId: number, routeId: string, description: string) : Promise<Data.Place> {
-        const place = new Data.Place(placeCode, directionId, routeId, description);
-        await place.reload();
-        return place;
-    }
-
     public readonly description: string;
     public readonly directionId: number;
     public readonly routeId: string;

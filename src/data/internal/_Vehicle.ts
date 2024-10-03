@@ -1,21 +1,29 @@
 import _DataAbstract from "./_DataAbstract";
-import Realtime from "../../backend/Realtime";
-import Data from "../Data";
 
 export default class _Vehicle extends _DataAbstract {
-    constructor(vehicleId: string, directionId: number, routeId: string, data: any) {
+    constructor(vehicleId: string, routeId: string, data: any) {
         super(vehicleId);
-        this.directionId = directionId;
         this.routeId = routeId;
+
         this.data = data;
+
+        this.directionId = data.direction_id;
+        this.direction = data.direction;
+        this.latitude = data.latitude;
+        this.longitude = data.longitude;
+        this.bearing = data.bearing;
+        this.speed = data.speed;
+        this.timestamp = data.timestamp;
     }
 
     public readonly data : any;
 
-    static async create(vehicleId: string, directionId: number, routeId: string, data: any) : Promise<Data.Vehicle> {
-        const vehicle = new Data.Vehicle(vehicleId, directionId, routeId, data);
-        return vehicle;
-    }
+    private readonly bearing: number;
+    private readonly direction: string;
+    private readonly latitude: number;
+    private readonly longitude: number;
+    private readonly speed: number;
+    private readonly timestamp: number;
 
     private readonly directionId: number;
     private readonly routeId: string;

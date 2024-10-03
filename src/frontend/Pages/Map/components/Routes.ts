@@ -237,10 +237,10 @@ namespace Routes {
         }
 
         Data.Route.load(routeId);
-        // Data.Departure.getAll()
-        // .then(r => console.log(r));
-        // console.log(Data.Stop.getAll(routeId))
-        // console.log(await Data.Route.get(routeId));
+        // Data.Place.all(routeId, 1)
+        // Data.Stop.all(routeId)
+        Data.Vehicle.all(routeId)
+        .then(s => console.log(s));
     }
 
     async function loadPath(routeId: string, shapeId: string, color: string, locations: Array<google.maps.LatLng>) {
