@@ -67,7 +67,7 @@ class Vehicle extends InfoWindowElement {
             divElement.style.cssText = "text-align:center; font-family: Arial, sans-serif;";
 
             const vehicle = await Data.Vehicle.get(this.routeId as string, String(this.id));
-            console.log(vehicle);
+            // console.log(vehicle);
 
             const directionElement = document.createElement("h2");
             directionElement.textContent = String(vehicle.direction)
