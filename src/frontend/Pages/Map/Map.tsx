@@ -57,7 +57,7 @@ async function initalize() {
             center: UMNLocation,
             zoom: defaultZoom,
             mapId: process.env.REACT_APP_MAP_ID,
-            streetViewControl: !isMobile,
+            streetViewControl: false,
             fullscreenControl: false,
             mapTypeControl: false,
         })

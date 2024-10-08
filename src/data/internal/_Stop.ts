@@ -1,6 +1,15 @@
 import _DataAbstract from "./_DataAbstract";
 
+/** Stores the data for a stop */
 export default class _Stop extends _DataAbstract {
+    /**
+     * Constructor for the _Stop class
+     * @param stopId        
+     * @param placeId 
+     * @param directionId 
+     * @param routeId 
+     * @param data 
+     */
     constructor(stopId: string, placeId: string, directionId: number, routeId: string, data: any) {
         super(stopId);
         this.directionId = directionId;

@@ -6,8 +6,6 @@ import _Vehicle from "./internal/_Vehicle";
 import _Departure from "./internal/_Departure";
 import _ExistsError from "./internal/_ExistsError";
 
-import Realtime from "src/backend/Realtime";
-
 namespace Data {
     export class Route extends _Route {
         static async create(routeId: string) : Promise<Data.Route> {

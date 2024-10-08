@@ -128,9 +128,7 @@ namespace Routes {
         // Updates Stop Data
         for (const routeId in URL.getRoutes())
             await Data.Departure.reload(routeId);
-
-        console.log(Data.Departure.all());
-
+        
         // Updates Stops
         URL.getRoutes()?.forEach(async routeId => {
             for (const schedule of (await Schedule.getRouteDetails(routeId)).schedules) {
@@ -212,6 +210,8 @@ namespace Routes {
      * @param routeId ID of the route
      */
     async function loadRoute(routeId: string) {
+        Data.Route.load(routeId);
+
         const route = new Route(routeId, map);
         routes.set(routeId, route);
 
@@ -236,8 +236,6 @@ namespace Routes {
             console.warn(`Route with ID: ${routeId} not found`);
             Resources.createInactiveRoutePopup();
         }
-
-        Data.Route.load(routeId);
     }
 
     async function loadPath(routeId: string, shapeId: string, color: string, locations: Array<google.maps.LatLng>) {
