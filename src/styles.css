@@ -290,6 +290,7 @@ div#search_bar{
   margin-left: 7vh;
   font-family: 'Neutraface Text', sans-serif;
   color: whitesmoke;
+
 }
 
 
@@ -304,6 +305,7 @@ div#search_bar{
  float:center;
  position: relative;
  width: 250px;
+ padding-bottom: 10px;
 }
 
 .searchContainer input {
@@ -317,7 +319,6 @@ text-align: center;
 margin: 0 auto;
 margin-left: 30px;
 background-color: rgb(226, 226, 226);
-
 }
 .searchContainer button {
 position:absolute;
