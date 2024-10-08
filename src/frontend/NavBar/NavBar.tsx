@@ -14,8 +14,8 @@ import ResponsiveDropdown from './components/MobileDropdown.tsx';
  * Navbar Component
  */
 export default function NavBar({ setPage }) {
-    // Check if screen width is 768px or less (mobile)
-    const [isMobile] = useMediaQuery("(max-width: 768px)");
+    // Check if screen width is 1024px or less (mobile)
+    const [isMobile] = useMediaQuery("(max-width: 1024px)");
 
     return (
         <div id="title-bar">
