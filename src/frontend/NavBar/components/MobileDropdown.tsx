@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import { ChevronDownIcon } from '@chakra-ui/icons'; 
 
 const ResponsiveDropdown = ({ setPage }) => {
-    // Check if the screen width is 768px or less (common mobile sizing cutoff)
-    const [isMobile] = useMediaQuery("(max-width: 768px)");
+    // Check if the screen width is 1024px or less (common mobile size and before buttons are cutoff by title)
+    const [isMobile] = useMediaQuery("(max-width: 1024px)");
 
     return (
         <>
