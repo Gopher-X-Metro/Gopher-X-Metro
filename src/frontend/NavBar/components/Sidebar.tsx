@@ -75,12 +75,16 @@ export default function SideBar() {
 
             <div id="nav-bar" className={sidebarOpen ? 'sidebar open' : 'sidebar'}>
 
-                    <div className = 'col-3 tab '>
-                    <ul className='d-flex'>
-                    <li className='flex-fill' onClick = {() => updateToggle(1)}>Main</li>
-                    <li className='flex-fill' onClick = {() => updateToggle(2)}>Favorites</li>
-                    </ul>
-                    </div>
+                    
+                        <div className='tab-container'>
+                            <ul className='d-flex'>
+                            <li className='tab-button' onClick = {() => updateToggle(1)}>Main</li>
+                            <li className='tab-button' onClick = {() => updateToggle(2)}>Favorites</li>
+                            </ul>
+                        </div>
+                   
+                
+                 
             <div className={toggle === 1 ? 'tab-content' : 'content'}>
 
 
@@ -111,10 +115,14 @@ export default function SideBar() {
 
                         {/* content for the favorite tab */}
             <div className={toggle === 2 ? 'tab-content' : 'content'}>
-                    <h1> Favoirtes</h1>
+                <div className='favorite-tab'>
+                    <div className='sidebar-content flex flex-col items-center'>
+                    <RouteButton key={123} routeId={123} text={"123 4th Street Circulator"}/>
+                    </div>
+                </div>
             </div>
 
-        </div>
+            </div>
         </>
     )
     

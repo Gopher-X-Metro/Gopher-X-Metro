@@ -80,10 +80,11 @@ div#title-bar > h1 > .city {
   background-color: #f9f9f9;
   overflow-x: clip;
   padding-top: 15px;
-  transition: 0.5s;
+  transition: width 0.5s ease;
   overflow-y: scroll;
   scrollbar-color:  black; /* only works for firefox */
   scrollbar-width: thin;
+  padding:0;
 }
 
 /* WebKit-based browsers (Chrome, Safari, Edge) sidebar scrollbar */
@@ -221,6 +222,7 @@ div#title-bar > h1 > .city {
     color: white;
     border: none;
   }
+
 .PageButton {
     position: absolute;
     top: 0;
@@ -248,6 +250,7 @@ div#title-bar > h1 > .city {
   margin-top: 1px;
   margin-bottom: px;
   width: 285px;
+  padding-top: 40px;
 }
 
 .nav-header h3 {
@@ -402,18 +405,36 @@ padding: 1px 3px;
 
 
 /* CSS for the tabs */
-.tab ul {
-  list-style-type: none;
+
+.tab-container{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: absolute;
+  top:0;
+
+  box-sizing: border-box;
 }
 
-.tab ul li {
-  display: inline;
+.tab-container ul.d-flex {
+  display: flex;
+  padding: 0;
+  margin: 0;
+  list-style-type: none; /* Remove default list styling */
+}
+
+.tab-container li.tab-button {
+  width: 100%;
+  border:none;
+  transition: background-color 0.3s ease, color 0.3s ease;
   color: white;
   text-align: center;
   background-color: gray;
+  box-sizing: border-box;
+  white-space: nowrap;
 }
 
-.tab ul li:hover{
+.tab-container li.tab-button:hover{
   color: black;
   cursor: pointer;
   background-color: white;
@@ -421,8 +442,13 @@ padding: 1px 3px;
 
 .content{  /* Hides the second tab content originally */
   display: none;
+
 }
 
-.show-content {
+.tab-content {
   display: block;
+}
+
+.favorite-tab{
+  padding-top: 20px;
 }
