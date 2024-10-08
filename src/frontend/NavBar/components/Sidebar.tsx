@@ -11,6 +11,9 @@ export default function SideBar() {
     const [_, forceReload] = useState(0);
     const [routes, setRoutes] = useState(new Map<string, string>());
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [toggle, setToggle] = useState(1); //switching between tabs
+
+    const updateToggle = (id) => {setToggle(id);};
 
     routes.set("121", "121 Campus Connector");
     routes.set("122", "122 University Avenue Circulator");
@@ -63,6 +66,7 @@ export default function SideBar() {
 
     return (
         <>
+
             <div id="nav-bar">
                 <button className="openbtn" onClick={() => setSidebarOpen(!sidebarOpen)}>
                     <Icon as={ HamburgerIcon} w={6} h={6} />
@@ -70,6 +74,16 @@ export default function SideBar() {
             </div>
 
             <div id="nav-bar" className={sidebarOpen ? 'sidebar open' : 'sidebar'}>
+
+                    <div className = 'col-3 tab '>
+                    <ul className='d-flex'>
+                    <li className='flex-fill' onClick = {() => updateToggle(1)}>Main</li>
+                    <li className='flex-fill' onClick = {() => updateToggle(2)}>Favorites</li>
+                    </ul>
+                    </div>
+            <div className={toggle === 1 ? 'tab-content' : 'content'}>
+
+
                 <div className="nav-header">
                     <h3>Select Routes</h3>
                     <div className="underline"></div>
@@ -94,6 +108,13 @@ export default function SideBar() {
                 
                 <div className= "error_text" id = 'error_text'></div>
             </div>
+
+                        {/* content for the favorite tab */}
+            <div className={toggle === 2 ? 'tab-content' : 'content'}>
+                    <h1> Favoirtes</h1>
+            </div>
+
+        </div>
         </>
     )
     

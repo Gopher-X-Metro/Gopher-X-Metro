@@ -28,7 +28,7 @@ function RouteButton({ routeId, text }) {
   const buttonElement = React.createElement("button", {
     className: `route-btn ${isActive ? 'active' : undefined} route-${routeId}`,
     onClick: () => {
-      // selects specific route depending on button pressed
+      // selects specific route depending on button pressed 
       if (!isActive)
         URL.addRoute(routeId);
       else

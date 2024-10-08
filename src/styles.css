@@ -246,7 +246,7 @@ div#title-bar > h1 > .city {
 .nav-header {
   text-align: center;
   margin-top: 1px;
-  margin-bottom: 5px;
+  margin-bottom: px;
   width: 285px;
 }
 
@@ -398,4 +398,31 @@ padding: 1px 3px;
   cursor: pointer;
   border: none;
   padding-right: 10px;
+}
+
+
+/* CSS for the tabs */
+.tab ul {
+  list-style-type: none;
+}
+
+.tab ul li {
+  display: inline;
+  color: white;
+  text-align: center;
+  background-color: gray;
+}
+
+.tab ul li:hover{
+  color: black;
+  cursor: pointer;
+  background-color: white;
+}
+
+.content{  /* Hides the second tab content originally */
+  display: none;
+}
+
+.show-content {
+  display: block;
 }
