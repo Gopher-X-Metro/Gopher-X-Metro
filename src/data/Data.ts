@@ -76,11 +76,14 @@ namespace Data {
         static async reload(routeId: string, directionId: number) : Promise<void>
         static async reload(routeId?: string, directionId?: number) : Promise<void> {
             if (routeId !== undefined && directionId !== undefined)
+                // Reload a direction
                 await (await Direction.get(routeId, directionId)).load();
             else if (routeId !== undefined)
+                // Reload directions within a route
                 for (const direction of await Direction.all(routeId))
                     await Direction.reload(routeId, direction.id as number);
             else 
+                // Reload all directions
                 for (const route of await Route.all())
                     await Direction.reload(route.id as string);
         }
@@ -104,8 +107,10 @@ namespace Data {
         static async all(routeId: string) : Promise<Array<Direction>>
         static async all(routeId?: string) : Promise<Array<Direction>> {
             if (routeId !== undefined)
+                // Gets all directions within a route
                 return Promise.all(Array.from((await Route.get(routeId)).directions.values()));
             else
+                // Gets all directions
                 return Promise.all((await Route.all()).map(route => Array.from(route.directions.values())).flat());
         }
     };
@@ -141,8 +146,10 @@ namespace Data {
         static async all(routeId: string) : Promise<Array<Vehicle>>
         static async all(routeId?: string) : Promise<Array<Vehicle>> {
             if (routeId !== undefined)
+                // Gets all vehicles in a route
                 return Promise.all((await Route.get(routeId)).vehicles.values());
             else
+                // Gets all vehicles
                 return Promise.all((await Route.all()).map(route => Array.from(route.vehicles.values())).flat());
         }
 
@@ -152,8 +159,10 @@ namespace Data {
         static async reload(routeId: string) : Promise<void>
         static async reload(routeId?: string) : Promise<void> {
             if (routeId !== undefined)
+                // Reloads all vehicles in a route
                 await (await Route.get(routeId)).loadVehicles();
             else 
+                // Reloads all vehicles
                 for (const route of await Route.all())
                     await route.loadVehicles();
         }
@@ -183,14 +192,18 @@ namespace Data {
         static async reload(routeId: string, directionId: number, placeId: string) : Promise<void>
         static async reload(routeId?: string, directionId?: number, placeId?: string) : Promise<void> {
             if (routeId !== undefined && directionId !== undefined && placeId !== undefined)
+                // Reload a specific Place
                 await (await Place.get(routeId, directionId, placeId)).load()
             else if (routeId !== undefined && directionId !== undefined)
+                // Reload all places in a direction
                 for (const place of await Place.all(routeId, directionId))
                     await Place.reload(routeId, directionId, place.id as string);
             else if (routeId !== undefined)
+                // Reload all places in a route
                 for (const direction of await Direction.all(routeId))
                     await Place.reload(routeId, direction.id as number);
             else 
+                // Reload all places
                 for (const route of await Route.all())
                     await Place.reload(route.id as string);
         }
@@ -217,10 +230,13 @@ namespace Data {
         static async all(routeId: string, directionId: number) : Promise<Array<Place>>
         static async all(routeId?: string, directionId?: number) : Promise<Array<Place>> {
             if (directionId !== undefined && routeId !== undefined)
+                // Gets all places in a direction
                 return Promise.all(Array.from((await Direction.get(routeId, directionId)).places.values()));
             else if (routeId !== undefined)
+                // Gets all places in a route
                 return Promise.all((await Direction.all(routeId)).map(direction => Array.from(direction.places.values())).flat());
             else
+                // Gets all places
                 return Promise.all((await Direction.all()).map(direction => Array.from(direction.places.values())).flat());
         }
     };
@@ -249,14 +265,18 @@ namespace Data {
         static async reload(routeId: string, directionId: number, placeId: string) : Promise<void>
         static async reload(routeId?: string, directionId?: number, placeId?: string) : Promise<void> {
             if (routeId !== undefined && directionId !== undefined && placeId !== undefined)
+                // Reload departures in a place
                 await (await Place.get(routeId, directionId, placeId)).loadDepartures();
             else if (routeId !== undefined && directionId !== undefined)
+                // Reloads all departures in a direction
                 for (const place of await Place.all(routeId, directionId))
                     await place.loadDepartures();
             else if (routeId !== undefined)
+                // Reloads all departures in a route
                 for (const place of await Place.all(routeId))
                     await place.loadDepartures();
             else
+                // Reloads all departures
                 for (const place of await Place.all())
                     await place.loadDepartures();
         }
@@ -286,12 +306,16 @@ namespace Data {
         static async all(routeId: string, directionId: number, placeId: string) : Promise<Array<Departure>>
         static async all(routeId?: string, directionId?: number, placeId?: string) : Promise<Array<Departure>> {
             if (placeId !== undefined && directionId !== undefined && routeId !== undefined)
+                // Gets all departues within a place
                 return Promise.all(Array.from((await Place.get(routeId, directionId, placeId)).departures.values()));
             else if (directionId !== undefined && routeId !== undefined)
+                // Gets all deparutes within a direction
                 return Promise.all((await Place.all(routeId, directionId)).map(place => Array.from(place.departures.values())).flat());
             else if (routeId !== undefined)
+                // Gets all departures within a route
                 return Promise.all((await Place.all(routeId)).map(place => Array.from(place.departures.values())).flat());
             else
+                // Gets all departures
                 return Promise.all((await Place.all()).map(place => Array.from(place.departures.values())).flat());
         }
     };
@@ -336,12 +360,16 @@ namespace Data {
         static async all(routeId: string, directionId: number, placeId: string) : Promise<Array<Stop>>
         static async all(routeId?: string, directionId?: number, placeId?: string) : Promise<Array<Stop>> {
             if (placeId !== undefined && directionId !== undefined && routeId !== undefined)
+                // Gets all stops within a place
                 return Promise.all(Array.from((await Place.get(routeId, directionId, placeId)).stops.values()));
             else if (directionId !== undefined && routeId !== undefined)
+                // Gets all stops within a direction
                 return Promise.all((await Place.all(routeId, directionId)).map(place => Array.from(place.stops.values())).flat());
             else if (routeId !== undefined)
+                // Gets all stops within a route
                 return Promise.all((await Place.all(routeId)).map(place => Array.from(place.stops.values())).flat());
             else
+                // Gets all stops
                 return Promise.all((await Place.all()).map(place => Array.from(place.stops.values())).flat());
         }
     };
