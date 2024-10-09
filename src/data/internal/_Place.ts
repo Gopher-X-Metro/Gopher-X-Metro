@@ -26,12 +26,13 @@ export default class _Place extends _DataAbstract {
         this.departures.clear();
         this.stops.clear();
         
+        // Loads both stops and departures
         await Realtime.getStopInfo(this.routeId, this.directionId, this.id as string).then(async info => {
-            console.log(info);
-
+            // Stops
             for (const stop of info.stops)
                 this.stops.set(stop.stop_id, await Data.Stop.create(stop.stop_id, this.id as string, this.directionId, this.routeId, stop))
 
+            // Departures
             for (const departure of info.departures)
                 this.departures.set(departure.trip_id, await Data.Departure.create(departure.trip_id, this.id as string, this.directionId, this.routeId, departure))
         })
@@ -41,6 +42,7 @@ export default class _Place extends _DataAbstract {
     public async loadDepartures() {
         this.departures.clear();
 
+        // Loads only departues
         await Realtime.getStopInfo(this.routeId, this.directionId, this.id as string).then(async info => {
             for (const departure of info.departures)
                 this.departures.set(departure.trip_id, await Data.Departure.create(departure.trip_id, this.id as string, this.directionId, this.routeId, departure))

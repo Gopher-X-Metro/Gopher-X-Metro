@@ -20,6 +20,7 @@ export default class _Direction extends _DataAbstract {
     public async load() {
         this.places.clear();
 
+        // Load places
         await Realtime.getStops(this.routeId, this.id as number).then(response => {
             for (const place of response)
                 this.places.set(place.place_code, Data.Place.create(place.place_code, this.id as number, this.routeId, place.description));
