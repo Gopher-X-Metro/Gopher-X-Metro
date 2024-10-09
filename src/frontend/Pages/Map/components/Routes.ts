@@ -128,7 +128,7 @@ namespace Routes {
         // Updates Stop Data
         for (const routeId in URL.getRoutes())
             await Data.Departure.reload(routeId);
-        
+
         // Updates Stops
         URL.getRoutes()?.forEach(async routeId => {
             for (const schedule of (await Schedule.getRouteDetails(routeId)).schedules) {
