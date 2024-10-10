@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Routes from '../Pages/Map/components/Routes.ts';
 import {
     Button,
     HStack,
@@ -9,6 +10,7 @@ import {
 import TitleBar from './components/TitleBar.tsx';
 import SideBar from './components/Sidebar.tsx';
 import ResponsiveDropdown from './components/MobileDropdown.tsx';
+
 
 /**
  * Navbar Component
@@ -23,7 +25,7 @@ export default function NavBar({ setPage }) {
                 <SideBar />
 
                 <Box>
-                    <Link to="/" >
+                    <Link to="/" onClick={Routes.refresh}>
                         <TitleBar />
                     </Link>
                 </Box>
