@@ -16,23 +16,20 @@ namespace Data {
          */
         static async create(routeId: string) : Promise<Data.Route> {
             const route = new Data.Route(routeId);
-    
             await route.loadVehicles();
-    
             await route.loadDirections();
-            
             return route;
         }
 
         /**
-         * Loads the route into Data
+         * Loads a new route into Data
          * @param routeId id of the route
          */
         static load(routeId: string) : void {
-            if (this.routes.has(routeId)) 
+            if (routes.has(routeId)) 
                 throw new ExistsError(`Route '${routeId}' already loaded.`);
 
-            this.routes.set(routeId, Route.create(routeId));
+            routes.set(routeId, Route.create(routeId));
         }
 
         /**
@@ -41,19 +38,16 @@ namespace Data {
          * @returns         Route Promise
          */
         static get(routeId: string) : Promise<Route> {
-            if (!this.routes.has(routeId))
+            if (!routes.has(routeId))
                 throw new ExistsError(`Route '${routeId}' has not been loaded.`);
 
-            return this.routes.get(routeId) as Promise<Route>;
+            return routes.get(routeId) as Promise<Route>;
         }
 
         /** Gets all of the routes within Data */
         static all() : Promise<Array<Route>> { 
-            return Promise.all(Array.from(this.routes.values())); 
+            return Promise.all(Array.from(routes.values())); 
         }
-
-        /** Routes Object Promises*/
-        private static routes = new Map<string, Promise<Route>>();
     };
     /** Direction Data and Direction Access */
     export class Direction extends _Direction {
@@ -376,6 +370,10 @@ namespace Data {
 
     /** Exists Error */
     export class ExistsError extends _ExistsError {};
+
+    
+    /** Routes Object Promises*/
+    const routes = new Map<string, Promise<Route>>();
 }
 
 export default Data;

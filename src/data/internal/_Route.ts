@@ -15,12 +15,6 @@ export default class _Route extends _DataAbstract {
         this.directions = new Map<number, Promise<Data.Direction>>();
         this.vehicles = new Map<string, Promise<Data.Vehicle>>();
     }
-
-    /** Loads the whole route */
-    public async load() : Promise<void> {
-        await this.loadVehicles();
-        await this.loadDirections();
-    }
     
     /** Loads the vehicles in this route */
     public async loadVehicles() : Promise<void> {
