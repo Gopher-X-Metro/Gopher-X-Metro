@@ -44,16 +44,6 @@ namespace Resources {
     }
     
     /**
-     * Gets the running service ids of a route as an Array
-     * @param routeId ID of the route
-     */
-    export async function getServiceIds(routeId: string) : Promise<Set<string>> {
-        return new Set(await (await Static.getTrips(routeId))
-        .filter((trip: { service_id: string; }) => Static.isServiceRunning(trip.service_id))
-        .map((trip: { service_id: any; }) => trip.service_id));
-    }
-
-    /**
      * Gets the shape ids of a route as an Array
      * @param routeId ID of the route
      */
@@ -61,16 +51,6 @@ namespace Resources {
         return new Set(await (await Static.getTrips(routeId))
         .filter((trip: { service_id: string; }) => Static.isServiceRunning(trip.service_id))
         .map((trip: { shape_id: any; }) => trip.shape_id));
-    }
-
-    /**
-     * Gets the trip ids of a route as a Set
-     * @param routeId ID of the route
-     */
-    export async function getTripIds(routeId: string) : Promise<Set<string>> {
-        return new Set(await (await Static.getTrips(routeId))
-        .filter((trip: { service_id: string; }) => Static.isServiceRunning(trip.service_id))
-        .map((trip: { trip_id: any; }) => trip.trip_id));
     }
 
     /**
@@ -85,25 +65,6 @@ namespace Resources {
         .map((shape: {shape_pt_lat: any, shape_pt_lon: any}) => new google.maps.LatLng(Number(shape.shape_pt_lat), Number(shape.shape_pt_lon)))
 
         return shapeLocations
-    }
-
-    /**
-     * Gets the stop IDs of a trip
-     * @param routeId ID of the trip
-     */
-    export async function getStopsInfo(routeId: string) : Promise<Array<any> | null> {
-        const stopsInfo = new Array<any>();
-
-        const directions = await Realtime.getDirections(routeId);
-
-        // If there are no directions, return null
-        if (!Array.isArray(directions) || !directions.length) return null;
-        
-        for (const direction of (await Realtime.getDirections(routeId)))
-            for (const stop of (await Realtime.getStops(routeId, direction.direction_id)))
-                stopsInfo.push(await Realtime.getStopInfo(routeId, direction.direction_id, stop.place_code))
-
-        return stopsInfo;
     }
     
     /**
@@ -192,6 +153,51 @@ namespace Resources {
     };
 
     const colors = new Map<string, string>();
+
+    /* Depreciated */
+
+
+    /**
+     * Gets the trip ids of a route as a Set
+     * @param routeId ID of the route
+     * @deprecated
+     */
+    export async function getTripIds(routeId: string) : Promise<Set<string>> {
+        return new Set(await (await Static.getTrips(routeId))
+        .filter((trip: { service_id: string; }) => Static.isServiceRunning(trip.service_id))
+        .map((trip: { trip_id: any; }) => trip.trip_id));
+    }
+    /**
+     * Gets the running service ids of a route as an Array
+     * @param routeId ID of the route
+     * @deprecated
+     */
+    export async function getServiceIds(routeId: string) : Promise<Set<string>> {
+        return new Set(await (await Static.getTrips(routeId))
+        .filter((trip: { service_id: string; }) => Static.isServiceRunning(trip.service_id))
+        .map((trip: { service_id: any; }) => trip.service_id));
+    }
+    /**
+     * Gets the stop IDs of a trip
+     * @param routeId ID of the trip
+     * @deprecated
+     */
+    export async function getStopsInfo(routeId: string) : Promise<Array<any> | null> {
+        const stopsInfo = new Array<any>();
+
+        const directions = await Realtime.getDirections(routeId);
+
+        // If there are no directions, return null
+        if (!Array.isArray(directions) || !directions.length) return null;
+        
+        for (const direction of (await Realtime.getDirections(routeId)))
+            for (const stop of (await Realtime.getStops(routeId, direction.direction_id)))
+                stopsInfo.push(await Realtime.getStopInfo(routeId, direction.direction_id, stop.place_code))
+
+        return stopsInfo;
+    }
+
+    
 }
 
 export default Resources;
