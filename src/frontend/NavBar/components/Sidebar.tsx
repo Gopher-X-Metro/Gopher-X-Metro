@@ -4,6 +4,7 @@ import { Icon } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import URL from 'src/backend/URL.ts';
 import SearchIcon from "src/img/CustomBus.png";
+import { BsBookmarkStar} from "react-icons/bs";
 import SearchFeature from 'src/frontend/NavBar/components/SearchFeature.tsx';
 import Schedule from 'src/backend/Schedule.ts';
 
@@ -78,12 +79,16 @@ export default function SideBar() {
                     
                         <div className='tab-container'>
                             <ul className='d-flex'>
-                            <li className='tab-button' onClick = {() => updateToggle(1)}>Main</li>
-                            <li className='tab-button' onClick = {() => updateToggle(2)}>Favorites</li>
+                            <li className='tab-button-left' onClick = {() => updateToggle(1)}>Main</li>
+                            <li className='tab-button-right' onClick = {() => updateToggle(2)}>Favorites</li>
+                            <li className= "bookmark-css"> <BsBookmarkStar/>  </li>
                             </ul>
+                           
+                           
                         </div>
+                     
                    
-                
+                <BsBookmarkStar/> 
                  
             <div className={toggle === 1 ? 'tab-content' : 'content'}>
 

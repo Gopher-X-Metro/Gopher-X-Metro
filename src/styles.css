@@ -77,7 +77,7 @@ div#title-bar > h1 > .city {
   z-index: 1;
   top: 10%;
   left: 0;
-  background-color: #f9f9f9;
+  background-color: #F0FFFF;
   overflow-x: clip;
   padding-top: 15px;
   transition: width 0.5s ease;
@@ -89,7 +89,7 @@ div#title-bar > h1 > .city {
 
 /* WebKit-based browsers (Chrome, Safari, Edge) sidebar scrollbar */
 .sidebar::-webkit-scrollbar {
-  width:  8px; 
+  width: 8px; 
 }
 
 .sidebar::-webkit-scrollbar-thumb {
@@ -409,11 +409,10 @@ padding: 1px 3px;
 .tab-container{
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
   width: 100%;
   position: absolute;
   top:0;
-
-  box-sizing: border-box;
 }
 
 .tab-container ul.d-flex {
@@ -421,28 +420,81 @@ padding: 1px 3px;
   padding: 0;
   margin: 0;
   list-style-type: none; /* Remove default list styling */
+  width: 290px;
+  background-color: #7a0019;
+  border-bottom: solid black;
+  border-bottom-width: 2px;
+  border-top-width: 2px;
+  border-top: solid black;
 }
 
-.tab-container li.tab-button {
+.tab-container li.tab-button-right {
   width: 100%;
   border:none;
   transition: background-color 0.3s ease, color 0.3s ease;
-  color: white;
-  text-align: center;
-  background-color: gray;
+  color: #F0FFFF;
+  text-align: center;  
   box-sizing: border-box;
   white-space: nowrap;
+  position: static !important;
+  border-width: 5px;
+  border-color: solid black;
+  border-left: solid black;
+  font-family: 'Neutraface Text', sans-serif;
+  font-size: 20px;
+  text-decoration: underline;
+  text-shadow: 5px 5px 5px black;
 }
 
-.tab-container li.tab-button:hover{
+.tab-container li.tab-button-left {
+  width: 100%;
+  border:none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  color: #F0FFFF;
+  font-family: 'Neutraface Text', sans-serif;
+  font-size: 20px;
+  text-align: center;
+  box-sizing: border-box;
+  white-space: nowrap;
+  position: static !important;
+  border-width: 5px;
+  border-color: solid black;
+  text-decoration: underline;
+  text-shadow: 5px 5px 5px black;
+}
+
+.tab-container li.tab-button-right:hover {
   color: black;
   cursor: pointer;
-  background-color: white;
+  background-color: rgb(255, 204, 51);
 }
 
-.content{  /* Hides the second tab content originally */
-  display: none;
+.tab-container li.tab-button-left:hover {
+  color: black;
+  cursor: pointer;
+  background-color: rgb(255, 204, 51);
+}
 
+.bookmark-css{
+  align-items: center;
+  color: white;
+  font-size: 30px;
+  padding-left: 7px;
+  padding-right:7px;
+  box-sizing: border-box;
+  display: flex;
+  border-left: solid black;
+  height:fit-content;
+}
+
+.bookmark-css:hover{
+  color: black;
+  cursor: pointer;
+  background-color: rgb(255, 204, 51);
+}
+
+.content{  /* Hides the favorite tab content originally */
+  display: none;
 }
 
 .tab-content {
