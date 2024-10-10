@@ -75,7 +75,7 @@ namespace Routes {
     {
         // Updates Vehicle Data
         for (const routeId of URL.getRoutes())
-            await Data.Vehicle.reload(routeId);
+            Data.Vehicle.reload(routeId);
 
         // Updates Vehicles
         URL.getRoutes()?.forEach(async routeId => {
@@ -127,7 +127,7 @@ namespace Routes {
     export async function refreshStops() {
         // Updates Stop Data
         for (const routeId in URL.getRoutes())
-            await Data.Departure.reload(routeId);
+            Data.Departure.reload(routeId);
 
         // Updates Stops
         URL.getRoutes()?.forEach(async routeId => {
@@ -211,6 +211,7 @@ namespace Routes {
      */
     async function loadRoute(routeId: string) {
         Data.Route.load(routeId);
+        // Data.Stop.all(routeId).then(thing => console.log(thing));
 
         const route = new Route(routeId, map);
         routes.set(routeId, route);
