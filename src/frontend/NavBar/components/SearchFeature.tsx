@@ -45,12 +45,6 @@ namespace SearchFeature {
         }
     }
 
-    function Clear_all(){
-        var test = URL.getRoutes(); 
-        console.log(test);
-
-        
-    }
 }
 
 export default SearchFeature
