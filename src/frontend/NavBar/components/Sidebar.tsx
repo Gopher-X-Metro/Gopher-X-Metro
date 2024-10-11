@@ -82,6 +82,7 @@ export default function SideBar() {
                             <li className='tab-button-left' onClick = {() => updateToggle(1)}>Routes</li>
                             <li className='tab-button-right' onClick = {() => updateToggle(2)}>Favorites</li>
                             </ul>
+                            
                            
                            
                         </div>
@@ -91,6 +92,7 @@ export default function SideBar() {
                  
             <div className={toggle === 1 ? 'tab-content' : 'content'}>
 
+            {/* <button className='Clear-all' onClick={SearchFeature.Clear_all}>Clear Routes</button> */}
 
                 <div className="nav-header">
                     <h3>Select Routes</h3>

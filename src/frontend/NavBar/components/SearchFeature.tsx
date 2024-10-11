@@ -44,6 +44,13 @@ namespace SearchFeature {
             errorElement.innerHTML = '';
         }
     }
+
+    function Clear_all(){
+        var test = URL.getRoutes(); 
+        console.log(test);
+
+        
+    }
 }
 
 export default SearchFeature

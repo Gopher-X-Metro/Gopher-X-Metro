@@ -81,7 +81,7 @@ div#title-bar > h1 > .city {
   overflow-x: clip;
   padding-top: 15px;
   transition: width 0.5s ease;
-  overflow-y: scroll;
+  overflow-y: hidden;
   scrollbar-color:  black; /* only works for firefox */
   scrollbar-width: thin;
   padding:0;
@@ -479,6 +479,39 @@ padding: 1px 3px;
   background-color: rgb(255, 204, 51);
 }
 
+.tab-container li.tab-button-right:active{
+  transform: scale(0.95);
+}
+
+.tab-container li.tab-button-left:active{
+  transform: scale(0.95);
+}
+
+.Clear-all:active{
+transform: none;
+}
+
+.Clear-all:hover{
+  cursor: pointer;
+  color: rgb(255, 204, 51);
+  }
+
+.Clear-all{
+  border: 2px solid black;
+  width: 100%;
+  text-align: center;
+  padding-top: 15px;
+  text-decoration: underline;
+  width: 290px;
+  max-width:290px;
+  box-sizing: border-box;
+  white-space: nowrap;
+  position: static !important;
+  
+  }
+
+/* Bookmark css*/
+
 .bookmark-css{
   align-items: center;
   color: #666666;
@@ -504,6 +537,7 @@ padding: 1px 3px;
   transform: scale(0.95);
 }
 
+/*Controls tab switching */ 
 .content{  /* Hides the favorite tab content originally */
   display: none;
 }
