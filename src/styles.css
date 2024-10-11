@@ -85,6 +85,9 @@ div#title-bar > h1 > .city {
   scrollbar-color:  black; /* only works for firefox */
   scrollbar-width: thin;
   padding:0;
+  border-left: solid 2px black;
+  border-right: solid 2px black;
+  scrollbar-gutter: stable both-edges;
 }
 
 /* WebKit-based browsers (Chrome, Safari, Edge) sidebar scrollbar */
@@ -413,6 +416,7 @@ padding: 1px 3px;
   width: 100%;
   position: absolute;
   top:0;
+  z-index: 200;
 }
 
 .tab-container ul.d-flex {
@@ -477,20 +481,27 @@ padding: 1px 3px;
 
 .bookmark-css{
   align-items: center;
-  color: white;
+  color: #666666;
   font-size: 30px;
-  padding-left: 7px;
-  padding-right:7px;
   box-sizing: border-box;
   display: flex;
-  border-left: solid black;
   height:fit-content;
+  z-index: 10;
+  border: 2px solid white;
+  background-color: white;
+  bottom: 110px;
+  width: 40px;
+  padding-left: 2px;
+  padding-right: 2px;
 }
 
 .bookmark-css:hover{
   color: black;
   cursor: pointer;
-  background-color: rgb(255, 204, 51);
+}
+
+.bookmark-css:active{
+  transform: scale(0.95);
 }
 
 .content{  /* Hides the favorite tab content originally */

@@ -1,6 +1,6 @@
 import { Loader } from "@googlemaps/js-api-loader";
 import { useState, useEffect } from "react";
-
+import { BsBookmarkStar} from "react-icons/bs";
 import Resources from "src/backend/Resources";
 import Marker from "./components/Marker";
 import Routes from "./components/Routes";
@@ -44,8 +44,10 @@ export default function Map({ hidden, setPage }) {
             <NavBar setPage={setPage}/>
             <LoadingScreen hidden={mapLoaded}/>
             <input id="search-bar" className="controls" type="text"/>
-            <div id="map"/> 
-        </div>
+            <div id="map"/>
+            <button className= "bookmark-css absolute right-2.5"> <BsBookmarkStar size={30}/> </button>
+        </div> 
+            
     </>);
 }
 

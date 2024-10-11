@@ -79,9 +79,8 @@ export default function SideBar() {
                     
                         <div className='tab-container'>
                             <ul className='d-flex'>
-                            <li className='tab-button-left' onClick = {() => updateToggle(1)}>Main</li>
+                            <li className='tab-button-left' onClick = {() => updateToggle(1)}>Routes</li>
                             <li className='tab-button-right' onClick = {() => updateToggle(2)}>Favorites</li>
-                            <li className= "bookmark-css"> <BsBookmarkStar/>  </li>
                             </ul>
                            
                            
