@@ -20,7 +20,6 @@ function About({ hidden, setPage }) {
                         The transit pass allows students to have access to 
                         the city buses and Metro green and blue lines. 
                     </p>
-                    <p className="made-with">Made with Bootstrap v5.2.3</p>
 
                     {/* Feedback Section */}
                     <div className="feedback-section mt-4">
