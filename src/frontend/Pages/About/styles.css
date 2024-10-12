@@ -91,98 +91,112 @@
     scroll-behavior: smooth;
   }
 }
-  /* About page beautification */
-  body, .about-page {
-    font-family: 'Poppins', sans-serif;
-    font-size: 18px;
-    line-height: 1.6;
+/* About page beautification */
+body, .about-page {
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  line-height: 1.4; /* Adjusted for compactness */
 }
 
 /* Title Styling */
 .title {
-    font-size: 2.5rem;
-    font-weight: 600;
-    color: #333;
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #333;
 }
 
 /* Highlight link-containing paragraphs */
 .highlight-text {
-    background-color: #ffffcc; /* Soft yellow highlight */
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 1.1rem;
+  background-color: #ffffcc; /* Soft yellow highlight */
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 1.1rem;
 }
 
 a {
-    color: #007bff;
-    text-decoration: none;
+  color: #007bff;
+  text-decoration: none;
 }
 
 a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 /* Feedback Section */
 .feedback-section h2 {
-    font-size: 2rem;
+  font-size: 2rem;
 }
 
 .feedback-section p {
-    font-size: 1.1rem;
+  font-size: 1.1rem;
 }
 
 /* "Made with" paragraph styling */
 .made-with {
-    font-size: 1.1rem;
-    color: #999;
+  font-size: 1.1rem;
+  color: #999;
 }
 
 /* FAQ Section */
 .faq-title {
-    font-size: 2.5rem; /* Larger title for FAQs */
-    margin-bottom: 2rem;
+  font-size: 2.5rem; /* Larger title for FAQs */
+  margin-bottom: 1.5rem; /* Reduced margin for compactness */
 }
 
 .faq-item {
-    margin-bottom: 2rem; /* Space between each Q&A pair */
+  margin-bottom: 0.5rem; /* Reduced space between each Q&A pair */
 }
 
 .question {
-    font-size: 1.25rem; /* Smaller size for questions */
-    font-weight: 600; /* Bold question */
-    color: #333;
+  font-size: 1.25rem; /* Smaller size for questions */
+  font-weight: 600; /* Bold question */
+  color: #333;
 }
 
 .answer {
-    font-size: 1.1rem; /* Smaller size for answers */
-    color: #555;
+  font-size: 1.1rem; /* Smaller size for answers */
+  color: #555;
 }
 
 /* Highlight for "this form" link */
 .highlight-link {
-    color: #007bff; 
-    font-weight: bold;
-    text-decoration: underline;
+  color: #007bff; 
+  font-weight: bold;
+  text-decoration: underline;
 }
 
 .highlight-link:hover {
-    color: #0056b3; /* Darker blue on hover */
+  color: #0056b3; /* Darker blue on hover */
 }
 
 /* Adjust spacing between sections */
 .mt-4 {
-    margin-top: 2rem;
+  margin-top: 1rem; /* Reduced margin */
 }
 
 .mt-5 {
-    margin-top: 3rem;
+  margin-top: 2rem; /* Reduced margin */
 }
 
 /* Additional spacing at the bottom of the page */
 .page-end-spacing {
-  margin-bottom: 100px; 
+  margin-bottom: 50px; /* Reduced for a more compact look */
 }
 
+/* Add padding at the bottom of the container */
+.container {
+  padding-bottom: 50px; /* Reduced padding for a more compact bottom space */
+}
+
+/* Optional: Adjust FAQ Section and Text if needed */
+.faq-title, .question, .answer {
+  margin-bottom: 5px; /* Adjust margins to keep the text compact */
+}
+
+/* Adjust margins of all text elements for consistency */
+h1, h2, h4, p {
+  margin: 5px 0; /* Adjusted for more compact spacing */
+}
 
 body {
   margin: 0;
