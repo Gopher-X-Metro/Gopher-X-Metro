@@ -1,5 +1,7 @@
 import React from "react"
 import { Heading, Box } from "@chakra-ui/react"
+import Routes from "../../Pages/Map/components/Routes"
+
 
 
 export default function TitleBar(){
@@ -9,9 +11,12 @@ export default function TitleBar(){
         'WebkitBackgroundClip': 'text',
         'WebkitTextFillColor': 'transparent',
     }
+    const handleTitleBarClick = () => {
+        Routes.refresh();
+    };
 
     return(
-            <Box>
+            <Box onClick ={handleTitleBarClick}>
                 <Heading display='inline-block' color='#FFCC33' margin='1'>Gopher </Heading>
                 <Heading display='inline-block' margin='1' style={xStyle}> X </Heading>
                 <Heading display='inline-block' color ='#0053A0' margin='1'> Metro </Heading>

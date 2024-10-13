@@ -29,7 +29,7 @@ export default function NavBar({ setPage }) {
             <HStack padding="2%" gap="3%" width="100%" className="items-center justify-content">
                 <SideBar />
 
-                <Box onClick ={handleTitleBarClick}>
+                <Box>
                     <Link to="/" >
                         <TitleBar />
                     </Link>
