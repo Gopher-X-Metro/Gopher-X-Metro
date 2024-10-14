@@ -32,7 +32,7 @@ function About({ hidden, setPage }) {
                         <h2 className="faq-title"><strong>Frequently Asked Questions</strong></h2>
                         <div className="faq-item">
                             <h4 className="question">1. What routes am I able to track?</h4>
-                            <p className="answer">You can track bus times and the current location of a bus! Our statistics update every thirty seconds, making sure your information is always up to date.</p>
+                            <p className="answer">You can track bus times and the current location of any Campus bus, Metro bus, or lightrail! Our statistics update every thirty seconds, making sure your information is always up to date.</p>
                         </div>
                         <div className="faq-item">
                             <h4 className="question">2. How does the search function work?</h4>
