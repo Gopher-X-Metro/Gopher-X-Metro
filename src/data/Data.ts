@@ -5,9 +5,13 @@ import _Place from "./internal/_Place";
 import _Vehicle from "./internal/_Vehicle";
 import _Departure from "./internal/_Departure";
 import _ExistsError from "./internal/_ExistsError";
+import _Schedule from "./schedule/_Schedule";
 
 /** Data Access Object (DAO) */
 namespace Data {
+    export class Schedule extends _Schedule {
+        
+    };
     /** Route Data and Route Access */
     export class Route extends _Route {
         /**
@@ -374,6 +378,9 @@ namespace Data {
     
     /** Routes Object Promises*/
     const routes = new Map<string, Promise<Route>>();
+
+    /** Schedule Object */
+    const schedule = new Schedule();
 }
 
 export default Data;
