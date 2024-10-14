@@ -1,4 +1,4 @@
-a/** Builds the schedule objects */
+/** Builds the schedule objects */
 export default abstract class _ScheduleAbstract {
     /**
      * Constructor for _ScheduleAbstract class
