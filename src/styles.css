@@ -19,7 +19,8 @@ body  {
 
 div#map
 {
-  height: 100%;
+  top: 10%;
+  height: 90%;
   width: 100%;
 }
 
