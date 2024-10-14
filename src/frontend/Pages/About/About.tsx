@@ -36,15 +36,35 @@ function About({ hidden, setPage }) {
                         </div>
                         <div className="faq-item">
                             <h4 className="question">2. How does the search function work?</h4>
-                            <p className="answer">By searching a specific location, you can find the nearest bus stops and see the buses that pass by that given location. From there, you can plan your route based on the available stops near the place you would like to go.</p>
+                            <p className="answer">By searching a specific location, you can find the nearest bus stops and see the buses that pass by that given location. From there, you can plan your route based on the available stops near the place you would like to go.
+                            </p>
                         </div>
                         <div className="faq-item">
                             <h4 className="question">3. Does this work outside of UMN?</h4>
                             <p className="answer">Yes! The Gopher-X-Metro Transit app works throughout the entire Twin Cities Metropolitan Area. Though we cater our app towards use on the UMN campus, the transit app is highly applicable for travel throughout the Twin Cities
                             </p>
-                            <br />
-                            <br />
                         </div>
+
+                        <div className="faq-item">
+                            <h4 className="question">4. Can I favorite specific routes?</h4>
+                            <p className="answer">By hitting the star on the map, you can put any route you want into the favorites tab. This includes routes that are not automatically listed in the routes tab. 
+                            </p>
+                        </div>
+
+                        <div className="faq-item">
+                            <h4 className="question">5. How can I add routes that are not already on the Navigation Bar?</h4>
+                            <p className="answer"> At the bottom of the routes tab, there is a small search bar. Search any route that goes through the Twin Cities Metropolitan Area and it will appear on your map!
+                            </p>
+                        </div>
+
+                        <div className="faq-item">
+                            <h4 className="question">6. Can I see which stop my bus is heading to next?</h4>
+                            <p className="answer"> You can see the next stop of your bus by tapping the bus icon for the bus you are currently riding. A popup will then appear with information including the next stop your bus is heading to. 
+                            </p>
+                        </div>
+                        <br/>
+                        <br/>
+
                     </div>
                 </div>
             </div>
