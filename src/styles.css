@@ -70,6 +70,12 @@ div#title-bar > h1 > .city {
   color: rgb(0, 83, 160);
 }
 
+.tab-container {
+  width: 100%;
+  height: 10px;
+  background-color: red;
+}
+
 /* The sidebar container */
 .sidebar {
   height: 90%;
@@ -80,7 +86,7 @@ div#title-bar > h1 > .city {
   left: 0;
   background-color: #f9f9f9;
   overflow-x: clip;
-  padding-top: 15px;
+  padding-top: 0;
   transition: 0.5s;
   overflow-y: scroll;
   scrollbar-color:  black; /* only works for firefox */

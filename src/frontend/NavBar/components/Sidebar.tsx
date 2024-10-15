@@ -70,29 +70,39 @@ export default function SideBar() {
             </div>
 
             <div id="nav-bar" className={sidebarOpen ? 'sidebar open' : 'sidebar'}>
-                <div className="nav-header">
-                    <h3>Select Routes</h3>
-                    <div className="underline"></div>
-                </div>
-                
                 <div className='sidebar-content flex flex-col items-center'>
-                    {Array.from(routes.keys()).map(routeId => (<RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)}/>))}
-                </div>
+                    <div className="tab-container">
+                        <div className='routes-tab'>
 
-                <div className = "nav-header"> 
-                    <h1> Search Routes </h1>
-                    <div className="underline"></div>
-                    <br></br>
-                </div> 
-                
-                <div className = "searchContainer">
-                    <input type = "text" id = "search_route" placeholder = "902"></input>
-                    <button onClick = {SearchFeature.searchRoute} id = "searchButton">
-                        <img className = "busImg" height = "50" alt = "error" width = "50" src={SearchIcon}></img>
-                    </button>
+                        </div>
+                        <div className='favorite-tab'>
+
+                        </div>
+                    </div>
+
+                    <div className="nav-header">
+                        <h3>Select Routes</h3>
+                        <div className="underline"></div>
+                    </div>
+
+                    {Array.from(routes.keys()).map(routeId => (<RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)}/>))}
+
+                    <div className = "nav-header"> 
+                        <h1> Search Routes </h1>
+                        <div className="underline"></div>
+                        <br></br>
+                    </div> 
+                    
+                    <div className = "searchContainer">
+                        <input type = "text" id = "search_route" placeholder = "902"></input>
+                        <button onClick = {SearchFeature.searchRoute} id = "searchButton">
+                            <img className = "busImg" height = "50" alt = "error" width = "50" src={SearchIcon}></img>
+                        </button>
+                    </div>
+
+                    <div className= "error_text" id = 'error_text'></div>
                 </div>
                 
-                <div className= "error_text" id = 'error_text'></div>
             </div>
         </>
     )
