@@ -73,7 +73,6 @@ div#title-bar > h1 > .city {
 .tab-container {
   width: 100%;
   height: 10px;
-  background-color: red;
 }
 
 /* The sidebar container */
@@ -84,7 +83,7 @@ div#title-bar > h1 > .city {
   z-index: 1;
   top: 10%;
   left: 0;
-  background-color: #f9f9f9;
+  background-color: #F0FFFF;
   overflow-x: clip;
   padding-top: 0;
   transition: 0.5s;
@@ -404,4 +403,34 @@ padding: 1px 3px;
   cursor: pointer;
   border: none;
   padding-right: 10px;
+}
+
+/*  CSS for tab containers */
+
+.tab-container-sidebar{
+  display: flex;
+  background-color: #7a0019;
+  text-align: center;
+  width: 100%;
+  border: 2px solid black;
+  
+  
+}
+
+.routes-tab{
+  color: #F0FFFF;
+  font-family: 'Neutraface Text', sans-serif;
+  font-size: 20px;
+  text-decoration: underline;
+  text-align: center;
+  width: 100%;
+}
+
+.favorite-tab{
+  color: #F0FFFF;
+  font-family: 'Neutraface Text', sans-serif;
+  font-size: 20px;
+  text-decoration: underline;
+  text-align: center;
+  width: 100%;
 }

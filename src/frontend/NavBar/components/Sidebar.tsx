@@ -4,13 +4,18 @@ import { Icon } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import URL from 'src/backend/URL.ts';
 import SearchIcon from "src/img/CustomBus.png";
+import { BsBookmarkStar} from "react-icons/bs";
 import SearchFeature from 'src/frontend/NavBar/components/SearchFeature.tsx';
 import Schedule from 'src/backend/Schedule.ts';
+import Clearall from 'src/frontend/NavBar/components/Clearall.tsx';
 
 export default function SideBar() {
     const [_, forceReload] = useState(0);
     const [routes, setRoutes] = useState(new Map<string, string>());
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [toggle, setToggle] = useState(1); //switching between tabs
+
+    const updateToggle = (id) => {setToggle(id);};
 
     routes.set("121", "121 Campus Connector");
     routes.set("122", "122 University Avenue Circulator");
@@ -71,14 +76,15 @@ export default function SideBar() {
 
             <div id="nav-bar" className={sidebarOpen ? 'sidebar open' : 'sidebar'}>
                 <div className='sidebar-content flex flex-col items-center'>
-                    <div className="tab-container">
-                        <div className='routes-tab'>
-
-                        </div>
-                        <div className='favorite-tab'>
-
-                        </div>
+                    <div className="tab-container-sidebar">
+                            <button className = "routes-tab" onClick = {() => updateToggle(1)}>Routes</button>
+                            <button className='favorite-tab' onClick = {() => updateToggle(2)}>Favorites</button>
                     </div>
+
+
+                    <div className={toggle === 1 ? 'tab-content' : 'content'}>
+
+                    <button className='Clear-all-btn' onClick={Clearall.Clear_all}>Clear Routes</button> 
 
                     <div className="nav-header">
                         <h3>Select Routes</h3>
@@ -102,7 +108,17 @@ export default function SideBar() {
 
                     <div className= "error_text" id = 'error_text'></div>
                 </div>
-                
+
+                              {/* content for the favorite tab */}
+            <div className={toggle === 2 ? 'tab-content' : 'content'}>
+                <div className='favorite-tab-content'>
+
+                    <div className='sidebar-content flex flex-col items-center'>
+                       <div id="Favorite-routeButton"></div>
+                    </div>
+                </div>
+            </div>
+                </div>
             </div>
         </>
     )
