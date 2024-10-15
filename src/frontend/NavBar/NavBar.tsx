@@ -11,8 +11,6 @@ import TitleBar from './components/TitleBar.tsx';
 import SideBar from './components/Sidebar.tsx';
 import ResponsiveDropdown from './components/MobileDropdown.tsx';
 
-
-
 const handleTitleBarClick = () => {
     Routes.refresh();
 };
@@ -29,7 +27,7 @@ export default function NavBar({ setPage }) {
             <HStack padding="2%" gap="3%" width="100%" className="items-center justify-content">
                 <SideBar />
 
-                <Box>
+                <Box onClick ={handleTitleBarClick}>
                     <Link to="/" >
                         <TitleBar />
                     </Link>
