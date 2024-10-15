@@ -2,6 +2,7 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+/* Overall */
 
 html {
   padding: 0;
@@ -11,52 +12,54 @@ html {
   
 }
 
-body  {
-    margin: 0;
-    height: 100%;
-    padding: 0;  
+body {
+  margin: 0;
+  padding: 0;  
+  height: 100%;
 }
 
-div#map
-{
+#root {
+  margin: 0;
+  height: 100%;
+}
+
+#map {
+  position: relative;
   top: 10%;
   height: 90%;
   width: 100%;
 }
 
-div#root {
-    margin: 0vh;
-    height: 100%;
-}
+/* Title Bar */
 
 #title-bar {
   display: flex;
   height: 10%;
   background-color: #7a0019;
-  margin: 0vh;
-  padding: 0vh;
+  margin: 0;
+  padding: 0;
   list-style: none;
   top: 0;
   position:fixed; /** prevents title bar from moving when sidebar is active */
   width: 100%;
-  z-index:1001; /** makes sure that the titlebar stays on top */ 
+  z-index: 1001; /** makes sure that the titlebar stays on top */ 
 }
 
-div#title-bar > h1 
+#title-bar > h1 
 {
   text-align: center;
   font-size: 20px;
-  margin-left: 7vh;
+  margin-left: 7%;
   font-family: 'Neutraface Text', sans-serif;
   padding: 0.75em;
   color: whitesmoke;
 }
 
-div#title-bar > h1 > .gopher {
+#title-bar > h1 > .gopher {
   color: rgb(255, 204, 51);
 }
 
-div#title-bar > h1 > .X {
+#title-bar > h1 > .X {
   display: inline-block;
   line-height: 1em;
   font-size: 24px;
@@ -66,11 +69,11 @@ div#title-bar > h1 > .X {
   -webkit-text-fill-color: transparent;
 }
 
-div#title-bar > h1 > .city {
+#title-bar > h1 > .city {
   color: rgb(0, 83, 160);
 }
 
-/* The sidebar container */
+/* Sidebar */
 .sidebar {
   height: 90%;
   width: 0px;
@@ -127,9 +130,7 @@ div#title-bar > h1 > .city {
   color: #a71010;
 } */
 
-/* * sidebar scrollbar */ 
-
-
+/* Sidebar Scrollbar */ 
 
 .sidebar-content button {
   background-color: transparent;
@@ -215,13 +216,14 @@ div#title-bar > h1 > .city {
   background-color: #003DA5; /* Color for route "901" */
 }
   
-  /* The button used to open the sidebar */
-  .openbtn {
-    cursor: pointer;
-    background-color: transparent;
-    color: white;
-    border: none;
-  }
+/* The button used to open the sidebar */
+.openbtn {
+  cursor: pointer;
+  background-color: transparent;
+  color: white;
+  border: none;
+}
+
 .PageButton {
     position: absolute;
     top: 0;
@@ -239,11 +241,11 @@ div#title-bar > h1 > .city {
     cursor: pointer;
 }
 
-  .openbtn:hover {
-    background-color: transparent;
-  }
+.openbtn:hover {
+  background-color: transparent;
+}
 
-  /* Styling for the "Select Routes" header */
+/* Styling for the "Select Routes" header */
 .nav-header {
   text-align: center;
   margin-top: 1px;
@@ -264,31 +266,26 @@ div#title-bar > h1 > .city {
   margin: 0 auto;
 }
 
-
-
-  /* Styling for LoadingScreen.tsx */
-  @keyframes rotate {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
+/* Styling for LoadingScreen.tsx */
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
   }
-  
-  .rotate-wheel {
-    animation: rotate 0.5s linear infinite;
+  100% {
+    transform: rotate(360deg);
   }
+}
 
-
-
+.rotate-wheel {
+  animation: rotate 0.5s linear infinite;
+}
 
 /* styling for sidebar search feature */
 
-div#search_bar{
+#search_bar{
   text-align: center;
   font-size: 20px;
-  margin-left: 7vh;
+  margin-left: 7%;
   font-family: 'Neutraface Text', sans-serif;
   color: whitesmoke;
 }
@@ -364,7 +361,7 @@ padding: 1px 3px;
   cursor: pointer;
 }
 
-.controls {
+.search-controls {
   background-color: #fff;
   border-radius: 2px;
   border: 1px solid transparent;
@@ -380,6 +377,24 @@ padding: 1px 3px;
   padding: 0 11px 0 13px;
   text-overflow: ellipsis;
   width: 400px;
+}
+
+.search-controls-mobile {
+  background-color: #fff;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+  font-family: Roboto;
+  font-size: 15px;
+  font-weight: 300;
+  height: 29px;
+  margin-left: 17px;
+  margin-top: 10px;
+  outline: none;
+  padding: 0 11px 0 13px;
+  text-overflow: ellipsis;
+  width: 100px;
 }
 
 .inactive-route-popup {

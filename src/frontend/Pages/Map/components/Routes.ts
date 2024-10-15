@@ -186,8 +186,6 @@ namespace Routes {
                                 if ((await s[1])?.getId() !== properties.stop_id)
                                     (await s[1])?.infoWindow?.setVisible(false);
                         });
-
-                        refreshDepartures(stop);
                     } else stop = await stops.get(properties.stop_id);
                 }
 
