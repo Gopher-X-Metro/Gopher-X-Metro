@@ -434,10 +434,12 @@ padding: 1px 3px;
   padding: 0;
   margin: 0;
   list-style-type: none; /* Remove default list styling */
-  width: 290px;
+  width: 100%;
   background-color: #7a0019;
-  border:2px solid black;
+  border-top: 2px solid black;
+  border-bottom: 2px solid black;
   border-left:none;
+
 }
 
 .tab-container li.tab-button-right {

@@ -44,7 +44,7 @@ export default function Map({ hidden, setPage }) {
             <LoadingScreen hidden={mapLoaded}/>
             <input id="search-bar" className="controls" type="text"/>
             <div id="map"/>
-            <button onClick={Bookmark_icon.AddRouteToFavorite} className="bookmark-css" > <BsBookmarkStar size={30}/> </button> 
+            <button onClick={Bookmark_icon.AddRouteToFavorite} className="bookmark-css" > <BsBookmarkStar size={30}/></button> 
         </div> 
             
     </>);
