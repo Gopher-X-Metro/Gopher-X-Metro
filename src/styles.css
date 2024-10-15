@@ -359,7 +359,8 @@ body {
   cursor: pointer;
 }
 
-#search-bar {
+/* Location Search Bar */
+#location-search-bar {
   background-color: #fff;
   border-radius: 2px;
   border: 1px solid transparent;
@@ -374,18 +375,23 @@ body {
   text-overflow: ellipsis;
 }
 
-#search-bar.search-controls {
+#location-search-bar.location-search-bar {
   margin-left: 17px;
   margin-top: 10px;
   width: 400px;
 }
 
-#search-bar.search-controls.mobile {
+#location-search-bar.location-search-bar.mobile {
   margin-right: 100%;
   margin-bottom: 20%;
   width: 100%;
 }
 
+body.mobile .pac-container {
+  margin-top: -210px;
+}
+
+/* Center Button */
 #center-button {
   background: none rgb(255, 255, 255); 
   box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
@@ -404,8 +410,6 @@ body {
   top: 0px; 
   left: 0px;
 }
-
-/* Center Button */
 
 #center-button .icon{
   display: block;

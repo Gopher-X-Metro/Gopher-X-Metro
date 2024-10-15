@@ -5,12 +5,11 @@ import { useEffect, useState } from "react";
 import Resources from "src/backend/Resources";
 import Marker from "./components/Marker";
 import Routes from "./components/Routes";
-// import SearchBar from "src/frontend/NavBar/components/SearchBar";
-import SearchBar from "src/frontend/NavBar/components/SearchBar.tsx"
 
 import LoadingScreen from "./components/LoadingScreen";
 import NavBar from "src/frontend/NavBar/NavBar";
 import CenterButton from "src/frontend/NavBar/components/CenterButton";
+import LocationSearchBar from "src/frontend/NavBar/components/LocationSearchBar";
 
 const APIKey = process.env.REACT_APP_API_KEY; // Comes from the .env.local file, just for security. Won't appear in main -- all api keys should be added to Vercel console. 
 const UMNLocation = { lat: 44.97369560732433, lng: -93.2317259515601 };
@@ -52,7 +51,7 @@ export default function MapPage({ hidden, setPage, isMobile }) {
                 fullscreenControl={false}
                 mapTypeControl={false}
             > 
-                <SearchBar isMobile={isMobile}/>
+                <LocationSearchBar isMobile={isMobile}/>
                 <CenterButton/>
             </Map>
         </div>
@@ -62,10 +61,10 @@ export default function MapPage({ hidden, setPage, isMobile }) {
 /** Focus the map at a the UMN */
 export function centerMap(map: google.maps.Map | null) : void
 /** Focus the map at a specified location */
-export function centerMap(map: google.maps.Map | null, location: {lat: number, lng: number}) : void
+export function centerMap(map: google.maps.Map | null, location: {lat: number, lng: number} | google.maps.LatLng) : void
 /** Focus the map at a specific location and zoom */
-export function centerMap(map: google.maps.Map | null, location: {lat: number, lng: number}, zoom: number) : void
-export function centerMap(map: google.maps.Map | null, location?: {lat: number, lng: number}, zoom?: number) : void {
+export function centerMap(map: google.maps.Map | null, location: {lat: number, lng: number} | google.maps.LatLng, zoom: number) : void
+export function centerMap(map: google.maps.Map | null, location?: {lat: number, lng: number} | google.maps.LatLng, zoom?: number) : void {
     if (map !== null) {
         map.setZoom((zoom === undefined) ? defaultZoom : zoom);
         map.panTo((location === undefined) ? UMNLocation : location);
