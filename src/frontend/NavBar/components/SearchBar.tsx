@@ -28,7 +28,7 @@ export default function SearchBar( { isMobile } ) {
     return (
         <>
             <MapControl position={isMobile ? ControlPosition.BOTTOM_CENTER : ControlPosition.TOP_CENTER}>
-                <input id="search-bar" className={"search-controls" + (isMobile ? "-mobile" : "")} type="text" ref={input}/>
+                <input id="search-bar" className={"search-controls" + (isMobile ? " mobile" : "")} type="text" ref={input}/>
             </MapControl>
         </>
     )
