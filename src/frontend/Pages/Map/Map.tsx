@@ -1,6 +1,6 @@
 import { Map, useMap } from "@vis.gl/react-google-maps";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Resources from "src/backend/Resources";
 import Marker from "./components/Marker";
@@ -21,15 +21,17 @@ export default function MapPage({ hidden, setPage, isMobile }) {
     const [mapLoaded, setMapLoaded] = useState(false);
     const map = useMap("map");
 
-    // Initalizes Map Component
-    if (map) {
-        const minimumDelay = 2000;
+    useEffect(() => {
+        // Initalizes Map Component
+        if (map) {
+            const minimumDelay = 2000;
 
-        const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+            const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-        // Initialize the map and wait for the minimum delay
-        Promise.all([initalize(map), delay(minimumDelay)]).then(() => setMapLoaded(true));
-    }
+            // Initialize the map and wait for the minimum delay
+            Promise.all([initalize(map), delay(minimumDelay)]).then(() => setMapLoaded(true));
+        }
+    }, [map])
 
     return (
     <>
@@ -55,7 +57,6 @@ export default function MapPage({ hidden, setPage, isMobile }) {
 }
 
 async function initalize( map: google.maps.Map ) {
-
     // Loads the Route's Resources
     await Resources.load()
     // Sets the Routes map to this map
