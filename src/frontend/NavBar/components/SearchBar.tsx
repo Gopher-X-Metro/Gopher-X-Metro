@@ -7,7 +7,7 @@ import Search from "src/frontend/Pages/Map/elements/Search";
 const searches = new Map<string, Search>();
 
 export default function SearchBar( { isMobile } ) {
-    const input = useRef(null);
+    const input = useRef<HTMLInputElement>(null);
     const map = useMap("map");
 
     if (input.current && map) {
@@ -15,13 +15,19 @@ export default function SearchBar( { isMobile } ) {
         const geocoder = new google.maps.Geocoder();
 
         autocomplete.bindTo("bounds", map);
-     
         autocomplete.addListener("place_changed", () => onPlaceChange(map, autocomplete, geocoder));
+        
+        input.current.addEventListener("keypress", () =>{
+            const autocompleteDropdowns = document.querySelectorAll('.pac-container');
+            for (const dropdown of autocompleteDropdowns)
+                if (dropdown)
+                    (dropdown as HTMLDivElement).style.marginTop = (isMobile ? "-210px" : "0")
+        })
     }
 
     return (
         <>
-            <MapControl position={ControlPosition.TOP_CENTER}>
+            <MapControl position={isMobile ? ControlPosition.BOTTOM_CENTER : ControlPosition.TOP_CENTER}>
                 <input id="search-bar" className={"search-controls" + (isMobile ? "-mobile" : "")} type="text" ref={input}/>
             </MapControl>
         </>

@@ -46,6 +46,7 @@ export default function MapPage({ hidden, setPage, isMobile }) {
                 defaultZoom={defaultZoom}
                 gestureHandling={'greedy'}
                 disableDefaultUI={true}
+                zoomControl={true}
                 streetViewControl={false}
                 fullscreenControl={false}
                 mapTypeControl={false}
