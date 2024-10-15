@@ -290,7 +290,6 @@ body {
   color: whitesmoke;
 }
 
-
 #search_route{
   display: inline-block;
   vertical-align: top;
@@ -305,28 +304,27 @@ body {
 }
 
 .searchContainer input {
-border: 2px solid;
-border-radius: 100px;
-padding: 1rem 2rem;
-max-height:100%;
-height: 8px;
-width: 100%;
-text-align: center;
-margin: 0 auto;
-margin-left: 30px;
-background-color: rgb(226, 226, 226);
-
+  border: 2px solid;
+  border-radius: 100px;
+  padding: 1rem 2rem;
+  max-height:100%;
+  height: 8px;
+  width: 100%;
+  text-align: center;
+  margin: 0 auto;
+  margin-left: 30px;
+  background-color: rgb(226, 226, 226);
 }
+
 .searchContainer button {
-position:absolute;
-border-radius: 100%;
-max-height: 100%;
-border: 2px solid;
-width: 40px;
-right: 0;
-padding: 1px 3px;
+  position:absolute;
+  border-radius: 100%;
+  max-height: 100%;
+  border: 2px solid;
+  width: 40px;
+  right: 0;
+  padding: 1px 3px;
 }
-
 
 #searchButton:hover{
   background-color: darkgrey;
@@ -361,7 +359,7 @@ padding: 1px 3px;
   cursor: pointer;
 }
 
-.search-controls {
+#search-bar {
   background-color: #fff;
   border-radius: 2px;
   border: 1px solid transparent;
@@ -371,15 +369,24 @@ padding: 1px 3px;
   font-size: 15px;
   font-weight: 300;
   height: 29px;
-  margin-left: 17px;
-  margin-top: 10px;
   outline: none;
   padding: 0 11px 0 13px;
   text-overflow: ellipsis;
+}
+
+#search-bar.search-controls {
+  margin-left: 17px;
+  margin-top: 10px;
   width: 400px;
 }
 
-.center-button {
+#search-bar.search-controls.mobile {
+  margin-right: 100%;
+  margin-bottom: 20%;
+  width: 100%;
+}
+
+#center-button {
   background: none rgb(255, 255, 255); 
   box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
   display: block; 
@@ -398,36 +405,27 @@ padding: 1px 3px;
   left: 0px;
 }
 
+/* Center Button */
 
-.center-button .icon {
-  color: #666666;
+#center-button .icon{
   display: block;
   margin: auto;
   height: 80%;
   width: 80%;
 }
 
-.center-button .icon:hover {
+#center-button.center-button .icon {
+  color: #666666;
+}
+
+#center-button.center-button .icon:hover {
   color: #333333;
 }
 
-.search-controls-mobile {
-  background-color: #fff;
-  border-radius: 2px;
-  border: 1px solid transparent;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-  box-sizing: border-box;
-  font-family: Roboto;
-  font-size: 15px;
-  font-weight: 300;
-  height: 29px;
-  margin-right: 100%;
-  margin-bottom: 20%;
-  outline: none;
-  padding: 0 11px 0 13px;
-  text-overflow: ellipsis;
-  width: 100%;
+#center-button.center-button.centered .icon {
+  color: #111111;
 }
+
 
 .inactive-route-popup {
   position: fixed;
