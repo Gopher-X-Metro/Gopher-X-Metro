@@ -81,7 +81,7 @@ div#title-bar > h1 > .city {
   overflow-x: clip;
   padding-top: 15px;
   transition: width 0.5s ease;
-  overflow-y: hidden;
+  overflow-y: auto;
   scrollbar-color:  black; /* only works for firefox */
   scrollbar-width: thin;
   padding:0;
@@ -253,7 +253,7 @@ div#title-bar > h1 > .city {
   margin-top: 1px;
   margin-bottom: px;
   width: 285px;
-  padding-top: 40px;
+  padding-top: 15px;
 }
 
 .nav-header h3 {
@@ -299,6 +299,15 @@ div#search_bar{
 
 }
 
+.Search-header{
+  text-align: center;
+  margin-top: 1px;
+  margin-bottom: px;
+  width: 285px;
+  padding-top: 10px;
+  padding-bottom: 10px
+}
+
 
 #search_route{
   display: inline-block;
@@ -311,7 +320,7 @@ div#search_bar{
  float:center;
  position: relative;
  width: 250px;
- padding-bottom: 10px;
+ padding-bottom: 20px;;
 }
 
 .searchContainer input {
@@ -324,8 +333,9 @@ width: 100%;
 text-align: center;
 margin: 0 auto;
 margin-left: 30px;
-background-color: rgb(226, 226, 226);
+background-color: #F0F8FF;
 }
+
 .searchContainer button {
 position:absolute;
 border-radius: 100%;
@@ -335,7 +345,6 @@ width: 40px;
 right: 0;
 padding: 1px 3px;
 }
-
 
 #searchButton:hover{
   background-color: darkgrey;
@@ -351,6 +360,7 @@ padding: 1px 3px;
   color: red;
   text-align: center;
   font-weight: bold; 
+  padding-top:none;
 }
 
 .AboutButton {
@@ -426,10 +436,8 @@ padding: 1px 3px;
   list-style-type: none; /* Remove default list styling */
   width: 290px;
   background-color: #7a0019;
-  border-bottom: solid black;
-  border-bottom-width: 2px;
-  border-top-width: 2px;
-  border-top: solid black;
+  border:2px solid black;
+  border-left:none;
 }
 
 .tab-container li.tab-button-right {
@@ -441,13 +449,12 @@ padding: 1px 3px;
   box-sizing: border-box;
   white-space: nowrap;
   position: static !important;
-  border-width: 5px;
   border-color: solid black;
-  border-left: solid black;
+  border-left: 2px solid black;
   font-family: 'Neutraface Text', sans-serif;
   font-size: 20px;
   text-decoration: underline;
-  text-shadow: 5px 5px 5px black;
+  padding:0;
 }
 
 .tab-container li.tab-button-left {
@@ -461,20 +468,17 @@ padding: 1px 3px;
   box-sizing: border-box;
   white-space: nowrap;
   position: static !important;
-  border-width: 5px;
-  border-color: solid black;
+  border-color: 2px solid black;
   text-decoration: underline;
-  text-shadow: 5px 5px 5px black;
+  padding-left:0;
 }
 
 .tab-container li.tab-button-right:hover {
-  color: black;
   cursor: pointer;
   background-color: rgb(255, 204, 51);
 }
 
 .tab-container li.tab-button-left:hover {
-  color: black;
   cursor: pointer;
   background-color: rgb(255, 204, 51);
 }
@@ -487,16 +491,16 @@ padding: 1px 3px;
   transform: scale(0.95);
 }
 
-.Clear-all:active{
+.Clear-all-btn:active{
 transform: none;
 }
 
-.Clear-all:hover{
+.Clear-all-btn:hover{
   cursor: pointer;
-  color: rgb(255, 204, 51);
+  background-color: rgb(255, 204, 51);
   }
 
-.Clear-all{
+.Clear-all-btn{
   border: 2px solid black;
   width: 100%;
   text-align: center;
@@ -507,25 +511,36 @@ transform: none;
   box-sizing: border-box;
   white-space: nowrap;
   position: static !important;
-  
+  background-color: #7a0019;
+  color: #F0FFFF;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: 'Neutraface Text', sans-serif;
+  font-size: 20px;
+  border-color: 2px solid black;
+  border-left:none;
   }
 
 /* Bookmark css*/
 
-.bookmark-css{
+.bookmark-css {
   align-items: center;
-  color: #666666;
-  font-size: 30px;
-  box-sizing: border-box;
+  text-align: center;
+  color: #333;
+  font-size: 24px;
   display: flex;
   height:fit-content;
   z-index: 10;
-  border: 2px solid white;
-  background-color: white;
-  top: 250px;
+  border: 1px solid #fff;
+  background-color: #fff;
+  bottom: 150px;
   width: 40px;
-  padding-left: 2px;
+  height: 40px;
+  padding-left: 4px;
   padding-right: 2px;
+  position: absolute;
+  outline: none;
+  right: 11px;
+  display: none;
 }
 
 .bookmark-css:hover{
@@ -535,6 +550,7 @@ transform: none;
 
 .bookmark-css:active{
   transform: scale(0.95);
+  color: rgb(255, 204, 51);
 }
 
 /*Controls tab switching */ 

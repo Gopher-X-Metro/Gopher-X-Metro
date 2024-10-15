@@ -7,7 +7,6 @@ import SearchIcon from "src/img/CustomBus.png";
 import { BsBookmarkStar} from "react-icons/bs";
 import SearchFeature from 'src/frontend/NavBar/components/SearchFeature.tsx';
 import Schedule from 'src/backend/Schedule.ts';
-import clearall from 'src/frontend/NavBar/components/Clearall.tsx'
 import Clearall from 'src/frontend/NavBar/components/Clearall.tsx';
 
 export default function SideBar() {
@@ -78,7 +77,6 @@ export default function SideBar() {
 
             <div id="nav-bar" className={sidebarOpen ? 'sidebar open' : 'sidebar'}>
 
-                    
                         <div className='tab-container'>
                             <ul className='d-flex'>
                             <li className='tab-button-left' onClick = {() => updateToggle(1)}>Routes</li>
@@ -86,11 +84,11 @@ export default function SideBar() {
                             </ul>
                         </div>
                      
-                        <BsBookmarkStar/> 
+                    <BsBookmarkStar/> 
                  
             <div className={toggle === 1 ? 'tab-content' : 'content'}>
 
-           <button className='Clear-all' onClick={Clearall.Clear_all}>Clear Routes</button> 
+           <button className='Clear-all-btn' onClick={Clearall.Clear_Routes}>Clear Routes</button> 
 
                 <div className="nav-header">
                     <h3>Select Routes</h3>
@@ -101,10 +99,9 @@ export default function SideBar() {
                     {Array.from(routes.keys()).map(routeId => (<RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)}/>))}
                 </div>
 
-                <div className = "nav-header"> 
+                <div className = "Search-header" > 
                     <h1> Search Routes </h1>
                     <div className="underline"></div>
-                    <br></br>
                 </div> 
                 
                 <div className = "searchContainer">
@@ -120,9 +117,11 @@ export default function SideBar() {
                         {/* content for the favorite tab */}
             <div className={toggle === 2 ? 'tab-content' : 'content'}>
                 <div className='favorite-tab'>
+
                     <div className='sidebar-content flex flex-col items-center'>
-                    <RouteButton key={123} routeId={123} text={"123 4th Street Circulator"}/>
+                       <div id="Favorite-routeButton"></div>
                     </div>
+
                 </div>
             </div>
 

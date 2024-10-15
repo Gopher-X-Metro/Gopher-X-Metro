@@ -5,14 +5,13 @@ import Resources from "src/backend/Resources";
 import Marker from "./components/Marker";
 import Routes from "./components/Routes";
 import SearchBar from "src/frontend/NavBar/components/SearchBar";
-
+import Bookmark_icon from 'src/frontend/Pages/Map/components/Bookmark_icon.tsx'
 import LoadingScreen from "./components/LoadingScreen";
 import NavBar from "src/frontend/NavBar/NavBar";
 
 const APIKey = process.env.REACT_APP_API_KEY; // Comes from the .env.local file, just for security. Won't appear in main -- all api keys should be added to Vercel console. 
 const UMNLocation = { lat: 44.97369560732433, lng: -93.2317259515601 };
 const defaultZoom = 15;
-
 const isMobile = window.innerWidth < 768;
 
 if (!APIKey) throw new Error("API Key was not loaded, or was not found!"); 
@@ -45,7 +44,7 @@ export default function Map({ hidden, setPage }) {
             <LoadingScreen hidden={mapLoaded}/>
             <input id="search-bar" className="controls" type="text"/>
             <div id="map"/>
-            <button className= "bookmark-css absolute right-2.5"> <BsBookmarkStar size={30}/> </button>
+            <button onClick={Bookmark_icon.AddRouteToFavorite} className="bookmark-css" > <BsBookmarkStar size={30}/> </button> 
         </div> 
             
     </>);
@@ -59,7 +58,7 @@ async function initalize() {
             center: UMNLocation,
             zoom: defaultZoom,
             mapId: process.env.REACT_APP_MAP_ID,
-            streetViewControl: !isMobile,
+            streetViewControl: false,
             fullscreenControl: false,
             mapTypeControl: false,
         })
