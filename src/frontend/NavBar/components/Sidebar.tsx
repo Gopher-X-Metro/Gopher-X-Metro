@@ -84,7 +84,10 @@ export default function SideBar() {
 
                     <div className={toggle === 1 ? 'tab-content' : 'content'}>
 
-                    <button className='Clear-all-btn' onClick={Clearall.Clear_all}>Clear Routes</button> 
+                    <div className='Clear-all-btn'>
+                        <button onClick={Clearall.Clear_Routes}>Clear Routes</button> 
+                    </div>
+                   
 
                     <div className="nav-header">
                         <h3>Select Routes</h3>

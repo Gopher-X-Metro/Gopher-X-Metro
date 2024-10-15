@@ -434,3 +434,8 @@ padding: 1px 3px;
   text-align: center;
   width: 100%;
 }
+
+.clear-all-btn button{
+  width: 100%;
+  text-align: center;
+}
