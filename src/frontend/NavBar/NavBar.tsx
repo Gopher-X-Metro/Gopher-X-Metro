@@ -9,6 +9,7 @@ import {
 import TitleBar from './components/TitleBar.tsx';
 import SideBar from './components/Sidebar.tsx';
 import ResponsiveDropdown from './components/MobileDropdown.tsx';
+import Clearall from './components/Clearall.tsx';
 
 /**
  * Navbar Component
@@ -23,11 +24,11 @@ export default function NavBar({ setPage }) {
                 <SideBar />
 
                 <Box>
-                    <Link to="/" >
+                    <Link to="/" onClick = {Clearall.Clear_Routes} >
                         <TitleBar />
                     </Link>
                 </Box>
-                <div className="flex-grow"/>
+                <div className="flex-grow" />
 
                 {/*Display NavBar buttons or drop-down menu depending if the user is on mobile or not*/}
                 {isMobile ? (
