@@ -11,6 +11,8 @@ namespace SearchBar {
         map = _map;
 
         input = document.getElementById("search-bar") as HTMLInputElement;
+        input.className = "search-controls" + (false ? "-mobile" : "")
+
         autocomplete = new google.maps.places.Autocomplete(input, { fields: ["place_id", "geometry", "name", "formatted_address"] });
         geocoder = new google.maps.Geocoder();
 
@@ -59,40 +61,6 @@ namespace SearchBar {
                         }
                     }
                 })
-
-                // if (place.formatted_address) {
-                //     const plan = await (await Plan.trip("Coffman Memorial Union, Washington Avenue Southeast, Minneapolis, MN, USA", place.formatted_address)).json();
-                //     console.log(plan.routes);
-                //     plan.routes.forEach(route => {
-                //         const steps = route.legs[0].steps;
-                //         steps.forEach(step => {
-                //             if (step.transitDetails) {
-                //                 const stopDetails = step.transitDetails.stopDetails;
-                //                 const transitLine = step.transitDetails.transitLine;
-                //                 const arrivalLocation = stopDetails.arrivalStop.location.latLng;
-                //                 const departureLocation = stopDetails.departureStop.location.latLng;
-
-                //                 console.log(transitLine);
-                //                 console.log(departureLocation);
-                //                 console.log(arrivalLocation);
-                //             }
-                //         });
-                //     });
-                // }
-
-                // console.log(await Plan.serviceNearby(location.lat(), location.lng(), null, 0, 0.3));
-                // console.log(await Plan.nearestLandmark(location.lat(), location.lng(), null, 3, 10, null));
-                // console.log(await Plan.nearestParkAndRides(location.lat(), location.lng(), null, 1));
-                
-                // let center = { lat: 44.97369560732433, lng: -93.2317259515601 }; // UMN location
-                // console.log(await Plan.serviceNearby(center.lat, center.lng, null, 1, 20))
-                // console.log(await Plan.routeLandmarks(routeId, null))
-                // console.log(await Plan.serviceNearby(center.lat, center.lng, null, 902, 0))
-                // console.log(await Plan.nearestLandmark(center.lat, center.lng, "3462", 1, 10, null))
-                // console.log(await Plan.nearestParkAndRides(center.lat, center.lng, null, 1))
-                // console.log(await Plan.suggest("Comst", null))
-                // console.log(await Plan.findaddress("dHA9MCNsb2M9MjY4MCNsbmc9MCNwbD0zOTcwI2xicz0xNDozMTQ="))
-
             }).catch((error) => window.alert("Geocoder failed due to: " + error));
         }
     }
