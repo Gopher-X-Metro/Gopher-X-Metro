@@ -77,7 +77,7 @@ export default function SideBar() {
             <div id="nav-bar" className={sidebarOpen ? 'sidebar open' : 'sidebar'}>
                 <div className='sidebar-content flex flex-col items-center'>
                     <div className="tab-container-sidebar">
-                            <button className = "routes-tab" onClick = {() => updateToggle(1)}>Routes</button>
+                            <button className ="routes-tab" onClick = {() => updateToggle(1)}>Routes</button>
                             <button className='favorite-tab' onClick = {() => updateToggle(2)}>Favorites</button>
                     </div>
 
@@ -89,15 +89,15 @@ export default function SideBar() {
                     </div>
                    
 
-                    <div className="nav-header">
+                    <div className="sidebar-header">
                         <h3>Select Routes</h3>
                         <div className="underline"></div>
                     </div>
 
                     {Array.from(routes.keys()).map(routeId => (<RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)}/>))}
 
-                    <div className = "nav-header"> 
-                        <h1> Search Routes </h1>
+                    <div className = "sidebar-header"> 
+                        <h3> Search Routes </h3>
                         <div className="underline"></div>
                         <br></br>
                     </div> 

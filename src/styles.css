@@ -87,13 +87,14 @@ div#title-bar > h1 > .city {
   overflow-x: clip;
   padding-top: 0;
   transition: 0.5s;
-  overflow-y: scroll;
+
+  /* overflow-y: scroll;
   scrollbar-color:  black; /* only works for firefox */
-  scrollbar-width: thin;
+  /* scrollbar-width: thin; */ 
 }
 
 /* WebKit-based browsers (Chrome, Safari, Edge) sidebar scrollbar */
-.sidebar::-webkit-scrollbar {
+/* .sidebar::-webkit-scrollbar {
   width:  8px; 
 }
 
@@ -104,7 +105,7 @@ div#title-bar > h1 > .city {
 
 .sidebar::-webkit-scrollbar-track {
   background-color: transparent;
-}
+} */
 
 /* The sidebar container when it's open */
 .sidebar.open {
@@ -112,7 +113,7 @@ div#title-bar > h1 > .city {
 }
 
 .sidebar-content {
-  width: 285px;
+  width: 290px;
 }
 
 /* The sidebar links */
@@ -412,30 +413,94 @@ padding: 1px 3px;
   background-color: #7a0019;
   text-align: center;
   width: 100%;
-  border: 2px solid black;
-  
-  
+  border-top: 2px solid black;
+  border-left: 2px solid black;
+
+
 }
 
-.routes-tab{
+.tab-container-sidebar button{
   color: #F0FFFF;
+  text-align: center;
+  padding-right: 30px;
+}
+
+.tab-container-sidebar .routes-tab {
   font-family: 'Neutraface Text', sans-serif;
-  font-size: 20px;
+  font-size: 17px;
   text-decoration: underline;
   text-align: center;
   width: 100%;
+  border-right: 1px solid black;
 }
 
-.favorite-tab{
-  color: #F0FFFF;
+.tab-container-sidebar .favorite-tab{
   font-family: 'Neutraface Text', sans-serif;
-  font-size: 20px;
+  font-size: 17px;
   text-decoration: underline;
   text-align: center;
   width: 100%;
+  border-left: 1px solid black;
 }
 
-.clear-all-btn button{
+.tab-container-sidebar .favorite-tab:hover{
+  cursor: pointer;
+  background-color: rgb(255, 204, 51);
+}
+
+.tab-container-sidebar .routes-tab:hover{
+  cursor: pointer;
+  background-color: rgb(255, 204, 51);
+}
+
+.tab-container-sidebar .favorite-tab:active{
+  transform: scale(0.95);
+}
+
+.tab-container-sidebar .routes-tab:active{
+  transform: scale(0.95);
+}
+
+.clear-route-container{
+  border-bottom: 2px solid black;
+  background-color: #7a0019;
+  border-top: 2px solid black;
+  font-size: 17px;
   width: 100%;
+  border-left: 4px solid black;
+
+  
+
+}
+.tab-container-sidebar .Clear--btn {
   text-align: center;
+  background-color: #7a0019;
+  color: #F0FFFF;
+  text-decoration: underline;
+  font-family: 'Neutraface Text', sans-serif;
+}
+
+.tab-container-sidebar .Clear-all-btn:hover{
+  cursor: pointer;
+  background-color:  rgb(255, 204, 51);
+}
+
+.tab-container-sidebar .Clear-all-btn:active{
+  transform: scale(0.95);
+}
+
+
+/* sidebar headers */
+
+.sidebar-header h3 {
+  color: black;
+  font-family: 'Neutraface Text', sans-serif;
+  white-space: nowrap;
+}
+
+.sidebar-header {
+  text-align: center;
+  padding-top: 20px;
+  margin-bottom: 5px;
+  width: 100%;
 }
