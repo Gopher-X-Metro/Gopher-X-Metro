@@ -9,7 +9,7 @@ import Pages from './frontend/Pages/Pages.tsx';
 import "./styles.css";
 
 export default function App() {
-  // Check if screen width is 1024px or less (mobile)
+  // Check if screen width is 1024px or less (common mobile size and before buttons are cutoff by title)
   const [isMobile] = useMediaQuery("(max-width: 1024px)");
 
   return (

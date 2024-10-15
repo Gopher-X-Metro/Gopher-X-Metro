@@ -379,6 +379,38 @@ padding: 1px 3px;
   width: 400px;
 }
 
+.center-button {
+  background: none rgb(255, 255, 255); 
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+  display: block; 
+  border: 0px; 
+  margin: 10px; 
+  padding: 0px; 
+  text-transform: none; 
+  appearance: none; 
+  position: relative; 
+  cursor: pointer; 
+  user-select: none; 
+  overflow: hidden; 
+  width: 40px; 
+  height: 40px;
+  top: 0px; 
+  left: 0px;
+}
+
+
+.center-button .icon {
+  color: #666666;
+  display: block;
+  margin: auto;
+  height: 80%;
+  width: 80%;
+}
+
+.center-button .icon:hover {
+  color: #333333;
+}
+
 .search-controls-mobile {
   background-color: #fff;
   border-radius: 2px;
