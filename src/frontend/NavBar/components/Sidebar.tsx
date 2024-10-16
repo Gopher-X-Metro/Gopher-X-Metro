@@ -74,17 +74,19 @@ export default function SideBar() {
             </div>
 
             <div id="nav-bar" className={sidebarOpen ? 'sidebar open' : 'sidebar'}>
-                <div className='sidebar-content flex flex-col items-center'>
+              
                     <div className='tab-container-sidebar'>
                             <button className ="routes-tab" onClick = {() => updateToggle(1)}>Routes</button>
                             <button className='favorite-tab' onClick = {() => updateToggle(2)}>Favorites</button>
                     </div>
-
+                  
                     <div className={toggle === 1 ? 'tab-content' : 'content'}>
-
+                    
                     <div className='Clear-container'>
                         <button className='Clear-all-btn' onClick={Clearall.Clear_Routes}>Clear Routes</button> 
                     </div>
+
+                    <div className='sidebar-content flex flex-col items-center'>
                    
 
                     <div className="sidebar-header">
