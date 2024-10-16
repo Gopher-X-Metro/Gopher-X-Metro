@@ -11,7 +11,7 @@ export default function CenterButton() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((position) => {
                 if (position.coords.accuracy <= 1000) {
-                    centerMap(map, {lat: position.coords.latitude, lng: position.coords.longitude}); 
+                    centerMap(map, {lat: position.coords.latitude, lng: position.coords.longitude}, 16); 
                     setCentered(true);
                 } else
                     console.warn("Your location is too inaccurate to center.");
