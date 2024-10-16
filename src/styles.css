@@ -410,19 +410,21 @@ padding: 1px 3px;
 
 .tab-container-sidebar{
   display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: #7a0019;
-  text-align: center;
-  width: 100%;
+  width: 290px;
   border-top: 2px solid black;
   border-left: 2px solid black;
-
-
+  border-right: 2px solid black;
 }
 
 .tab-container-sidebar button{
   color: #F0FFFF;
   text-align: center;
-  padding-right: 30px;
+  width: 100%;
+  padding:0;
+  
 }
 
 .tab-container-sidebar .routes-tab {
@@ -431,7 +433,8 @@ padding: 1px 3px;
   text-decoration: underline;
   text-align: center;
   width: 100%;
-  border-right: 1px solid black;
+
+  border-right: 2px solid black;
 }
 
 .tab-container-sidebar .favorite-tab{
@@ -440,7 +443,6 @@ padding: 1px 3px;
   text-decoration: underline;
   text-align: center;
   width: 100%;
-  border-left: 1px solid black;
 }
 
 .tab-container-sidebar .favorite-tab:hover{
@@ -461,31 +463,33 @@ padding: 1px 3px;
   transform: scale(0.95);
 }
 
-.clear-route-container{
+.Clear-container{
   border-bottom: 2px solid black;
   background-color: #7a0019;
   border-top: 2px solid black;
   font-size: 17px;
-  width: 100%;
-  border-left: 4px solid black;
-
-  
-
+  width: 290px;
+  border-left: 2px solid black;
+  border-right: 2px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.tab-container-sidebar .Clear--btn {
+.Clear-container .Clear-all-btn {
   text-align: center;
-  background-color: #7a0019;
   color: #F0FFFF;
   text-decoration: underline;
   font-family: 'Neutraface Text', sans-serif;
+  width: 100%;
+  padding:0;
 }
 
-.tab-container-sidebar .Clear-all-btn:hover{
+.Clear-container .Clear-all-btn:hover{
   cursor: pointer;
   background-color:  rgb(255, 204, 51);
 }
 
-.tab-container-sidebar .Clear-all-btn:active{
+.Clear-container .Clear-all-btn:active{
   transform: scale(0.95);
 }
 
