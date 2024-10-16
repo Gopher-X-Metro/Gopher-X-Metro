@@ -5,7 +5,8 @@ import Resources from "src/backend/Resources";
 import Marker from "./components/Marker";
 import Routes from "./components/Routes";
 import SearchBar from "src/frontend/NavBar/components/SearchBar";
-
+import Bookmark_icon from 'src/frontend/Pages/Map/components/Bookmark_icon.tsx'
+import { BsBookmarkStar} from "react-icons/bs";
 import LoadingScreen from "./components/LoadingScreen";
 import NavBar from "src/frontend/NavBar/NavBar";
 
@@ -45,6 +46,7 @@ export default function Map({ hidden, setPage }) {
             <LoadingScreen hidden={mapLoaded}/>
             <input id="search-bar" className="controls" type="text"/>
             <div id="map"/> 
+            <button onClick={Bookmark_icon.AddRouteToFavorite} className="bookmark-css" > <BsBookmarkStar size={30}/></button> 
         </div>
     </>);
 }

@@ -4,7 +4,6 @@ import { Icon } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import URL from 'src/backend/URL.ts';
 import SearchIcon from "src/img/CustomBus.png";
-import { BsBookmarkStar} from "react-icons/bs";
 import SearchFeature from 'src/frontend/NavBar/components/SearchFeature.tsx';
 import Schedule from 'src/backend/Schedule.ts';
 import Clearall from 'src/frontend/NavBar/components/Clearall.tsx';

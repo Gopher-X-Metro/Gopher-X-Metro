@@ -8,7 +8,7 @@ namespace Bookmark_icon{
 
     export function AddRouteToFavorite(){
         const element = document.getElementById("Favorite-routeButton");
-        
+        console.log("func");
         var URL_route = URL.getRoutes();
 
        for (let route of URL_route){

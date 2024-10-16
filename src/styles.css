@@ -448,11 +448,13 @@ padding: 1px 3px;
 .tab-container-sidebar .favorite-tab:hover{
   cursor: pointer;
   background-color: rgb(255, 204, 51);
+  color: #F0FFFF;
 }
 
 .tab-container-sidebar .routes-tab:hover{
   cursor: pointer;
   background-color: rgb(255, 204, 51);
+  color: #F0FFFF;
 }
 
 .tab-container-sidebar .favorite-tab:active{
@@ -475,6 +477,7 @@ padding: 1px 3px;
   justify-content: center;
   align-items: center;
 }
+
 .Clear-container .Clear-all-btn {
   text-align: center;
   color: #F0FFFF;
@@ -487,6 +490,7 @@ padding: 1px 3px;
 .Clear-container .Clear-all-btn:hover{
   cursor: pointer;
   background-color:  rgb(255, 204, 51);
+  color: #F0FFFF;
 }
 
 .Clear-container .Clear-all-btn:active{
@@ -507,4 +511,50 @@ padding: 1px 3px;
   padding-top: 20px;
   margin-bottom: 5px;
   width: 100%;
+}
+
+/* Bookmark css*/
+
+.bookmark-css {
+  align-items: center;
+  text-align: center;
+  color: #333;
+  font-size: 24px;
+  display: flex;
+  height:fit-content;
+  z-index: 10;
+  border: 1px solid #fff;
+  background-color: #fff;
+  bottom: 150px;
+  width: 40px;
+  height: 40px;
+  padding-left: 4px;
+  padding-right: 2px;
+  position: absolute;
+  outline: none;
+  right: 11px;
+  display: none;
+}
+
+.bookmark-css:hover{
+  color: black;
+  cursor: pointer;
+}
+
+.bookmark-css:active{
+  transform: scale(0.95);
+  color: rgb(255, 204, 51);
+}
+
+/*Controls tab switching */ 
+.content{  /* Hides the favorite tab content originally */
+  display: none;
+}
+
+.tab-content {
+  display: block;
+}
+
+.favorite-tab{
+  padding-top: 20px;
 }
