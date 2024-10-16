@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 import {
     Button,
     HStack,
-    Box,
-    useMediaQuery
+    Box
 } from '@chakra-ui/react'
 import TitleBar from './components/TitleBar.tsx';
 import SideBar from './components/Sidebar.tsx';
@@ -13,10 +12,7 @@ import ResponsiveDropdown from './components/MobileDropdown.tsx';
 /**
  * Navbar Component
  */
-export default function NavBar({ setPage }) {
-    // Check if screen width is 1024px or less (mobile)
-    const [isMobile] = useMediaQuery("(max-width: 1024px)");
-
+export default function NavBar({ setPage, isMobile }) {
     return (
         <div id="title-bar">
             <HStack padding="2%" gap="3%" width="100%" className="items-center justify-content">
@@ -31,7 +27,7 @@ export default function NavBar({ setPage }) {
 
                 {/*Display NavBar buttons or drop-down menu depending if the user is on mobile or not*/}
                 {isMobile ? (
-                    <ResponsiveDropdown setPage={setPage} />
+                    <ResponsiveDropdown setPage={setPage} isMobile={isMobile} />
                 ) : (
                     <div className="flex flex-row gap-2 max-lg:hidden ">
 
