@@ -13,9 +13,10 @@ export default function CenterButton() {
                 if (position.coords.accuracy <= 1000) {
                     centerMap(map, {lat: position.coords.latitude, lng: position.coords.longitude}, 16); 
                     setCentered(true);
-                } else
-                    console.warn("Your location is too inaccurate to center.");
-            }, () => console.warn("Unable to retreive your location."));
+                } else { 
+                    console.warn("Your location is too inaccurate to center.") 
+                };
+            }, () => { console.warn("Unable to retreive your location.") });
         }
 
         if (!centered) {
