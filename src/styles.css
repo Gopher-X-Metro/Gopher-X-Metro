@@ -382,9 +382,10 @@ body {
 }
 
 #location-search-bar.location-search-bar.mobile {
-  margin-right: 100%;
+  float: left;
+  margin-left: -40%;
   margin-bottom: 20%;
-  width: 100%;
+  width: 150%;
 }
 
 body.mobile .pac-container {
@@ -414,21 +415,30 @@ body.mobile .pac-container {
 #center-button .icon{
   display: block;
   margin: auto;
-  height: 80%;
-  width: 80%;
+  height: 60%;
+  width: 60%;
 }
 
 #center-button.center-button .icon {
   color: #666666;
 }
 
-#center-button.center-button .icon:hover {
+#center-button.center-button:hover .icon {
   color: #333333;
 }
 
-#center-button.center-button.centered .icon {
+#center-button.center-button:active .icon {
   color: #111111;
 }
+
+#center-button.center-button.centered .icon {
+  color: #000000;
+}
+
+#center-button.center-button.centered {
+  background-color: #dddddd;
+}
+
 
 
 .inactive-route-popup {
