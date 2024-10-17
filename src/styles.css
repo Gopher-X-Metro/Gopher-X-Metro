@@ -88,14 +88,13 @@ div#title-bar > h1 > .city {
   padding-top: 0;
   transition: 0.5s;
  
+
+  overflow-y: scroll;
+  scrollbar-color:  black;
+  scrollbar-width: thin; 
   
 }
 
-.sidebar-content {
-  overflow: scroll;
-  scrollbar-color:  black; /* only works for firefox */
-  scrollbar-width: thin; 
-}
 
 /* WebKit-based browsers (Chrome, Safari, Edge) sidebar scrollbar */
 /* .sidebar::-webkit-scrollbar {
@@ -117,7 +116,7 @@ div#title-bar > h1 > .city {
 }
 
 .sidebar-content {
-  width: 280px;
+  width: 285px;
 }
 
 /* The sidebar links */
@@ -347,9 +346,7 @@ padding: 1px 3px;
 }
 
 #searchButton:active{
-  background-color:rgb(226, 226, 226);
-  box-shadow: 0 5px rgb(226, 226, 226);
-  transform: translateY(1px);
+  transform: translate(1px);
 }
 
 #error_text{
@@ -418,8 +415,7 @@ padding: 1px 3px;
   justify-content: center;
   align-items: center;
   background-color: #7a0019;
-  width: 290
-  px;
+  width: 285px;
   border-top: 2px solid black;
   border-left: 2px solid black;
   border-right: 2px solid black;
@@ -430,6 +426,7 @@ padding: 1px 3px;
   text-align: center;
   width: 100%;
   padding:0;
+
   
 }
 
@@ -484,7 +481,7 @@ padding: 1px 3px;
   background-color: #7a0019;
   border-top: 2px solid black;
   font-size: 17px;
-  width: 290px;
+  width: 285px;
   border-left: 2px solid black;
   border-right: 2px solid black;
   display: flex;
@@ -567,11 +564,10 @@ padding: 1px 3px;
 .content{  /* Hides the favorite tab content originally */
   display: none;
 }
-
 .tab-content {
   display: block;
 }
 
-.favorite-tab{
-  padding-top: 20px;
-}
+/* .favorite-tab-content{
+  display: block;
+} */
