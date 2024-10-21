@@ -101,7 +101,7 @@ div#title-bar > h1 > .city {
 
 
 /* WebKit-based browsers (Chrome, Safari, Edge) sidebar scrollbar */
-/* .sidebar::-webkit-scrollbar {
+ .sidebar::-webkit-scrollbar {
   width:  8px; 
 }
 
@@ -112,7 +112,7 @@ div#title-bar > h1 > .city {
 
 .sidebar::-webkit-scrollbar-track {
   background-color: transparent;
-} */
+} 
 
 /* The sidebar container when it's open */
 .sidebar.open {
@@ -121,18 +121,11 @@ div#title-bar > h1 > .city {
 
 .sidebar-content {
   width: 290px;
-
   height: 100%;
   overflow-y: auto;
-  scrollbar-gutter: stable;
+  overflow-x:hidden;
 }
 
-.scroll-section{
-  /* width: 290px;
-  height: 100%;
-  overflow-y: auto;
-  scrollbar-gutter: stable; */
-}
 
 /* The sidebar links */
 /* .sidebar a {
@@ -343,8 +336,8 @@ text-align: center;
 margin: 0 auto;
 margin-left: 30px;
 background-color: rgb(226, 226, 226);
-
 }
+
 .searchContainer button {
 position:absolute;
 border-radius: 100%;
@@ -368,6 +361,7 @@ padding: 1px 3px;
   color: red;
   text-align: center;
   font-weight: bold; 
+  
 }
 
 .AboutButton {
@@ -441,9 +435,6 @@ padding: 1px 3px;
   text-align: center;
   width: 100%;
   padding:0;
-  position: sticky;
-
-  
 }
 
 .tab-container-sidebar .routes-tab {
@@ -452,7 +443,6 @@ padding: 1px 3px;
   text-decoration: underline;
   text-align: center;
   width: 100%;
-
   border-right: 2px solid black;
 }
 
@@ -512,7 +502,6 @@ padding: 1px 3px;
   font-family: 'Neutraface Text', sans-serif;
   width: 100%;
   padding:0;
-  position: sticky;
 }
 
 .Clear-container .Clear-all-btn:hover{
@@ -528,15 +517,21 @@ padding: 1px 3px;
 
 /* sidebar headers */
 
-.sidebar-header h3 {
+.search-header .select-header h3 {
   color: black;
   font-family: 'Neutraface Text', sans-serif;
   white-space: nowrap;
 }
 
-.sidebar-header {
+.search-header {
   text-align: center;
-  padding-top: 20px;
+  width: 100%;
+  padding-bottom: 15px;
+}
+
+.select-header  {
+  text-align: center;
+  padding-top:10px;
   margin-bottom: 5px;
   width: 100%;
 }

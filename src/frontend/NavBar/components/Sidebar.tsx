@@ -80,7 +80,6 @@ export default function SideBar() {
                             <button className ="routes-tab" onClick = {() => updateToggle(1)}>Routes</button>
                             <button className='favorite-tab' onClick = {() => updateToggle(2)}>Favorites</button>
                     </div>
-            <div className='scroll-section'> 
             <div className={toggle === 1 ? 'tab-content' : 'content'}>
                     
                     <div className='Clear-container'>
@@ -90,7 +89,7 @@ export default function SideBar() {
                 
                    
 
-                    <div className="sidebar-header">
+                    <div className="select-header">
                         <h3>Select Routes</h3>
                         <div className="underline"></div>
                     </div>
@@ -98,10 +97,9 @@ export default function SideBar() {
                     {Array.from(routes.keys()).map(routeId => (<RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)}/>))}
 
                     <div id="Favorite-routeButton"></div>
-                    <div className = "sidebar-header"> 
+                    <div className = "search-header"> 
                         <h3> Search Routes </h3>
                         <div className="underline"></div>
-                        <br></br>
                     </div> 
                     
                     <div className = "searchContainer">
@@ -116,12 +114,11 @@ export default function SideBar() {
 
                               {/* content for the favorite tab */}
         <div className={toggle === 2 ? 'tab-content' : 'content'}>
-                        <p>hiiiiii</p>
+                        <h1>Favorite Tab</h1>
                        <p id="Favorite-routeButton"></p>
          </div>
          </div>   
         </div>  
-        </div>
            
         </>
     )
