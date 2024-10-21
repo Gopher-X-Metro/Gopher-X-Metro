@@ -1,4 +1,4 @@
-export interface Shape {
+export interface IShape {
     shapeID: string;
     agencyID: string;
     shapeName: string;

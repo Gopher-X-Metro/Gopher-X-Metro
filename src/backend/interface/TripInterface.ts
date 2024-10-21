@@ -1,4 +1,4 @@
-export interface Trip {
+export interface ITrip {
     routeID: string;
     shapeID: string;
 }
