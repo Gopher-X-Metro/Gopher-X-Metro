@@ -1,9 +1,9 @@
-import { Shape } from "./interface/ShapeInterface";
-import { Trip } from "./interface/TripInterface";
+import { IShape } from "src/backend/interface/ShapeInterface";
+import { ITrip } from "src/backend/interface/TripInterface";
 
 namespace Peak {
-    const shapes : Map<string, Shape> = new Map<string, Shape>();
-    const trips : Map<string, Trip[]> = new Map<string, Trip[]>();    
+    const shapes : Map<string, IShape> = new Map<string, IShape>();
+    const trips : Map<string, ITrip[]> = new Map<string, ITrip[]>();    
 
     /* University Routes and ID */
     export const UNIVERSITY_ROUTES = {
@@ -22,7 +22,7 @@ namespace Peak {
      */
     export async function getPeakShapeIds(routeId: string) : Promise<Set<string>> {
         const trips = await getPeakTrips(routeId);
-        return new Set(trips.map((trip: Trip) => trip.shapeID));
+        return new Set(trips.map((trip: ITrip) => trip.shapeID));
     }
 
     /**
@@ -54,12 +54,12 @@ namespace Peak {
      * @param routeId ID of the route
      * @returns array of trips
      */
-    async function getPeakTrips(routeId: string) : Promise<Trip[]> {
+    async function getPeakTrips(routeId: string) : Promise<ITrip[]> {
         if (!trips.has(routeId)) {
             // Load Trips
             const response = await fetch("https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=route2&action=list&agencyID=88");
             const data = await response.json();
-            data.routes?.forEach((trip: Trip) => {
+            data.routes?.forEach((trip: ITrip) => {
                 if (!trips.has(trip.routeID)) {
                     trips.set(trip.routeID, []);
                 }
@@ -75,13 +75,13 @@ namespace Peak {
      * @param shapeId ID of the shape
      * @returns shape data
      */
-    async function getPeakShapes(shapeId: string) : Promise<Shape> {
+    async function getPeakShapes(shapeId: string) : Promise<IShape> {
         if (!shapes.has(shapeId))
             await fetch("https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=shape2&action=list&agencyID=88")
             .then(async response => response.json()
-            .then(data => data.shape?.forEach((shape: Shape) => shapes.set(shape.shapeID, shape))))
+            .then(data => data.shape?.forEach((shape: IShape) => shapes.set(shape.shapeID, shape))))
 
-        return shapes.get(shapeId) as Shape; 
+        return shapes.get(shapeId) as IShape; 
     }
 }
 

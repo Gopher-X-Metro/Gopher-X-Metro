@@ -8,7 +8,7 @@ namespace Plan {
      * @param destination destination address for the trip
      * @returns response object
      */
-    export async function trip(origin: string, destination: string) {
+    export async function trip(origin: string, destination: string) : Promise<any> {
       let response = await fetch("https://routes.googleapis.com/directions/v2:computeRoutes", {
         method: "POST",
         body: JSON.stringify({
@@ -41,7 +41,7 @@ namespace Plan {
      * @param category category of landmarks to retrieve
      * @returns JSON response object
      */
-    export async function routeLandmarks(routeID: string, category: string | null) {
+    export async function routeLandmarks(routeID: string, category: string | null) : Promise<any> {
       let response = await fetch("https://svc.metrotransit.org/tripplanner/routelandmarks", {
         method: "POST",
         body: JSON.stringify({
@@ -66,7 +66,7 @@ namespace Plan {
      * @param walkdist maximum walking distance
      * @returns JSON response object
      */
-    export async function serviceNearby(latitude: number, longitude: number, description: string | null, landmarkid: number, walkdist: number) {
+    export async function serviceNearby(latitude: number, longitude: number, description: string | null, landmarkid: number, walkdist: number) : Promise<any> {
       const coordinates = fromLatLngtoUTM(latitude, longitude);
 
       let response = await fetch("https://svc.metrotransit.org/tripplanner/servicenearby", {
@@ -99,7 +99,7 @@ namespace Plan {
      * @param landmarkid ID of nearby landmark
      * @returns JSON response object
      */
-  export async function nearestParkAndRides(latitude: number, longitude: number, description: string | null, landmarkid: number) {
+  export async function nearestParkAndRides(latitude: number, longitude: number, description: string | null, landmarkid: number) : Promise<any> {
     const coordinates = fromLatLngtoUTM(latitude, longitude);
 
     let response = await fetch("https://svc.metrotransit.org/tripplanner/nearestparkandrides", {
@@ -132,7 +132,7 @@ namespace Plan {
      * @param category optional category of landmarks
      * @returns JSON response object
      */
-  export async function nearestLandmark(latitude: number, longitude: number, description: string | null, landmarkid: number, maxanswers: number, category: string | null) {
+  export async function nearestLandmark(latitude: number, longitude: number, description: string | null, landmarkid: number, maxanswers: number, category: string | null) : Promise<any> {
     const coordinates = fromLatLngtoUTM(latitude, longitude);
 
     let response = await fetch("https://svc.metrotransit.org/tripplanner/nearestlandmark", {
@@ -163,7 +163,7 @@ namespace Plan {
      * @param location optional location filter for suggestions
      * @returns JSON response object
      */
-  export async function suggest(text: string | null, location: string | null) {
+  export async function suggest(text: string | null, location: string | null) : Promise<Response> {
     let response = await fetch(`https://svc.metrotransit.org/tripplanner/suggest/${text}/${location}`);
 
     return response.json();
@@ -174,7 +174,7 @@ namespace Plan {
      * @param magicKey unique key to find address
      * @returns JSON response object
      */
-  export async function findaddress(magicKey: string) {
+  export async function findaddress(magicKey: string) : Promise<Response> {
     let response = await fetch(`https://svc.metrotransit.org/tripplanner/findaddress/${magicKey}`);
 
     return response.json();
@@ -209,6 +209,7 @@ namespace Plan {
      * @param x UTM x coordinate
      * @param y UTM y coordinate
      * @returns google.maps.LatLng object representing latitude and longitude.
+     * @depreciated
      */
   function fromUTMtoLatLng(x: number, y: number) : google.maps.LatLng {
     const coordinates = proj4("+proj=utm +zone=15", "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs", [x, y]);
