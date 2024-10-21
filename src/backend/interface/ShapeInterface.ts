@@ -10,4 +10,7 @@ export interface IShape {
     disabled: boolean;
     directions: string;
     dynamicTotalShapeTime: string;
+    shape_dist_traveled: number;
+    shape_pt_lat: string;
+    shape_pt_lon: string;
 }

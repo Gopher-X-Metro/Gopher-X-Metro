@@ -217,4 +217,4 @@ namespace Plan {
   }
 }
 
-export default Plan
+export default Plan;
