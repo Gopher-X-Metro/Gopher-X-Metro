@@ -4,6 +4,7 @@ import { IRoute } from "src/backend/interface/RouteInterface";
 import { IStop } from "src/backend/interface/StopInterface";
 import { IVehicle } from "src/backend/interface/VehicleInterface";
 import { IExternalVehicle } from "src/backend/interface/ExternalVehicleInterface";
+import { IDirection } from "src/backend/interface/DirectionInterface";
 
 namespace Realtime {
     const GTFS_REALTIME_URL_UMN = "https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=vehicles2&action=list&agencyID=88";
@@ -96,12 +97,12 @@ namespace Realtime {
      * @param routeId route ID
      * @returns direcitons data
      */
-    export async function getDirections(routeId: string) : Promise<Array<any>> {
+    export async function getDirections(routeId: string) : Promise<Array<IDirection>> {
         return await (await fetch(`https://svc.metrotransit.org/nextrip/directions/${routeId}`)).json();
     }
 
     /**
-     * Gets fetched data of university busses
+     * Gets fetched data of university buses
      */
     export async function getRealtimeGTFSUniversity(): Promise<any> {
         return await fetch(GTFS_REALTIME_URL_UMN).then(async response => {
