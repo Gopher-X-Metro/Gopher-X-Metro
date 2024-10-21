@@ -1,59 +1,84 @@
 namespace URL {
-
-    /* Public */
+    const functions: Array<() => void> = [];
 
     /**
-     * Gets the routes from the URL as a Set
+     * Gets routes from URL query string
+     * @returns set of route IDs extracted from URL
      */
-    export function getRoutes() : Set<string> { return new Set((new URLSearchParams(window.location.search)).get("route")?.split(",").filter(String)); }
+    export function getRoutes() : Set<string> { 
+        return new Set((new URLSearchParams(window.location.search))
+            .get("route")?.split(",")
+            .filter(Boolean) ?? []
+        ); 
+    }
+
     /**
-     * Adds a new route to the URL, Sets the route without reloading the website
-     * @param routeId route ID to add
+     * Adds new route to URL without reloading page.
+     * Updates route param in query string
+     * @param routeId route ID to add to URL
      */
     export function addRoute(routeId: string) : void {
-        if (!URL.getRoutes().has(routeId)) {
-            window.history.replaceState({}, getQuerySelectorTextContext(), "./?route=" + ((getRoutes().size === 0) ? routeId : (Array.from(getRoutes()).join(",") + "," + (routeId))));
+        const currentRoutes = getRoutes();
+
+        if (!currentRoutes.has(routeId)) {
+            const updatedRoutes = currentRoutes.size === 0 ? routeId : `${Array.from(currentRoutes).join(",")},${routeId}`;
+            window.history.replaceState(
+                {}, 
+                getQuerySelectorTextContext(), 
+                `./?route=${updatedRoutes}`
+            );
             onChange(); 
         }
     }
+
     /**
-     * Removes the specified route from the URL
+     * Removes specific route from URL without reloading the page
      * @param routeId route ID to remove
      */
     export function removeRoute(routeId: string) : void {
-        if (getRoutes().has(routeId)) {
-            const routes = getRoutes();
-            routes.delete(routeId);
-            window.history.replaceState({}, getQuerySelectorTextContext(), (routes.size === 0) ? "./" : ("./?route=" + Array.from(routes).join(",")));
+        const currentRoutes = getRoutes();
+
+        if (currentRoutes.has(routeId)) {
+            currentRoutes.delete(routeId);
+
+            const updatedUrl = currentRoutes.size === 0 ? "./" : `./?route=${Array.from(currentRoutes).join(",")}`;
+            window.history.replaceState(
+                {}, 
+                getQuerySelectorTextContext(), 
+                updatedUrl
+            );
             onChange();
         }
     }
+
     /**
-     * Runs functions to when the URL is updated
-     * @param callbackfn function to run
+     * Adds listener function triggered when URL changes
+     * @param callbackfn function to be called when URL is updated
      */
     export function addListener(callbackfn: () => void) : void {
         functions.push(callbackfn);
     }
 
-    /* Private */
-    const functions = new Array<() => void>();
+    /* Private Helper Methods */
 
     /**
-     * Runs the listeners that were added
+     * Calls all registered listener functions when URL is updated
      */
-    function onChange() { functions.forEach(f => f()); }
+    function onChange() : void { 
+        functions.forEach(f => f()); 
+    }
 
     /**
-     * Gets the url
+     * Gets document title as a string for updating browser history
+     * @returns text content of title element or empty string if not found
      */
     function getQuerySelectorTextContext() : string {
         const query = document.querySelector("title");
 
         if (query && query.textContent) {
-            return query.textContent
+            return query.textContent;
         } else {
-            console.warn("Could not get document.querySelector(\"title\").textContext!")
+            console.warn("Could not get document.querySelector(\"title\").textContext!");
             return "";
         }
     }
