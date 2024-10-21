@@ -3,7 +3,6 @@ import { IoMdLocate } from "react-icons/io";
 import { ControlPosition, MapControl, useMap } from "@vis.gl/react-google-maps";
 import { centerMap } from "src/frontend/Pages/Map/Map";
 
-
 /**
  * CenterButton Component
  * 
