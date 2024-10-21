@@ -93,6 +93,7 @@ div#title-bar > h1 > .city {
 
 .sidebar-content {
   overflow: scroll;
+  scrollbar-gutter:stable;
   scrollbar-color:  black; /* only works for firefox */
   scrollbar-width: thin; 
 }
@@ -117,7 +118,7 @@ div#title-bar > h1 > .city {
 }
 
 .sidebar-content {
-  width: 280px;
+  width: 290px;
 }
 
 /* The sidebar links */
@@ -418,8 +419,7 @@ padding: 1px 3px;
   justify-content: center;
   align-items: center;
   background-color: #7a0019;
-  width: 290
-  px;
+  width: 290px;
   border-top: 2px solid black;
   border-left: 2px solid black;
   border-right: 2px solid black;
