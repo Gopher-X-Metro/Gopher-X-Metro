@@ -53,7 +53,7 @@ namespace Realtime {
             return vehicles;
         }
   
-      // Check if the route exists in Transit
+      // Check if route exists in Transit
       if (!(await getRoute(routeId))) return;
   
       // Run on Metro Routes
@@ -101,19 +101,6 @@ namespace Realtime {
         return await (await fetch(`https://svc.metrotransit.org/nextrip/directions/${routeId}`)).json();
     }
 
-    /**
-     * Gets fetched data of university buses
-     */
-    export async function getRealtimeGTFSUniversity(): Promise<any> {
-        return await fetch(GTFS_REALTIME_URL_UMN).then(async response => {
-            if (response.ok && response.status === 200) {
-                return await response.json();
-            } else {
-                console.warn(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${await response.text()}`);
-            }
-        });
-    }
-
     /* Private Helper Methods */
 
     /**
@@ -134,13 +121,27 @@ namespace Realtime {
         return await (await fetch("https://svc.metrotransit.org/nextrip/routes")).json();
     }
 
+    /**
+     * Gets fetched data of university buses
+     * @returns university bus data
+     */
+    async function getRealtimeGTFSUniversity(): Promise<any> {
+        return await fetch(GTFS_REALTIME_URL_UMN).then(async response => {
+            if (response.ok && response.status === 200) {
+                return await response.json();
+            } else {
+                console.warn(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${await response.text()}`);
+            }
+        });
+    }
+
     /* Depreciated */
     
     /**
      * Gets fetched vehicle position data
      * @depreciated
      */
-    export async function getRealtimeGTFSVehiclePositions() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
+    async function getRealtimeGTFSVehiclePositions() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
         const response = await fetch(GTFS_REALTIME_URL_VEHICLE_POSITIONS);
         return response?.arrayBuffer().then(buffer => GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)));
     }
@@ -149,7 +150,7 @@ namespace Realtime {
      * Gets fetched trip updates data
      * @deprecated
      */
-    export async function getRealtimeGTFSTripUpdates() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage | undefined> {
+    async function getRealtimeGTFSTripUpdates() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage | undefined> {
         return await fetch(GTFS_REALTIME_URL_TRIP_UPDATES).then(async response => {
             if (response.ok && response.status === 200) {
                 return await response.arrayBuffer().then(buffer => GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)));
