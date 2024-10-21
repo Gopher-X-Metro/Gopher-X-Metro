@@ -73,20 +73,21 @@ export default function SideBar() {
                 </button>
             </div>
 
+
             <div id="nav-bar" className={sidebarOpen ? 'sidebar open' : 'sidebar'}>
-              
+        <div className='sidebar-content flex flex-col items-center'>
                     <div className='tab-container-sidebar'>
                             <button className ="routes-tab" onClick = {() => updateToggle(1)}>Routes</button>
                             <button className='favorite-tab' onClick = {() => updateToggle(2)}>Favorites</button>
                     </div>
-                  
-                    <div className={toggle === 1 ? 'tab-content' : 'content'}>
+            <div className='scroll-section'> 
+            <div className={toggle === 1 ? 'tab-content' : 'content'}>
                     
                     <div className='Clear-container'>
                         <button className='Clear-all-btn' onClick={Clearall.Clear_Routes}>Clear Routes</button> 
                     </div>
 
-                    <div className='sidebar-content flex flex-col items-center'>
+                
                    
 
                     <div className="sidebar-header">
@@ -96,6 +97,7 @@ export default function SideBar() {
 
                     {Array.from(routes.keys()).map(routeId => (<RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)}/>))}
 
+                    <div id="Favorite-routeButton"></div>
                     <div className = "sidebar-header"> 
                         <h3> Search Routes </h3>
                         <div className="underline"></div>
@@ -110,19 +112,17 @@ export default function SideBar() {
                     </div>
 
                     <div className= "error_text" id = 'error_text'></div>
-                </div>
+            </div>
 
                               {/* content for the favorite tab */}
-            <div className={toggle === 2 ? 'tab-content' : 'content'}>
-                <div className='favorite-tab-content'>
-
-                    <div className='sidebar-content flex flex-col items-center'>
-                       <div id="Favorite-routeButton"></div>
-                    </div>
-                </div>
-            </div>
-                </div>
-            </div>
+        <div className={toggle === 2 ? 'tab-content' : 'content'}>
+                        <p>hiiiiii</p>
+                       <p id="Favorite-routeButton"></p>
+         </div>
+         </div>   
+        </div>  
+        </div>
+           
         </>
     )
     
