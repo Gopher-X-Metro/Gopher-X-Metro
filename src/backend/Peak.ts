@@ -42,7 +42,7 @@ namespace Peak {
 
             if (latStr && lngStr)
                 shapeLocations.push(new google.maps.LatLng(Number(latStr), Number(lngStr)));
-        })
+        });
 
         return shapeLocations;
     }
