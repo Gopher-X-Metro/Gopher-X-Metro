@@ -1,18 +1,24 @@
-import _Route from "./internal/_Route";
-import _Direction from "./internal/_Direction";
-import _Stop from "./internal/_Stop";
-import _Place from "./internal/_Place";
-import _Vehicle from "./internal/_Vehicle";
-import _Departure from "./internal/_Departure";
-import _ExistsError from "./internal/_ExistsError";
+import _Route from "src/data/internal/_Route";
+import _Direction from "src/data/internal/_Direction";
+import _Stop from "src/data/internal/_Stop";
+import _Place from "src/data/internal/_Place";
+import _Vehicle from "src/data/internal/_Vehicle";
+import _Departure from "src/data/internal/_Departure";
+import _ExistsError from "src/data/internal/_ExistsError";
 
 /** Data Access Object (DAO) */
 namespace Data {
+    /** Exists Error */
+    export class ExistsError extends _ExistsError {};
+
+    /** Routes Object Promises*/
+    const routes = new Map<string, Promise<Route>>();
+
     /** Route Data and Route Access */
     export class Route extends _Route {
         /**
          * Create a new Route
-         * @param routeId   id of the route
+         * @param routeId id of the route
          */
         static async create(routeId: string) : Promise<Data.Route> {
             const route = new Data.Route(routeId);
@@ -367,13 +373,6 @@ namespace Data {
                 return Promise.all((await Place.all()).map(place => Array.from(place.stops.values())).flat());
         }
     };
-
-    /** Exists Error */
-    export class ExistsError extends _ExistsError {};
-
-    
-    /** Routes Object Promises*/
-    const routes = new Map<string, Promise<Route>>();
 }
 
 export default Data;
