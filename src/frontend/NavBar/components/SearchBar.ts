@@ -2,35 +2,25 @@ import Routes from "src/frontend/Pages/Map/components/Routes";
 import Plan from "src/backend/Plan";
 import Search from "src/frontend/Pages/Map/elements/Search";
 
+/* Currently not being used */
+
+/**
+ * SearchBar Component
+ * 
+ * Creates a search bar on the map
+ * @returns rendered SearchBar component
+ */
 namespace SearchBar {
-    /**
-     * Initalizes the search bar in map
-     * @param _map map object
-     */
-    export function init(_map: google.maps.Map) : void {
-        map = _map;
-
-        input = document.getElementById("search-bar") as HTMLInputElement;
-        input.className = "search-controls" + (false ? "-mobile" : "")
-
-        autocomplete = new google.maps.places.Autocomplete(input, { fields: ["place_id", "geometry", "name", "formatted_address"] });
-        geocoder = new google.maps.Geocoder();
-
-        autocomplete.bindTo("bounds", map);
-        map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
-
-        autocomplete.addListener("place_changed", () => onPlaceChange());
-    }
-
-    /* Private */
     const searches = new Map<string, Search>();
     let input: HTMLInputElement;
     let autocomplete: google.maps.places.Autocomplete;
     let geocoder: google.maps.Geocoder;
     let map: google.maps.Map;
 
+    /* Private Helper Methods*/
+
     /**
-     * Sets the new location of the marker, and focuses on the spot
+     * Sets new location of marker and focuses on the spot
      */
     function onPlaceChange() : void {
         const place = autocomplete.getPlace();
@@ -60,11 +50,32 @@ namespace SearchBar {
                             });
                         }
                     }
-                })
+                });
             }).catch((error) => window.alert("Geocoder failed due to: " + error));
         }
     }
-}
 
+    /* Deprecated / Unused */
+
+    /**
+     * Initalizes search bar in map
+     * @param _map map object
+     * @deprecated
+     */
+    function init(_map: google.maps.Map) : void {
+        map = _map;
+
+        input = document.getElementById("search-bar") as HTMLInputElement;
+        input.className = "search-controls" + (false ? "-mobile" : "")
+
+        autocomplete = new google.maps.places.Autocomplete(input, { fields: ["place_id", "geometry", "name", "formatted_address"] });
+        geocoder = new google.maps.Geocoder();
+
+        autocomplete.bindTo("bounds", map);
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
+
+        autocomplete.addListener("place_changed", () => onPlaceChange());
+    }
+}
 
 export default SearchBar;
