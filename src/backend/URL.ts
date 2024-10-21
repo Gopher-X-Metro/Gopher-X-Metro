@@ -59,6 +59,17 @@ namespace URL {
         functions.push(callbackfn);
     }
 
+    /**
+     * Removes listener function
+     * @param callbackfn function to be removed from the listener list
+     */
+    export function removeListener(callbackfn: () => void): void {
+        const index = functions.indexOf(callbackfn);
+        if (index !== -1) {
+            functions.splice(index, 1);
+        }
+    }
+
     /* Private Helper Methods */
 
     /**
