@@ -1,39 +1,42 @@
-import URL from 'src/backend/URL.ts';
-import Schedule from 'src/backend/Schedule'; 
-import Peak from 'src/backend/Peak';
+import URL from "src/backend/URL.ts";
+import Schedule from "src/backend/Schedule"; 
+import Peak from "src/backend/Peak";
 
 namespace SearchFeature {
-    /* Public */
-
     /**
+     * SearchFeature Component
+     * 
      * Runs when a search is requested for a route
      */
-    export async function searchRoute() {
+    export async function searchRoute() : Promise<void> {
         const routeInput = document.getElementById("search_route") as HTMLInputElement | null;
         
         if (routeInput) {
             const routeId = routeInput.value;
-            // Checks if the route exists
+            // Checks if route exists
             if (Peak.UNIVERSITY_ROUTES[routeId] || (await Schedule.getRoute(routeId))) {
-                showError(false)
-                if (URL.getRoutes().has(routeId))
+                showError(false);
+                if (URL.getRoutes().has(routeId)) {
                     URL.removeRoute(routeId);
-                else
+                } else {
                     URL.addRoute(routeId);
-            } else showError(true)
+                }
+            } else {
+                showError(true);
+            }
         } else {
             showError(true);
             console.warn("error input is not a value"); // checks if routeInput has a value
         }
     }
 
-    /* Private */
+    /* Private Helper Methods */
 
     /**
      * Shows the error of the route not existing
      * @param show if the error should be shown
      */
-    function showError( show : boolean ) {
+    function showError( show : boolean ) : void {
         const errorElement = document.getElementById("error_text")!;
 
         if (show) {
@@ -46,4 +49,4 @@ namespace SearchFeature {
     }
 }
 
-export default SearchFeature
+export default SearchFeature;
