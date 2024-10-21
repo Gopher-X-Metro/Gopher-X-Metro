@@ -1,6 +1,8 @@
 import Static from "src/backend/Static.ts";
 import Realtime from "src/backend/Realtime.ts";
-import { IStop } from "./interface/StopInterface";
+import { IStop } from "src/backend/interface/StopInterface";
+import { ITrip } from "src/backend/interface/TripInterface";
+import { IShape } from "src/backend/interface/ShapeInterface";
 
 import busImage120 from "src/img/120_bus.png";
 import busImage121 from "src/img/121_bus.png";
@@ -82,9 +84,10 @@ namespace Resources {
      * @returns set of shape IDs for the given route
      */
     export async function getShapeIds(routeId: string) : Promise<Set<string>> {
-        return new Set(await (await Static.getTrips(routeId))
-        .filter((trip: { service_id: string; }) => Static.isServiceRunning(trip.service_id))
-        .map((trip: { shape_id: string; }) => trip.shape_id));
+        return new Set((await Static.getTrips(routeId))
+            .filter((trip: ITrip) => Static.isServiceRunning(trip.service_id))
+            .map((trip: ITrip) => trip.shape_id)
+        );
     }
 
     /**
@@ -94,9 +97,9 @@ namespace Resources {
      * @returns array of shape locations
      */
     export async function getShapeLocations(shapeId: string) : Promise<Array<google.maps.LatLng>> {
-        const shapeLocations = await (await Static.getShapes(shapeId))
-        .sort((a: { shape_dist_traveled: number; }, b: { shape_dist_traveled: number; }) => a.shape_dist_traveled - b.shape_dist_traveled)
-        .map((shape: {shape_pt_lat: number, shape_pt_lon: number}) => new google.maps.LatLng(shape.shape_pt_lat, shape.shape_pt_lon));
+        const shapeLocations = (await Static.getShapes(shapeId))
+            .sort((a: IShape, b: IShape) => a.shape_dist_traveled - b.shape_dist_traveled)
+            .map((shape: IShape) => new google.maps.LatLng(Number(shape.shape_pt_lat), Number(shape.shape_pt_lon)));
 
         return shapeLocations;
     }
@@ -119,7 +122,7 @@ namespace Resources {
             }
 
             // Fetch route color from Static.getRoutes
-            const result = await Static.getRoutes(routeId);
+            const result = await Static.getRoute(routeId);
             if (result && result[0] && result[0].route_color && result[0].route_color !== "") {
                 colors.set(routeId, result[0].route_color);
                 return result[0].route_color;
@@ -174,9 +177,10 @@ namespace Resources {
      * @deprecated
      */
     async function getTripIds(routeId: string) : Promise<Set<string>> {
-        return new Set(await (await Static.getTrips(routeId))
-        .filter((trip: { service_id: string; }) => Static.isServiceRunning(trip.service_id))
-        .map((trip: { trip_id: string; }) => trip.trip_id));
+        return new Set((await Static.getTrips(routeId))
+            .filter((trip: ITrip) => Static.isServiceRunning(trip.service_id))
+            .map((trip: ITrip) => trip.trip_id)
+        );
     }
 
     /**
@@ -186,9 +190,10 @@ namespace Resources {
      * @deprecated
      */
     async function getServiceIds(routeId: string) : Promise<Set<string>> {
-        return new Set(await (await Static.getTrips(routeId))
-        .filter((trip: { service_id: string; }) => Static.isServiceRunning(trip.service_id))
-        .map((trip: { service_id: string; }) => trip.service_id));
+        return new Set((await Static.getTrips(routeId))
+            .filter((trip: ITrip) => Static.isServiceRunning(trip.service_id))
+            .map((trip: ITrip) => trip.service_id)
+        );
     }
 
     /**

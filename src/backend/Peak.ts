@@ -2,8 +2,8 @@ import { IShape } from "src/backend/interface/ShapeInterface";
 import { ITrip } from "src/backend/interface/TripInterface";
 
 namespace Peak {
-    const shapes : Map<string, IShape> = new Map<string, IShape>();
-    const trips : Map<string, ITrip[]> = new Map<string, ITrip[]>();    
+    const shapes : Map<string, IShape> = new Map();
+    const trips : Map<string, ITrip[]> = new Map();    
 
     /* University Routes and ID */
     export const UNIVERSITY_ROUTES = {

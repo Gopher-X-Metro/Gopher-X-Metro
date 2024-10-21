@@ -9,3 +9,7 @@ export interface IStop {
     stops: any[];
     departures: any[];
 }
+
+export interface IStopTimes {
+    
+}
