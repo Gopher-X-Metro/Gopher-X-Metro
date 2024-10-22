@@ -32,22 +32,22 @@ namespace Realtime {
         // Check if University Route
         if (Object.keys(Peak.UNIVERSITY_ROUTES).includes(routeId)) {
             let externalVehicles: Array<IExternalVehicle> = (await getRealtimeGTFSUniversity()).vehicles
-                .filter((vehicle: IExternalVehicle) => Peak.UNIVERSITY_ROUTES[routeId] === vehicle.tripID);
+                .filter((vehicle: IExternalVehicle) => Peak.UNIVERSITY_ROUTES[routeId] === vehicle.routeID);
 
             // Map external vehicles to internal Vehicle type
             let vehicles: Array<IVehicle> = externalVehicles.map((vehicle: IExternalVehicle) => ({
-                trip_id: vehicle.tripID,
+                trip_id: String(vehicle.tripID),
                 direction_id: vehicle.directionID,
                 direction: vehicle.direction,
-                location_time: vehicle.location_time,
                 termianl: vehicle.termianl,
                 latitude: vehicle.lat,
                 longitude: vehicle.lng,
                 odometer: vehicle.odometer,
                 speed: vehicle.speed,
-                timestamp: vehicle.timestamp,
-                bearing: vehicle.bearing || 0,
-                route_id: vehicle.routeID || ''
+                timestamp: vehicle.positionUpdated,
+                location_time: vehicle.timestamp,
+                bearing: vehicle.linkBearing,
+                route_id: routeId
             }));
 
             return vehicles;

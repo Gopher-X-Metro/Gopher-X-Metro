@@ -51,14 +51,14 @@ namespace Routes {
         for (const routeId of URL.getRoutes()) {
             const route = routes.get(routeId);
             const vehicleData = await Realtime.getVehicles(routeId);
-
+        
             if (!vehicleData) return;
 
             for (const vehicle of vehicleData) {
                 if (!vehicles.has(vehicle.trip_id)) {
                     // Add Vehicle
                     vehicles.set(vehicle.trip_id, new Vehicle(vehicle.trip_id, Resources.getRouteImages(routeId), map));
-                    
+
                     if (route) {
                         route.addVehicleObject(vehicle.trip_id, vehicles.get(vehicle.trip_id));
 
@@ -83,7 +83,7 @@ namespace Routes {
                     vehicles.get(vehicle.trip_id)?.setBusBearing(Number(vehicle.bearing));
                 }
 
-                vehicles.get(vehicle.trip_id)?.setPosition(new google.maps.LatLng(vehicle.latitude as number, vehicle.longitude as number), Number(vehicle.timestamp));
+                vehicles.get(vehicle.trip_id)?.setPosition(new google.maps.LatLng(vehicle.latitude, vehicle.longitude), vehicle.timestamp);
                 vehicles.get(vehicle.trip_id)?.updateWindow();
                 vehicles.get(vehicle.trip_id)?.updateTimestamp();
             }
