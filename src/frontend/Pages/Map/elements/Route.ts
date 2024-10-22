@@ -89,7 +89,7 @@ class Route extends Primative {
 
     private visible: boolean;
 
-    /* Depreciated */
+    /* Depreciated / Unused */
 
     /**
      * Adds a stop to the route

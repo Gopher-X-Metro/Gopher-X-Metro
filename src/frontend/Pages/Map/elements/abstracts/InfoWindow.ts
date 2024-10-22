@@ -52,7 +52,7 @@ export default class InfoWindow {
     protected window: google.maps.InfoWindow;
     protected map: google.maps.Map;
 
-    /* Depreciated */
+    /* Depreciated / Unused */
 
     /**
      * Closes the info window on the map

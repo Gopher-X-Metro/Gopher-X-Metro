@@ -27,7 +27,7 @@ abstract class InfoWindowElement extends Element {
 
     public readonly infoWindow: InfoWindow | undefined;
 
-    /* Depreciated */
+    /* Depreciated / Unused */
 
     /**
      * Updates the info window information

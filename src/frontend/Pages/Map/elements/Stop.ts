@@ -196,7 +196,7 @@ class Stop extends InfoWindowElement {
     private direction: string;
     private elements: Set<Primative>;
 
-    /* Depreciated */
+    /* Depreciated / Unused */
     
     /**
      * Sets the description of the info window

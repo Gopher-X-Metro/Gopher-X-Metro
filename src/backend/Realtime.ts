@@ -135,7 +135,7 @@ namespace Realtime {
         });
     }
 
-    /* Depreciated */
+    /* Depreciated / Unused */
     
     /**
      * Gets fetched vehicle position data
