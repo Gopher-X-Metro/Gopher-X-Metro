@@ -1,5 +1,5 @@
-import Static from "src/backend/Static.ts";
-import Realtime from "src/backend/Realtime.ts";
+import Static from "src/backend/Static";
+import Realtime from "src/backend/Realtime";
 import { IStop } from "src/backend/interface/StopInterface";
 import { ITrip } from "src/backend/interface/TripInterface";
 import { IShape } from "src/backend/interface/ShapeInterface";

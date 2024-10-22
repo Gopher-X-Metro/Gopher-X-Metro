@@ -1,4 +1,4 @@
-import URL from "src/backend/URL.ts";
+import URL from "src/backend/URL";
 import Schedule from "src/backend/Schedule"; 
 import Peak from "src/backend/Peak";
 
@@ -44,7 +44,7 @@ namespace SearchFeature {
             errorElement.innerHTML = "Route doesn't exist!";
         } else {
             errorElement.style.display = "none";
-            errorElement.innerHTML = '';
+            errorElement.innerHTML = "";
         }
     }
 }

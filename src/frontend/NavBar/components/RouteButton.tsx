@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 
-import URL from "src/backend/URL.ts";
+import URL from "src/backend/URL";
 import Routes from "src/frontend/Pages/Map/components/Routes";
 
 /**
