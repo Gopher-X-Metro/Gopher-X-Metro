@@ -27,7 +27,7 @@ class Path extends Element{
             polyline.setOptions({ zIndex: 1 , strokeWeight: Number(process.env.REACT_APP_LINE_HIGHLIGHT) + 1.5 });
         });
 
-        polyline.addListener('mouseout', () => {
+        polyline.addListener("mouseout", () => {
             polyline.setOptions({ zIndex: -1 });
         });
     }
