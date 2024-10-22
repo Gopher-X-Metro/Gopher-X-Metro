@@ -13,7 +13,7 @@ class Path extends Element{
      * @param map map that the line is displayed on
      */
     constructor(shapeId: string, color: string, locations: Array<google.maps.LatLng>, map: google.maps.Map) {
-        super(shapeId, map, new window.google.maps.Polyline({
+        const polyline = new window.google.maps.Polyline({
             path: locations,
             geodesic: true,
             strokeColor: "#" + color,
@@ -21,7 +21,15 @@ class Path extends Element{
             strokeWeight: Number(process.env.REACT_APP_LINE_NORMAL),
             map: map,
             zIndex: -1
-        }));
+        });
+        super(shapeId, map, polyline);
+        polyline.addListener("mouseover", () => {
+            polyline.setOptions({ zIndex: 1 , strokeWeight: Number(process.env.REACT_APP_LINE_HIGHLIGHT) + 1.5 });
+        });
+
+        polyline.addListener("mouseout", () => {
+            polyline.setOptions({ zIndex: -1 });
+        });
     }
 }
 
