@@ -202,7 +202,7 @@ namespace Plan {
     return { x: coordinates["0"], y: coordinates["1"] };
   }
 
-  /* Deprecated / Never Used */
+  /* Depreciated / Unused */
 
   /**
      * Converts UTM coordinates to latitude and longitude

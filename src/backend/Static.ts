@@ -118,7 +118,7 @@ namespace Static {
         return `${year}${month}${day}`;
     }
 
-    /* Deprecated / Unused */
+    /* Depreciated / Unused */
 
     /**
      * Gets stop data for a specific trip ID

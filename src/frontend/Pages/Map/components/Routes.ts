@@ -293,7 +293,7 @@ namespace Routes {
         }
     } 
 
-    /* Depreciated */
+    /* Depreciated / Unused */
 
     /**
      * Sets a route's visibility

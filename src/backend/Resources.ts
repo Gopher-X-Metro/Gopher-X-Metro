@@ -168,7 +168,7 @@ namespace Resources {
         document.body.appendChild(popup);
       }
 
-    /* Depreciated */
+    /* Depreciated / Unused */
 
     /**
      * Gets the trip IDs of a route as a Set
