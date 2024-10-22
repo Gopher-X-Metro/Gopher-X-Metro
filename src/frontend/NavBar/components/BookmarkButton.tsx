@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { BsBookmarkStar } from 'react-icons/bs';
 import { ControlPosition, MapControl } from '@vis.gl/react-google-maps';
 
-function BookmarkIcon() {
+function BookmarkButton() {
     const [, forceReload] = useState(1);
     const [bookmarked, setBookmarked] = useState(false);
     const [routes, setRoutes] = useState(new Set<string>());
@@ -38,4 +38,4 @@ function BookmarkIcon() {
         </>
     )
 }
-export default BookmarkIcon
+export default BookmarkButton
