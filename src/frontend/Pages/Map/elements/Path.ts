@@ -23,7 +23,7 @@ class Path extends Element{
             zIndex: -1
         });
         super(shapeId, map, polyline);
-        polyline.addListener('mouseover', () => {
+        polyline.addListener("mouseover", () => {
             polyline.setOptions({ zIndex: 1 , strokeWeight: Number(process.env.REACT_APP_LINE_HIGHLIGHT) + 1.5 });
         });
 
