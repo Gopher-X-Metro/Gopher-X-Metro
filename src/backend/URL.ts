@@ -15,35 +15,12 @@ namespace URL {
             window.history.replaceState({}, getQuerySelectorTextContext(), "./?route=" + ((getRoutes().size === 0) ? routeId : (Array.from(getRoutes()).join(",") + "," + (routeId))));
             onChange(); 
         }
-
-        const element = document.getElementsByClassName("bookmark-css");
-        const routes = URL.getRoutes();
-    
-        let button:any;
-        if(routes.size === 1 ){
-            button = element[0] as HTMLElement;
-            button.style.display = 'block';
-        }else{
-            button = element[0] as HTMLElement;
-            button.style.display = 'none';
-        }
-
     }
     /**
      * Removes the specified route from the URL
      * @param routeId route ID to remove
      */
     export function removeRoute(routeId: string) : void {
-
-        const element = document.getElementsByClassName("bookmark-css");
-        let button = element[0] as HTMLElement;
-    
-            if(URL.getRoutes().size === 1){
-                button.style.display = 'none';
-            }else if(URL.getRoutes().size === 2){
-                button.style.display = 'block';
-            }
-
         if (getRoutes().has(routeId)) {
             const routes = getRoutes();
             routes.delete(routeId);

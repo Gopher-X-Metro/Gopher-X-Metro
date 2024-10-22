@@ -9,6 +9,7 @@ import LoadingScreen from "./components/LoadingScreen";
 import NavBar from "src/frontend/NavBar/NavBar";
 import CenterButton from "src/frontend/NavBar/components/CenterButton";
 import LocationSearchBar from "src/frontend/NavBar/components/LocationSearchBar";
+import BookmarkIcon from "src/frontend/NavBar/components/BookmarkIcon";
 
 const APIKey = process.env.REACT_APP_API_KEY; // Comes from the .env.local file, just for security. Won't appear in main -- all api keys should be added to Vercel console. 
 const UMNLocation = { lat: 44.97369560732433, lng: -93.2317259515601 };
@@ -52,6 +53,7 @@ export default function MapPage({ hidden, setPage, isMobile }) {
             > 
                 <LocationSearchBar isMobile={isMobile}/>
                 <CenterButton/>
+                <BookmarkIcon/>
             </Map>
         </div>
     </>);

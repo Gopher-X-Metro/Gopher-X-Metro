@@ -23,11 +23,52 @@ body {
   height: 100%;
 }
 
+
+/* Map */
+
 #map {
   position: relative;
   top: 10%;
   height: 90%;
   width: 100%;
+}
+
+.map-control-button {
+  background: none rgb(255, 255, 255); 
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+  display: block; 
+  border: 0px; 
+  margin: 10px; 
+  padding: 0px; 
+  text-transform: none; 
+  appearance: none; 
+  position: relative; 
+  cursor: pointer; 
+  user-select: none; 
+  overflow: hidden; 
+  width: 40px; 
+  height: 40px;
+  top: 0px; 
+  left: 0px;
+}
+
+.map-control-button .icon{
+  display: block;
+  margin: auto;
+  height: 60%;
+  width: 60%;
+}
+
+.map-control-button .icon {
+  color: #666666;
+}
+
+.map-control-button:hover .icon {
+  color: #333333;
+}
+
+.map-control-button:active .icon {
+  color: #111111;
 }
 
 /* Title Bar */
@@ -405,44 +446,6 @@ body.mobile .pac-container {
 }
 
 /* Center Button */
-#center-button {
-  background: none rgb(255, 255, 255); 
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
-  display: block; 
-  border: 0px; 
-  margin: 10px; 
-  padding: 0px; 
-  text-transform: none; 
-  appearance: none; 
-  position: relative; 
-  cursor: pointer; 
-  user-select: none; 
-  overflow: hidden; 
-  width: 40px; 
-  height: 40px;
-  top: 0px; 
-  left: 0px;
-}
-
-#center-button .icon{
-  display: block;
-  margin: auto;
-  height: 60%;
-  width: 60%;
-}
-
-#center-button.center-button .icon {
-  color: #666666;
-}
-
-#center-button.center-button:hover .icon {
-  color: #333333;
-}
-
-#center-button.center-button:active .icon {
-  color: #111111;
-}
-
 #center-button.center-button.centered .icon {
   color: #111111;
 }
@@ -590,43 +593,16 @@ body.mobile .pac-container {
   width: 100%;
 }
 
-/* Bookmark css*/
-
-.bookmark-css {
-  align-items: center;
-  text-align: center;
-  color: #333;
-  font-size: 24px;
-  display: flex;
-  height:fit-content;
-  z-index: 10;
-  border: 1px solid #fff;
-  background-color: #fff;
-  bottom: 150px;
-  width: 40px;
-  height: 40px;
-  padding-left: 4px;
-  padding-right: 2px;
-  position: absolute;
-  outline: none;
-  right: 11px;
-  display: none;
+/* Bookmark button*/
+#bookmark-button.bookmark-button.bookmarked .icon {
+  color: #111111;
 }
 
-.bookmark-css:hover{
-  color: black;
-  cursor: pointer;
+#bookmark-button.bookmark-button.bookmarked {
+  background-color: #d7c602;
 }
 
-.bookmark-css:active{
-  transform: scale(0.95);
-}
-
-.bookmark-css:focus{
-  background-color:  rgb(255, 204, 51);
-}
-
-/*Controls tab switching */ 
+/* Controls tab switching */ 
 .content{  /* Hides the favorite tab content originally */
   display: none;
 }

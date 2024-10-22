@@ -9,7 +9,7 @@ import Schedule from 'src/backend/Schedule.ts';
 import Clearall from 'src/frontend/NavBar/components/Clearall.tsx';
 
 export default function SideBar() {
-    const [_, forceReload] = useState(0);
+    const [, forceReload] = useState(0);
     const [routes, setRoutes] = useState(new Map<string, string>());
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [toggle, setToggle] = useState(1); //switching between tabs
