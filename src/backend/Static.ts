@@ -124,6 +124,7 @@ namespace Static {
      * Gets stop data for a specific trip ID
      * @param tripId ID of trip
      * @returns array of stop data
+     * @deprecated
      */
     async function getStops(tripId: string) : Promise<IStop[]> {
         if (!stops.has(tripId)) {
@@ -144,6 +145,7 @@ namespace Static {
      * Gets stop times data for a specific trip ID
      * @param tripId ID of trip
      * @returns array of stop times data
+     * @deprecated
      */
     async function getStopTimes(tripId: string) : Promise<IStopTimes[]> {
         if (!stop_times.has(tripId)) {

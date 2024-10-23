@@ -1,20 +1,18 @@
-import Resources from "src/backend/Resources.ts";
-import Schedule from "src/backend/Schedule.ts";
-import Vehicle from "src/frontend/Pages/Map/elements/Vehicle.ts";
-import URL from "src/backend/URL.ts";
-import Route from "src/frontend/Pages/Map/elements/Route.ts";
-import Realtime from "src/backend/Realtime.ts";
-import Peak from "src/backend/Peak.ts";
-import Stop from "src/frontend/Pages/Map/elements/Stop.ts";
-import Data from "src/data/Data.ts";
+import Resources from "src/backend/Resources";
+import Schedule from "src/backend/Schedule";
+import Vehicle from "src/frontend/Pages/Map/elements/Vehicle";
+import URL from "src/backend/URL";
+import Route from "src/frontend/Pages/Map/elements/Route";
+import Realtime from "src/backend/Realtime";
+import Peak from "src/backend/Peak";
+import Stop from "src/frontend/Pages/Map/elements/Stop";
+import Data from "src/data/Data";
 
 namespace Routes {
     const routes = new Map<string, Route>();
     const stops = new Map<string, Promise<Stop | undefined>>();
     const vehicles = new Map<string, Vehicle>();
     let map: google.maps.Map;
-
-    /* Public */
 
     /**
      * Initalzes Routes
@@ -32,7 +30,7 @@ namespace Routes {
     /**
      * Gets a route object
      * @param routeId ID of route
-     * @returns route
+     * @returns route object
      */
     export function getRoute(routeId: string): Route | undefined { 
         return routes.get(routeId); 
@@ -180,17 +178,17 @@ namespace Routes {
     /* Private Helper Methods */
 
     /**
-     * Refreshes the routes after the change of the url
+     * Refreshes routes after the change of url
      */
     function refresh() : void {
-        // Goes through each route that is not on the URL, and hides it
+        // Goes through each route that is not on the URL and hides it
         routes.forEach(route => {
             if (!URL.getRoutes().has(route.getId())) {
                 route.setVisible(false);
             }
         });
 
-        // Goes through each route that is on the URL, and unhides it or creates it
+        // Goes through each route that is on the URL and unhides it or creates it
         URL.getRoutes().forEach(routeId => {
             if (!routes.has(routeId)) {
                 loadRoute(routeId);
@@ -211,7 +209,7 @@ namespace Routes {
     /**
      * Sets a route's boldedness
      * @param routeId ID of route
-     * @param bolded should the route be boolded
+     * @param bolded boolean should route be boolded
      */
     function setBolded(routeId: string, bolded: boolean) : void {
         getRoute(routeId)?.getPaths()?.forEach(paths => {
@@ -265,10 +263,10 @@ namespace Routes {
         if (route) {
             route.addPath(shapeId, color, locations);
 
-            // If the user hovers over the line, change the width
+            // If user hovers over the line, change the width
             route.getPaths().get(shapeId)?.getMarker().addListener("mouseover", () => setBolded(route.getId(), true));
 
-            // If the user stops hovering over the line, return back
+            // If user stops hovering over the line, return back
             route.getPaths().get(shapeId)?.getMarker().addListener("mouseout", () => setBolded(route.getId(), false));
         }
     }
@@ -279,12 +277,12 @@ namespace Routes {
      */
     async function refreshDepartures(stop: Stop | undefined) : Promise<void> {
         if (stop) {
-            const response = await Realtime.getStop(stop.getId());
+            const stopData = await Realtime.getStop(stop.getId());
 
-            if (response.status !== 400) {
+            if (stopData.status !== 400) {
                 stop.clearDepartures();
 
-                for (const departure of response.departures) {
+                for (const departure of stopData.departures) {
                     stop?.addDeparture(departure.route_id, departure.trip_id, departure.departure_text, departure.direction_text, departure.description, departure.departure_time);
                 }
 
