@@ -1,3 +1,5 @@
+import { IDeparture } from "src/backend/interface/DepartureInterface";
+
 export interface IStop {
     stop_id: string;
     latitude: number;
@@ -6,10 +8,10 @@ export interface IStop {
     place_code: string;
     status: number;
     description: string;
-    stops: any[];
-    departures: any[];
+    stops: IStop[];
+    departures: IDeparture[];
 }
 
 export interface IStopTimes {
-    
+    tripId: string;
 }
