@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button, HStack, Box } from "@chakra-ui/react"
-import TitleBar from "src/frontend/NavBar/components/TitleBar.tsx";
-import SideBar from "src/frontend/NavBar/components/Sidebar.tsx";
-import ResponsiveDropdown from "src/frontend/NavBar/components/MobileDropdown.tsx";
+import TitleBar from "src/frontend/NavBar/components/TitleBar";
+import SideBar from "src/frontend/NavBar/components/Sidebar";
+import ResponsiveDropdown from "src/frontend/NavBar/components/MobileDropdown";
 
 /**
  * Navbar Component
