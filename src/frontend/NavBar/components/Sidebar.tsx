@@ -9,7 +9,7 @@ import RouteButton from "src/frontend/NavBar/components/RouteButton";
 import SearchFeature from "src/frontend/NavBar/components/SearchFeature";
 import SearchIcon from "src/img/CustomBus.png";
 
-// Predefined routes data outside the component
+// Predefined routes data
 const predefinedRoutes = new Map<string, string>([
     ["121", "121 Campus Connector"],
     ["122", "122 University Avenue Circulator"],
