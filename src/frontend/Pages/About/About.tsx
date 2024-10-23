@@ -24,7 +24,7 @@ function About({ hidden, setPage }) {
                 </div>
             </nav>
             {/* <!-- Page content--> */}
-            <div className="container">
+            <div className="about-container">
                 <div className="text-center mt-5">
                     <h1 className="title">About <strong>Gopher X Metro Bus</strong></h1>
                     <p className="highlight-text">The University of Minnesota has included 
@@ -35,13 +35,13 @@ function About({ hidden, setPage }) {
 
                     {/* Feedback Section */}
                     <div className="feedback-section mt-4">
-                        <h2><strong>Feedback</strong></h2>
+                        <h2 className="feedback-title">Feedback</h2>
                         <p>We would love to hear your thoughts! Please provide your feedback using <a href={googleFormUrl} target="_blank" rel="noreferrer" className="highlight-link">this form</a>.</p>
                     </div>
 
                     {/* FAQ Section */}
                     <div className="faq-section mt-5">
-                        <h2 className="faq-title"><strong>Frequently Asked Questions</strong></h2>
+                        <h2 className="faq-title">Frequently Asked Questions</h2>
                         <div className="faq-item">
                             <h4 className="question">1. What routes am I able to track?</h4>
                             <p className="answer">You can track bus times and the current location of any Campus bus, Metro bus, or lightrail! Our statistics update every thirty seconds, making sure your information is always up to date.</p>
