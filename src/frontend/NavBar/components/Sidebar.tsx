@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import { Icon } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 
-import URL from "src/backend/URL.ts";
-import Schedule from "src/backend/Schedule.ts";
+import URL from "src/backend/URL";
+import Schedule from "src/backend/Schedule";
 import RouteButton from "src/frontend/NavBar/components/RouteButton";
 import SearchFeature from "src/frontend/NavBar/components/SearchFeature";
 import SearchIcon from "src/img/CustomBus.png";
