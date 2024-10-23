@@ -7,7 +7,6 @@ import { centerMap } from "src/frontend/Pages/Map/Map";
  * CenterButton Component
  * 
  * Button to center map to user's current location or default center.
- * 
  * Button listens for map events such as 'center_changed', 'zoom_changed', and 'drag'
  * to update 'centered' state. This state determines whether the map is centered on 
  * the user's current location or not

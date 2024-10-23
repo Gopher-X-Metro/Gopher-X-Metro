@@ -42,7 +42,7 @@ function RouteButton({ routeId, text }) {
 
   // Create button element with dynamic classes based on route's active state
   const buttonElement = React.createElement("button", {
-    className: `route-btn ${isActive ? 'active' : ''} route-${routeId}`, onClick: () => {
+    className: `route-btn ${isActive ? "active" : ""} route-${routeId}`, onClick: () => {
       // Toggle route's visibility when button is clicked
       if (!isActive) {
         URL.addRoute(routeId);
