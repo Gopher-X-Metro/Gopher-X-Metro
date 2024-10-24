@@ -1,5 +1,5 @@
 /**
- * Info Window element
+ * Info Window component
  */
 export default class InfoWindow {
     protected location: google.maps.LatLng | undefined;
