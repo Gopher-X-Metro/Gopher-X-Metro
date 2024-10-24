@@ -7,6 +7,8 @@ import SearchIcon from "src/img/CustomBus.png";
 import SearchFeature from 'src/frontend/NavBar/components/SearchFeature.tsx';
 import Schedule from 'src/backend/Schedule.ts';
 import Clearall from 'src/frontend/NavBar/components/Clearall.tsx';
+import BookmarkButton from 'src/frontend/NavBar/components/BookmarkButton.tsx';
+
 
 export default function SideBar() {
     const [, forceReload] = useState(0);
@@ -115,9 +117,15 @@ export default function SideBar() {
                               {/* content for the favorite tab */}
         <div className={toggle === 2 ? 'tab-content' : 'content'}>
                         <h1>Favorite Tab</h1>
-                       <p id="Favorite-routeButton"></p>
-         </div>
-         </div>   
+                       <ul id="Favorite-tab"></ul>
+                       
+
+
+        </div>    
+                    </div>
+
+         
+          
         </div>  
            
         </>

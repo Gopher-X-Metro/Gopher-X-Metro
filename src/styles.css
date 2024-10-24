@@ -450,6 +450,10 @@ body.mobile .pac-container {
   color: #111111;
 }
 
+#center-button.center-button.centered .icon:active {
+  transform: scale(0.95);
+}
+
 #center-button.center-button.centered {
   background-color: #dddddd;
 }
@@ -599,7 +603,12 @@ body.mobile .pac-container {
 }
 
 #bookmark-button.bookmark-button.bookmarked {
-  background-color: #d7c602;
+  
+}
+
+#bookmark-button.bookmark-button.bookmarked:active {
+  transform: scale(0.95);
+ 
 }
 
 /* Controls tab switching */ 
@@ -610,6 +619,3 @@ body.mobile .pac-container {
   display: block;
 }
 
-/* .favorite-tab-content{
-  display: block;
-} */
