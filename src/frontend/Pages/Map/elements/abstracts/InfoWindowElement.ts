@@ -1,8 +1,9 @@
 import Element from "src/frontend/Pages/Map/elements/abstracts/Element";
-import InfoWindow from "src/frontend/Pages/Map/elements//abstracts/InfoWindow";
+import InfoWindow from "src/frontend/Pages/Map/components/InfoWindow";
 
 /**
- * Info Window element
+ * Info Window element 
+ * @abstract
  */
 abstract class InfoWindowElement extends Element {
     public readonly infoWindow: InfoWindow | undefined;
