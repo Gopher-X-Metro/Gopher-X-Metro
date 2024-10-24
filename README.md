@@ -2,7 +2,8 @@
 ##### *By: Adam, Ken, Riley, Will, Babacar, Alex, Mike, and Andy*
 Our website includes maps of live-location **Gopher Buses along with Metro Buses and Lightrails** in the area surrounding campus. 
 Our motivation is to **increase the accessibility** of campus transportation for students. The primary goal is to include Metro Buses and Light Rails
-in a format visually similar to the [Gopher Trip Website](https://umn.rider.peaktransit.com/).
+in a format visually similar to the [Gopher Trip Website](https://umn.rider.peaktransit.com/) with the addition of many new features to enhance the
+ease-of-use in our webpage.
 
 ![]([https://raw.github.umn.edu/joh20327/Gopher-City-Bus/Develop/gophermetrowebsite.png?token=GHSAT0AAAAAAAAA2I62OSM5UBDQJ444OLAWZNLLNJA](https://raw.github.umn.edu/joh20327/Gopher-City-Bus/Develop/gophermetrowebsite.png?token=GHSAT0AAAAAAAAA2PHYLFBTOPZCD5HG634AZN4H7IQ))
 Our website allows for concurrent, live updating views of both Metro Transit and University of Minnesota transportation options.

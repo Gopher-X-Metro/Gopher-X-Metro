@@ -1,16 +1,12 @@
-import React from 'react';
-import {
-    Table,
-    Thead,
-    Tbody,
-    Tr,
-    Th,
-    Td,
-    TableCaption,
-    TableContainer,
-    Heading,
-} from '@chakra-ui/react';
+import React from "react";
+import {Table, Thead, Tbody, Tr, Th, Td, TableCaption, TableContainer, Heading} from "@chakra-ui/react";
 
+/**
+ * Schedule Page
+ * @param selectedName selected name of route schedule
+ * @param scheduleTimes times for schedule
+ * @returns rendered Schedule Page
+ */
 export default function Schedule({ selectedName, scheduleTimes }) {
     const renderRows = (scheduleTimes) => {
         return scheduleTimes.map((row, index) => {
@@ -22,13 +18,13 @@ export default function Schedule({ selectedName, scheduleTimes }) {
                 </Tr>
             );
         });
-    };
+    }
 
     return (
         <div>
-            <Heading as='h1' size='md' margin='5'>{selectedName}</Heading>
+            <Heading as="h1" size="md" margin="5">{selectedName}</Heading>
             <TableContainer>
-                <Table variant='striped'>
+                <Table variant="striped">
                     <TableCaption>Only for Fall/Spring Semesters and Finals</TableCaption>
                     <Thead>
                         <Tr>

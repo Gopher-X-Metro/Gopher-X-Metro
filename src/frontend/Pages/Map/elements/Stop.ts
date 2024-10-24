@@ -1,20 +1,14 @@
-import InfoWindowElement from './abstracts/InfoWindowElement';
-
-import Resources from 'src/backend/Resources.ts';
-import URL from 'src/backend/URL.ts';
-import Primative from './abstracts/Primative';
-
-interface departure {
-    routeId: string;
-    tripId: string;
-    departure_text: string;
-    departure_time: number;
-    direction_text: string;
-    description: string;
-}
+import Resources from "src/backend/Resources";
+import URL from "src/backend/URL";
+import Primative from "src/frontend/Pages/Map/elements/abstracts/Primative";
+import InfoWindowElement from "src/frontend/Pages/Map/elements/abstracts/InfoWindowElement";
+import { IDeparture } from "src/backend/interface/DepartureInterface";
 
 class Stop extends InfoWindowElement {
-    /* Public */
+    private name: string;
+    private departures: Map<string, Array<IDeparture>>;
+    private direction: string;
+    private elements: Set<Primative>;
 
     /**
      * Stop Constructor
@@ -36,30 +30,30 @@ class Stop extends InfoWindowElement {
             map: map
         }));
 
-        this.departures = new Map<string, Array<departure>>();
+        this.departures = new Map<string, Array<IDeparture>>();
         this.elements = new Set<Primative>();
-
         this.name = name;
         this.direction = direction;
 
         this.updateWindow();
     }
+
     /**
-     * Updates the info window information
+     * Updates info window information
      */
     public async updateWindow() : Promise<void> {
         this.setColor(this.departures.size === 0 ? "#F35708" : "#4169e1");
 
         /**
-         * Generate the content of the infowindow
-         * @param errorMessage  the error message to replace the content
+         * Generate content of the infowindow
+         * @param errorMessage error message to replace the content
          */
         const generateContent = async (errorMessage?: string) => {
             const divElement = document.createElement("div");
             divElement.style.cssText = "text-align:center; font-family: Arial, sans-serif;";
 
             const directionElement = document.createElement("h2");
-            directionElement.textContent = this.direction
+            directionElement.textContent = this.direction;
             directionElement.style.cssText = "margin-bottom: 10px; font-weight: bold; border-bottom: 2px solid #000;";
 
             const nameElement = document.createElement("p");
@@ -79,13 +73,12 @@ class Stop extends InfoWindowElement {
                 if (this.departures.size === 0) {
                     const warningElement = document.createElement("p");
                     warningElement.innerHTML = `There are no buses for this stop at this time<br><a href="./schedules" rel="noopener noreferrer">Check the scheduling page for more information</a>`;
-                    warningElement.style.cssText = 'color: red;';
+                    warningElement.style.cssText = "color: red;";
                     warningElement.style.fontSize = "12px";
                 
                     divElement.appendChild(warningElement);
-                }
-                else {
-                    const listElement = document.createElement("ul")
+                } else {
+                    const listElement = document.createElement("ul");
                     listElement.style.cssText = "margin-top: 20px; list-style: none;";
 
                     for (const [routeId, departures] of this.departures) {
@@ -93,12 +86,13 @@ class Stop extends InfoWindowElement {
                         listItemElement.style.cssText = "display: inline-block; margin-left: 10px; margin-right: 10px; vertical-align: text-top;";
 
                         const buttonElement = document.createElement("button");
-                        buttonElement.innerHTML = `<svg width="12" height="12" style="display: block; margin: 0 auto 5px;"><circle cx="6" cy="6" r="6" fill="#${await Resources.getColor(routeId)}"/></svg>`
+                        buttonElement.innerHTML = `<svg width="12" height="12" style="display: block; margin: 0 auto 5px;"><circle cx="6" cy="6" r="6" fill="#${await Resources.getColor(routeId)}"/></svg>`;
                         buttonElement.addEventListener("click", () => {
-                            if (!URL.getRoutes().has(routeId))
+                            if (!URL.getRoutes().has(routeId)) {
                                 URL.addRoute(routeId);
-                            else
+                            } else {
                                 URL.removeRoute(routeId);
+                            }
                         });
 
                         const routeIdElement = document.createElement("h3");
@@ -114,7 +108,7 @@ class Stop extends InfoWindowElement {
                             timeElement.style.cssText = "margin: 5px 0; font-size: 14px;";
                             
                             listItemElement.appendChild(timeElement);
-                        })
+                        });
 
                         listElement.append(listItemElement);
                     }
@@ -134,81 +128,91 @@ class Stop extends InfoWindowElement {
             this.infoWindow?.setContent(await generateContent("Failed to load departure information."));
         }
     }
+
     /**
      * Adds a departure to the route
-     * @param routeId            route the departure is for
-     * @param tripId             the trip id of the departure
-     * @param departure_text     text of the departure time
-     * @param direction_text     text of departure direction
-     * @param description        description of departure
-     * @param departure_time     time of departure epoch
+     * @param routeId route the departure is for
+     * @param tripId trip id of the departure
+     * @param departure_text text of departure time
+     * @param direction_text text of departure direction
+     * @param description description of departure
+     * @param departure_time time of departure epoch
      */
     public addDeparture(routeId: string, tripId: string, departure_text: string, direction_text: string, description: string, departure_time: number) : void {
-        if (!this.departures.has(routeId))
-            this.departures.set(routeId, new Array<departure>())
+        if (!this.departures.has(routeId)) {
+            this.departures.set(routeId, new Array<IDeparture>());
+        }
 
         this.departures.get(routeId)?.push({
-            routeId: routeId,
-            tripId: tripId,
+            route_id: routeId,
+            trip_id: tripId,
             departure_text: departure_text,
             direction_text: direction_text,
             description: description,
             departure_time: departure_time
-        })
+        });
     }
+
     /**
      * Clears all departures
      */
-    public clearDepartures() : void { this.departures.clear() }
-    /**
-     * Changes the color of the stop
-     * @param color  the new color
-     */
-    public setColor(color: string) : void {
-        (this.marker as google.maps.Circle).set("fillColor", color);
-        (this.marker as google.maps.Circle).set("strokeColor", color);
+    public clearDepartures() : void { 
+        this.departures.clear() 
     }
+
     /**
-     * Adds an element to the set of elements
-     * @param element   the element to add
+     * Adds element to set of elements
+     * @param element element to add
      */
-    public addElement(element: Primative) : void { this.elements.add(element); }
+    public addElement(element: Primative) : void { 
+        this.elements.add(element); 
+    }
+
     /**
-     * Updates the visibility baised on which elements are visible
+     * Updates visibility based on which elements are visible
      */
     public updateVisibility() : void {
         let visible = false;
 
         this.elements.forEach(element => {
             if (element.isVisible()) {
-                visible = true
+                visible = true;
                 return;
             }
-        })
+        });
 
         this.setVisible(visible); 
     }
- 
-    /* Private */
 
-    private name: string;
-    private departures: Map<string, Array<departure>>;
-    private direction: string;
-    private elements: Set<Primative>;
+    /* Private Helper Methods */
 
-    /* Depreciated */
+    /**
+     * Changes color of the stop
+     * @param color new color
+     */
+    public setColor(color: string) : void {
+        (this.marker as google.maps.Circle).set("fillColor", color);
+        (this.marker as google.maps.Circle).set("strokeColor", color);
+    }
+
+    /* Depreciated / Unused */
     
     /**
-     * Sets the description of the info window
-     * @param description   the html text for the info window
+     * Sets description of info window
+     * @param description html text for the info window
      * @deprecated
      */
-    public setDescription(description: string) : void { this.infoWindow?.setContent(description); }
+    private setDescription(description: string) : void { 
+        this.infoWindow?.setContent(description); 
+    }
+
     /**
      * Updates the info window information
      * @deprecated
      */
-    public closeInfoWindow() : void { this.infoWindow?.setVisible(false); }   
+    private closeInfoWindow() : void { 
+        this.infoWindow?.setVisible(false); 
+    }   
 }
 
 export default Stop;
