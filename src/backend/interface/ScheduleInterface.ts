@@ -1,6 +1,9 @@
 export interface ISchedule {
     timetables: ITimeTable[];
     schedule_type_name: string;
+    days: string;
+    times: string;
+    frequency: string;
 }
 
 export interface ITimeTable {
