@@ -1,30 +1,11 @@
-import _DataAbstract from "./_DataAbstract";
+import _DataAbstract from "src/data/internal/_DataAbstract";
 
-/** Stores data for a vehicle */
+/**
+ * Stores data for a vehicle
+ */
 export default class _Vehicle extends _DataAbstract {
-    /**
-     * Constructor for the _Vehicle class
-     * @param vehicleId     id of the vehicle
-     * @param routeId       id of the route that contains this vehicle
-     * @param data          data of the vehicle obtained from _Route
-     */
-    constructor(vehicleId: string, routeId: string, data: any) {
-        super(vehicleId);
-        this.routeId = routeId;
-
-        this.data = data;
-
-        this.directionId = data.direction_id;
-        this.direction = data.direction;
-        this.latitude = data.latitude;
-        this.longitude = data.longitude;
-        this.bearing = data.bearing;
-        this.timestamp = data.timestamp;
-    }
-
     /** Aditional data about the vehicle */
     public readonly data : any;
-
     /** Direction the vehicle is heading in degrees */
     public readonly bearing: number;
     /** Text of the direction the vehicle is heading */
@@ -35,9 +16,27 @@ export default class _Vehicle extends _DataAbstract {
     public readonly longitude: number;
     /** Time when the bus location was last updated */
     public readonly timestamp: number;
-
     /** Id of the direction that contains this vehicle */
     public readonly directionId: number;
     /** Id of the route that contains this vehicle */
     public readonly routeId: string;
+
+    /**
+     * Constructor for _Vehicle class
+     * @param vehicleId id of vehicle
+     * @param routeId id of route that contains this vehicle
+     * @param data data of vehicle obtained from _Route
+     */
+    constructor(vehicleId: string, routeId: string, data: any) {
+        super(vehicleId);
+        
+        this.routeId = routeId;
+        this.data = data;
+        this.directionId = data.direction_id;
+        this.direction = data.direction;
+        this.latitude = data.latitude;
+        this.longitude = data.longitude;
+        this.bearing = data.bearing;
+        this.timestamp = data.timestamp;
+    }
 }
