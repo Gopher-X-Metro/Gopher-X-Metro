@@ -1,3 +1,3 @@
 export interface IDirection {
-    direction_id: string;
+    direction_id: number;
 }

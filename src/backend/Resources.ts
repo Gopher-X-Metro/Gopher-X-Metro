@@ -213,8 +213,8 @@ namespace Resources {
         }
         
         for (const direction of directions) {
-            for (const stop of (await Realtime.getStops(routeId, Number(direction.direction_id)))) {
-                stopsInfo.push(await Realtime.getStopInfo(routeId, Number(direction.direction_id), stop.place_code));
+            for (const stop of (await Realtime.getStops(routeId, direction.direction_id))) {
+                stopsInfo.push(await Realtime.getStopInfo(routeId, direction.direction_id, stop.place_code));
             }
         }
 
