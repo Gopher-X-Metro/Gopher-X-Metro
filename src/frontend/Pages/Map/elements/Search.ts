@@ -1,8 +1,17 @@
-import Stop from "./Stop";
-import InfoWindowElement from "./abstracts/InfoWindowElement";
+import Stop from "src/frontend/Pages/Map/elements/Stop";
+import InfoWindowElement from "src/frontend/Pages/Map/elements/abstracts/InfoWindowElement";
 
 class Search extends InfoWindowElement {
-    /* Public */
+    private name: string | undefined;
+    private elements: Set<Stop>;
+    
+    /**
+     * Search Constructor
+     * @param searchId ID of search
+     * @param name name of search
+     * @param location location of search
+     * @param map map to display the search result
+     */
     constructor(searchId: string, name: string | undefined, location: google.maps.LatLng, map: google.maps.Map) {
         super(searchId, map, new google.maps.marker.AdvancedMarkerElement({
             map: map,
@@ -11,14 +20,15 @@ class Search extends InfoWindowElement {
         }));
 
         this.name = name;
-        
         this.elements = new Set<Stop>();
 
         this.infoWindow?.getWindow().set("pixelOffset", new google.maps.Size(0, -15));
-        
         this.updateWindow();
     }
 
+    /**
+     * Updates search window
+     */
     public async updateWindow() : Promise<void> {
         const divElement = document.createElement("div");
         divElement.style.cssText = "text-align:center; font-family: Arial, sans-serif;";
@@ -40,26 +50,24 @@ class Search extends InfoWindowElement {
 
         this.infoWindow?.setContent(divElement);
     }
+
     /**
-     * Adds an element to the elements set
+     * Adds an element to elements set
      * @param element Element to add
      */
     public addElement(element: Stop) : void {
         this.elements.add(element);
     }
+
     /**
      * Sets this search element's visiblity
-     * @param visible   if the elements should be visible
+     * @param visible if elements should be visible
      * @override
      */
     public setVisible(visible: boolean): void {
         (this.marker as google.maps.marker.AdvancedMarkerElement).map = (visible ? this.map : undefined);
         this.elements.forEach(element => element.updateVisibility());
     }
-
-    /* Private */
-    private name: string | undefined;
-    private elements: Set<Stop>;
 }
 
 export default Search;
