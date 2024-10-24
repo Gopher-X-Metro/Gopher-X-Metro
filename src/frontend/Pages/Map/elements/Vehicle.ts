@@ -207,24 +207,27 @@ class Vehicle extends InfoWindowElement {
     /**
      * Get trip ID
      * @returns string trip ID
+     * @deprecated
      */
-    public getTripId() : string | undefined { 
+    private getTripId() : string | undefined { 
         return this.tripId; 
     }
 
     /**
      * Gets direction the bus is heading
      * @returns direction number bus is heading
+     * @deprecated
      */
-    public getBusBearing(): number | undefined { 
+    private getBusBearing(): number | undefined { 
         return this.bearing; 
     }
 
     /**
      * Gets direction the lightrail is heading
      * @returns direction ID number
+     * @deprecated
      */
-    public getDirectionID(): number | undefined { 
+    private getDirectionID(): number | undefined { 
         return this.direction_id; 
     }
 }

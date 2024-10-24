@@ -15,7 +15,7 @@ const searches = new Map<string, Search>();
  * 
  * @returns rendered LocationSearchBar component
  */
-export default function LocationSearchBar( { isMobile } ) {
+export default function LocationSearchBar({ isMobile }) {
     const input = useRef<HTMLInputElement>(null);
     const map = useMap("map");
 
