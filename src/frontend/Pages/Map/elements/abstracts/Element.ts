@@ -2,6 +2,7 @@ import Primative from "src/frontend/Pages/Map/elements/abstracts/Primative";
 
 /**
  * Builds Map Elements
+ * @abstract
  */
 abstract class Element extends Primative {
     protected readonly marker: google.maps.MVCObject | google.maps.marker.AdvancedMarkerElement;
