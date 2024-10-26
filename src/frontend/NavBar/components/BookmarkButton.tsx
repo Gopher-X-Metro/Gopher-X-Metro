@@ -12,10 +12,11 @@ export function BookmarkButton() {
     const [, forceReload] = useState(1);
     const [bookmarked, setBookmarked] = useState(false); 
     useEffect(() => setRoutes(URL.getRoutes()), []);
-    const [routes, setRoutes] = useState(new Set<string>());
+    const [routes, setRoutes] = useState(new Map<string,string>());
 
 
     URL.addListener(() => {
+        
         forceReload(Math.random());
         setRoutes(URL.getRoutes());
     });
@@ -25,27 +26,35 @@ export function BookmarkButton() {
     const onClick = () => {
         // TODO: setBookmarked to flip the bookmark of a route
         // Temp
+
+            routes.set("123", "Route 123");
      
-       console.log("here");
+         
 
-        const element = document.getElementById("Favorite-tab")!;
-        const root = ReactDOM.createRoot(element);
+            
+        
+     
+    //    console.log("here");
 
-        root.render(
-            <div id = "Favorite-tab"> 
+        
+         const root = ReactDOM.createRoot(document.getElementById('Favorite-tab'));
+
+       
 
          
-            <li>
-                {Array.from(routes.keys()).map((routeId) => 
+         const element =   <div>
+                 {Array.from(routes.keys()).map((routeId) => 
                 <RouteButton key={routeId} routeId={routeId} text={routeId}/>
                 
                 )}
-            </li>  
             </div>
+          root.render(element);
           
-        )
+     
 
-         console.log(routes);
+
+
+        console.log(routes);
         setBookmarked(true);
       
     }

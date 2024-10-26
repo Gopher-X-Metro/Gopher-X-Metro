@@ -7,7 +7,7 @@ import SearchIcon from "src/img/CustomBus.png";
 import SearchFeature from 'src/frontend/NavBar/components/SearchFeature.tsx';
 import Schedule from 'src/backend/Schedule.ts';
 import Clearall from 'src/frontend/NavBar/components/Clearall.tsx';
-import BookmarkButton from 'src/frontend/NavBar/components/BookmarkButton.tsx';
+
 
 
 export default function SideBar() {
