@@ -116,13 +116,14 @@ export default function SideBar() {
 
                               {/* content for the favorite tab */}
         <div className={toggle === 2 ? 'tab-content' : 'content'}>
-                        <h1>Favorite Tab</h1>
-                       <ul id="Favorite-tab"></ul>
-                       
-
-
-        </div>    
+                    <div className='Favorite-header'>
+                        <h1>Favorite Routes</h1>
+                        <div className="underline"></div>
                     </div>
+                       
+                     <ul id="Favorite-tab"></ul>
+        </div>    
+        </div>
 
          
           

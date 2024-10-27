@@ -611,6 +611,13 @@ body.mobile .pac-container {
  
 }
 
+.Favorite-header {
+  text-align: center;
+  width: 100%;
+  padding-top: 15px;
+}
+
+
 /* Controls tab switching */ 
 .content{  /* Hides the favorite tab content originally */
   display: none;
