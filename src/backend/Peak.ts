@@ -54,7 +54,6 @@ namespace Peak {
             .then(async response => response.json()
             .then(data => data.shape?.forEach(shape => shapes.set(shape.shapeID, shape))))
 
-        console.log(shapeId);
         return shapes.get(shapeId); 
     }
 
