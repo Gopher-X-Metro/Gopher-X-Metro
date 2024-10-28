@@ -23,7 +23,7 @@ abstract class InfoWindowElement extends Element {
     /**
      * Updates the info window information
      */
-    abstract updateWindow() : void;
+    abstract updateWindow(...args) : void;
 
     public readonly infoWindow: InfoWindow | undefined;
 

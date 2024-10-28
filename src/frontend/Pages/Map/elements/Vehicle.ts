@@ -1,4 +1,6 @@
+import Data from "src/data/Data";
 import InfoWindowElement from "./abstracts/InfoWindowElement";
+import Resources from "src/backend/Resources";
 
 class Vehicle extends InfoWindowElement {
     /* Public */
@@ -53,10 +55,66 @@ class Vehicle extends InfoWindowElement {
     /**
      * Updates the info window information
      */
-    public updateWindow() {
-        this.infoWindow?.setContent(
-            String(Math.ceil(Number(this.getLastUpdated())))
-        );
+    public async updateWindow(routeId: string) {
+        /**
+         * Generate the content of the infowindow
+         * @param errorMessage  the error message to replace the content
+         */
+        const generateContent = async () => {
+            const vehicle = await Data.Vehicle.get(routeId, this.id);
+
+            const divElement = document.createElement("div");
+            divElement.style.cssText = "text-align:center; font-family: Arial, sans-serif;";
+
+            const directionElement = document.createElement("h2");
+            directionElement.textContent = vehicle.direction
+            directionElement.style.cssText = "margin-bottom: 10px; font-weight: bold; border-bottom: 2px solid #000;";
+
+            divElement.appendChild(directionElement);
+            
+            const departures = 
+                (await Data.Departure.all(routeId, vehicle.directionId))
+                .filter(departure => (departure.id === this.id && departure.data.actual))
+                .sort((a, b) => a.data.departure_time - b.data.departure_time)
+                .slice(0, 2);
+
+            // console.log(departures);
+
+            const listElement = document.createElement("ul")
+            listElement.style.cssText = "margin-top: 20px; list-style: none;";
+
+            const listItemElement = document.createElement("li");
+            listItemElement.style.cssText = "display: inline-block; margin-left: 10px; margin-right: 10px; vertical-align: text-top;";
+
+            const svgElement = document.createElement("p");
+            svgElement.innerHTML = `<svg width="12" height="12" style="display: block; margin: 0 auto 5px;"><circle cx="6" cy="6" r="6" fill="#${await Resources.getColor(routeId)}"/></svg>`
+
+            const routeIdElement = document.createElement("h3");
+            routeIdElement.innerHTML = `- ${routeId} -`;
+            routeIdElement.style.cssText = "margin-top: 10px;";
+            
+            listItemElement.appendChild(svgElement);
+            listItemElement.appendChild(routeIdElement);
+
+            departures.forEach(async departure => {
+                const stop = await Data.Stop.get(routeId, vehicle.directionId, departure.placeId, departure.data.stop_id);
+                const timeElement = document.createElement("p");
+                timeElement.innerHTML = stop.description + " : " + departure.data.departure_text;
+                timeElement.style.cssText = "margin: 5px 0; font-size: 14px;";
+                
+                listItemElement.appendChild(timeElement);
+            })
+
+            listElement.append(listItemElement);
+            
+            divElement.appendChild(listElement);
+        
+
+            return divElement;
+        }
+
+        // Load infowindow
+        this.infoWindow?.setContent(await generateContent());
     }
     /**
      * Gets the length in ms of the time between when position was updated and now

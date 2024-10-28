@@ -111,7 +111,7 @@ namespace Routes {
                 }
 
                 vehicles.get(info.trip_id)?.setPosition(new google.maps.LatLng(info.latitude as number, info.longitude as number), info.timestamp);
-                vehicles.get(info.trip_id)?.updateWindow();
+                await vehicles.get(info.trip_id)?.updateWindow(routeId);
                 vehicles.get(info.trip_id)?.updateTimestamp();
             }
             
@@ -304,7 +304,7 @@ namespace Routes {
                 vehicle.setBusBearing(bearing);
             }
 
-            vehicle.updateWindow();
+            vehicle.updateWindow(routeId);
         }
     }
     /**
