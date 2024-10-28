@@ -6,6 +6,7 @@ import Route from "../elements/Route.ts";
 import Realtime from "src/backend/Realtime.ts";
 import Peak from "src/backend/Peak.ts";
 import Stop from "../elements/Stop.ts";
+import Data from "src/data/Data.ts";
 
 
 namespace Routes {
@@ -72,6 +73,10 @@ namespace Routes {
      */
     export async function refreshVehicles() 
     {
+        // Updates Vehicle Data
+        for (const routeId of URL.getRoutes())
+            Data.Vehicle.reload(routeId);
+
         // Updates Vehicles
         URL.getRoutes()?.forEach(async routeId => {
             const route = routes.get(routeId)
@@ -120,6 +125,10 @@ namespace Routes {
      * Refresh the stops
      */
     export async function refreshStops() {
+        // Updates Stop Data
+        for (const routeId in URL.getRoutes())
+            Data.Departure.reload(routeId);
+
         // Updates Stops
         URL.getRoutes()?.forEach(async routeId => {
             for (const schedule of (await Schedule.getRouteDetails(routeId)).schedules) {
@@ -177,8 +186,6 @@ namespace Routes {
                                 if ((await s[1])?.getId() !== properties.stop_id)
                                     (await s[1])?.infoWindow?.setVisible(false);
                         });
-
-                        refreshDepartures(stop);
                     } else stop = await stops.get(properties.stop_id);
                 }
 
@@ -201,6 +208,9 @@ namespace Routes {
      * @param routeId ID of the route
      */
     async function loadRoute(routeId: string) {
+        Data.Route.load(routeId);
+        // Data.Stop.all(routeId).then(thing => console.log(thing));
+
         const route = new Route(routeId, map);
         routes.set(routeId, route);
 
