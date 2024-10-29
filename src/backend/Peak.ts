@@ -56,6 +56,29 @@ namespace Peak {
 
         return shapes.get(shapeId); 
     }
+    /**
+     * Gets all vehicles that peak is tracking.
+     */
+    export async function getPeekVehicles() : Promise<Array<any>> {
+        return await fetch("https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=vehicle&action=list&agencyID=88")
+                     .then(response => response.json()
+                     .then(json => json.vehicles));
+    }
+    /**
+     * Gets all stop etas for each stop and route
+     */
+    export async function getPeekStopETAs() : Promise<Array<any>> {
+        return await fetch("https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=eta&action=list&agencyID=88")
+                    .then(response => response.json()
+                    .then(json => json.stop));
+    }
+    /**
+     * Tells if the route is a university route
+     * @param routeId   route ID to check
+     */
+    export function isUniversityRoute(routeId: string) : boolean { 
+        return (UNIVERSITY_ROUTES[routeId] !== undefined)
+    }
 
     const shapes : Map<string, any> = new Map<string, any>();
     const trips : Map<string, any> = new Map<string, any>();    
