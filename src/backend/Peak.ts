@@ -73,6 +73,18 @@ namespace Peak {
                     .then(json => json.stop));
     }
     /**
+     * Gets the shape data of a stopId
+     * @param stopId ID of the stop
+     */
+    export async function getPeakStop(stopId: string) : Promise<any> {
+        if (!stops.has(stopId))
+            await fetch("https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=stop2&action=list&agencyID=88")
+            .then(async response => response.json()
+            .then(data => data.stop?.forEach(stop => stops.set(stop.stopID, stop))))
+
+        return stops.get(stopId); 
+    }
+    /**
      * Tells if the route is a university route
      * @param routeId   route ID to check
      */
@@ -81,7 +93,8 @@ namespace Peak {
     }
 
     const shapes : Map<string, any> = new Map<string, any>();
-    const trips : Map<string, any> = new Map<string, any>();    
+    const trips : Map<string, any> = new Map<string, any>();  
+    const stops : Map<string, any> = new Map<string, any>();  
 
     /* University Routes and ID */
     export const UNIVERSITY_ROUTES = {

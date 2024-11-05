@@ -2,6 +2,9 @@ import Data from "src/data/Data";
 import InfoWindowElement from "./abstracts/InfoWindowElement";
 import Resources from "src/backend/Resources";
 import Peak from "src/backend/Peak";
+import Plan from "src/backend/Plan";
+import Realtime from "src/backend/Realtime";
+import Stop from "./Stop";
 
 class Vehicle extends InfoWindowElement {
     /* Public */
@@ -56,7 +59,7 @@ class Vehicle extends InfoWindowElement {
     /**
      * Updates the info window information
      */
-    public async updateWindow(routeId: string) {
+    public async updateWindow(routeId: string, stops: Map<string, Promise<Stop | undefined>>) {
         /**
          * Generate the content of the infowindow
          * @param errorMessage  the error message to replace the content
@@ -87,12 +90,37 @@ class Vehicle extends InfoWindowElement {
                 const vehicle = await Data.Vehicle.get(routeId, String(this.id));
 
                 if (Peak.isUniversityRoute(routeId)) {
+                    console.log(vehicle.data)
+                    // const etas = Peak.getPeekStopETAs()
+                    // console.log(etas)
                     directionElement.textContent = vehicle.data.minsLate
-                    
-                    // console.log((await Data.Departure.all(routeId, 0)).filter(departure => departure.data.actual))
-                    // console.log(vehicle);
-                    
-                    // console.log((await Peak.getPeekStopETAs()).filter(stop => stop.routeID === Peak.UNIVERSITY_ROUTES[routeId]));
+
+                    const peakStop = await Peak.getPeakStop(vehicle.data.nextStopID);
+                    const stopsSearch = (await Plan.serviceNearby(peakStop.lat, peakStop.lng, null, 0, 0.1)).atstop.filter(stop => (stop.walkdist === 0));
+
+                    const stopPromises = new Array<Promise<any>>();
+
+                    for (const stopSearch of stopsSearch) { 
+                        for (const service of stopSearch.service) {
+                            console.log(service)
+                            
+                            if (String(service.route) === routeId) {
+                                stopPromises.push(Realtime.getStop(stopSearch.stopid)
+                                .then(stop => {
+                                    const departure = stop.departures[0]
+                                    const timeElement = document.createElement("p");
+                                    timeElement.innerHTML = stopSearch.description + " : " + departure.departure_text;
+                                    timeElement.style.cssText = "margin: 5px 0; font-size: 14px;";
+                                    
+                                    listItemElement.appendChild(timeElement);
+                                }))
+
+                                break;
+                            }
+                        } 
+                    }
+
+                    await Promise.all(stopPromises);
                 } else {
                     directionElement.textContent = vehicle.direction
     
