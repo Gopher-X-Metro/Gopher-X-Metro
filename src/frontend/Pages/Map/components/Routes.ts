@@ -7,10 +7,9 @@ import Realtime from "src/backend/Realtime.ts";
 import Peak from "src/backend/Peak.ts";
 import Stop from "../elements/Stop.ts";
 import Data from "src/data/Data.ts";
-
+import User from "src/user/User.ts";
 
 namespace Routes {
-
     /* Public */
 
     /**
@@ -209,7 +208,6 @@ namespace Routes {
      */
     async function loadRoute(routeId: string) {
         Data.Route.load(routeId);
-        // Data.Stop.all(routeId).then(thing => console.log(thing));
 
         const route = new Route(routeId, map);
         routes.set(routeId, route);
