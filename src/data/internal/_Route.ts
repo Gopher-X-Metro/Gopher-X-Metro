@@ -36,7 +36,8 @@ export default class _Route extends _DataAbstract {
         await Realtime.getDirections(this.id as string).then(response => {
             for (const direction of response) {
                 this.directions.set(direction.direction_id, Data.Direction.create(direction.direction_id, this.id as string));
-        })
+           }
+        });
     }
 
     /** Directions of this route */
