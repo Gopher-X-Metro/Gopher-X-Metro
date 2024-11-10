@@ -22,8 +22,9 @@ export default class _Route extends _DataAbstract {
         await Realtime.getVehicles(this.id as string).then(response => {
             this.vehicles.clear();
 
-            for (const vehicle of response)
-                this.vehicles.set(String(vehicle.trip_id), Data.Vehicle.create(vehicle.trip_id, this.id as string, vehicle))
+            for (const vehicle of response) {
+                this.vehicles.set(String(vehicle.trip_id), Data.Vehicle.create(vehicle.trip_id, this.id as string, vehicle));
+            }
         })
     }
 
