@@ -18,7 +18,7 @@ namespace User {
 
                 return response;
             }
-        ))
+        ));
     }
 
     export async function set(key: string, value: BodyInit) {
