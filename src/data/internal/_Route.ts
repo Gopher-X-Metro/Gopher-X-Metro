@@ -27,10 +27,11 @@ export default class _Route extends _DataAbstract {
     
     /** Loads vehicles in this route */
     public async loadVehicles() : Promise<void> {
-        this.vehicles.clear();
-
+    
         // Load Vehicles
         await Realtime.getVehicles(this.id as string).then(vehicleData => {
+            this.vehicles.clear();
+            
             if (vehicleData) {
                 for (const vehicle of vehicleData) {
                     this.vehicles.set(String(vehicle.trip_id), Data.Vehicle.create(vehicle.trip_id, this.id as string, vehicle));

@@ -7,6 +7,7 @@ import Realtime from "src/backend/Realtime";
 import Peak from "src/backend/Peak";
 import Stop from "src/frontend/Pages/Map/elements/Stop";
 import Data from "src/data/Data";
+import User from "src/user/User.ts";
 
 namespace Routes {
     const routes = new Map<string, Route>();
