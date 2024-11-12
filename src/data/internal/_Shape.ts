@@ -2,6 +2,9 @@ import _DataAbstract from "./_DataAbstract";
 import Resources from "src/backend/Resources";
 import haversine from "haversine";
 
+/**
+ * Holds information and functions on a shape
+ */
 export default class _Shape extends _DataAbstract {
     /** Id of the route that contains this shape */
     public readonly routeId : string;
