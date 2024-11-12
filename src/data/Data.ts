@@ -5,6 +5,7 @@ import _Place from "src/data/internal/_Place";
 import _Vehicle from "src/data/internal/_Vehicle";
 import _Departure from "src/data/internal/_Departure";
 import _ExistsError from "src/data/internal/_ExistsError";
+import _Shape from "./internal/_Shape";
 
 /** Data Access Object (DAO) */
 namespace Data {
@@ -27,6 +28,7 @@ namespace Data {
             const route = new Data.Route(routeId);
             await route.loadVehicles();
             await route.loadDirections();
+            await route.loadShapes();
             return route;
         }
 
@@ -418,6 +420,14 @@ namespace Data {
             }
         }
     };
+    
+    /** Shape Data and Shape Access */
+    export class Shape extends _Shape {
+        static async create(shapeId: string, points: Array<google.maps.LatLng>) : Promise<Data.Shape>{
+            const shape = new Data.Shape(shapeId, points);
+            return shape;
+        }
+    }
 }
 
 export default Data;
