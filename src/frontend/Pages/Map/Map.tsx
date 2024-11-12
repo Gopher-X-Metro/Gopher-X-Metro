@@ -8,6 +8,7 @@ import LoadingScreen from "src/frontend/Pages/Map/components/LoadingScreen";
 import NavBar from "src/frontend/NavBar/NavBar";
 import CenterButton from "src/frontend/NavBar/components/CenterButton";
 import LocationSearchBar from "src/frontend/NavBar/components/LocationSearchBar";
+import InfoBar from "src/frontend/InfoBar/InfoBar";
 
 const APIKey = process.env.REACT_APP_API_KEY; // Comes from the .env.local file, just for security. Won't appear in main -- all api keys should be added to Vercel console. 
 const UMNLocation = { lat: 44.97369560732433, lng: -93.2317259515601 };
@@ -43,6 +44,7 @@ export default function MapPage({ hidden, setPage, isMobile }) {
         <>
             <div className="h-[100%] w-full bg-black" hidden={hidden}>
                 <NavBar setPage={setPage} isMobile={isMobile} />
+                <InfoBar />
                 <LoadingScreen hidden={mapLoaded} />
                 <Map
                     id="map"

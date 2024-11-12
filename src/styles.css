@@ -73,7 +73,61 @@ body {
   color: rgb(0, 83, 160);
 }
 
+/* Infobar */
+
+#info-bar {
+  position: absolute;
+  height: 90%;
+  width: 0px;
+  top: 10%;
+  right: 0px;
+  background-color: #302929;
+  z-index: 1;
+  transition: 0.5s;
+}
+
+#info-bar.open {
+  width: 290px;
+}
+
+#info-bar-button {
+  position: absolute;
+  left: -29px;
+  right: 0;
+  height: 100%;
+  width: 29px;
+  background-color: #7a0019;
+  filter: drop-shadow(4px 0px 5px #222222);
+}
+
+#info-bar-button:hover {
+  background-color: #6f0016;
+}
+
+#info-bar-button-icon {
+  position: relative;
+  width: 25px;
+  height: 25px;
+  color: rgb(255, 255, 255);
+  filter: drop-shadow(3px 0 #000000);
+  transition: 0.1s;
+}
+
+#info-bar-button-icon.open {
+  transform: rotate(180deg);
+  color: rgb(224, 224, 224);
+  filter: drop-shadow(-3px 0 #000000);
+}
+
+#info-bar-content {
+  height: 90%;
+  width: 90%;
+  left: 10%;
+  top: 10%;
+}
+
 /* Sidebar */
+
 .sidebar {
   height: 90%;
   width: 0px;
