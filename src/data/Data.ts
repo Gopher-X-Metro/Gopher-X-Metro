@@ -225,10 +225,10 @@ namespace Data {
         static async all(routeId: string) : Promise<Array<Shape>>
         static async all(routeId?: string) : Promise<Array<Shape>> {
             if (routeId !== undefined) {
-                // Gets all vehicles in a route
+                // Gets all shapes in a route
                 return Promise.all((await Route.get(routeId)).shapes.values());
             } else {
-                // Gets all vehicles
+                // Gets all shapes
                 return Promise.all((await Route.all()).map(route => Array.from(route.shapes.values())).flat());
             }
         }
