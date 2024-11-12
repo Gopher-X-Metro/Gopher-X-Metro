@@ -224,6 +224,8 @@ namespace Routes {
     async function loadRoute(routeId: string) : Promise<void> {
         Data.Route.load(routeId);
 
+        console.log(Data.Shape.all());
+
         const route = new Route(routeId, map);
         routes.set(routeId, route);
 

@@ -56,13 +56,14 @@ export default class _Route extends _DataAbstract {
         });
     }
 
+    /** Loads shapes in this route */
     public async loadShapes() : Promise<void> {
         this.shapes.clear();
-        
+
         // Load Shapes
         await Resources.getShapeIds(this.id as string).then(response => {
-            for (const shape of response) {
-                console.log(shape);
+            for (const shapeId of response) {
+                this.shapes.set(shapeId, Data.Shape.create(shapeId, this.id as string))
             }
         })
     }
