@@ -189,7 +189,50 @@ namespace Data {
             }
         }
     };
+    /** Shape Data and Shape Access */
+    export class Shape extends _Shape {
+        /**
+         * Creates a new Shape object
+         * @param shapeId id of shape
+         * @param routeId id of route that contains the shape 
+         * @param points points of shape that define the path
+         */
+        static async create(shapeId: string, routeId: string) : Promise<Data.Shape>{
+            const shape = new Data.Shape(shapeId, routeId);
 
+            await shape.load();
+
+            return shape;
+        }
+
+        /**
+         * Gets Shape from the Data object
+         * @param routeId id of route that contains the shape
+         * @param shapeId id of shape
+         * @returns Shape Promise
+         */
+        static async get(routeId: string, shapeId: string) : Promise<Shape> {
+            if (!(await Route.get(routeId)).shapes.has(shapeId)) {
+                throw new ExistsError(`Shape '${shapeId}' does not exist in route '${routeId}'`);
+            }
+
+            return (await Route.get(routeId)).shapes.get(shapeId) as Promise<Shape>;
+        }
+
+        /** Gets all the shapes within Data */
+        static async all() : Promise<Array<Shape>>
+        /** Gets all the shapes within the route */
+        static async all(routeId: string) : Promise<Array<Shape>>
+        static async all(routeId?: string) : Promise<Array<Shape>> {
+            if (routeId !== undefined) {
+                // Gets all vehicles in a route
+                return Promise.all((await Route.get(routeId)).shapes.values());
+            } else {
+                // Gets all vehicles
+                return Promise.all((await Route.all()).map(route => Array.from(route.shapes.values())).flat());
+            }
+        }
+    }
     /**
      * Place Data and Place Access
      */
@@ -420,14 +463,6 @@ namespace Data {
             }
         }
     };
-    
-    /** Shape Data and Shape Access */
-    export class Shape extends _Shape {
-        static async create(shapeId: string, points: Array<google.maps.LatLng>) : Promise<Data.Shape>{
-            const shape = new Data.Shape(shapeId, points);
-            return shape;
-        }
-    }
 }
 
 export default Data;
