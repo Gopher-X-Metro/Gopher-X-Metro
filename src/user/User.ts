@@ -1,7 +1,7 @@
 import { promises } from "dns";
-import _CacheError from "./internal/_CacheError";
-import _ExistsError from "./internal/_ExistsError";
-import _User from "./internal/_User";
+import _CacheError from "src/user/internal/_CacheError";
+import _ExistsError from "src/user/internal/_ExistsError";
+import _User from "src/user/internal/_User";
 
 namespace User {
     /** User Exists Error */
@@ -9,13 +9,13 @@ namespace User {
     /** Cache Error */
     export class CacheError extends _CacheError {};
 
-    /** The default user that is being used to store settings */
+    /** Default user that is being used to store settings */
     const user = new _User("0");
 
     /**
-     * Gets a value from the cache by looking up the key
-     * @param key ID to look for in the cache
-     * @returns a promise of the Response when calling for the key in the cache
+     * Gets value from cache by looking up key
+     * @param key ID to look for in cache
+     * @returns a promise of the Response when calling for key in the cache
      */
     export async function get(key: string) : Promise<Response> {
         return getCache("0")
@@ -31,8 +31,8 @@ namespace User {
     }
 
     /**
-     * Sets the value of a key in the cache
-     * @param key ID of the place in cache we want to store the value
+     * Sets value of key in cache
+     * @param key ID of place in cache we want to store the value
      * @param value value that we want to set to the ID
      */
     export async function set(key: string, value: BodyInit): Promise<void> {
@@ -40,12 +40,12 @@ namespace User {
     }
 
     /**
-     * Gets the cache object for the user
-     * @param id ID of the user
-     * @returns Cache for the user
+     * Gets cache object for user
+     * @param id ID of user
+     * @returns Cache for user
      */
     async function getCache(id: string) : Promise<Cache> {
-        if ('caches' in window) {
+        if ("caches" in window) {
             return caches.open(id);
         }
 

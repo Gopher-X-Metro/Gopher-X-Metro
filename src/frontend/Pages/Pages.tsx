@@ -1,17 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import Map from './Map/Map.tsx';
-import About from './About/About.tsx';
-import Schedules from './Schedule/Schedules.tsx';
+import Map from "src/frontend/Pages/Map/Map";
+import About from "src/frontend/Pages/About/About";
+import Schedules from "src/frontend/Pages/Schedule/Schedules";
 
-export default function Pages( { isMobile } ) {
+/**
+ * Rendered WebPage
+ * @param isMobile if user is on mobile or not
+ * @returns rendered WebPage
+ */
+export default function Pages({ isMobile }) {
     const [page, setPage] = useState("map");
 
     return (
         <>
-            <Map hidden={page!=="map"} setPage={setPage} isMobile={isMobile}/>
-            <About hidden={page!=="about"} setPage={setPage}/>
-            <Schedules hidden={page!=="schedules"} setPage={setPage}/>
+            <Map hidden={page!=="map"} setPage={setPage} isMobile={isMobile} />
+            <About hidden={page!=="about"} setPage={setPage} />
+            <Schedules hidden={page!=="schedules"} setPage={setPage} />
         </>
-    )
+    );
 }

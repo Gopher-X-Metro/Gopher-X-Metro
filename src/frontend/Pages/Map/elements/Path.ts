@@ -1,14 +1,11 @@
-import Element from "./abstracts/Element.ts";
+import Element from "src/frontend/Pages/Map/elements/abstracts/Element";
 
-class Path extends Element{
-
-    /* Public */
-
+class Path extends Element {
     /**
      * Path Constructor
      * @param routeId route ID the path belongs to
-     * @param shapeId shape ID of the path
-     * @param color color of the path
+     * @param shapeId shape ID of path
+     * @param color color of path
      * @param locations locations of points that draw the path
      * @param map map that the line is displayed on
      */
@@ -22,7 +19,9 @@ class Path extends Element{
             map: map,
             zIndex: -1
         });
+
         super(shapeId, map, polyline);
+        
         polyline.addListener("mouseover", () => {
             polyline.setOptions({ zIndex: 1 , strokeWeight: Number(process.env.REACT_APP_LINE_HIGHLIGHT) + 1.5 });
         });
