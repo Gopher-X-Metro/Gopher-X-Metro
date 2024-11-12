@@ -1,81 +1,78 @@
+import { IRoute } from "src/backend/interface/RouteInterface";
+import { ITimeTable } from "src/backend/interface/ScheduleInterface";
+import { IStop } from "src/backend/interface/StopInterface";
+
 namespace Schedule {
-    /* Public */
-
     /**
-     * Gets all the routes that are avalible
-     * @returns a list of all the routes
+     * Gets specified route data of all routes
+     * @param routeId route ID
+     * @returns route data
      */
-    export async function getRoutes() : Promise<Array<any>> {
-        return await (await fetch("https://svc.metrotransit.org/schedule/routes")).json();
-    }
-    /**
-     * Gets the specified route data of all routes
-     * @param routeId the route ID
-     * @returns the route data
-     */
-    export async function getRoute(routeId: string) : Promise<any> {
-        for (const route of await getRoutes())
-            if (route.route_id === routeId) 
-                return route;
-    }
-    /**
-     * Gets more specified details about the route
-     * @param routeId the route ID
-     * @returns the specified data about the route
-     */
-    export async function getRouteDetails(routeId: string) : Promise<any> {
-        return await (await fetch("https://svc.metrotransit.org/schedule/routedetails/"+(await getRoute(routeId)).route_url_param)).json()
-    }
-    /**
-     * Gets the time table for the route and schedule
-     * @param routeId       route ID
-     * @param scheduleId    schedule ID
-     * @returns             time table for the route schedule
-     */
-    export async function getTimeTable(routeId: string, scheduleId: number) : Promise<Array<any>> {
-        return await (await fetch("https://svc.metrotransit.org/schedule/timetable/"+routeId+"/"+scheduleId)).json()
-    }
-    /**
-     * Gets the stop list for the route and schedule
-     * @param routeId       route ID
-     * @param scheduleId    schedule ID
-     * @returns             stop list for the route schedule
-     */
-    export async function getStopList(routeId: string, scheduleId: number) : Promise<Array<any>> {
-        return await (await fetch("https://svc.metrotransit.org/schedule/stoplist/"+routeId+"/"+scheduleId)).json()
+    export async function getRoute(routeId: string) : Promise<IRoute | undefined> {
+        const routes = await getRoutes();
+        return routes.find(route => route.route_id === routeId);
     }
 
-    /* Private */
+    /**
+     * Gets more specified details about route
+     * @param routeId route ID
+     * @returns specified data about the route
+     */
+    export async function getRouteDetails(routeId: string) : Promise<IRoute> {
+        const route = await getRoute(routeId);
+        if (!route) {
+            throw new Error(`Route with ID ${routeId} not found`);
+        }
+
+        return await (await fetch(`https://svc.metrotransit.org/schedule/routedetails/${route.route_url_param}`)).json();
+    }
+
+    /**
+     * Gets stop list for the route and schedule
+     * @param routeId route ID
+     * @param scheduleId schedule ID
+     * @returns stop list for the route schedule
+     */
+    export async function getStopList(routeId: string, scheduleId: number) : Promise<Array<IStop>> {
+        return await (await fetch(`https://svc.metrotransit.org/schedule/stoplist/${routeId}/${scheduleId}`)).json();
+    }
 
     /**
      * Gets the week of the date in terms of Sunday, Saturday, and Weekday
+     * @returns day category as a string
      */
     export function getWeekDate() : string | undefined {
         const date = new Date();
         switch (date.getDay()) {
             case 0:
-                return "Sunday"
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-                return "Weekday"
+                return "Sunday";
             case 6:
-                return "Saturday"
+                return "Saturday";
+            default:
+                return "Weekday";
         }
     }
 
-    /* Depreciated */
+    /* Private Helper Methods */
+
+    /**
+     * Gets all routes that are avalible
+     * @returns list of all the routes
+     */
+    async function getRoutes() : Promise<Array<IRoute>> {
+        return await (await fetch("https://svc.metrotransit.org/schedule/routes")).json();
+    }
+
+    /* Depreciated / Unused */
     
     /**
-     * Gets the current schedule of the route
-     * @param routeId       route ID
-     * @returns             a combination of all data from schedule
-     * @deprecated  This is nolonger used
+     * Gets current schedule of the route
+     * @param routeId route ID
+     * @returns combination of all data from schedule
+     * @deprecated This is no longer used
      */
-    export async function getSchedule(routeId: string) : Promise<any> {
-        let detail = await getRouteDetails(routeId)
+    async function getSchedule(routeId: string) : Promise<IRoute> {
+        let detail = await getRouteDetails(routeId);
 
         for (let schedule of detail.schedules) {
             if (schedule.schedule_type_name === getWeekDate()) {
@@ -88,6 +85,17 @@ namespace Schedule {
         }
 
         return detail;
+    }
+
+    /**
+     * Gets time table for the route and schedule
+     * @param routeId route ID
+     * @param scheduleId schedule ID
+     * @returns time table for the route schedule
+     * @deprecated  This is no longer used (only used by other deprecated method)
+     */
+    async function getTimeTable(routeId: string, scheduleId: number) : Promise<Array<ITimeTable>> {
+        return await (await fetch(`https://svc.metrotransit.org/schedule/timetable/${routeId}/${scheduleId}`)).json();
     }
 }
 

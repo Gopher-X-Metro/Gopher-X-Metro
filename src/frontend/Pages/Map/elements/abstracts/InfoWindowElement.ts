@@ -1,23 +1,31 @@
-import Element from "./Element";
-import InfoWindow from "./InfoWindow";
+import Element from "src/frontend/Pages/Map/elements/abstracts/Element";
+import InfoWindow from "src/frontend/Pages/Map/components/InfoWindow";
 
+/**
+ * Info Window element 
+ * @abstract
+ */
 abstract class InfoWindowElement extends Element {
+    public readonly infoWindow: InfoWindow | undefined;
 
     /**
      * Constructor for the InfoElement class
-     * @param id        ID of the element
-     * @param map       map the element appears on
-     * @param marker    marker the element represents
+     * @param id ID of element
+     * @param map map the element appears on
+     * @param marker marker the element represents
      */
     constructor(id: string, map: google.maps.Map, marker: google.maps.MVCObject | google.maps.marker.AdvancedMarkerElement) {
         super(id, map, marker);
 
-        if (this.marker instanceof google.maps.MVCObject)
+        if (this.marker instanceof google.maps.MVCObject) {
             this.infoWindow = new InfoWindow(this.marker.get("center"), map);
-        else if (this.marker instanceof google.maps.marker.AdvancedMarkerElement)
+        } else if (this.marker instanceof google.maps.marker.AdvancedMarkerElement) {
             this.infoWindow = new InfoWindow(this.marker.position as google.maps.LatLng, map);
+        }
 
-        this.marker.addListener("click", () => this.infoWindow?.setVisible(!this.infoWindow?.isVisible()));
+        this.marker.addListener("click", () => {
+            this.infoWindow?.setVisible(!this.infoWindow?.isVisible())
+        });
     }
 
     /**
@@ -25,15 +33,15 @@ abstract class InfoWindowElement extends Element {
      */
     abstract updateWindow() : void;
 
-    public readonly infoWindow: InfoWindow | undefined;
-
-    /* Depreciated */
+    /* Depreciated / Unused */
 
     /**
-     * Updates the info window information
+     * Updates info window information
      * @deprecated
      */
-    public updateInfoWindow() { this.updateWindow(); }
+    private updateInfoWindow() : void { 
+        this.updateWindow(); 
+    }
 }
 
 export default InfoWindowElement;

@@ -6,7 +6,16 @@ import Search from "src/frontend/Pages/Map/elements/Search";
 
 const searches = new Map<string, Search>();
 
-export default function LocationSearchBar( { isMobile } ) {
+/**
+ * LocationSearchBar Component
+ * 
+ * Search Bar for specific locations based on user input.
+ * Location Search Bar displays differently based on if user is on
+ * mobile or not
+ * 
+ * @returns rendered LocationSearchBar component
+ */
+export default function LocationSearchBar({ isMobile }) {
     const input = useRef<HTMLInputElement>(null);
     const map = useMap("map");
 
@@ -18,20 +27,22 @@ export default function LocationSearchBar( { isMobile } ) {
             autocomplete.bindTo("bounds", map);
             autocomplete.addListener("place_changed", () => onPlaceChange(map, autocomplete, geocoder));
         }
-    }, [input, map])
+    }, [input, map]);
 
     return (
         <>
             <MapControl position={isMobile ? ControlPosition.BOTTOM_CENTER : ControlPosition.TOP_CENTER}>
-                <input id="location-search-bar" className={"location-search-bar" + (isMobile ? " mobile" : "")} type="text" ref={input}/>
+                <input id="location-search-bar" className={"location-search-bar" + (isMobile ? " mobile" : "")} type="text" ref={input} />
             </MapControl>
         </>
-    )
+    );
 }
 
+/* Private Helper Methods */
+
 /**
-     * Sets the new location of the marker, and focuses on the spot
-     */
+ * Sets new location of marker and focuses on the spot
+ */
 function onPlaceChange(map : google.maps.Map, autocomplete : google.maps.places.Autocomplete, geocoder : google.maps.Geocoder) : void {
     const place = autocomplete.getPlace();
 
@@ -60,7 +71,7 @@ function onPlaceChange(map : google.maps.Map, autocomplete : google.maps.places.
                         });
                     }
                 }
-            })
+            });
         }).catch((error) => window.alert("Geocoder failed due to: " + error));
     }
 }

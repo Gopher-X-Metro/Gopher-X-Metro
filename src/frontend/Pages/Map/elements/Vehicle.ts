@@ -1,12 +1,18 @@
-import InfoWindowElement from "./abstracts/InfoWindowElement";
+import InfoWindowElement from "src/frontend/Pages/Map/elements/abstracts/InfoWindowElement";
 
 class Vehicle extends InfoWindowElement {
-    /* Public */
+    private updatedTimestamp: number | undefined;
+    private tripId: string | undefined;
+    private positionTimestamp : number | undefined;
+    private bearing: number | undefined;
+    private direction_id: number | undefined;
+    private arrowImg: HTMLImageElement | null = null;
+    private arrowCont: HTMLDivElement;
 
     /**
      * Vehicle Constructor
      * @param vehicleId vehicle ID
-     * @param tripId 
+     * @param tripId trip ID
      * @param color color of vehicle image
      * @param map map the vehicle displays on
      */
@@ -50,33 +56,27 @@ class Vehicle extends InfoWindowElement {
 
         this.infoWindow?.getWindow().set("pixelOffset", new google.maps.Size(0, -15));
     }
+
     /**
-     * Updates the info window information
+     * Updates info window information
      */
-    public updateWindow() {
+    public updateWindow() : void {
         this.infoWindow?.setContent(
             String(Math.ceil(Number(this.getLastUpdated())))
         );
     }
+
     /**
-     * Gets the length in ms of the time between when position was updated and now
-     */
-    public getLastUpdated() : number | undefined {
-        if (this.positionTimestamp)
-            return (Date.now()/1000) - this.positionTimestamp; 
-    }
-    /**
-     * Get the trip ID
-     */
-    public getTripId() : string | undefined { return this.tripId; }
-    /**
-     * Sets the trip ID
+     * Sets trip ID
      * @param tripId trip ID
      */
-    public setTripId(tripId : string) : void { this.tripId = tripId; }
+    public setTripId(tripId : string) : void { 
+        this.tripId = tripId; 
+    }
+
     /**
-     * Sets the position of the vehicle on the map
-     * @param position position of the vehicle
+     * Sets position of vehicle on the map
+     * @param position position of vehicle
      * @param timestamp when this position was updated
      */
     public setPosition(position : google.maps.LatLng, timestamp : number) : void {
@@ -86,13 +86,10 @@ class Vehicle extends InfoWindowElement {
             this.positionTimestamp = timestamp;
         }
     }
+
     /**
-     * Gets the direction the bus is heading
-     */
-    public getBusBearing(): number | undefined { return this.bearing; }
-    /**
-     * Sets the direction the bus is heading
-     * @param bearing the orientation of the bus
+     * Sets direction the bus is heading
+     * @param bearing orientation of the bus
      */
     public setBusBearing(bearing: number): void {
         this.bearing = bearing;
@@ -101,26 +98,34 @@ class Vehicle extends InfoWindowElement {
             this.setArrowImageOrientation(bearing);
         }
     }
+
     /**
-     * Gets the direction the lightrail is heading
+     * Returns if vehicle position has been updated
+     * @returns boolean if position has been updated
      */
-    public getDirectionID(): number | undefined { return this.direction_id; }
+    public isPositionUpdated(): boolean { 
+        return this.getLastUpdated() as number < 300;
+    }
+
     /**
-     * Returns if the vehicle position has been updated
+     * Sets updated status of vehicle
+     * @param bool new updated status
      */
-    public isPositionUpdated(): boolean { return this.getLastUpdated() as number < 300 }
+    public updateTimestamp() : void { 
+        this.updatedTimestamp = Date.now(); 
+    }
+
     /**
-     * Sets the updated status of the vehicle
-     * @param bool the new updated status
+     * Returns if vehicle has been updated
+     * @returns boolean if vehicle has been updated
      */
-    public updateTimestamp() : void { this.updatedTimestamp = Date.now(); }
+    public isUpdated(): boolean { 
+        return (this.updatedTimestamp && this.isPositionUpdated()) ? (Date.now() - this.updatedTimestamp < 500) : false; 
+    }
+
     /**
-     * Returns if the vehicle had been updated
-     */
-    public isUpdated(): boolean { return (this.updatedTimestamp && this.isPositionUpdated()) ? (Date.now() - this.updatedTimestamp < 500) : false; }
-    /**
-     * Sets the direction the blueline lightrail is heading
-     * @param direction_id the orientation of the blueline lightrail
+     * Sets direction the blueline lightrail is heading
+     * @param direction_id orientation of the blueline lightrail
      */
     public setBlueDirectionID(direction_id: number): void {
         this.direction_id = direction_id;
@@ -128,9 +133,10 @@ class Vehicle extends InfoWindowElement {
             this.setArrowImageBluelineOrientation(direction_id);
         }
     }
+
     /**
-     * Sets the direction the greenline lightrail is heading
-     * @param direction_id the orientation of the greenline lightrail
+     * Sets direction the greenline lightrail is heading
+     * @param direction_id orientation of the greenline lightrail
      */
     public setGreenDirectionID(direction_id: number): void {
         this.direction_id = direction_id;
@@ -138,11 +144,23 @@ class Vehicle extends InfoWindowElement {
             this.setArrowImageGreenlineOrientation(direction_id);
         }
     }
+    
+    /* Private Helper Methods */
+
+    /**
+     * Gets length in ms of time between when position was updated and now
+     */
+    private getLastUpdated() : number | undefined {
+        if (this.positionTimestamp) {
+            return (Date.now()/1000) - this.positionTimestamp;
+        }
+    }
+
     /**
      * Sets position of bus arrow image around center of bus image
-     * @param bearing the orientation of the bus
+     * @param bearing orientation of the bus
      */
-    public setArrowImageOrientation(bearing: number) : void {
+    private setArrowImageOrientation(bearing: number) : void {
         const radius = 10;
         const radians = (bearing + 90) / 180 * Math.PI;
         
@@ -151,26 +169,12 @@ class Vehicle extends InfoWindowElement {
             this.arrowCont.style.left = (-Math.cos(radians) * radius).toString() + "px";
         }
     }
+
     /**
      * Sets position of bus arrow image around center of bus image
-     * @param direction_id the orientation of the blueline lightrail
+     * @param direction_id orientation of the greenline lightrail
      */
-    public setArrowImageBluelineOrientation(direction_id: number) : void {
-        if (this.arrowCont && this.arrowImg) {
-            if (direction_id === 0) {
-                this.arrowImg.style.transform = `rotate(${0}deg)`;
-                this.arrowCont.style.top = "-10px";
-            } else if (direction_id === 1) {
-                this.arrowImg.style.transform = `rotate(${180}deg)`;
-                this.arrowCont.style.top = "10px";
-            }
-        }
-    }
-    /**
-     * Sets position of bus arrow image around center of bus image
-     * @param direction_id the orientation of the greenline lightrail
-     */
-    public setArrowImageGreenlineOrientation(direction_id: number) : void {
+    private setArrowImageGreenlineOrientation(direction_id: number) : void {
         if (this.arrowCont && this.arrowImg) {
             if (direction_id === 0) {
                 this.arrowImg.style.transform = `rotate(${90}deg)`;
@@ -181,15 +185,51 @@ class Vehicle extends InfoWindowElement {
             }
         }
     }
-    
-    /* Private */
-    private updatedTimestamp: number | undefined;
-    private tripId: string | undefined;
-    private positionTimestamp : number | undefined;
-    private bearing: number | undefined;
-    private direction_id: number | undefined;
-    private arrowImg: HTMLImageElement | null = null;
-    private arrowCont: HTMLDivElement;
+
+    /**
+     * Sets position of bus arrow image around center of bus image
+     * @param direction_id orientation of the blueline lightrail
+     */
+    private setArrowImageBluelineOrientation(direction_id: number) : void {
+        if (this.arrowCont && this.arrowImg) {
+            if (direction_id === 0) {
+                this.arrowImg.style.transform = `rotate(${0}deg)`;
+                this.arrowCont.style.top = "-10px";
+            } else if (direction_id === 1) {
+                this.arrowImg.style.transform = `rotate(${180}deg)`;
+                this.arrowCont.style.top = "10px";
+            }
+        }
+    }
+
+    /* Depreciated / Unused */
+
+    /**
+     * Get trip ID
+     * @returns string trip ID
+     * @deprecated
+     */
+    private getTripId() : string | undefined { 
+        return this.tripId; 
+    }
+
+    /**
+     * Gets direction the bus is heading
+     * @returns direction number bus is heading
+     * @deprecated
+     */
+    private getBusBearing(): number | undefined { 
+        return this.bearing; 
+    }
+
+    /**
+     * Gets direction the lightrail is heading
+     * @returns direction ID number
+     * @deprecated
+     */
+    private getDirectionID(): number | undefined { 
+        return this.direction_id; 
+    }
 }
 
 export default Vehicle;
