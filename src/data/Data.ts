@@ -5,6 +5,7 @@ import _Place from "./internal/_Place";
 import _Vehicle from "./internal/_Vehicle";
 import _Departure from "./internal/_Departure";
 import _ExistsError from "./internal/_ExistsError";
+import _Shape from "./internal/_Shape";
 
 /** Data Access Object (DAO) */
 namespace Data {
@@ -18,6 +19,7 @@ namespace Data {
             const route = new Data.Route(routeId);
             await route.loadVehicles();
             await route.loadDirections();
+            await route.loadShapes();
             return route;
         }
 
@@ -367,6 +369,16 @@ namespace Data {
                 return Promise.all((await Place.all()).map(place => Array.from(place.stops.values())).flat());
         }
     };
+    /** Shape Data and Shape Access */
+    export class Shape extends _Shape {
+        static async create(shapeId: string, points: Array<google.maps.LatLng>) : Promise<Data.Shape>{
+            const shape = new Data.Shape(shapeId, points);
+
+            return shape;
+        }
+
+
+    }
 
     /** Exists Error */
     export class ExistsError extends _ExistsError {};

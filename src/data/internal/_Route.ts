@@ -1,6 +1,7 @@
 import _DataAbstract from "./_DataAbstract";
 import Realtime from "src/backend/Realtime";
 import Data from "../Data";
+import Resources from "src/backend/Resources";
 
 /** Manages the route data */
 export default class _Route extends _DataAbstract {
@@ -14,6 +15,7 @@ export default class _Route extends _DataAbstract {
         this.visible = true;
         this.directions = new Map<number, Promise<Data.Direction>>();
         this.vehicles = new Map<string, Promise<Data.Vehicle>>();
+        this.shapes = new Map<string, Promise<Data.Shape>>();
     }
     
     /** Loads the vehicles in this route */
@@ -38,10 +40,23 @@ export default class _Route extends _DataAbstract {
         })
     }
 
+    public async loadShapes() : Promise<void> {
+        this.shapes.clear();
+
+        // Load Shapes
+        await Resources.getShapeIds(this.id as string).then(response => {
+            for (const shape of response) {
+                console.log(shape);
+            }
+        })
+    }
+
     /** Directions of this route */
     public readonly directions: Map<number, Promise<Data.Direction>>;
     /** Vehicles of this route */
     public readonly vehicles: Map<string, Promise<Data.Vehicle>>;
+    /** Shapes of this route */
+    public readonly shapes: Map<string, Promise<Data.Shape>>;
 
     private visible: boolean;
 }
