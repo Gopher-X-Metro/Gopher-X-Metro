@@ -41,4 +41,20 @@ export default class _Shape extends _DataAbstract {
             )
         })
     }
+
+    /**
+     * Finds the nearest point on the path to the given point
+     * @param point given point to look for
+     * @returns an index of the point in the array and the point itself
+     */
+    public nearestPoint(point: google.maps.LatLng) : [google.maps.LatLng, number] {
+        const calculated = this.points.map(p => haversine(
+            {latitude: p.lat(), longitude: p.lng()}, 
+            {latitude: point.lat(), longitude: point.lng()}
+        ))
+
+        const index = calculated.findIndex(value => value === Math.min(...calculated));
+
+        return [this.points[index], index];
+    }
 }
