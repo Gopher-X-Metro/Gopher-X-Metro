@@ -90,7 +90,7 @@ class Vehicle extends InfoWindowElement {
                 const vehicle = await Data.Vehicle.get(routeId, String(this.id));
 
                 if (Peak.isUniversityRoute(routeId)) {
-                    console.log(vehicle.data)
+                    // console.log(vehicle.data)
                     // const etas = Peak.getPeekStopETAs()
                     // console.log(etas)
                     directionElement.textContent = vehicle.data.minsLate
@@ -102,7 +102,7 @@ class Vehicle extends InfoWindowElement {
 
                     for (const stopSearch of stopsSearch) { 
                         for (const service of stopSearch.service) {
-                            console.log(service)
+                            // console.log(service)
                             
                             if (String(service.route) === routeId) {
                                 stopPromises.push(Realtime.getStop(stopSearch.stopid)
