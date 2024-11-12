@@ -90,11 +90,10 @@ class Vehicle extends InfoWindowElement {
                 const vehicle = await Data.Vehicle.get(routeId, String(this.id));
 
                 if (Peak.isUniversityRoute(routeId)) {
-                    // const locations = 
-                    // console.log(locations.sort(location => haversine({latitude: location.lat(), longitude: location.lng()}, {latitude: 1, longitude: 2})));
-                
-
-                    directionElement.textContent = vehicle.data.headway
+                    console.log(vehicle.data)
+                    // const etas = Peak.getPeekStopETAs()
+                    // console.log(etas)
+                    directionElement.textContent = vehicle.data.minsLate
 
                     const peakStop = await Peak.getPeakStop(vehicle.data.nextStopID);
                     const stopsSearch = (await Plan.serviceNearby(peakStop.lat, peakStop.lng, null, 0, 0.1)).atstop.filter(stop => (stop.walkdist === 0));
@@ -103,7 +102,7 @@ class Vehicle extends InfoWindowElement {
 
                     for (const stopSearch of stopsSearch) { 
                         for (const service of stopSearch.service) {
-                            // console.log(service)
+                            console.log(service)
                             
                             if (String(service.route) === routeId) {
                                 stopPromises.push(Realtime.getStop(stopSearch.stopid)

@@ -8,6 +8,7 @@ import Peak from "src/backend/Peak.ts";
 import Stop from "../elements/Stop.ts";
 import Data from "src/data/Data.ts";
 
+
 namespace Routes {
 
     /* Public */
@@ -237,7 +238,7 @@ namespace Routes {
     }
 
     async function loadPath(routeId: string, shapeId: string, color: string, locations: Array<google.maps.LatLng>) {
-        const route = getRoute(routeId);        
+        const route = getRoute(routeId);
 
         if (route) {
             route.addPath(shapeId, color, locations)
