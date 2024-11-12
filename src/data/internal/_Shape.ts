@@ -47,7 +47,7 @@ export default class _Shape extends _DataAbstract {
      * @param point given point to look for
      * @returns an index of the point in the array and the point itself
      */
-    public nearestPoint(point: google.maps.LatLng) : [google.maps.LatLng, number] {
+    public nearestPoint(point: google.maps.LatLng) : {point: google.maps.LatLng, index: number} {
         const calculated = this.points.map(p => haversine(
             {latitude: p.lat(), longitude: p.lng()}, 
             {latitude: point.lat(), longitude: point.lng()}
@@ -55,6 +55,6 @@ export default class _Shape extends _DataAbstract {
 
         const index = calculated.findIndex(value => value === Math.min(...calculated));
 
-        return [this.points[index], index];
+        return {point: this.points[index], index: index};
     }
 }
