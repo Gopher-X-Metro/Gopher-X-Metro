@@ -1,4 +1,4 @@
-import _DataAbstract from "./_DataAbstract";
+import _DataAbstract from "src/data/internal/_DataAbstract";
 import Resources from "src/backend/Resources";
 import haversine from "haversine";
 
