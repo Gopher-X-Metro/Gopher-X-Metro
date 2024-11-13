@@ -23,6 +23,9 @@ body {
   height: 100%;
 }
 
+
+/* Map */
+
 #map {
   position: relative;
   top: 10%;
@@ -33,6 +36,44 @@ body {
 #map-page {
   height: 100%;
   width: 100%;
+}
+
+.map-control-button {
+  background: none rgb(255, 255, 255); 
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+  display: block; 
+  border: 0px; 
+  margin: 10px; 
+  padding: 0px; 
+  text-transform: none; 
+  appearance: none; 
+  position: relative; 
+  cursor: pointer; 
+  user-select: none; 
+  overflow: hidden; 
+  width: 40px; 
+  height: 40px;
+  top: 0px; 
+  left: 0px;
+}
+
+.map-control-button .icon{
+  display: block;
+  margin: auto;
+  height: 60%;
+  width: 60%;
+}
+
+.map-control-button .icon {
+  color: #666666;
+}
+
+.map-control-button:hover .icon {
+  color: #333333;
+}
+
+.map-control-button:active .icon {
+  color: #111111;
 }
 
 /* Title Bar */
@@ -507,6 +548,7 @@ body {
 }
 
 /* Location Search Bar */
+
 #location-search-bar {
   background-color: #fff;
   border-radius: 2px;
@@ -540,46 +582,13 @@ body.mobile .pac-container {
 }
 
 /* Center Button */
-#center-button {
-  background: none rgb(255, 255, 255); 
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
-  display: block; 
-  border: 0px; 
-  margin: 10px; 
-  padding: 0px; 
-  text-transform: none; 
-  appearance: none; 
-  position: relative; 
-  cursor: pointer; 
-  user-select: none; 
-  overflow: hidden; 
-  width: 40px; 
-  height: 40px;
-  top: 0px; 
-  left: 0px;
-}
-
-#center-button .icon{
-  display: block;
-  margin: auto;
-  height: 60%;
-  width: 60%;
-}
-
-#center-button.center-button .icon {
-  color: #666666;
-}
-
-#center-button.center-button:hover .icon {
-  color: #333333;
-}
-
-#center-button.center-button:active .icon {
-  color: #111111;
-}
 
 #center-button.center-button.centered .icon {
   color: #111111;
+}
+
+#center-button.center-button.centered .icon:active {
+  transform: scale(0.95);
 }
 
 #center-button.center-button.centered {
