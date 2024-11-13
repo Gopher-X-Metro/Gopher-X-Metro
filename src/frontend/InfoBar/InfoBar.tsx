@@ -49,7 +49,7 @@ export default function InfoBar() {
                     </button>
 
                     <div id="info-bar-page-content">
-                        {info?.map(vehicle => (<button key={vehicle.id} className="button"><p>{vehicle.id}</p></button>))}
+                        {info?.map(shape => { console.log(shape); return (<button key={shape.id} className="button"><p>{shape.id}</p></button>)})}
                     </div>
                 </div>
             </div>

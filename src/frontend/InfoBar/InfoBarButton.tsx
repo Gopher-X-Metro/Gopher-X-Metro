@@ -3,7 +3,8 @@ import Data from "src/data/Data";
 
 export default function InfoBarButton( { text, setInfoPage, setInfo} ) {
     const onClick = async () => {
-        await Data.Vehicle.all(text).then(vehicles => setInfo(vehicles));
+        await Data.Shape.all(text).then(shapes => setInfo(shapes));
+
         setInfoPage(true);
     }
 
