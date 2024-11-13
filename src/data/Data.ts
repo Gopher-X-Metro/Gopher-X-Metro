@@ -5,7 +5,7 @@ import _Place from "src/data/internal/_Place";
 import _Vehicle from "src/data/internal/_Vehicle";
 import _Departure from "src/data/internal/_Departure";
 import _ExistsError from "src/data/internal/_ExistsError";
-import _Shape from "./internal/_Shape";
+import _Shape from "src/data/internal/_Shape";
 
 /** Data Access Object (DAO) */
 namespace Data {
