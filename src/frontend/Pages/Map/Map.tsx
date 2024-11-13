@@ -41,29 +41,27 @@ export default function MapPage({ hidden, setPage, isMobile }) {
     }, [map]);
 
     return (
-        <>
-            <div className="h-[100%] w-full bg-black" hidden={hidden}>
-                <NavBar setPage={setPage} isMobile={isMobile} />
-                <InfoBar />
-                <LoadingScreen hidden={mapLoaded} />
-                <Map
-                    id="map"
-                    className="map"
-                    mapId={process.env.REACT_APP_MAP_ID}
-                    defaultCenter={UMNLocation}
-                    defaultZoom={defaultZoom}
-                    gestureHandling={"greedy"}
-                    disableDefaultUI={true}
-                    zoomControl={true}
-                    streetViewControl={false}
-                    fullscreenControl={false}
-                    mapTypeControl={false}
-                > 
-                    <LocationSearchBar isMobile={isMobile} />
-                    <CenterButton />
-                </Map>
-            </div>
-        </>
+        <div id="map-page" hidden={hidden}>
+            <NavBar setPage={setPage} isMobile={isMobile} />
+            <InfoBar />
+            <LoadingScreen hidden={mapLoaded} />
+            <Map
+                id="map"
+                className="map"
+                mapId={process.env.REACT_APP_MAP_ID}
+                defaultCenter={UMNLocation}
+                defaultZoom={defaultZoom}
+                gestureHandling={"greedy"}
+                disableDefaultUI={true}
+                zoomControl={true}
+                streetViewControl={false}
+                fullscreenControl={false}
+                mapTypeControl={false}
+            > 
+                <LocationSearchBar isMobile={isMobile} />
+                <CenterButton />
+            </Map>
+        </div>
     );
 }
 
