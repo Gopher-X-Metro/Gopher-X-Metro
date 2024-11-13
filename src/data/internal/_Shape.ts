@@ -42,7 +42,7 @@ export default class _Shape extends _DataAbstract {
                     {unit: "meter"}
                 )
             )
-        })
+        });
     }
 
     /**
