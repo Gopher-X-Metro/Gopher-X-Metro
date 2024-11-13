@@ -65,6 +65,6 @@ export default class _Route extends _DataAbstract {
             for (const shapeId of response) {
                 this.shapes.set(shapeId, Data.Shape.create(shapeId, this.id as string))
             }
-        })
+        });
     }
 }
