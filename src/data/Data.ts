@@ -189,6 +189,7 @@ namespace Data {
             }
         }
     };
+    
     /** Shape Data and Shape Access */
     export class Shape extends _Shape {
         /**
