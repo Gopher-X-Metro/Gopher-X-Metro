@@ -5,6 +5,7 @@ import _Place from "src/data/internal/_Place";
 import _Vehicle from "src/data/internal/_Vehicle";
 import _Departure from "src/data/internal/_Departure";
 import _ExistsError from "src/data/internal/_ExistsError";
+import _Shape from "src/data/internal/_Shape";
 
 /** Data Access Object (DAO) */
 namespace Data {
@@ -27,6 +28,7 @@ namespace Data {
             const route = new Data.Route(routeId);
             await route.loadVehicles();
             await route.loadDirections();
+            await route.loadShapes();
             return route;
         }
 
@@ -187,7 +189,51 @@ namespace Data {
             }
         }
     };
+    
+    /** Shape Data and Shape Access */
+    export class Shape extends _Shape {
+        /**
+         * Creates a new Shape object
+         * @param shapeId id of shape
+         * @param routeId id of route that contains the shape 
+         * @param points points of shape that define the path
+         */
+        static async create(shapeId: string, routeId: string) : Promise<Data.Shape>{
+            const shape = new Data.Shape(shapeId, routeId);
 
+            await shape.load();
+
+            return shape;
+        }
+
+        /**
+         * Gets Shape from the Data object
+         * @param routeId id of route that contains the shape
+         * @param shapeId id of shape
+         * @returns Shape Promise
+         */
+        static async get(routeId: string, shapeId: string) : Promise<Shape> {
+            if (!(await Route.get(routeId)).shapes.has(shapeId)) {
+                throw new ExistsError(`Shape '${shapeId}' does not exist in route '${routeId}'`);
+            }
+
+            return (await Route.get(routeId)).shapes.get(shapeId) as Promise<Shape>;
+        }
+
+        /** Gets all the shapes within Data */
+        static async all() : Promise<Array<Shape>>
+        /** Gets all the shapes within the route */
+        static async all(routeId: string) : Promise<Array<Shape>>
+        static async all(routeId?: string) : Promise<Array<Shape>> {
+            if (routeId !== undefined) {
+                // Gets all shapes in a route
+                return Promise.all((await Route.get(routeId)).shapes.values());
+            } else {
+                // Gets all shapes
+                return Promise.all((await Route.all()).map(route => Array.from(route.shapes.values())).flat());
+            }
+        }
+    }
     /**
      * Place Data and Place Access
      */

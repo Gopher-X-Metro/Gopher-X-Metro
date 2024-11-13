@@ -1,5 +1,6 @@
 import _DataAbstract from "src/data/internal/_DataAbstract";
 import Realtime from "src/backend/Realtime";
+import Resources from "src/backend/Resources";
 import Data from "src/data/Data";
 
 /**
@@ -10,6 +11,8 @@ export default class _Route extends _DataAbstract {
     public readonly directions: Map<number, Promise<Data.Direction>>;
     /** Vehicles of this route */
     public readonly vehicles: Map<string, Promise<Data.Vehicle>>;
+    /** Shapes of this route */
+    public readonly shapes: Map<string, Promise<Data.Shape>>;
     /** Vehicles visible or not */
     private visible: boolean;
 
@@ -23,6 +26,7 @@ export default class _Route extends _DataAbstract {
         this.visible = true;
         this.directions = new Map<number, Promise<Data.Direction>>();
         this.vehicles = new Map<string, Promise<Data.Vehicle>>();
+        this.shapes = new Map<string, Promise<Data.Shape>>();
     }
     
     /** Loads vehicles in this route */
@@ -48,6 +52,18 @@ export default class _Route extends _DataAbstract {
         await Realtime.getDirections(this.id as string).then(directionData => {
             for (const direction of directionData) {
                 this.directions.set(direction.direction_id, Data.Direction.create(direction.direction_id, this.id as string));
+            }
+        });
+    }
+
+    /** Loads shapes in this route */
+    public async loadShapes() : Promise<void> {
+        this.shapes.clear();
+
+        // Load Shapes
+        await Resources.getShapeIds(this.id as string).then(response => {
+            for (const shapeId of response) {
+                this.shapes.set(shapeId, Data.Shape.create(shapeId, this.id as string))
             }
         });
     }
