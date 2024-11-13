@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { IoMdArrowDropleft } from "react-icons/io";
-import { PiArrowBendUpLeftBold } from "react-icons/pi";
 import InfoBarButton from "./InfoBarButton";
 import URL from "src/backend/URL";
+
+import { IoMdArrowDropleft } from "react-icons/io";
+import { PiArrowBendUpLeftBold } from "react-icons/pi";
 
 export default function InfoBar() {
     const [, forceReload] = useState(0);
     const [open, setOpen] = useState(false);
     const [infoPage, setInfoPage] = useState(false);
     const [routes, setRoutes] = useState(new Array<string>());
+    const [info, setInfo] = useState<any>();
 
     useEffect(() => {
-        const change = () => {
+        const change = async () => {
             setRoutes(Array.from(URL.getRoutes()));
             forceReload(Math.random());
         }
@@ -38,15 +40,16 @@ export default function InfoBar() {
                 </div>
 
                 <div id="button-list" hidden={infoPage}>
-                    {routes.map(route => (<InfoBarButton key={route} text={route} setInfoPage={setInfoPage} />))}
+                    {routes.map(route => (<InfoBarButton key={route} text={route} setInfoPage={setInfoPage} setInfo={setInfo}/>))}
                 </div>
 
                 <div id="info-bar-page" hidden={!infoPage}>
                     <button id="return-button" onClick={() => setInfoPage(false)}>
                         <PiArrowBendUpLeftBold className="icon"/>
                     </button>
-                    <div id="info-bar-page-content">
 
+                    <div id="info-bar-page-content">
+                        {info?.map(vehicle => (<button key={vehicle.id} className="button"><p>{vehicle.id}</p></button>))}
                     </div>
                 </div>
             </div>
