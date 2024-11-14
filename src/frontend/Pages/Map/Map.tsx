@@ -7,6 +7,7 @@ import Routes from "src/frontend/Pages/Map/components/Routes";
 import LoadingScreen from "src/frontend/Pages/Map/components/LoadingScreen";
 import NavBar from "src/frontend/NavBar/NavBar";
 import CenterButton from "src/frontend/NavBar/components/CenterButton";
+import POIButton from "src/frontend/NavBar/components/mapPOI";
 import LocationSearchBar from "src/frontend/NavBar/components/LocationSearchBar";
 
 const APIKey = process.env.REACT_APP_API_KEY; // Comes from the .env.local file, just for security. Won't appear in main -- all api keys should be added to Vercel console. 
@@ -59,6 +60,7 @@ export default function MapPage({ hidden, setPage, isMobile }) {
                 > 
                     <LocationSearchBar isMobile={isMobile} />
                     <CenterButton />
+                    <POIButton />
                 </Map>
             </div>
         </>
@@ -77,6 +79,8 @@ export function centerMap(map: google.maps.Map | null, location?: {lat: number, 
         map.panTo((location === undefined) ? UMNLocation : location);
     }
 }
+
+export function mapPOI(map: google.maps.Map | null) {}
 
 /**
  * Initializes map with routes, markers, and periodic updates for vehicle positions
