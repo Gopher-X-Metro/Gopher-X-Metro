@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import InfoBarButton from "./InfoBarButton";
+import InfoRouteButton from "./InfoRouteButton";
+import Data from "src/data/Data";
 import URL from "src/backend/URL";
 
 import { IoMdArrowDropleft } from "react-icons/io";
 import { PiArrowBendUpLeftBold } from "react-icons/pi";
+import InfoShapeButton from "./InfoShapeButton";
 
 export default function InfoBar() {
     const [, forceReload] = useState(0);
     const [open, setOpen] = useState(false);
     const [infoPage, setInfoPage] = useState(false);
     const [routes, setRoutes] = useState(new Array<string>());
-    const [info, setInfo] = useState<any>();
+    const [info, setInfo] = useState(new Array<Data.Shape>());
 
     useEffect(() => {
         const change = async () => {
@@ -40,7 +42,7 @@ export default function InfoBar() {
                 </div>
 
                 <div id="button-list" hidden={infoPage}>
-                    {routes.map(route => (<InfoBarButton key={route} text={route} setInfoPage={setInfoPage} setInfo={setInfo}/>))}
+                    {routes.map(route => (<InfoRouteButton key={route} routeId={route} setInfoPage={setInfoPage} setInfo={setInfo}/>))}
                 </div>
 
                 <div id="info-bar-page" hidden={!infoPage}>
@@ -49,7 +51,7 @@ export default function InfoBar() {
                     </button>
 
                     <div id="info-bar-page-content">
-                        {info?.map(shape => { console.log(shape); return (<button key={shape.id} className="button"><p>{shape.id}</p></button>)})}
+                        {info?.map(shape => { return (<InfoShapeButton key={shape.id as string} shape={shape} />)})}
                     </div>
                 </div>
             </div>
