@@ -7,6 +7,7 @@ import SearchIcon from "src/img/CustomBus.png";
 import SearchFeature from 'src/frontend/NavBar/components/SearchFeature.tsx';
 import Schedule from 'src/backend/Schedule.ts';
 import Clearall from 'src/frontend/NavBar/components/Clearall.tsx';
+import BookmarkButton from './BookmarkButton.tsx';
 
 
 
@@ -121,7 +122,7 @@ export default function SideBar() {
                         <div className="underline"></div>
                     </div>
                        
-                     <ul id="Favorite-tab"></ul>
+                     <div id="Favorite-tab"></div>
         </div>    
         </div>
 
