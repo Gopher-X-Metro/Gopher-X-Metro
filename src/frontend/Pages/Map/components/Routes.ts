@@ -8,6 +8,8 @@ import Peak from "src/backend/Peak";
 import Stop from "src/frontend/Pages/Map/elements/Stop";
 import Data from "src/data/Data";
 
+import Schedule2 from "src/schedule/Schedule";
+
 namespace Routes {
     const routes = new Map<string, Route>();
     const stops = new Map<string, Promise<Stop | undefined>>();
@@ -224,6 +226,7 @@ namespace Routes {
     async function loadRoute(routeId: string) : Promise<void> {
         Data.Route.load(routeId);
 
+        Schedule2.Route.get(routeId).then(route => console.log(route));
         const route = new Route(routeId, map);
         routes.set(routeId, route);
 
