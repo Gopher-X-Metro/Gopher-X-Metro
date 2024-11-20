@@ -60,4 +60,25 @@ export default class _Shape extends _DataAbstract {
 
         return {point: this.points[index], index: index};
     }
+
+    
+    public distance(start: google.maps.LatLng, end: google.maps.LatLng) : number {
+        const startNearest = this.nearestPoint(start);
+        const endNearest = this.nearestPoint(end);
+
+        if (startNearest.index > endNearest.index) {
+            endNearest.index += this.points.length - 1;
+        }
+
+        let distance = 0;
+        for (let i = startNearest.index; i < endNearest.index; i++) {
+            distance += haversine(
+                {latitude: this.points[i % this.points.length].lat(), longitude: this.points[i % this.points.length].lng()}, 
+                {latitude: this.points[(i+1) % this.points.length].lat(), longitude: this.points[(i+1) % this.points.length].lng()}, 
+                {unit: "meter"}
+            )
+        }
+
+        return distance;
+    }
 }
