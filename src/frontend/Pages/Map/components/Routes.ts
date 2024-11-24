@@ -227,6 +227,7 @@ namespace Routes {
         Data.Route.load(routeId);
 
         Schedule2.Route.get(routeId).then(route => console.log(route));
+        Data.Route.get(routeId).then(route => console.log(route));
         const route = new Route(routeId, map);
         routes.set(routeId, route);
 

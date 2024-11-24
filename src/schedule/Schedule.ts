@@ -1,11 +1,14 @@
-import _Detail from "./internal/_Detail";
+import _RouteDetail from "./internal/_RouteDetail";
 import _ExistsError from "./internal/_ExistsError";
 import _FetchError from "./internal/_FetchError";
 import _Route from "./internal/_Route";
+import _ScheduleType from "./internal/_ScheduleType";
+import _Timetable from "./internal/_Timetable";
+import _Stop from "./internal/_Stop";
 
 namespace Schedule {
     /** Routes Object Promises */
-    const routes = new Map<string, Promise<Route>>();
+    const routes = new Map<string, Route>();
 
     const _initialize = (async () => {
         await fetch("https://svc.metrotransit.org/schedule/routes")
@@ -16,7 +19,7 @@ namespace Schedule {
 
             (await response.json() as Array<Interface.Route>)
             .forEach(data => 
-                routes.set(data.route_id, Route.create(data.route_id, data.agency_id, data))
+                routes.set(data.route_id, Route.create(data.route_id, data))
             )
         })
     })();
@@ -25,8 +28,8 @@ namespace Schedule {
     export class ExistsError extends _ExistsError {};
 
     export class Route extends _Route{
-        public static async create(routeId: string, agencyId: number, data: Interface.Route) : Promise<Route> {
-            const route = new Route(routeId, agencyId, data);
+        public static create(routeId: string, data: Interface.Route) : Route {
+            const route = new Route(routeId, data);
 
             return route;
         }
@@ -41,20 +44,53 @@ namespace Schedule {
                 throw new ExistsError(`Route '${routeId}' does not have a schedule.`);
             }
 
-            return routes.get(routeId) as Promise<Route>;
+            const route = await routes.get(routeId) as Route;
+
+            if (route.detail === undefined) {
+                route.detail = fetch(`https://svc.metrotransit.org/schedule/routedetails/${route.data.route_url_param}`)
+                .then(async response => {
+                    if (!response.ok) {
+                        throw new Schedule.FetchError(`Failed to fetch route detail '${route.data.route_url_param}'`);
+                    }
+        
+                    return new Schedule.RouteDetail(routeId, route.agencyId, route.data.route_url_param, await response.json());
+                })
+            }
+
+            return routes.get(routeId) as Route;
         }
     }
 
-    export class Detail extends _Detail{
-        public static async create(routeId: string, agencyId: number, routeUrlParam: string, data: Schedule.Interface.RouteDetail) {
-            const detail = new Detail(routeId, agencyId, routeUrlParam, data);
+    export class RouteDetail extends _RouteDetail{
+        public static create(routeUrlParam: string, agencyId: number, routeId: string, data: Schedule.Interface.RouteDetail) {
+            const detail = new RouteDetail(routeUrlParam, agencyId, routeId, data);
             
             return detail;
         }
     }
 
-    export class Timetable {
+    export class ScheduleType extends _ScheduleType {
+        public static create(scheduleTypeName: string, routeUrlParam: string, agencyId: number, routeId: string, data: Schedule.Interface.ScheduleType) {
+            const type = new ScheduleType(scheduleTypeName, routeUrlParam, agencyId, routeId, data);
+            
+            return type;
+        }
+    }
 
+    export class Timetable extends _Timetable {
+        public static create(scheduleNumber: number, scheduleTypeName: string, routeUrlParam: string, agencyId: number, routeId: string, data: Schedule.Interface.TimetableDetail) {
+            const table = new Timetable(scheduleNumber, scheduleTypeName, routeUrlParam, agencyId, routeId, data);
+            
+            return table;
+        }
+    }
+
+    export class Stop extends _Stop {
+        public static create(scheduleNumber: number, scheduleTypeName: string, routeUrlParam: string, agencyId: number, routeId: string, data: Schedule.Interface.Stop) {
+            const stop = new Stop(scheduleNumber, scheduleTypeName, routeUrlParam, agencyId, routeId, data);
+            
+            return stop;
+        }
     }
 
     export namespace Interface {
@@ -121,6 +157,11 @@ namespace Schedule {
             departure_time: string;
             place_sequence: number;
             comment_tag: string;
+        }
+        export interface Stop {
+            stop_id: string;
+            stop_name: string;
+            timepoint: boolean;
         }
     }
 }
