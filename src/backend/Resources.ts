@@ -10,6 +10,7 @@ import busImage122 from "src/img/122_bus.png";
 import busImage123 from "src/img/123_bus.png";
 import busImage124 from "src/img/124_bus.png";
 import busImage125 from "src/img/125_bus.png";
+import busImageFOOTBALL from "src/img/FOOTBALL_bus.png";
 import busImage2 from "src/img/2_bus.png";
 import busImage3 from "src/img/3_bus.png";
 import busImage6 from "src/img/6_bus.png";
@@ -22,6 +23,7 @@ import arrowImage122 from "src/img/122_arrow.png";
 import arrowImage123 from "src/img/123_arrow.png";
 import arrowImage124 from "src/img/124_arrow.png";
 import arrowImage125 from "src/img/125_arrow.png";
+import arrowImageFOOTBALL from "src/img/FOOTBALL_arrow.png";
 import arrowImage2 from "src/img/2_arrow.png";
 import arrowImage3 from "src/img/3_arrow.png";
 import arrowImage6 from "src/img/6_arrow.png";
@@ -43,6 +45,7 @@ namespace Resources {
         "123": [busImage123, arrowImage123], 
         "124": [busImage124, arrowImage124],
         "125": [busImage125, arrowImage125],
+        "FOOTBALL": [busImageFOOTBALL, arrowImageFOOTBALL],
         "2": [busImage2, arrowImage2],
         "3": [busImage3, arrowImage3],
         "6": [busImage6, arrowImage6],
@@ -58,6 +61,7 @@ namespace Resources {
         "123": "1ab7b7", 
         "124": "90EE90",
         "125": "c727e2",
+        "FOOTBALL": "964B00",
         "2": "bab832",
         "3": "d18528",
         "6": "236918",
