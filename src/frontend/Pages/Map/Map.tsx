@@ -16,6 +16,33 @@ const defaultZoom = 15;
 
 if (!APIKey) throw new Error("API Key was not loaded, or was not found!"); 
 
+export const styleMapFeatures = {
+    hidePOI: [
+        {
+            featureType: "poi",
+            stylers: [{ visibility: "off" }]
+        },
+        {
+            featureType: "road",
+            elementType: "labels",
+            stylers: [{ visibility: "on" }]
+        },
+        {
+            featureType: "all",
+            elementType: "labels",
+            stylers: [{ visibility: "off" }]
+        }
+    ],
+    showAll: [
+        {
+            featureType: "all",
+            elementType: "labels",
+            stylers: [{ visibility: "on" }]
+        }
+    ]
+};
+
+
 /**
  * Map Page
  * @param hidden if map should be hidden
@@ -57,13 +84,13 @@ export default function MapPage({ hidden, setPage, isMobile }) {
                     streetViewControl={false}
                     fullscreenControl={false}
                     mapTypeControl={false}
-                > 
-                    <LocationSearchBar isMobile={isMobile} />
-                    <CenterButton />
-                    <POIButton />
-                </Map>
-            </div>
-        </>
+                >
+                <LocationSearchBar isMobile={isMobile} />
+                <CenterButton />
+                <POIButton />
+            </Map>
+        </div>
+    </>
     );
 }
 
