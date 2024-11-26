@@ -42,7 +42,9 @@ namespace Routes {
     export async function refreshVehicles() : Promise<void> {
         // Updates Vehicle Data
         for (const routeId of URL.getRoutes()) {
-            Data.Vehicle.reload(routeId);
+            if (routeId != "FOOTBALL") {
+                Data.Vehicle.reload(routeId);
+            }
         }
 
         // Updates Vehicles
@@ -99,11 +101,14 @@ namespace Routes {
     export async function refreshStops() : Promise<void> {
         // Updates Stop Data
         for (const routeId in URL.getRoutes()) {
-            Data.Departure.reload(routeId);
+            if (routeId != "FOOTBALL") {
+                Data.Departure.reload(routeId);
+            }
         }
 
         // Updates Stops
         for (const routeId of URL.getRoutes()) {
+            if(routeId!=="FOOTBALL"){
             const scheduleResponse = await Schedule.getRouteDetails(routeId);
 
             for (const schedule of scheduleResponse.schedules) {
@@ -136,6 +141,7 @@ namespace Routes {
                     }
                 }
             }
+        }
         }
     }
 
@@ -222,7 +228,9 @@ namespace Routes {
      * @param routeId ID of route
      */
     async function loadRoute(routeId: string) : Promise<void> {
-        Data.Route.load(routeId);
+        if (routeId != "FOOTBALL") {
+            Data.Route.load(routeId);
+        }
 
         const route = new Route(routeId, map);
         routes.set(routeId, route);
