@@ -54,7 +54,7 @@ export default function CenterButton() {
                         aria-label="Center"
                         title="Center"
                         type="button"
-                        className={"center-button" + (centered ? " centered" : "")} 
+                        className={"map-control-button center-button" + (centered ? " centered" : "")} 
                         onClick={() => onClick()}>
                     <IoMdLocate className="icon"/>
                 </button>
