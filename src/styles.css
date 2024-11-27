@@ -115,6 +115,7 @@ body {
 }
 
 /* Sidebar */
+
 .sidebar {
   height: 90%;
   width: 0px;
@@ -413,6 +414,7 @@ body {
 }
 
 /* Location Search Bar */
+
 #location-search-bar {
   background-color: #fff;
   border-radius: 2px;
@@ -457,8 +459,6 @@ body.mobile .pac-container {
 #center-button.center-button.centered {
   background-color: #dddddd;
 }
-
-
 
 .inactive-route-popup {
   position: fixed;
@@ -602,9 +602,7 @@ body.mobile .pac-container {
   color: #111111;
 }
 
-#bookmark-button.bookmark-button.bookmarked {
-  
-}
+
 
 #bookmark-button.bookmark-button.bookmarked:active {
   transform: scale(0.95);

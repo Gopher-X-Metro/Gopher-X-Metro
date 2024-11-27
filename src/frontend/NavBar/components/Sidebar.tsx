@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import RouteButton from './RouteButton.tsx';
 import { Icon } from '@chakra-ui/react';
@@ -7,13 +8,38 @@ import SearchIcon from "src/img/CustomBus.png";
 import SearchFeature from 'src/frontend/NavBar/components/SearchFeature.tsx';
 import Schedule from 'src/backend/Schedule.ts';
 import Clearall from 'src/frontend/NavBar/components/Clearall.tsx';
-import BookmarkButton from './BookmarkButton.tsx';
 
+// Predefined routes data
+const predefinedRoutes = new Map<string, string>([
+    ["121", "121 Campus Connector"],
+    ["122", "122 University Avenue Circulator"],
+    ["123", "123 4th Street Circulator"],
+    ["124", "124 St. Paul Circulator"],
+    ["125", "125 Dinkytown Connector"],
+    ["120", "120 East Bank Circulator"],
+    ["2", "2 Franklin Av / To Hennepin"],
+    ["6", "6U 27Av-Univ / Via France"],
+    ["3", "3 U of M / Como Av / Dwtn Mpls"],
+    ["902", "Metro Green Line"],
+    ["901", "Metro Blue Line"]
+]);
 
-
+/**
+ * Sidebar Component
+ * 
+ * Component renders a collapsible sidebar for selecting and searching routes.
+ * Displays a list of available routes that users can toggle on or off, and includes
+ * a search feature that allows users to search routes by ID
+ * 
+ * @returns rendered Sidebar component
+ */
 export default function SideBar() {
-    const [, forceReload] = useState(0);
-    const [routes, setRoutes] = useState(new Map<string, string>());
+    // State to force component to reload when route data changes
+    const [_, forceReload] = useState(0);
+    // State to manage routes displayed in sidebar
+    const [routes, setRoutes] = useState(predefinedRoutes);
+
+    // State to track whether sidebar is open or closed
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [toggle, setToggle] = useState(1); //switching between tabs
 
@@ -32,15 +58,16 @@ export default function SideBar() {
     routes.set("901", "Metro Blue Line");
 
     useEffect(() => {
-        // Allows the user to hit "Enter" to enter a route
+        // Allows user to hit "Enter" to enter a route
         const searchBox = document.getElementById("search_route");
         searchBox?.addEventListener("keydown", event => event.code === "Enter" ? SearchFeature.searchRoute() : null);
 
         /**
          * Convert a string to a properly cased title
          * @param input input string
+         * @returns input string converted to title case
          */
-        const toTitleCase = (input : string) => { 
+        const toTitleCase = (input : string) : string => { 
             return input.replace( 
                 /\w\S*/g, 
                 text => text.charAt(0).toUpperCase() + text.substring(1).toLowerCase() 
@@ -48,36 +75,36 @@ export default function SideBar() {
         }
 
         /**
-         * Updates the displayed routes on the sidebar
+         * Updates displayed routes on sidebar based on routes returned from URL
          */ 
         const change = async () => {
+            const newRoutes = new Map(routes);
             for (const routeId of URL.getRoutes()) {
-                if (!routes.has(routeId)) {
+                // Fetch route info if not already in routes map
+                if (!newRoutes.has(routeId)) {
                     const info = await Schedule.getRoute(routeId);
                     const name = info ? info.route_label : routeId;
-                    routes.set(routeId, toTitleCase(name));
+                    newRoutes.set(routeId, toTitleCase(name));
                 }
             }
-
-            setRoutes(routes);
+            setRoutes(newRoutes);
             forceReload(Math.random());
         }
 
         URL.addListener(() => change());
 
         change();
-    }, [])
+    }, []); // empty dependency array needed to stop infinite render loop
 
     return (
         <>
             <div id="nav-bar">
                 <button className="openbtn" onClick={() => setSidebarOpen(!sidebarOpen)}>
-                    <Icon as={ HamburgerIcon} w={6} h={6} />
+                    <Icon as={HamburgerIcon} w={6} h={6} />
                 </button>
             </div>
 
-
-            <div id="nav-bar" className={sidebarOpen ? 'sidebar open' : 'sidebar'}>
+    <div id="nav-bar" className={sidebarOpen ? 'sidebar open' : 'sidebar'}>
         <div className='sidebar-content flex flex-col items-center'>
                     <div className='tab-container-sidebar'>
                             <button className ="routes-tab" onClick = {() => updateToggle(1)}>Routes</button>
@@ -114,23 +141,9 @@ export default function SideBar() {
 
                     <div className= "error_text" id = 'error_text'></div>
             </div>
-
-                              {/* content for the favorite tab */}
-        <div className={toggle === 2 ? 'tab-content' : 'content'}>
-                    <div className='Favorite-header'>
-                        <h1>Favorite Routes</h1>
-                        <div className="underline"></div>
-                    </div>
-                       
-                     <div id="Favorite-tab"></div>
-        </div>    
-        </div>
-
-         
-          
-        </div>  
-           
+            </div>
+            </div>
         </>
-    )
-    
+ 
+    ) 
 }
