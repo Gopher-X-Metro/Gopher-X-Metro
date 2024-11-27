@@ -116,9 +116,6 @@ export default function SideBar() {
                         <button className='Clear-all-btn' onClick={Clearall.Clear_Routes}>Clear Routes</button> 
                     </div>
 
-                
-                   
-
                     <div className="select-header">
                         <h3>Select Routes</h3>
                         <div className="underline"></div>
@@ -141,9 +138,13 @@ export default function SideBar() {
 
                     <div className= "error_text" id = 'error_text'></div>
             </div>
+                    <div className={toggle === 2 ? 'tab-content' : 'content'}>
+                        <div id='Favorite-tab'></div> 
+                        
+                    </div>
             </div>
-            </div>
-        </>
+        </div>
+    </>
  
     ) 
 }

@@ -1,13 +1,10 @@
 import URL from 'src/backend/URL.ts';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BsBookmarkStar } from 'react-icons/bs';
 import { ControlPosition, MapControl } from '@vis.gl/react-google-maps';
 import ReactDOM from 'react-dom/client';
 import RouteButton from './RouteButton.tsx';
-import Schedule from 'src/backend/Schedule.ts';
-import { ring } from '@chakra-ui/react';
-
-
+import User from 'src/user/User.ts';
 
 export function BookmarkButton() {
     const [, forceReload] = useState(1);
@@ -33,6 +30,7 @@ export function BookmarkButton() {
         setBookmarked(!booked)
 
         if (booked) {
+            URL.removeRoute(routeId);
             favorited.delete(routeId);
         } else {
             favorited.add(routeId);
@@ -65,9 +63,6 @@ export function BookmarkButton() {
                 </button>
             </MapControl>
         </>
-        
-
-
     )
 }
 
