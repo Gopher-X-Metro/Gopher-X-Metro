@@ -40,8 +40,9 @@ namespace Peak {
         pointArray.forEach((point: string) => {
             const [latStr, lngStr] = point.split(',');
 
-            if (latStr && lngStr)
+            if (latStr && lngStr) {
                 shapeLocations.push(new google.maps.LatLng(Number(latStr), Number(lngStr)));
+            }
         });
 
         return shapeLocations;
@@ -76,10 +77,11 @@ namespace Peak {
      * @returns shape data
      */
     async function getPeakShapes(shapeId: string) : Promise<IShape> {
-        if (!shapes.has(shapeId))
+        if (!shapes.has(shapeId)) {
             await fetch("https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=shape2&action=list&agencyID=88")
             .then(async response => response.json()
-            .then(data => data.shape?.forEach((shape: IShape) => shapes.set(shape.shapeID, shape))))
+            .then(data => data.shape?.forEach((shape: IShape) => shapes.set(shape.shapeID, shape))));
+        }
 
         return shapes.get(shapeId) as IShape; 
     }
