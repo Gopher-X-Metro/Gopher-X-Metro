@@ -59,7 +59,7 @@ export function BookmarkButton() {
                         type="button"
                         className={"map-control-button bookmark-button" + (bookmarked ? " bookmarked" : "")} 
                         onClick={() => onClick()}>
-                <BsBookmarkStar   className="icon" size={30}/>
+                <BsBookmarkStar className="icon" size={30}/>
                 </button>
             </MapControl>
         </>

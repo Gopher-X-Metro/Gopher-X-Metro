@@ -43,6 +43,7 @@ export default function SideBar() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [toggle, setToggle] = useState(1); //switching between tabs
 
+
     const updateToggle = (id) => {setToggle(id);};
 
     routes.set("121", "121 Campus Connector");
@@ -140,7 +141,6 @@ export default function SideBar() {
             </div>
                     <div className={toggle === 2 ? 'tab-content' : 'content'}>
                         <div id='Favorite-tab'></div> 
-                        
                     </div>
             </div>
         </div>

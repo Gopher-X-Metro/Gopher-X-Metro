@@ -132,13 +132,7 @@ body {
   scrollbar-gutter:auto;
   scrollbar-color: red blue;
   scrollbar-width: thin; */
-
- 
-  
 }
-
-
-
 
 /* WebKit-based browsers (Chrome, Safari, Edge) sidebar scrollbar */
  .sidebar::-webkit-scrollbar {
@@ -355,7 +349,7 @@ body {
  float:center;
  position: relative;
  width: 250px;
- padding-bottom: 15px;
+ padding-bottom: 5spx;
 }
 
 .searchContainer input {
@@ -393,7 +387,6 @@ body {
   color: red;
   text-align: center;
   font-weight: bold; 
-  
 }
 
 .AboutButton {
@@ -575,9 +568,7 @@ body.mobile .pac-container {
   transform: scale(0.95);
 }
 
-
 /* sidebar headers */
-
 .search-header .select-header h3 {
   color: black;
   font-family: 'Neutraface Text', sans-serif;
@@ -602,11 +593,8 @@ body.mobile .pac-container {
   color: #111111;
 }
 
-
-
-#bookmark-button.bookmark-button.bookmarked:active {
+#bookmark-button.bookmark-button.bookmarked.icon:active{
   transform: scale(0.95);
- 
 }
 
 .Favorite-header {
@@ -615,7 +603,6 @@ body.mobile .pac-container {
   padding-top: 15px;
   padding-bottom: 15px;
 }
-
 
 /* Controls tab switching */ 
 .content{  /* Hides the favorite tab content originally */
