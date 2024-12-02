@@ -1,13 +1,13 @@
 
-import React, { useEffect, useState } from 'react';
-import RouteButton from './RouteButton.tsx';
-import { Icon } from '@chakra-ui/react';
-import { HamburgerIcon } from '@chakra-ui/icons';
-import URL from 'src/backend/URL.ts';
+import React, { useEffect, useState } from "react";
+import { Icon } from "@chakra-ui/react";
+import { HamburgerIcon } from "@chakra-ui/icons";
+import RouteButton from "src/frontend/NavBar/components/RouteButton";
+import URL from "src/backend/URL";
+import SearchFeature from "src/frontend/NavBar/components/SearchFeature";
+import Schedule from "src/backend/Schedule";
+import Clearall from "src/frontend/NavBar/components/Clearall";
 import SearchIcon from "src/img/CustomBus.png";
-import SearchFeature from 'src/frontend/NavBar/components/SearchFeature.tsx';
-import Schedule from 'src/backend/Schedule.ts';
-import Clearall from 'src/frontend/NavBar/components/Clearall.tsx';
 
 // Predefined routes data
 const predefinedRoutes = new Map<string, string>([
@@ -44,7 +44,7 @@ export default function SideBar() {
     const [toggle, setToggle] = useState(1); //switching between tabs
 
 
-    const updateToggle = (id) => {setToggle(id);};
+    const updateToggle = (id) => {setToggle(id)};
 
     routes.set("121", "121 Campus Connector");
     routes.set("122", "122 University Avenue Circulator");
@@ -105,16 +105,16 @@ export default function SideBar() {
                 </button>
             </div>
 
-    <div id="nav-bar" className={sidebarOpen ? 'sidebar open' : 'sidebar'}>
-        <div className='sidebar-content flex flex-col items-center'>
-                    <div className='tab-container-sidebar'>
+    <div id="nav-bar" className={sidebarOpen ? "sidebar open" : "sidebar"}>
+        <div className="sidebar-content flex flex-col items-center">
+                    <div className="tab-container-sidebar">
                             <button className ="routes-tab" onClick = {() => updateToggle(1)}>Routes</button>
-                            <button className='favorite-tab' onClick = {() => updateToggle(2)}>Favorites</button>
+                            <button className="favorite-tab" onClick = {() => updateToggle(2)}>Favorites</button>
                     </div>
-            <div className={toggle === 1 ? 'tab-content' : 'content'}>
+            <div className={toggle === 1 ? "tab-content" : "content"}>
                     
-                    <div className='Clear-container'>
-                        <button className='Clear-all-btn' onClick={Clearall.Clear_Routes}>Clear Routes</button> 
+                    <div className="Clear-container">
+                        <button className="Clear-all-btn" onClick={Clearall.clearRoutes}>Clear Routes</button> 
                     </div>
 
                     <div className="select-header">
@@ -137,14 +137,13 @@ export default function SideBar() {
                         </button>
                     </div>
 
-                    <div className= "error_text" id = 'error_text'></div>
+                    <div className= "error_text" id = "error_text"></div>
             </div>
-                    <div className={toggle === 2 ? 'tab-content' : 'content'}>
-                        <div id='Favorite-tab'></div> 
+                    <div className={toggle === 2 ? "tab-content" : "content"}>
+                        <div id="Favorite-tab"></div> 
                     </div>
             </div>
         </div>
     </>
- 
-    ) 
+    );
 }

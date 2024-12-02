@@ -1,10 +1,10 @@
-import URL from 'src/backend/URL.ts';
-import React, { useEffect, useState } from 'react';
-import { BsBookmarkStar } from 'react-icons/bs';
-import { ControlPosition, MapControl } from '@vis.gl/react-google-maps';
-import ReactDOM from 'react-dom/client';
-import RouteButton from './RouteButton.tsx';
-import User from 'src/user/User.ts';
+import React, { useEffect, useState } from "react";
+import { BsBookmarkStar } from "react-icons/bs";
+import { ControlPosition, MapControl } from "@vis.gl/react-google-maps";
+import ReactDOM from "react-dom/client";
+import URL from "src/backend/URL";
+import RouteButton from "src/frontend/NavBar/components/RouteButton";
+import User from "src/user/User";
 
 export function BookmarkButton() {
     const [, forceReload] = useState(1);
@@ -13,11 +13,10 @@ export function BookmarkButton() {
     const [favorited,] = useState(new Set<string>());
     const [root, setRoot] = useState<any>();
 
-
     useEffect(() => {
         setRoot(ReactDOM.createRoot(document.getElementById('Favorite-tab')))
         setRoutes(URL.getRoutes())
-    }, [])
+    }, []);
 
     URL.addListener(() => {
         forceReload(Math.random());
@@ -27,7 +26,7 @@ export function BookmarkButton() {
     const onClick = () => {
         const routeId = Array.from(routes)[0];
         const booked = favorited.has(routeId);
-        setBookmarked(!booked)
+        setBookmarked(!booked);
 
         if (booked) {
             URL.removeRoute(routeId);
@@ -50,7 +49,6 @@ export function BookmarkButton() {
     return (
         <>
             <MapControl position={ControlPosition.RIGHT_BOTTOM}>
-              
                 <button hidden={URL.getRoutes().size !== 1}
                         id="bookmark-button" 
                         draggable="false"
@@ -63,7 +61,7 @@ export function BookmarkButton() {
                 </button>
             </MapControl>
         </>
-    )
+    );
 }
 
 export default BookmarkButton;

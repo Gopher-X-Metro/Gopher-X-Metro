@@ -1,10 +1,9 @@
 import { Map, useMap } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
-
 import Resources from "src/backend/Resources";
-import Marker from "./components/Marker";
-import Routes from "./components/Routes";
-import LoadingScreen from "./components/LoadingScreen";
+import Marker from "src/frontend/Pages/Map/components/Marker";
+import Routes from "src/frontend/Pages/Map/components/Routes";
+import LoadingScreen from "src/frontend/Pages/Map/components/LoadingScreen";
 import NavBar from "src/frontend/NavBar/NavBar";
 import CenterButton from "src/frontend/NavBar/components/CenterButton";
 import LocationSearchBar from "src/frontend/NavBar/components/LocationSearchBar";
@@ -43,24 +42,24 @@ export default function MapPage({ hidden, setPage, isMobile }) {
     return (
     <>
         <div className="h-[100%] w-full bg-black" hidden={hidden}>
-            <NavBar setPage={setPage} isMobile={isMobile}/>
-            <LoadingScreen hidden={mapLoaded}/>
+            <NavBar setPage={setPage} isMobile={isMobile} />
+            <LoadingScreen hidden={mapLoaded} />
             <Map
                 id="map"
                 className="map"
                 mapId={process.env.REACT_APP_MAP_ID}
                 defaultCenter={UMNLocation}
                 defaultZoom={defaultZoom}
-                gestureHandling={'greedy'}
+                gestureHandling={"greedy"}
                 disableDefaultUI={true}
                 zoomControl={true}
                 streetViewControl={false}
                 fullscreenControl={false}
                 mapTypeControl={false}
             > 
-                <LocationSearchBar isMobile={isMobile}/>
-                <CenterButton/>
-                <BookmarkButton/>
+                <LocationSearchBar isMobile={isMobile} />
+                <CenterButton />
+                <BookmarkButton />
             </Map>
         </div>
     </>);
