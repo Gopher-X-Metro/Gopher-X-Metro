@@ -5,6 +5,8 @@ import Peak from "src/backend/Peak";
 import Plan from "src/backend/Plan";
 import Realtime from "src/backend/Realtime";
 import Stop from "./Stop";
+import { Menu, MenuButton, MenuList, MenuItem, Button } from "@chakra-ui/react";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 class Vehicle extends InfoWindowElement {
     /* Public */
@@ -69,10 +71,9 @@ class Vehicle extends InfoWindowElement {
             divElement.style.cssText = "text-align:center; font-family: Arial, sans-serif;";
 
             const directionElement = document.createElement("h2");
-            directionElement.style.cssText = "margin-bottom: 10px; font-weight: bold; border-bottom: 2px solid #000;";
+            directionElement.style.cssText = "font-weight: bold; margin-right: 5px";
             divElement.appendChild(directionElement);
 
-            
             const listElement = document.createElement("ul")
             listElement.style.cssText = "margin-top: 20px; list-style: none;";
 
@@ -84,15 +85,21 @@ class Vehicle extends InfoWindowElement {
 
             const routeIdElement = document.createElement("h3");
             routeIdElement.innerHTML = `- ${routeId} -`;
-            routeIdElement.style.cssText = "margin-top: 10px;";
-            
+            // routeIdElement.style.cssText = "margin-bottom: 10px;";
+
+            const flexContainer = document.createElement("div");
+            flexContainer.style.cssText = "display: flex; align-items: center; justify-content: center; gap: 10px; border-bottom: 2px solid #000;"; // Flexbox styles
+            flexContainer.appendChild(routeIdElement);
+            flexContainer.appendChild(directionElement);
+
+            divElement.appendChild(svgElement);       
+            divElement.appendChild(flexContainer);
+     
             try {
                 const vehicle = await Data.Vehicle.get(routeId, String(this.id));
 
                 if (Peak.isUniversityRoute(routeId)) {
-                    // console.log(vehicle.data)
-                    // const etas = Peak.getPeekStopETAs()
-                    // console.log(etas)
+
                     directionElement.textContent = vehicle.data.minsLate
 
                     const peakStop = await Peak.getPeakStop(vehicle.data.nextStopID);
@@ -106,13 +113,35 @@ class Vehicle extends InfoWindowElement {
                             
                             if (String(service.route) === routeId) {
                                 stopPromises.push(Realtime.getStop(stopSearch.stopid)
-                                .then(stop => {
+                                .then(async stop => {
                                     const departure = stop.departures[0]
                                     const timeElement = document.createElement("p");
                                     timeElement.innerHTML = stopSearch.description + " : " + departure.departure_text;
                                     timeElement.style.cssText = "margin: 5px 0; font-size: 14px;";
                                     
-                                    listItemElement.appendChild(timeElement);
+                                    const bar = document.createElement("div");
+                                    bar.style.cssText = "background-color: rgb(192, 192, 192); color: black; width: 100%; border-radius: 15px; padding: 1.5%;";
+                
+                                    const fill = document.createElement("p");
+                                    const color = await Resources.getColor(routeId)
+                                    const time = departure.departure_text.split(" ")
+                                    const departureTime = parseFloat(time[0]); 
+                                    const percentage = 100 - (Math.min((departureTime / 10) * 100, 100)); 
+                                
+                
+                                    fill.style.cssText = ` background-color: #${color}; background-image: repeating-linear-gradient(45deg, #${color}, yellow 7%,green 5%); color: black; padding: 3%; width: ${percentage}%; text-align: right;font-size: 20px; border-radius: 15px; `;
+                                    fill.textContent = departure.departure_text; // Add departure text inside the bar
+
+                                    if (departure.departure_text == "Due"){
+                                        fill.style.cssText = `background-color: #${color}; color: black; padding: 3%; width: ${percentage}%; text-align: center;font-size: 20px; border-radius: 15px; `;
+                                        fill.textContent = 'DUE'
+                                    }
+                
+                                    // listItemElement.appendChild(svgElement);
+                                    // listItemElement.appendChild(routeIdElement);
+                                    listItemElement.appendChild(timeElement)
+                                    bar.appendChild(fill); 
+                                    listItemElement.appendChild(bar);   
                                 }))
 
                                 break;
@@ -129,33 +158,60 @@ class Vehicle extends InfoWindowElement {
                     .filter(departure => (departure.id === this.id && departure.data.actual))
                     .sort((a, b) => a.data.departure_time - b.data.departure_time)
                     // .slice(0, 2);
-    
+                    const theStop = await Data.Stop.get(routeId, vehicle.directionId, departures[0].placeId, departures[0].data.stop_id);
+                    const theTimeElement = document.createElement("p");
+                    
+                    theTimeElement.innerHTML = theStop.description + " : " + departures[0].data.departure_text;
+                    theTimeElement.style.cssText = "margin: 5px 0; font-size: 14px;";
+                    
+                    const bar = document.createElement("div");
+                    bar.style.cssText = "background-color: rgb(192, 192, 192); width: 100%; border-radius: 15px; padding: 1.5%";
+
+                    const fill = document.createElement("p");
+                    const color = await Resources.getColor(routeId)
+                    const time = departures[0].data.departure_text.split(" ")
+                    const departureTime = parseFloat(time[0]); 
+                    const percentage = 100 - (Math.min((departureTime / 10) * 100, 100)); 
+                    fill.style.cssText = ` background-color: #${color}; background-image: repeating-linear-gradient(45deg, #${color}, yellow 7%,green 5%); color: black; padding: 3%; width: ${percentage}%; text-align: right;font-size: 20px; border-radius: 15px; `;
+                    fill.textContent = departures[0].data.departure_text
+
+                    if (departures[0].data.departure_text == "Due"){
+                        fill.style.cssText = `background-color: #${color}; color: white; padding: 3%; width: ${percentage}%; text-align: center;font-size: 20px; border-radius: 15px; color: black`;
+                        fill.textContent = 'DUE'
+                    }
+                    listItemElement.appendChild(theTimeElement)
+                    bar.appendChild(fill); 
+                    listItemElement.appendChild(bar);   
+
+                    let first = 1
                     departures.forEach(async departure => {
-                        const stop = await Data.Stop.get(routeId, vehicle.directionId, departure.placeId, departure.data.stop_id);
-                        const timeElement = document.createElement("p");
-                        timeElement.innerHTML = stop.description + " : " + departure.data.departure_text;
-                        timeElement.style.cssText = "margin: 5px 0; font-size: 14px;";
-                        
-                        listItemElement.appendChild(timeElement);
-                    })
+                        if (first != 1) {
+                            const stop = await Data.Stop.get(routeId, vehicle.directionId, departure.placeId, departure.data.stop_id);
+                            const timeElement = document.createElement("div");
+                            timeElement.innerHTML = stop.description + " : " + departure.data.departure_text;
+                            timeElement.style.cssText = "margin: 5px 0; font-size: 14px;";
+    
+                            listItemElement.appendChild(timeElement); 
+                        }
+                        first += 1
+                    })                    
+                    
                 }
             } catch (e: unknown) {
                 directionElement.textContent = "N/A";
             }        
 
-            listItemElement.appendChild(svgElement);
-            listItemElement.appendChild(routeIdElement);
-
+            // listItemElement.appendChild(svgElement);
+            // listItemElement.appendChild(routeIdElement);
             listElement.append(listItemElement);
             divElement.appendChild(listElement);
-
-
             return divElement;
         }
 
         // Load infowindow
         this.infoWindow?.setContent(await generateContent());
     }
+
     /**
      * Gets the length in ms of the time between when position was updated and now
      */
