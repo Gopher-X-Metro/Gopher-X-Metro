@@ -15,7 +15,7 @@ export function BookmarkButton() {
     const [root, setRoot] = useState<any>();
 
     const updateButtons = () => {
-        const element = <div>
+        const element = <div className="favorite-buttons">
             {Array.from(favorited.keys()).map((routeId) => 
                 <RouteButton key={routeId} routeId={routeId} text={"Route " + routeId}/>
             )}

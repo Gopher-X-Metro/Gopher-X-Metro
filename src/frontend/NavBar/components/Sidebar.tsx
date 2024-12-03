@@ -106,7 +106,7 @@ export default function SideBar() {
             </div>
 
     <div id="nav-bar" className={sidebarOpen ? "sidebar open" : "sidebar"}>
-        <div className="sidebar-content flex flex-col items-center">
+        <div className="sidebar-content">
                     <div className="tab-container-sidebar">
                             <button className ="routes-tab" onClick = {() => updateToggle(1)}>Routes</button>
                             <button className="favorite-tab" onClick = {() => updateToggle(2)}>Favorites</button>
@@ -140,7 +140,11 @@ export default function SideBar() {
                     <div className= "error_text" id = "error_text"></div>
             </div>
                     <div className={toggle === 2 ? "tab-content" : "content"}>
-                        <div id="Favorite-tab"></div> 
+                        <div className="favorite-header">
+                            <h3> Favorited Routes </h3>
+                            <div className="underline"></div>
+                        </div>
+                        <div id="Favorite-tab" ></div> 
                     </div>
             </div>
         </div>
