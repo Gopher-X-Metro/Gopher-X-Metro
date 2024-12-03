@@ -349,7 +349,7 @@ body {
  float:center;
  position: relative;
  width: 250px;
- padding-bottom: 5spx;
+ padding-bottom: 5px;
 }
 
 .searchContainer input {
@@ -482,6 +482,7 @@ body.mobile .pac-container {
   border-top: 2px solid black;
   border-left: 2px solid black;
   border-right: 2px solid black;
+  border-bottom: 2px solid black;
 }
 
 .tab-container-sidebar button{
@@ -489,6 +490,7 @@ body.mobile .pac-container {
   text-align: center;
   width: 100%;
   padding:0;
+  
 }
 
 .tab-container-sidebar .routes-tab {
@@ -539,7 +541,6 @@ body.mobile .pac-container {
 .Clear-container{
   border-bottom: 2px solid black;
   background-color: #7a0019;
-  border-top: 2px solid black;
   font-size: 17px;
   width: 290px;
   border-left: 2px solid black;
@@ -590,7 +591,11 @@ body.mobile .pac-container {
 
 /* Bookmark button*/
 #bookmark-button.bookmark-button.bookmarked .icon {
-  color: #111111;
+  background-color: rgb(255, 204, 51); 
+}
+
+#bookmark-button.bookmark-button.bookmarked{
+  background-color: rgb(255, 204, 51); 
 }
 
 #bookmark-button.bookmark-button.bookmarked.icon:active{
