@@ -5,17 +5,43 @@ import ReactDOM from "react-dom/client";
 import URL from "src/backend/URL";
 import RouteButton from "src/frontend/NavBar/components/RouteButton";
 import User from "src/user/User";
+import { error } from "console";
 
 export function BookmarkButton() {
     const [, forceReload] = useState(1);
     const [bookmarked, setBookmarked] = useState(false); 
     const [routes, setRoutes] = useState(new Set<string>());
-    const [favorited,] = useState(new Set<string>());
+    const [favorited, setFavorited] = useState(new Set<string>());
     const [root, setRoot] = useState<any>();
 
+    const updateButtons = () => {
+        const element = <div>
+            {Array.from(favorited.keys()).map((routeId) => 
+                <RouteButton key={routeId} routeId={routeId} text={"Route " + routeId}/>
+            )}
+            </div>
+            
+        if (root) {
+            root.render(element);
+        }
+    }
+
     useEffect(() => {
-        setRoot(ReactDOM.createRoot(document.getElementById('Favorite-tab')))
-        setRoutes(URL.getRoutes())
+        setRoot(ReactDOM.createRoot(document.getElementById('Favorite-tab')));
+        setRoutes(URL.getRoutes());
+        (async () => {
+            try {
+                const data = await User.get("favorited-routes").then(response => response.json());
+
+                setFavorited(new Set(data));
+
+                console.log(data);
+
+                updateButtons();
+            } catch (error : unknown) {
+                console.error("The User cache of \"favorited-routes\" cache was not found.", error);
+            }
+        }) ()
     }, []);
 
     URL.addListener(() => {
@@ -29,21 +55,14 @@ export function BookmarkButton() {
         setBookmarked(!booked);
 
         if (booked) {
-            URL.removeRoute(routeId);
             favorited.delete(routeId);
         } else {
             favorited.add(routeId);
         }
-     
-        const element = <div>
-            {Array.from(favorited.keys()).map((routeId) => 
-                <RouteButton key={routeId} routeId={routeId} text={"Route " + routeId}/>
-            )}
-            </div>
-            
-        if (root) {
-            root.render(element);
-        }
+
+        User.set("favorited-routes", JSON.stringify(Array.from(favorited)));
+
+        updateButtons();
     }
 
     return (
