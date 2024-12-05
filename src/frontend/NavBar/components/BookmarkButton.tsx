@@ -12,6 +12,7 @@ export function BookmarkButton() {
     const [routes, setRoutes] = useState(new Set<string>());
     const [favorited, setFavorited] = useState(new Set<string>());
     const [root, setRoot] = useState<any>();
+    const [Highlighted, setHighlight] = useState(false);
 
     const updateButtons = () => {
         const element = <div>
@@ -25,6 +26,22 @@ export function BookmarkButton() {
         }
     }
 
+    const showHighlight = () => {
+        const routeId = Array.from(routes)[0];
+        const show = favorited.has(routeId);
+
+        if(show){
+            setHighlight(true);
+        }else{
+            setHighlight(false);
+        }
+    }
+
+    useEffect(( )=> {
+        updateButtons();
+        showHighlight();
+    });
+
     useEffect(() => {
         setRoot(ReactDOM.createRoot(document.getElementById('Favorite-tab')));
         setRoutes(URL.getRoutes());
@@ -32,11 +49,13 @@ export function BookmarkButton() {
             try {
                 const data = await User.get("favorited-routes").then(response => response.json());
                 setFavorited(new Set(data));
+                console.log(data);
                 updateButtons();
             } catch (error : unknown) {
                 console.error("The User cache of \"favorited-routes\" cache was not found.", error);
             }
         }) ()
+        
     }, []);
 
     URL.addListener(() => {
@@ -44,13 +63,11 @@ export function BookmarkButton() {
         setRoutes(URL.getRoutes());
     });
 
-    updateButtons();
-
     const onClick = () => {
         const routeId = Array.from(routes)[0];
         const booked = favorited.has(routeId);
         setBookmarked(!booked);
-
+       
         if (booked) {
             favorited.delete(routeId);
         } else {
@@ -68,7 +85,7 @@ export function BookmarkButton() {
                         aria-label="Center"
                         title="Center"
                         type="button"
-                        className={"map-control-button bookmark-button" + (bookmarked ? " bookmarked" : "")} 
+                        className={"map-control-button bookmark-button " + (Highlighted ? "bookmark-highlight" : "bookmark-default")} 
                         onClick={() => onClick()}>
                 <BsBookmarkStar className="icon" size={30}/>
                 </button>
