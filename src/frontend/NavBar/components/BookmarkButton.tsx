@@ -30,9 +30,9 @@ export function BookmarkButton() {
         const routeId = Array.from(routes)[0];
         const show = favorited.has(routeId);
 
-        if(show){
+        if (show) {
             setHighlight(true);
-        }else{
+        } else {
             setHighlight(false);
         }
     }
@@ -49,7 +49,6 @@ export function BookmarkButton() {
             try {
                 const data = await User.get("favorited-routes").then(response => response.json());
                 setFavorited(new Set(data));
-                console.log(data);
                 updateButtons();
             } catch (error : unknown) {
                 console.error("The User cache of \"favorited-routes\" cache was not found.", error);
@@ -74,6 +73,7 @@ export function BookmarkButton() {
         } else {
             favorited.add(routeId);
         }
+
         User.set("favorited-routes", JSON.stringify(Array.from(favorited)));
     }
 

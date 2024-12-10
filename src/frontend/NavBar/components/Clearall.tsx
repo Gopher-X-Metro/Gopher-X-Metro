@@ -11,11 +11,8 @@ namespace ClearAll {
      */
     export function clearRoutes() {
         var url_routes = URL.getRoutes(); 
-        console.log(url_routes);
         for (let route of url_routes) {
-            console.log(url_routes.size + "size"); 
             URL.removeRoute(route);
-            console.log(URL.getRoutes() + "after delete");
         }
     }
 }
