@@ -37,7 +37,7 @@ export function BookmarkButton() {
         }
     }
 
-    useEffect(( )=> {
+    useEffect(()=> {
         updateButtons();
         showHighlight();
     });
@@ -64,8 +64,11 @@ export function BookmarkButton() {
     });
 
     const onClick = () => {
+       
         const routeId = Array.from(routes)[0];
         const booked = favorited.has(routeId);
+
+        console.log("click " + routeId);
         setBookmarked(!booked);
        
         if (booked) {
