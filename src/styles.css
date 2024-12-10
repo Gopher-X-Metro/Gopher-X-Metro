@@ -601,24 +601,6 @@ body.mobile .pac-container {
   color: #666666;
 }
 
-
-/* Bookmark button*/
-/* #bookmark-button.bookmark-button.bookmarked .icon {
-  background-color: rgb(255, 204, 51); 
-}
-
-#bookmark-button.bookmark-button.bookmarked{
-  background-color: rgb(255, 204, 51); 
-}
-
-#bookmark-button.bookmark-button.bookmarked.icon:active{
-  transform: scale(0.95);
-}
-
-#bookmark-button.bookmark-button.not-bookedmarked{
-  background-color: #dddddd;
-} */
-
 .Favorite-header {
   text-align: center;
   width: 100%;
