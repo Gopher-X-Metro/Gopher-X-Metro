@@ -33,6 +33,9 @@ const ResponsiveDropdown = ({ setPage, isMobile }) => {
             <MenuItem as={"a"} href="https://umn.rider.peaktransit.com" target="_blank" rel="noreferrer">
               Gopher Trip Map
             </MenuItem>
+            <MenuItem as={"a"} href="https://www.metrotransit.org/rider-alerts" target="_blank" rel="noreferrer">
+              Metro Rider Alerts
+            </MenuItem>
             <MenuItem as={Link} onClick={() => setPage("about")}>
               About Us
             </MenuItem>
