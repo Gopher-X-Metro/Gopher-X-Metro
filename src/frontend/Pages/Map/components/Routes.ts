@@ -108,40 +108,40 @@ namespace Routes {
 
         // Updates Stops
         for (const routeId of URL.getRoutes()) {
-            if(routeId!=="FOOTBALL"){
-            const scheduleResponse = await Schedule.getRouteDetails(routeId);
+            if(routeId !== "FOOTBALL") {
+                const scheduleResponse = await Schedule.getRouteDetails(routeId);
 
-            for (const schedule of scheduleResponse.schedules) {
-                if (schedule.schedule_type_name === Schedule.getWeekDate()) {
-                    for (const timetable of schedule.timetables) {
-                        for (const stops of await Schedule.getStopList(routeId, timetable.schedule_number)) {
-                            // Load the stop
-                            loadStop(stops.stop_id, timetable.direction)?.then(async stop => {
-                                // Adds the stop if it has not been added yet
-                                const route = routes.get(routeId);
+                for (const schedule of scheduleResponse.schedules) {
+                    if (schedule.schedule_type_name === Schedule.getWeekDate()) {
+                        for (const timetable of schedule.timetables) {
+                            for (const stops of await Schedule.getStopList(routeId, timetable.schedule_number)) {
+                                // Load the stop
+                                loadStop(stops.stop_id, timetable.direction)?.then(async stop => {
+                                    // Adds the stop if it has not been added yet
+                                    const route = routes.get(routeId);
 
-                                if (route && !route?.getStops().has(stops.stop_id)) {
-                                    // Add stop
-                                    route.addStopObject(stops.stop_id, stop);
+                                    if (route && !route?.getStops().has(stops.stop_id)) {
+                                        // Add stop
+                                        route.addStopObject(stops.stop_id, stop);
 
-                                    // If the user hovers over the stop, change the width of the line
-                                    stop?.getMarker().addListener("mouseover", () => {
-                                        setBolded(route.getId(), true);
-                                    });
+                                        // If the user hovers over the stop, change the width of the line
+                                        stop?.getMarker().addListener("mouseover", () => {
+                                            setBolded(route.getId(), true);
+                                        });
 
-                                    // If the user stops hovering over the stop, return back
-                                    stop?.getMarker().addListener("mouseout", () => {
-                                        setBolded(route.getId(), false);
-                                    });
-                                }
+                                        // If the user stops hovering over the stop, return back
+                                        stop?.getMarker().addListener("mouseout", () => {
+                                            setBolded(route.getId(), false);
+                                        });
+                                    }
 
-                                refreshDepartures(stop);
-                            });
+                                    refreshDepartures(stop);
+                                });
+                            }
                         }
                     }
                 }
             }
-        }
         }
     }
 
