@@ -62,6 +62,12 @@ export default function ScheduleTable({ selectedSchedule }) {
           ["Monday-Friday", "7:10 am – 3:10 pm", "every 15 minutes"]
         ]);
         break;
+      case 126:
+          setSelectedName('Football Shuttle');
+          setScheduleTimes([
+            ["Saturday", "8:00 am – 2:00 am", "every 20 minutes on Gamedays"]
+          ]);
+          break;
       case 120:
         setSelectedName("120 East Bank Circulator");
         setScheduleTimes([

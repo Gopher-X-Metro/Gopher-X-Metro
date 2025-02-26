@@ -9,8 +9,19 @@ import RouteButton from "src/frontend/NavBar/components/RouteButton";
 import SearchFeature from "src/frontend/NavBar/components/SearchFeature";
 import SearchIcon from "src/img/CustomBus.png";
 
-// Predefined routes data
-const predefinedRoutes = new Map<string, string>([
+// Add "FOOTBALL" route only if its a Saturday in-season
+const currentDate = new Date();
+const currentDay = currentDate.getDay(); // 0 = Sunday ... 6 = Saturday
+
+const startDate = new Date(currentDate.getFullYear(), 7, 24); // August 24
+const endDate = new Date(currentDate.getFullYear(), 11, 7);  // December 7
+
+const isSaturday = currentDay === 6; 
+const isInSeason = currentDate >= startDate && currentDate <= endDate; 
+
+
+
+const predefinedRoutes = new Map([
     ["121", "121 Campus Connector"],
     ["122", "122 University Avenue Circulator"],
     ["123", "123 4th Street Circulator"],
@@ -21,8 +32,12 @@ const predefinedRoutes = new Map<string, string>([
     ["6", "6U 27Av-Univ / Via France"],
     ["3", "3 U of M / Como Av / Dwtn Mpls"],
     ["902", "Metro Green Line"],
-    ["901", "Metro Blue Line"]
-]);
+    ["901", "Metro Blue Line"],
+    ]);
+    
+    if (isSaturday && isInSeason) {
+    predefinedRoutes.set("FOOTBALL", "Football Game Day Route");
+    }
 
 /**
  * Sidebar Component
