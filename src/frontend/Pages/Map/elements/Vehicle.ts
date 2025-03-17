@@ -68,10 +68,10 @@ class Vehicle extends InfoWindowElement {
          */
         const generateContent = async () => {
             const divElement = document.createElement("div");
-            divElement.style.cssText = "text-align:center; font-family: Arial, sans-serif;";
+            divElement.style.cssText = "text-align:center; font-family: Times New Romas, sans-serif;";
 
             const directionElement = document.createElement("h2");
-            directionElement.style.cssText = "font-weight: bold; margin-right: 5px";
+            directionElement.style.cssText = "font-weight: bold; margin-right: 15px";
             divElement.appendChild(directionElement);
 
             const listElement = document.createElement("ul")
@@ -83,14 +83,19 @@ class Vehicle extends InfoWindowElement {
             const svgElement = document.createElement("p");
             svgElement.innerHTML = `<svg width="12" height="12" style="display: block; margin: 0 auto 5px;"><circle cx="6" cy="6" r="6" fill="#${await Resources.getColor(routeId)}"/></svg>`
 
-            const routeIdElement = document.createElement("h3");
+            const routeIdElement = document.createElement("h2");
             routeIdElement.innerHTML = `- ${routeId} -`;
             // routeIdElement.style.cssText = "margin-bottom: 10px;";
+            routeIdElement.style.cssText = "font-size: 24px; font-weight: bold;";
+
 
             const flexContainer = document.createElement("div");
-            flexContainer.style.cssText = "display: flex; align-items: center; justify-content: center; gap: 10px; border-bottom: 2px solid #000;"; // Flexbox styles
-            flexContainer.appendChild(routeIdElement);
+            flexContainer.style.cssText = "display: flex; flex-direction: column; align-items: center; gap: 5px; border-bottom: 2px solid #000;"; //flexbox style
+            directionElement.style.cssText = "font-weight: bold; margin: 0 0 0 10 0px;"
+
+            // Add directionElement above routeIdElement
             flexContainer.appendChild(directionElement);
+            flexContainer.appendChild(routeIdElement);
 
             divElement.appendChild(svgElement);       
             divElement.appendChild(flexContainer);
@@ -100,8 +105,6 @@ class Vehicle extends InfoWindowElement {
 
                 if (Peak.isUniversityRoute(routeId)) {
 
-                    directionElement.textContent = vehicle.data.minsLate
-
                     const peakStop = await Peak.getPeakStop(vehicle.data.nextStopID);
                     const stopsSearch = (await Plan.serviceNearby(peakStop.lat, peakStop.lng, null, 0, 0.1)).atstop.filter(stop => (stop.walkdist === 0));
 
@@ -109,36 +112,38 @@ class Vehicle extends InfoWindowElement {
 
                     for (const stopSearch of stopsSearch) { 
                         for (const service of stopSearch.service) {
-                            // console.log(service)
+                            
                             
                             if (String(service.route) === routeId) {
                                 stopPromises.push(Realtime.getStop(stopSearch.stopid)
                                 .then(async stop => {
                                     const departure = stop.departures[0]
                                     const timeElement = document.createElement("p");
-                                    timeElement.innerHTML = stopSearch.description + " : " + departure.departure_text;
+                                    timeElement.innerHTML = `${stopSearch.description} : <span style="font-weight: bold;">${departure.departure_text}</span>`;
                                     timeElement.style.cssText = "margin: 5px 0; font-size: 14px;";
+                                    listItemElement.appendChild(timeElement);
                                     
                                     const bar = document.createElement("div");
-                                    bar.style.cssText = "background-color: rgb(192, 192, 192); color: black; width: 100%; border-radius: 15px; padding: 1.5%;";
+                                    bar.style.cssText = "background-color: rgb(192, 192, 192); color: black; width: 100%; border-radius: 15px; font-weight: bold; padding: 1.5%;";
+                                    bar.textContent = departure.departure_text;
                 
                                     const fill = document.createElement("p");
                                     const color = await Resources.getColor(routeId)
                                     const time = departure.departure_text.split(" ")
+    
                                     const departureTime = parseFloat(time[0]); 
                                     const percentage = 100 - (Math.min((departureTime / 10) * 100, 100)); 
                                 
                 
-                                    fill.style.cssText = ` background-color: #${color}; background-image: repeating-linear-gradient(45deg, #${color}, yellow 7%,green 5%); color: black; padding: 3%; width: ${percentage}%; text-align: right;font-size: 20px; border-radius: 15px; `;
-                                    fill.textContent = departure.departure_text; // Add departure text inside the bar
+                                    fill.style.cssText = ` background-color: #${color}; background-image: repeating-linear-gradient(45deg, #${color}, yellow 7%,green 5%); color: black; padding: 3%; width: ${percentage}%; text-align: right;font-size: 100px; border-radius: 15px; font-weight: bold;`;
+                                    
 
                                     if (departure.departure_text == "Due"){
-                                        fill.style.cssText = `background-color: #${color}; color: black; padding: 3%; width: ${percentage}%; text-align: center;font-size: 20px; border-radius: 15px; `;
-                                        fill.textContent = 'DUE'
+                                        fill.style.cssText = `background-color: #${color}; color: black; padding: 3%; width: ${percentage}%; text-align: center;font-size: 20px; border-radius: 15px; font-weight: bold `;
+                                        
                                     }
                 
-                                    // listItemElement.appendChild(svgElement);
-                                    // listItemElement.appendChild(routeIdElement);
+                                    
                                     listItemElement.appendChild(timeElement)
                                     bar.appendChild(fill); 
                                     listItemElement.appendChild(bar);   
@@ -157,27 +162,30 @@ class Vehicle extends InfoWindowElement {
                     (await Data.Departure.all(routeId, vehicle.directionId))
                     .filter(departure => (departure.id === this.id && departure.data.actual))
                     .sort((a, b) => a.data.departure_time - b.data.departure_time)
-                    // .slice(0, 2);
+                    
                     const theStop = await Data.Stop.get(routeId, vehicle.directionId, departures[0].placeId, departures[0].data.stop_id);
                     const theTimeElement = document.createElement("p");
-                    
-                    theTimeElement.innerHTML = theStop.description + " : " + departures[0].data.departure_text;
+                    theTimeElement.innerHTML = `${theStop.description} : <span style="font-weight: bold;">${departures[0].data.departure_text}</span>`;
                     theTimeElement.style.cssText = "margin: 5px 0; font-size: 14px;";
+                    listItemElement.appendChild(theTimeElement);
                     
                     const bar = document.createElement("div");
-                    bar.style.cssText = "background-color: rgb(192, 192, 192); width: 100%; border-radius: 15px; padding: 1.5%";
+                    bar.style.cssText = "background-color: rgba(192, 192, 192, 0.43); width: 100%; font-weight: bold; border-radius: 15px; padding: 1.5%";
+                    bar.textContent = departures[0].data.departure_text;
 
                     const fill = document.createElement("p");
                     const color = await Resources.getColor(routeId)
                     const time = departures[0].data.departure_text.split(" ")
+                    
+
                     const departureTime = parseFloat(time[0]); 
                     const percentage = 100 - (Math.min((departureTime / 10) * 100, 100)); 
-                    fill.style.cssText = ` background-color: #${color}; background-image: repeating-linear-gradient(45deg, #${color}, yellow 7%,green 5%); color: black; padding: 3%; width: ${percentage}%; text-align: right;font-size: 20px; border-radius: 15px; `;
-                    fill.textContent = departures[0].data.departure_text
+                    fill.style.cssText = ` background-color: #${color}; background-image: repeating-linear-gradient(45deg, #${color}, yellow 7%,green 5%); color: black; padding: 3%; width: ${percentage}%; text-align: right;font-size: 20px; border-radius: 15px; font-weight: bold; `;
+                    
 
                     if (departures[0].data.departure_text == "Due"){
                         fill.style.cssText = `background-color: #${color}; color: white; padding: 3%; width: ${percentage}%; text-align: center;font-size: 20px; border-radius: 15px; color: black`;
-                        fill.textContent = 'DUE'
+                        
                     }
                     listItemElement.appendChild(theTimeElement)
                     bar.appendChild(fill); 
@@ -189,7 +197,7 @@ class Vehicle extends InfoWindowElement {
                             const stop = await Data.Stop.get(routeId, vehicle.directionId, departure.placeId, departure.data.stop_id);
                             const timeElement = document.createElement("div");
                             timeElement.innerHTML = stop.description + " : " + departure.data.departure_text;
-                            timeElement.style.cssText = "margin: 5px 0; font-size: 14px;";
+                            timeElement.style.cssText = "margin: 5px 0; font-size: 14px; ";
     
                             listItemElement.appendChild(timeElement); 
                         }
@@ -201,8 +209,7 @@ class Vehicle extends InfoWindowElement {
                 directionElement.textContent = "N/A";
             }        
 
-            // listItemElement.appendChild(svgElement);
-            // listItemElement.appendChild(routeIdElement);
+           
             listElement.append(listItemElement);
             divElement.appendChild(listElement);
             return divElement;
