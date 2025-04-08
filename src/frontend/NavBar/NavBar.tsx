@@ -1,10 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Button, HStack, Box } from "@chakra-ui/react"
+import { Button, HStack, Box } from "@chakra-ui/react";
+import { Icon } from "@chakra-ui/react";
+import { IconButton } from "@chakra-ui/react";
 import TitleBar from "src/frontend/NavBar/components/TitleBar";
 import SideBar from "src/frontend/NavBar/components/Sidebar";
 import Clearall from "src/frontend/NavBar/components/Clearall";
 import ResponsiveDropdown from "src/frontend/NavBar/components/MobileDropdown";
+import { WarningIcon, WarningTwoIcon } from "@chakra-ui/icons";
 
 /**
  * Navbar Component
@@ -48,6 +51,12 @@ export default function NavBar({ setPage, isMobile }) {
                             <Button colorScheme="yellow">
                                 GopherTrip Map
                             </Button>
+                        </a>
+
+                        <a href="https://www.metrotransit.org/rider-alerts" target="_blank" rel="noreferrer">
+                            <IconButton aria-label="Alert Button" colorScheme="yellow">
+                                <WarningTwoIcon />
+                            </IconButton>
                         </a>
 
                         <Button rounded="full" colorScheme="yellow" onClick={() => setPage("about")}>

@@ -18,6 +18,7 @@ namespace URL {
      * @param routeId route ID to add to URL
      */
     export function addRoute(routeId: string) : void {
+        console.log("Adding route:", routeId, "Current routes before:", Array.from(getRoutes()));
         const currentRoutes = getRoutes();
 
         if (!currentRoutes.has(routeId)) {
@@ -28,6 +29,7 @@ namespace URL {
                 `./?route=${updatedRoutes}`
             );
             onChange(); 
+            
         }
     }
 
@@ -37,9 +39,11 @@ namespace URL {
      */
     export function removeRoute(routeId: string) : void {
         const currentRoutes = getRoutes();
+        console.log(currentRoutes,"line 42");
 
         if (currentRoutes.has(routeId)) {
-            currentRoutes.delete(routeId);
+            //currentRoutes.delete(routeId);
+            console.log("delete");
 
             const updatedUrl = currentRoutes.size === 0 ? "./" : `./?route=${Array.from(currentRoutes).join(",")}`;
             window.history.replaceState(
@@ -56,7 +60,9 @@ namespace URL {
      * @param callbackfn function to be called when URL is updated
      */
     export function addListener(callbackfn: () => void) : void {
-        functions.push(callbackfn);
+        if(!functions.includes(callbackfn)){
+            functions.push(callbackfn);
+        }   
     }
 
     /**

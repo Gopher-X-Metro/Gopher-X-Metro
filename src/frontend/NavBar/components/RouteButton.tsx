@@ -24,32 +24,42 @@ function RouteButton({ routeId, text }) {
   };
 
   // Effect to set button's active state based on whether route is active
-  useEffect(() => {
+  useEffect(() => {    
     // Update button state when route state changes
-    const updateButtonState = () => setActive(URL.getRoutes().has(routeId));
+      const updateButtonState = () => {
+      const activeRoutes = URL.getRoutes();
+      setActive(activeRoutes.has(routeId));
+    };
+
+      // Initial check if route is active
+      updateButtonState();
     
     // Add listener to update button state when route state changes
-    URL.addListener(updateButtonState);
+   URL.addListener(updateButtonState);
     
-    // Initial check if route is active
-    updateButtonState();
-
     // Cleanup listener when component is unclicked
     return () => {
-      URL.removeListener(updateButtonState);
+       URL.removeListener(updateButtonState);
     };
   }, [routeId]);
+
+
 
   // Create button element with dynamic classes based on route's active state
   const buttonElement = React.createElement("button", {
     className: `route-btn ${isActive ? "active" : ""} route-${routeId}`, onClick: () => {
       // Toggle route's visibility when button is clicked
+      console.log(isActive , "active?", routeId);
       if (!isActive) {
+        console.log(`adding route ${routeId}`);
         URL.addRoute(routeId);
-      } else {
-        URL.removeRoute(routeId);
-      }
 
+      } else {
+        console.log("line 57 click");
+        console.log(`Removing route ${routeId}`);
+        URL.removeRoute(routeId);
+ 
+      }
       // Remove info windows associated with route
       removeInfoWindows();
     }

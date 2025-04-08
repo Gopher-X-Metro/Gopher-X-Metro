@@ -240,6 +240,10 @@ body {
   background-color: #c727e2; /* Light Green */
 }
 
+.sidebar-content button.route-FOOTBALL::before {
+  background-color: #483319; /* Light Green */
+}
+
 .sidebar-content button.route-120::before {
     background-color: #FFC0CB; /* Pink */
 }
@@ -482,7 +486,6 @@ body.mobile .pac-container {
   border-top: 2px solid black;
   border-left: 2px solid black;
   border-right: 2px solid black;
-  border-bottom: 2px solid black;
 }
 
 .tab-container-sidebar button{
