@@ -21,12 +21,12 @@ class Stop extends InfoWindowElement {
         super(stopId, map, new window.google.maps.Circle({
             fillColor: color,
             fillOpacity: 1,
-            strokeWeight: 8,
+            strokeWeight: 10,
             strokeColor: color,
             center: location,
-            radius: 6.5,
+            radius: 1,
             clickable: true,
-            strokeOpacity: 0.5,
+            strokeOpacity: 0.75,
             map: map
         }));
 
