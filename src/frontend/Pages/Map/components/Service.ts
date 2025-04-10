@@ -4,11 +4,15 @@ export default class Service {
     static #instance: Service;
     static #map: google.maps.Map;
 
+    private constructor() {}
+
     static link(map : google.maps.Map) {
         this.#map = map;
     }
 
-    private constructor() {}
+    public static get map() : google.maps.Map {
+        return Service.#map;
+    }
 
     public static get instance(): Service {
         if (!Service.#instance) {
@@ -35,23 +39,10 @@ export default class Service {
 
     private addRoute(routeId : string) : void {
         Loader.instance.loadRoute(routeId);
+    }
 
-        Data.instance.getPaths(routeId)
-        .then(paths => {
-            if (paths) {
-                for (const path of paths) {
-                    const polyline = new window.google.maps.Polyline({
-                        path: path.points.map(point => new google.maps.LatLng(point.lat, point.lng)),
-                        geodesic: true,
-                        strokeColor: "#000000",
-                        strokeOpacity: 1.0,
-                        strokeWeight: Number(process.env.REACT_APP_LINE_NORMAL),
-                        map: Service.#map,
-                        zIndex: -1
-                    });
-                }
-            }
-        })
+    private removeRoute(routeId : string) : void {
+
     }
 }
 
@@ -72,8 +63,38 @@ class Loader {
     public loadRoute(routeId: string) : void {
         if (!RouteUpdater.instance.routes.has(routeId)) {
             RouteUpdater.instance.routes.add(routeId);
+            RouteUpdater.instance.paths.set(routeId, new Set<google.maps.Polyline>());
+            Data.instance.getPaths(routeId)
+            .then(paths => {
+                if (paths) {
+                    for (const path of paths) {
+                        const polyline = new window.google.maps.Polyline({
+                            path: path.points.map(point => new google.maps.LatLng(point.lat, point.lng)),
+                            geodesic: true,
+                            strokeColor: "#000000",
+                            strokeOpacity: 1.0,
+                            strokeWeight: Number(process.env.REACT_APP_LINE_NORMAL),
+                            map: Service.map,
+                            zIndex: -1
+                        });
+
+                        RouteUpdater.instance.paths.get(routeId)?.add(polyline);
+                    }
+                }
+            })
         } else {
             console.warn(`Route \'${routeId}\' is already in the Service!`);
+        }
+    }
+
+    public unloadRoute(routeId: string) : void {
+        if (RouteUpdater.instance.routes.has(routeId)) {
+            RouteUpdater.instance.routes.delete(routeId);
+            RouteUpdater.instance.paths.get(routeId)?.forEach(path => {
+                path.setVisible(false);
+            })
+        } else {
+            console.warn(`Route \'${routeId}\' does not exist in the Service!`);
         }
     }
 }
@@ -85,6 +106,7 @@ abstract class Updater {
 class RouteUpdater extends Updater {
     static #instance: RouteUpdater;
     static #routes: Set<string>;
+    static #paths: Map<string, Set<google.maps.Polyline>>;
 
     private constructor() { super(); }
 
@@ -92,6 +114,7 @@ class RouteUpdater extends Updater {
         if (!RouteUpdater.#instance) {
             RouteUpdater.#instance = new RouteUpdater();
             RouteUpdater.#routes = new Set<string>();
+            RouteUpdater.#paths = new Map<string, Set<google.maps.Polyline>>();
         }
 
         return RouteUpdater.#instance;
@@ -99,6 +122,10 @@ class RouteUpdater extends Updater {
 
     public get routes() : Set<string> {
         return RouteUpdater.#routes;
+    }
+
+    public get paths() : Map<string, Set<google.maps.Polyline>> {
+        return RouteUpdater.#paths;
     }
 
     public update() : void {
