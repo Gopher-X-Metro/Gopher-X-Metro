@@ -1,8 +1,83 @@
-import { ICalendar } from "./interface/CalendarInterface";
-import { IShape } from "./interface/ShapeInterface";
-import { ITrip } from "./interface/TripInterface";
+export interface IMetroTrip {
+    route_id: number;
+    trip_id: string;
+    shape_id: number;
+    service_id: string;
+    direction_id: number;
+}
 
-export class Network {
+export interface IMetroShape {
+    shape_id: number;
+    shape_pt_lat: number;
+    shape_pt_lon: number;
+    shape_dist_traveled: number;
+    shape_pt_sequence: number;
+}
+
+export interface IMetroCalendar {
+    service_id: number;
+    monday: boolean;
+    tuesday: boolean;
+    wednesday: boolean;
+    thursday: boolean;
+    friday: boolean;
+    saturday: boolean;
+    sunday: boolean;
+    start_date: number;
+    end_date: number;
+}
+
+export interface IPeakTrip {
+    routeID: number;
+    agencyID: number;
+    shortName: string;
+    longName: string;
+    routeType: number;
+    sequence: number;
+    description: string;
+    color: string;
+    textColor: string;
+    onDemand: boolean;
+    calcETA: boolean;
+    hidden: boolean;
+    updated: number;
+    disabled: boolean;
+    scheduleURL: string;
+    scheduleURLType: string;
+    shapeID: number;
+    schedAdh: boolean;
+    aliases: string;
+    source: null;
+    LastETACalc: number;
+    routeCode: string;
+    special_service: boolean;
+}
+
+export interface IPeakShape {
+    shapeID: number;
+    agencyID: number;
+    shapeName: string;
+    routeID: number;
+    description: string;
+    points: string;
+    source: string;
+    updated: number;
+    disabled: boolean;
+    directions: string;
+    dynamicTotalShapeTime: number;
+}
+
+export interface IPeakTripResponse {
+    routes: Array<IPeakTrip>;
+    success: boolean;
+}
+
+export interface IPeakShapeResponse {
+    shape: Array<IPeakShape>;
+    success: boolean;
+}
+
+export default class Network {
     static #instance: Network;
     
     private constructor() {}
@@ -15,41 +90,32 @@ export class Network {
         return Network.#instance;
     }
 
-    public async getMetroTrips(routeId : string) : Promise<Array<ITrip> | undefined> {
-        return TripsMetroNetworkRetriever.instance.retrieve<Array<ITrip>>(routeId);
+    public async getMetroTrips(routeId : string) : Promise<Array<IMetroTrip> | undefined> {
+        return TripsMetroNetworkRetriever.instance.retrieve(routeId);
     }
 
-    public async getMetroShapes(shapeId : string) : Promise<Array<IShape> | undefined> {
-        return ShapesMetroNetworkRetriever.instance.retrieve<Array<IShape>>(shapeId);
+    public async getMetroShapes(shapeId : string) : Promise<Array<IMetroShape> | undefined> {
+        return ShapesMetroNetworkRetriever.instance.retrieve(shapeId);
     }
 
-    public async getMetroCalendar(serviceId : string) : Promise<ICalendar | undefined> {
-        return CalendarMetroNetworkRetriever.instance.retrieve<ICalendar>(serviceId);
+    public async getMetroCalendar(serviceId : string) : Promise<IMetroCalendar | undefined> {
+        return CalendarMetroNetworkRetriever.instance.retrieve(serviceId);
     }
 
 
-    public async getPeakTrips(routeId : string) : Promise<Array<any> | undefined> {
-        return TripsPeakNetworkRetriever.instance.retrieve<Array<any>>(routeId);
+    public async getPeakTrips(routeId : string) : Promise<Array<IPeakTrip> | undefined> {
+        return TripsPeakNetworkRetriever.instance.retrieve(routeId);
     }
 
-    public async getPeakShapes(shapeId : string) : Promise<Array<any> | undefined> {
-        return ShapesPeakNetworkRetriever.instance.retrieve<Array<any>>(shapeId);
-    }
-}
-
-
-class RetreiveError extends Error {
-    constructor (message: any) {
-        super(message);
-
-        this.name = "RetreiveError";
+    public async getPeakShapes(shapeId : string) : Promise<Array<IPeakShape> | undefined> {
+        return ShapesPeakNetworkRetriever.instance.retrieve(shapeId);
     }
 }
 
 abstract class NetworkRetriever {
     constructor(API_URL : string) { this.API_URL = API_URL; }
 
-    abstract retrieve<Interface>(data : string) : Promise<Interface | undefined>;
+    abstract retrieve(arg : string) : any | undefined;
 
     protected readonly API_URL : string;
 }
@@ -76,11 +142,11 @@ class TripsMetroNetworkRetriever extends MetroNetworkRetriever {
         return TripsMetroNetworkRetriever.#instance;
     }
 
-    async retrieve<ITrips>(routeId : string): Promise<ITrips | undefined> {
+    async retrieve(routeId : string): Promise<Array<IMetroTrip> | undefined> {
         return fetch(`${this.API_URL}/api/get-trips?route_id=${routeId}`)
         .then((response : Response) => 
             response.ok ? 
-            response.json().then((json : ITrips) => json) 
+            response.json().then((json : Array<IMetroTrip>) => json) 
             : undefined
         );
     }
@@ -99,11 +165,11 @@ class ShapesMetroNetworkRetriever extends MetroNetworkRetriever {
         return ShapesMetroNetworkRetriever.#instance;
     }
 
-    async retrieve<IShapes>(routeId : string): Promise<IShapes | undefined> {
+    async retrieve(routeId : string): Promise<Array<IMetroShape> | undefined> {
         return fetch(`${this.API_URL}/api/get-shapes?shape_id=${routeId}`)
         .then((response : Response) => 
             response.ok ? 
-            response.json().then((json : IShapes) => json) 
+            response.json().then((json : Array<IMetroShape>) => json) 
             : undefined
         );
     }
@@ -122,11 +188,11 @@ class CalendarMetroNetworkRetriever extends MetroNetworkRetriever {
         return CalendarMetroNetworkRetriever.#instance;
     }
 
-    async retrieve<ICalendar>(routeId : string): Promise<ICalendar | undefined> {
-        return fetch(`${this.API_URL}/api/get-calendar?service_id=${routeId}`)
+    async retrieve(serviceId : string): Promise<IMetroCalendar | undefined> {
+        return fetch(`${this.API_URL}/api/get-calendar?service_id=${serviceId}`)
         .then((response : Response) => 
             response.ok ? 
-            response.json().then((json : ICalendar) => json) 
+            response.json().then((json : IMetroCalendar) => json) 
             : undefined
         );
     }
@@ -134,7 +200,7 @@ class CalendarMetroNetworkRetriever extends MetroNetworkRetriever {
 
 class TripsPeakNetworkRetriever extends PeakNetworkRetriever {
     static #instance: TripsPeakNetworkRetriever;
-    static #trips: Array<any> | undefined;
+    static #trips: Array<IPeakTrip> | undefined;
     
     private constructor() {super();}
 
@@ -146,17 +212,17 @@ class TripsPeakNetworkRetriever extends PeakNetworkRetriever {
         return TripsPeakNetworkRetriever.#instance;
     }
 
-    async retrieve<ITrips>(routeId : string): Promise<ITrips | undefined> {
+    async retrieve(routeId : string): Promise<Array<IPeakTrip> | undefined> {
         if (!TripsPeakNetworkRetriever.#trips) {
             TripsPeakNetworkRetriever.#trips = await fetch(`${this.API_URL}route2${this.API_URL_END}`)
             .then((response : Response) => 
                 response.ok ? 
-                response.json().then((json : any) => json.routes) 
+                response.json().then((json : IPeakTripResponse) => json.routes) 
                 : undefined
             );
         }
 
-        return TripsPeakNetworkRetriever.#trips?.filter((trip) => trip.routeID.toString() === routeId) as ITrips; 
+        return TripsPeakNetworkRetriever.#trips?.filter((trip) => trip.routeID.toString() === routeId);
     }
 }
 
@@ -174,16 +240,16 @@ class ShapesPeakNetworkRetriever extends PeakNetworkRetriever {
         return ShapesPeakNetworkRetriever.#instance;
     }
 
-    async retrieve<IShapes>(shapeId : string): Promise<IShapes | undefined> {
+    async retrieve(shapeId : string): Promise<Array<IPeakShape> | undefined> {
         if (!ShapesPeakNetworkRetriever.#shapes) {
             ShapesPeakNetworkRetriever.#shapes = await fetch(`${this.API_URL}shape2${this.API_URL_END}`)
             .then((response : Response) => 
                 response.ok ? 
-                response.json().then((json : any) => json.shape) 
+                response.json().then((json : IPeakShapeResponse) => json.shape) 
                 : undefined
             );
         }
 
-        return ShapesPeakNetworkRetriever.#shapes?.filter((shape) => shape.shapeID.toString() === shapeId) as IShapes; 
+        return ShapesPeakNetworkRetriever.#shapes?.filter((shape) => shape.shapeID.toString() === shapeId); 
     }
 }
