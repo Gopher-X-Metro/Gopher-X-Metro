@@ -110,18 +110,31 @@ export default class Network {
     public async getPeakShapes(shapeId : string) : Promise<Array<IPeakShape> | undefined> {
         return ShapesPeakNetworkRetriever.instance.retrieve(shapeId);
     }
+
+    public async getPeakStops(stopId : string) : Promise<Array<any> | undefined> {
+        return StopsPeakNetworkRetriever.instance.retrieve(stopId);
+    }
+
+
+    public async getNextTripStops(routeId : string, directionId : string) : Promise<any | undefined> {
+        return StopsNextTripNetworkRetriever.instance.retrieve(routeId, directionId);
+    }
 }
 
 abstract class NetworkRetriever {
     constructor(API_URL : string) { this.API_URL = API_URL; }
 
-    abstract retrieve(arg : string) : any | undefined;
+    abstract retrieve(...args : string[]) : any | undefined;
 
     protected readonly API_URL : string;
 }
 
 abstract class MetroNetworkRetriever extends NetworkRetriever {
     constructor() { super(process.env.REACT_APP_SUPABASE_FUNCTION_URL as string); }
+}
+
+abstract class NextTripNetworkRetriever extends NetworkRetriever {
+    constructor() { super("https://svc.metrotransit.org/nextrip"); }
 }
 
 abstract class PeakNetworkRetriever extends NetworkRetriever {
@@ -228,7 +241,7 @@ class TripsPeakNetworkRetriever extends PeakNetworkRetriever {
 
 class ShapesPeakNetworkRetriever extends PeakNetworkRetriever {
     static #instance: ShapesPeakNetworkRetriever;
-    static #shapes: Array<any> | undefined;
+    static #shapes: Array<IPeakShape> | undefined;
     
     private constructor() {super();}
 
@@ -251,5 +264,56 @@ class ShapesPeakNetworkRetriever extends PeakNetworkRetriever {
         }
 
         return ShapesPeakNetworkRetriever.#shapes?.filter((shape) => shape.shapeID.toString() === shapeId); 
+    }
+}
+
+class StopsPeakNetworkRetriever extends PeakNetworkRetriever {
+    static #instance: StopsPeakNetworkRetriever;
+    static #stops: Array<any> | undefined;
+    
+    private constructor() {super();}
+
+    public static get instance(): StopsPeakNetworkRetriever {
+        if (!StopsPeakNetworkRetriever.#instance) {
+            StopsPeakNetworkRetriever.#instance = new this();
+        }
+
+        return StopsPeakNetworkRetriever.#instance;
+    }
+
+    async retrieve(stopId : string): Promise<Array<any> | undefined> {
+        if (!StopsPeakNetworkRetriever.#stops) {
+            StopsPeakNetworkRetriever.#stops = await fetch(`${this.API_URL}stop${this.API_URL_END}`)
+            .then((response : Response) => 
+                response.ok ? 
+                response.json().then((json : any) => json.stop) 
+                : undefined
+            );
+        }
+
+        return StopsPeakNetworkRetriever.#stops?.filter((stop) => stop.stopID.toString() === stopId); 
+    }
+}
+
+class StopsNextTripNetworkRetriever extends NextTripNetworkRetriever {
+    static #instance: StopsNextTripNetworkRetriever;
+    
+    private constructor() {super();}
+
+    public static get instance(): StopsNextTripNetworkRetriever {
+        if (!StopsNextTripNetworkRetriever.#instance) {
+            StopsNextTripNetworkRetriever.#instance = new this();
+        }
+
+        return StopsNextTripNetworkRetriever.#instance;
+    }
+
+    async retrieve(routeId : string, directionId : string): Promise<any | undefined> {
+        return await fetch(`${this.API_URL}/stops/${routeId}/${directionId}`)
+        .then((response : Response) => 
+            response.ok ? 
+            response.json().then((json : any) => json) 
+            : undefined
+        );
     }
 }

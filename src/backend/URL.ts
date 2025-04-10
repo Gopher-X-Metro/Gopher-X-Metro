@@ -1,3 +1,5 @@
+import Service from "src/frontend/Pages/Map/components/Service";
+
 namespace URL {
     const functions: Array<() => void> = [];
 
@@ -18,6 +20,8 @@ namespace URL {
      * @param routeId route ID to add to URL
      */
     export function addRoute(routeId: string) : void {
+        Service.instance.addRoute(routeId);
+
         const currentRoutes = getRoutes();
 
         if (!currentRoutes.has(routeId)) {
@@ -36,6 +40,8 @@ namespace URL {
      * @param routeId route ID to remove
      */
     export function removeRoute(routeId: string) : void {
+        Service.instance.removeRoute(routeId);
+
         const currentRoutes = getRoutes();
 
         if (currentRoutes.has(routeId)) {
