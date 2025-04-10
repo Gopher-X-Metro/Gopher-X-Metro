@@ -1,6 +1,8 @@
 import { Map, useMap } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
 
+import Service from "src/frontend/Pages/Map/components/Service"
+
 import Resources from "src/backend/Resources";
 import Marker from "src/frontend/Pages/Map/components/Marker";
 import Routes from "src/frontend/Pages/Map/components/Routes";
@@ -13,7 +15,7 @@ const APIKey = process.env.REACT_APP_API_KEY; // Comes from the .env.local file,
 const UMNLocation = { lat: 44.97369560732433, lng: -93.2317259515601 };
 const defaultZoom = 15;
 
-if (!APIKey) throw new Error("API Key was not loaded, or was not found!"); 
+if (!APIKey) throw new Error("API Key was not loaded, or was not found!");
 
 /**
  * Map Page
@@ -32,7 +34,7 @@ export default function MapPage({ hidden, setPage, isMobile }) {
             // min delay for smooth loading experience
             const minimumDelay = 2000;
 
-            const delay = (ms : number) => new Promise(resolve => setTimeout(resolve, ms));
+            const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
             // Initialize map and wait for the minimum delay
             Promise.all([initalize(map), delay(minimumDelay)]).then(() => setMapLoaded(true));
@@ -56,7 +58,7 @@ export default function MapPage({ hidden, setPage, isMobile }) {
                     streetViewControl={false}
                     fullscreenControl={false}
                     mapTypeControl={false}
-                > 
+                >
                     <LocationSearchBar isMobile={isMobile} />
                     <CenterButton />
                 </Map>
@@ -66,12 +68,12 @@ export default function MapPage({ hidden, setPage, isMobile }) {
 }
 
 /** Focus the map at a the UMN */
-export function centerMap(map: google.maps.Map | null) : void
+export function centerMap(map: google.maps.Map | null): void
 /** Focus the map at a specified location */
-export function centerMap(map: google.maps.Map | null, location: {lat: number, lng: number} | google.maps.LatLng) : void
+export function centerMap(map: google.maps.Map | null, location: { lat: number, lng: number } | google.maps.LatLng): void
 /** Focus the map at a specific location and zoom */
-export function centerMap(map: google.maps.Map | null, location: {lat: number, lng: number} | google.maps.LatLng, zoom: number) : void
-export function centerMap(map: google.maps.Map | null, location?: {lat: number, lng: number} | google.maps.LatLng, zoom?: number) : void {
+export function centerMap(map: google.maps.Map | null, location: { lat: number, lng: number } | google.maps.LatLng, zoom: number): void
+export function centerMap(map: google.maps.Map | null, location?: { lat: number, lng: number } | google.maps.LatLng, zoom?: number): void {
     if (map !== null) {
         map.setZoom((zoom === undefined) ? defaultZoom : zoom);
         map.panTo((location === undefined) ? UMNLocation : location);
@@ -83,10 +85,10 @@ export function centerMap(map: google.maps.Map | null, location?: {lat: number, 
  * 
  * @param map Google Maps instance to initialize
  */
-async function initalize( map: google.maps.Map ) : Promise<void> {
+async function initalize(map: google.maps.Map): Promise<void> {
     // Loads the Route's Resources
     await Resources.load();
-    
+
     // Sets Routes map to this map
     Routes.init(map);
 
@@ -103,4 +105,7 @@ async function initalize( map: google.maps.Map ) : Promise<void> {
     setInterval(() => {
         Routes.refreshStops();
     }, 30000); // ms of wait
+
+    Service.link(map);
+    Service.instance.run();
 }

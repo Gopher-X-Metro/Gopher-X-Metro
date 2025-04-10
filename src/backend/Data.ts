@@ -23,10 +23,6 @@ export default class Data{
         "125": 12527,
         "FOOTBALL": 12604
     };
-
-    static getUniversityRouteId(routeId: string) : number | undefined {
-        return this.#UNIVERSITY_ROUTES[routeId];
-    }
     
     private constructor() {}
 
@@ -49,6 +45,11 @@ export default class Data{
     public async getPaths(routeId: string) : Promise<Array<IPath> | undefined> {
         return PathsDataRetriever.instance.retrieve(routeId);
     }
+
+
+    public getUniversityRouteId(routeId: string) : number | undefined {
+        return Data.#UNIVERSITY_ROUTES[routeId];
+    }
 }
 
 abstract class DataRetriever {
@@ -69,7 +70,7 @@ class TripsDataRetriever extends DataRetriever {
     }
 
     async retrieve(routeId : string): Promise<Array<IMetroTrip | IPeakTrip> | undefined> {
-        const id = Data.getUniversityRouteId(routeId); 
+        const id = Data.instance.getUniversityRouteId(routeId); 
         
         if (!id) {
             const data = await Network.instance.getMetroTrips(routeId); 
@@ -118,7 +119,7 @@ class PathsDataRetriever extends DataRetriever {
     }
 
     async retrieve(routeId : string): Promise<Array<IPath> | undefined> {
-        const university = Data.getUniversityRouteId(routeId) != undefined;
+        const university = Data.instance.getUniversityRouteId(routeId) != undefined;
 
         const trips = await TripsDataRetriever.instance.retrieve(routeId);
         
@@ -142,7 +143,9 @@ class PathsDataRetriever extends DataRetriever {
                 if (university) {
                     (shape as IPeakShape).points.split(";").forEach((point, index) => {
                         const split = point.split(",");
-                        points.add({lat: Number(split[0]), lng: Number(split[1]), sequence: index});
+                        if (split.length == 2) {
+                            points.add({lat: Number(split[0]), lng: Number(split[1]), sequence: index});
+                        }
                     })
                 } else {
                     const point = shape as IMetroShape;
