@@ -21,18 +21,43 @@ export default function LocationSearchBar({ isMobile }) {
 
     useEffect(() => {
         if (input.current && map) {
-            const autocomplete = new google.maps.places.Autocomplete(input.current, { fields: ["place_id", "geometry", "name", "formatted_address"] });
-            const geocoder = new google.maps.Geocoder();
+            // As of March 1st, 2025, google.maps.places.Autocomplete is not available to new customers
+            // As a replacement we are using google.maps.places.PlaceAutocompleteElement instead
+            (async () => {
+                const placesLib = (await google.maps.importLibrary("places")) as any;
+                const PlaceAutocompleteElement: typeof google.maps.places.PlaceAutocompleteElement = placesLib.PlaceAutocompleteElement;
+                const autocomplete = new PlaceAutocompleteElement({
+                    inputElement: input.current!,
+                    locationBias: map.getBounds() || undefined
+                });
+                const geocoder = new google.maps.Geocoder();
     
-            autocomplete.bindTo("bounds", map);
-            autocomplete.addListener("place_changed", () => onPlaceChange(map, autocomplete, geocoder));
+                autocomplete.addEventListener("place_changed", async (event) => {
+                    const selectEvent = event as unknown as google.maps.places.PlaceAutocompletePlaceSelectEvent;
+                    let place = selectEvent.place;
+
+                    if (!place.location) {
+                        try {
+                            await place.fetchFields({
+                                fields: ["place_id", "geometry", "name", "formatted_address"],
+                            }).then((detailsResponse: { place: google.maps.places.Place }) => {
+                                place = detailsResponse.place;
+                            });
+                        } catch (e) {
+                            window.alert("Failed to fetch detailed place data: " + e);
+                            return;
+                        }
+                    }
+                    onPlaceChange(map, place, geocoder)
+                });
+            })();
         }
     }, [input, map]);
 
     return (
         <>
             <MapControl position={isMobile ? ControlPosition.BOTTOM_CENTER : ControlPosition.TOP_CENTER}>
-                <input id="location-search-bar" className={"location-search-bar" + (isMobile ? " mobile" : "")} type="text" ref={input} />
+                <input id="location-search-bar" className={"location-search-bar" + (isMobile ? " mobile" : "")} type="text" ref={input} placeholder="Enter a location" />
             </MapControl>
         </>
     );
@@ -43,20 +68,18 @@ export default function LocationSearchBar({ isMobile }) {
 /**
  * Sets new location of marker and focuses on the spot
  */
-function onPlaceChange(map : google.maps.Map, autocomplete : google.maps.places.Autocomplete, geocoder : google.maps.Geocoder) : void {
-    const place = autocomplete.getPlace();
+function onPlaceChange(map : google.maps.Map, place : google.maps.places.Place, geocoder : google.maps.Geocoder) : void {
+    if (!place.id) return;
 
-    if (!place.place_id) return;
-
-    if (searches.has(place.place_id)) {
-        searches.get(place.place_id)?.setVisible(true);
+    if (searches.has(place.id)) {
+        searches.get(place.id)?.setVisible(true);
     } else {
         geocoder
-        .geocode({ placeId: place.place_id })
+        .geocode({ placeId: place.id })
         .then(async ({ results }) => {
             const location = results[0].geometry.location;
 
-            searches.set(place.place_id as string, new Search(place.place_id as string, place.name, location, map));
+            searches.set(place.id as string, new Search(place.id as string, place.displayName || "", location, map));
 
             map.setZoom(15);
             map.setCenter(location);
@@ -65,8 +88,8 @@ function onPlaceChange(map : google.maps.Map, autocomplete : google.maps.places.
                 if (nearest.version !== 0) {
                     for (const stop of nearest.atstop) {
                         Routes.loadStop(stop.stopid, "").then(s => {
-                            if (s) searches.get(place.place_id as string)?.addElement(s);
-                            s?.addElement(searches.get(place.place_id as string) as Search);
+                            if (s) searches.get(place.id as string)?.addElement(s);
+                            s?.addElement(searches.get(place.id as string) as Search);
                             s?.updateVisibility();
                         });
                     }

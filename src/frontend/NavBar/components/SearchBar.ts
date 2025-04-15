@@ -13,7 +13,7 @@ import Search from "src/frontend/Pages/Map/elements/Search";
 namespace SearchBar {
     const searches = new Map<string, Search>();
     let input: HTMLInputElement;
-    let autocomplete: google.maps.places.Autocomplete;
+    let autocomplete: google.maps.places.PlaceAutocompleteElement;
     let geocoder: google.maps.Geocoder;
     let map: google.maps.Map;
 
@@ -22,20 +22,21 @@ namespace SearchBar {
     /**
      * Sets new location of marker and focuses on the spot
      */
-    function onPlaceChange() : void {
-        const place = autocomplete.getPlace();
+    function onPlaceChange(event: Event) : void {
+        const selectEvent = event as unknown as google.maps.places.PlaceAutocompletePlaceSelectEvent;
+        const place = selectEvent.place;
 
-        if (!place.place_id) return;
+        if (!place.id) return;
 
-        if (searches.has(place.place_id)) {
-            searches.get(place.place_id)?.setVisible(true);
+        if (searches.has(place.id)) {
+            searches.get(place.id)?.setVisible(true);
         } else {
             geocoder
-            .geocode({ placeId: place.place_id })
+            .geocode({ placeId: place.id })
             .then(async ({ results }) => {
                 const location = results[0].geometry.location;
 
-                searches.set(place.place_id as string, new Search(place.place_id as string, place.name, location, map));
+                searches.set(place.id as string, new Search(place.id as string, place.displayName || "", location, map));
 
                 map.setZoom(15);
                 map.setCenter(location);
@@ -44,8 +45,8 @@ namespace SearchBar {
                     if (nearest.version !== 0) {
                         for (const stop of nearest.atstop) {
                             Routes.loadStop(stop.stopid, "").then(s => {
-                                if (s) searches.get(place.place_id as string)?.addElement(s);
-                                s?.addElement(searches.get(place.place_id as string) as Search);
+                                if (s) searches.get(place.id as string)?.addElement(s);
+                                s?.addElement(searches.get(place.id as string) as Search);
                                 s?.updateVisibility();
                             });
                         }
@@ -62,19 +63,23 @@ namespace SearchBar {
      * @param _map map object
      * @deprecated
      */
-    function init(_map: google.maps.Map) : void {
+    async function init(_map: google.maps.Map) : Promise<void> {
         map = _map;
 
         input = document.getElementById("search-bar") as HTMLInputElement;
         input.className = "search-controls" + (false ? "-mobile" : "")
 
-        autocomplete = new google.maps.places.Autocomplete(input, { fields: ["place_id", "geometry", "name", "formatted_address"] });
+        const placesLib = (await google.maps.importLibrary("places")) as any;
+        const PlaceAutocompleteElement: typeof google.maps.places.PlaceAutocompleteElement = placesLib.PlaceAutocompleteElement;
+
+        autocomplete = new PlaceAutocompleteElement({
+            inputElement: input,
+            locationBias: map.getBounds() || undefined
+        });
+
         geocoder = new google.maps.Geocoder();
-
-        autocomplete.bindTo("bounds", map);
         map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
-
-        autocomplete.addListener("place_changed", () => onPlaceChange());
+        autocomplete.addEventListener("place_changed", onPlaceChange);
     }
 }
 
