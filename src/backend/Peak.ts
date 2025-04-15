@@ -23,7 +23,7 @@ namespace Peak {
      */
     export async function getPeakShapeIds(routeId: string) : Promise<Set<string>> {
         const trips = await getPeakTrips(routeId);
-        return new Set(trips.map((trip: ITrip) => trip.shapeID));
+        return new Set(trips.map((trip: ITrip) => trip.shape_id));
     }
 
     /**
@@ -61,10 +61,10 @@ namespace Peak {
             const response = await fetch("https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=route2&action=list&agencyID=88");
             const data = await response.json();
             data.routes?.forEach((trip: ITrip) => {
-                if (!trips.has(trip.routeID)) {
-                    trips.set(trip.routeID, []);
+                if (!trips.has(trip.route_id)) {
+                    trips.set(trip.route_id, []);
                 }
-                trips.get(trip.routeID)!.push(trip);
+                trips.get(trip.route_id)!.push(trip);
             });
         }
 

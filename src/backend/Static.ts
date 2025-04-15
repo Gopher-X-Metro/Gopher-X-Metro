@@ -30,9 +30,9 @@ namespace Static {
      */
     export async function load() : Promise<void> {        
         // Load calendar
-        await fetch(`${API_URL}/get-calendar?date=${date()}`)
-        .then(async response => (await response.json())
-        .forEach((element: ICalendar) => calendar.set(element.service_id, element)));
+        // await fetch(`${API_URL}/get-calendar?date=${date()}`)
+        // .then(async response => (await response.json())
+        // .forEach((element: ICalendar) => calendar.set(element.service_id, element)));
     }
 
     /**
@@ -53,7 +53,7 @@ namespace Static {
     export async function getTrips(routeId: string) : Promise<ITrip[]> {
         if (!trips.has(routeId)) {
             // Load Trips
-            await fetch(`${API_URL}/get-trips?route_id=${routeId}`)
+            await fetch(`${API_URL}/api/get-trips?route_id=${routeId}`)
             .then(async response => trips.set(routeId, await response.json()));
         }
 

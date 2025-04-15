@@ -7,6 +7,8 @@ import Realtime from "src/backend/Realtime";
 import Peak from "src/backend/Peak";
 import Stop from "src/frontend/Pages/Map/elements/Stop";
 import Data from "src/data/Data";
+import Data2 from "src/backend/Data";
+import Service from "./Service";
 
 namespace Routes {
     const routes = new Map<string, Route>();
@@ -32,7 +34,7 @@ namespace Routes {
      * @param routeId ID of route
      * @returns route object
      */
-    export function getRoute(routeId: string): Route | undefined { 
+    export function getRoute(routeId: string): Route | undefined {
         return routes.get(routeId); 
     }
 
@@ -227,7 +229,7 @@ namespace Routes {
      * Loads a route into routes hash
      * @param routeId ID of route
      */
-    async function loadRoute(routeId: string) : Promise<void> {
+    async function loadRoute(routeId: string) : Promise<void> {        
         if (routeId != "FOOTBALL") {
             Data.Route.load(routeId);
         }
