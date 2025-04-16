@@ -9,14 +9,14 @@ import Schedules from "src/frontend/Pages/Schedule/Schedules";
  * @param isMobile if user is on mobile or not
  * @returns rendered WebPage
  */
-export default function Pages({ isMobile }) {
+export default function Pages() {
     const [page, setPage] = useState("map");
 
     return (
         <>
-            <Map hidden={page!=="map"} setPage={setPage} isMobile={isMobile} />
-            <About hidden={page!=="about"} setPage={setPage} />
-            <Schedules hidden={page!=="schedules"} setPage={setPage} />
+            <Map hidden={page !== "map"} setPage={setPage} />
+            <About hidden={page !== "about"} setPage={setPage} />
+            <Schedules hidden={page !== "schedules"} setPage={setPage} />
         </>
     );
 }
