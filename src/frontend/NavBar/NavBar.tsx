@@ -5,6 +5,7 @@ import { Icon } from "@chakra-ui/react";
 import { IconButton } from "@chakra-ui/react";
 import TitleBar from "src/frontend/NavBar/components/TitleBar";
 import SideBar from "src/frontend/NavBar/components/Sidebar";
+import Clearall from "src/frontend/NavBar/components/Clearall";
 import ResponsiveDropdown from "src/frontend/NavBar/components/MobileDropdown";
 import { WarningIcon, WarningTwoIcon } from "@chakra-ui/icons";
 
@@ -25,7 +26,7 @@ export default function NavBar({ setPage, isMobile }) {
                 <SideBar />
 
                 <Box>
-                    <Link to="/" >
+                    <Link to="/" onClick = {Clearall.clearRoutes}>
                         <TitleBar />
                     </Link>
                 </Box>
