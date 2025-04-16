@@ -9,6 +9,7 @@ import ResponsiveDropdown from "src/frontend/NavBar/components/MobileDropdown";
 import { WarningIcon, WarningTwoIcon } from "@chakra-ui/icons";
 
 import useIsMobile from "src/hook/useIsMobile";
+import usePage from "src/hook/usePage";
 
 /**
  * Navbar Component
@@ -20,7 +21,9 @@ import useIsMobile from "src/hook/useIsMobile";
  * @param isMovile prop to check if mobile or not
  * @returns rendered NavBar component
  */
-export default function NavBar({ setPage }) {
+export default function NavBar() {
+    const [, setPage] = usePage();
+
     return (
         <div id="title-bar">
             <HStack padding="2%" gap="3%" width="100%" className="items-center justify-content">
@@ -35,7 +38,7 @@ export default function NavBar({ setPage }) {
 
                 { /*Display NavBar buttons or drop-down menu depending if the user is on mobile or not*/}
                 {useIsMobile() ? (
-                    <ResponsiveDropdown setPage={setPage} />
+                    <ResponsiveDropdown />
                 ) : (
                     <div className="flex flex-row gap-2 max-lg:hidden">
 

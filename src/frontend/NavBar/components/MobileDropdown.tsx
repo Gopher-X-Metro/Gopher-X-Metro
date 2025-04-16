@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
 import useIsMobile from "src/hook/useIsMobile";
+import usePage from "src/hook/usePage";
 
 /**
  * ResponsiveDropdown Component
@@ -14,12 +15,11 @@ import useIsMobile from "src/hook/useIsMobile";
  * 
  * The dropdown will only be displayed if the user is on a mobile device
  * 
- * @param setPage callback function to update current page when menu item is selected
- * @param isMobile boolean indicating if user is on a mobile device
- * 
  * @returns rendered dropdown component
  */
-const ResponsiveDropdown = ({ setPage }) => {
+const ResponsiveDropdown = () => {
+  const [, setPage] = usePage();
+
   return (
     <>
       {useIsMobile() && (
