@@ -97,6 +97,10 @@ export default class Data{
     public getUniversityRouteId(routeId: string) : number | undefined {
         return Data.#UNIVERSITY_ROUTES[routeId];
     }
+
+    public pathPointsToGoogleLatLng(path: Array<IPoint>) : Array<google.maps.LatLng>  {
+        return path.sort((pointA, pointB) => pointA.sequence - pointB.sequence).map(point => new google.maps.LatLng(point.lat, point.lng));
+    }
 }
 
 /**
@@ -257,7 +261,7 @@ class PathsDataRetriever extends DataRetriever {
                 }
             }
 
-            paths.set(shapeId, {routeId: routeId, shapeId: shapeId.toString(), points: Array.from(points.keys())});
+            paths.set(shapeId, {routeId: routeId, shapeId: shapeId.toString(), points: Array.from(points)});
         }
 
         return Array.from(paths.values());

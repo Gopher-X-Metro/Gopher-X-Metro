@@ -4,9 +4,9 @@ import Vehicle from "src/frontend/Pages/Map/elements/Vehicle";
 import URL from "src/backend/URL";
 import Route from "src/frontend/Pages/Map/elements/Route";
 import Realtime from "src/backend/Realtime";
-import Peak from "src/backend/Peak";
 import Stop from "src/frontend/Pages/Map/elements/Stop";
 import Data from "src/data/Data";
+import DataNetwork from "src/backend/Data";
 
 namespace Routes {
     const routes = new Map<string, Route>();
@@ -32,7 +32,7 @@ namespace Routes {
      * @param routeId ID of route
      * @returns route object
      */
-    export function getRoute(routeId: string): Route | undefined { 
+    export function getRoute(routeId: string): Route | undefined {
         return routes.get(routeId); 
     }
 
@@ -235,27 +235,18 @@ namespace Routes {
         const route = new Route(routeId, map);
         routes.set(routeId, route);
 
-        if (Peak.UNIVERSITY_ROUTES[routeId]) {
-            // Peak Campus Bus
-            Peak.getPeakShapeIds(Peak.UNIVERSITY_ROUTES[routeId])
-                .then(shapeIds => shapeIds
-                    .forEach(async shapeId => {
-                        loadPath(routeId, shapeId, await Resources.getColor(routeId), await Peak.getPeakShapeLocations(shapeId))
-                    })
-                );
-        } else if ((await Schedule.getRoute(routeId)) !== undefined) {
-            // Metro Bus
-            Resources.getShapeIds(routeId)
-                .then(shapeIds => shapeIds
-                    .forEach(async shapeId => {
-                        loadPath(routeId, shapeId, await Resources.getColor(routeId), await Resources.getShapeLocations(shapeId))
-                    })
-                );
-        } else {
-            // Does not exist
-            console.warn(`Route with ID: ${routeId} not found`);
-            Resources.createInactiveRoutePopup();
-        }
+        DataNetwork.instance.getPaths(routeId)
+        .then(paths => {
+            if (paths) {
+                paths.forEach(async path => {
+                    loadPath(routeId, path.shapeId, await Resources.getColor(routeId), DataNetwork.instance.pathPointsToGoogleLatLng(path.points))
+                })
+            } else {
+                // Does not exist
+                console.warn(`Route with ID: ${routeId} not found`);
+                Resources.createInactiveRoutePopup();
+            }
+        })
     }
 
     /**
