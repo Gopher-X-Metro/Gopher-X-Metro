@@ -10,7 +10,6 @@ import usePage from "src/hook/usePage";
  */
 export default function Schedules() {
     const [selectedSchedule, setSelectedSchedule] = useState(121);
-
     const [page, setPage] = usePage();
 
     return (
