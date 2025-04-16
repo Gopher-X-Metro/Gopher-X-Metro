@@ -213,17 +213,22 @@ class PathsDataRetriever extends DataRetriever {
      * @description Retrieves and processes path data for a given route ID. It fetches trips and their corresponding shapes, then structures the data into an array of `IPath` objects.
      */
     async retrieve(routeId : string): Promise<Array<IPath> | undefined> {
+        // Check if the route ID corresponds to a university-specific route.
+        // University routes are handled differently as they use the Peak Transit API and have specific IDs.
         const university = Data.instance.getUniversityRouteId(routeId) != undefined;
 
         const trips = await TripsDataRetriever.instance.retrieve(routeId);
 
         if (!trips) { return undefined; }
 
+        // Initialize a Map to store the paths. The key is the shape ID, which ensures that we only process each unique shape once, even if multiple trips use the same shape.
         const paths : Map<number, IPath> = new Map<number, IPath>();
 
         for (const trip of trips) {
+            // Determine the shape ID. For university routes (Peak), it's directly available as `shapeID`. For regular routes (Metro), it's `shape_id`.
             const shapeId = university ? (trip as IPeakTrip).shapeID : (trip as IMetroTrip).shape_id;
 
+            // If we have already processed a path with this shape ID, we can skip it. This prevents duplicate path entries if multiple trips follow the same shape.
             if (paths.has(shapeId)) {
                 continue;
             }
@@ -232,18 +237,22 @@ class PathsDataRetriever extends DataRetriever {
 
             if (!shapes) { return undefined; }
 
+            // Initialize a Set to store the geographical points of the shape. A Set is used to automatically handle potential duplicate points.
             let points = new Set<IPoint>();
             for (const shape of shapes) {
+                // University (Peak) and regular (Metro) routes have different structures for their shape data.
                 if (university) {
+                    // For Peak Transit, the 'points' property is a string where each point (latitude and longitude) is separated by a comma, and points are separated by semicolons.
                     (shape as IPeakShape).points.split(";").forEach((point, index) => {
                         const split = point.split(",");
+                        // Ensure we have both latitude and longitude.
                         if (split.length == 2) {
                             points.add({lat: Number(split[0]), lng: Number(split[1]), sequence: index});
                         }
                     })
                 } else {
+                    // For Metro Transit, each shape point is an object with separate properties for latitude, longitude, and sequence.
                     const point = shape as IMetroShape;
-
                     points.add({lat: point.shape_pt_lat, lng: point.shape_pt_lon, sequence: point.shape_pt_sequence});
                 }
             }
