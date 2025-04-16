@@ -222,7 +222,7 @@ abstract class NetworkRetriever {
  * @description An abstract class for network retrievers specifically for the Metro Transit API.
  */
 abstract class MetroNetworkRetriever extends NetworkRetriever {
-    constructor() { super(process.env.REACT_APP_SUPABASE_FUNCTION_URL as string); }
+    constructor() { super(process.env.REACT_APP_SUPABASE_FUNCTION_URL_2 as string); }
 }
 
 /**
