@@ -551,6 +551,7 @@ body.mobile .pac-container {
   display: flex;
   justify-content: center;
   align-items: center;
+  border-top: 2px solid black;
 }
 
 .Clear-container .Clear-all-btn {

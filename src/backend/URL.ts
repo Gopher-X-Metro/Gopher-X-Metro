@@ -17,6 +17,7 @@ namespace URL {
      * Updates route param in query string
      * @param routeId route ID to add to URL
      */
+    
     export function addRoute(routeId: string) : void {
         console.log("Adding route:", routeId, "Current routes before:", Array.from(getRoutes()));
         const currentRoutes = getRoutes();
@@ -42,7 +43,7 @@ namespace URL {
         console.log(currentRoutes,"line 42");
 
         if (currentRoutes.has(routeId)) {
-            //currentRoutes.delete(routeId);
+            currentRoutes.delete(routeId);
             console.log("delete");
 
             const updatedUrl = currentRoutes.size === 0 ? "./" : `./?route=${Array.from(currentRoutes).join(",")}`;

@@ -43,14 +43,15 @@ export default function SearchFeature() {
         if(existingRoute !==-1){//it exist so remove
             newRoutes.splice(existingRoute,1);
         }else{///add route since it doesnt exist
-            newRoutes.push({id:nextId++,inputRoute: routeId});
+            newRoutes.push({id:Date.now(),inputRoute: routeId});
+            console.log(routes," routes");
             //URL.addRoute(routeId);
         }
         return newRoutes;
         
       });
 
-      console.log(routes," routes");
+     // console.log(routes," routes");
       //update URL
 
     }
@@ -108,4 +109,3 @@ export default function SearchFeature() {
         }
     }
     }//ends function
-

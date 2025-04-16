@@ -4,7 +4,7 @@ import { Icon } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import RouteButton from "src/frontend/NavBar/components/RouteButton";
 import URL from "src/backend/URL";
-import SearchFeature from "src/frontend/NavBar/components/SearchFeature";
+ import SearchFeature from "src/frontend/NavBar/components/SearchFeature";
 import Schedule from "src/backend/Schedule";
 import Clearall from "src/frontend/NavBar/components/Clearall";
 import SearchIcon from "src/img/CustomBus.png";
@@ -72,7 +72,7 @@ export default function SideBar() {
     useEffect(() => {
         // Allows user to hit "Enter" to enter a route
         // const searchBox = document.getElementById("search_route");
-        // searchBox?.addEventListener("keydown", event => event.code === "Enter" ? SearchFeature.searchRoute() : null);
+         //searchBox?.addEventListener("keydown", event => event.code === "Enter" ? SearchFeature.searchRoute() : null);
 
         /**
          * Convert a string to a properly cased title
@@ -139,26 +139,31 @@ export default function SideBar() {
                         <div className="underline"></div>
                     </div>
 
-                    {Array.from(routes.keys()).map(routeId => (<RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)}/>))}
+                {Array.from(routes.keys()).map(routeId => (<RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)}/>))}
                     
                    <div>
                    <SearchFeature></SearchFeature>
                    </div>
 
-                    {/* <div id="Favorite-routeButton"></div>
+                
+                     {/* <div id="Favorite-routeButton"></div>
                     <div className = "search-header"> 
                         <h3> Search Routes </h3>
                         <div className="underline"></div>
                     </div> 
                     
                  <div className = "searchContainer">
-                        <input type = "text" id = "search_route" placeholder = "902"></input>
-                        <button onClick = {SearchFeature.searchRoute} id = "searchButton">
+                        <input type = "text" id="search_route" placeholder = "902"></input>
+                        <button onClick = {SearchFeature} id = "searchButton">
+                          <script>
+                                var temp = documnent.get
+                          </script>
                             <img className = "busImg" height = "50" alt = "error" width = "50" src={SearchIcon}></img>
                         </button>
-                    </div>
+                    </div> */}
 
-                    <div className= "error_text" id = "error_text"></div> */}
+                    {/* <div className= "error_text" id = "error_text"></div>  */}
+
             </div>
                     <div className={toggle === 2 ? "tab-content" : "content"}>
                         <div className="favorite-header">
