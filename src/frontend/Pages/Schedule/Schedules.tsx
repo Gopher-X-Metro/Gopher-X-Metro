@@ -1,19 +1,20 @@
 import React, { useState } from "react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import {Menu, MenuButton, MenuList, MenuItemOption, MenuOptionGroup, Button} from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItemOption, MenuOptionGroup, Button } from "@chakra-ui/react";
 import ScheduleTable from "src/frontend/Pages/Schedule/components/ScheduleTable";
+import usePage from "src/hook/usePage";
 
 /**
  * Schedules drop-down menu
- * @param hidden if schedules should be hidden
- * @param setPage callback to change current page
  * @returns rendered schedules drop-down menu
  */
-export default function Schedules({ hidden, setPage }) {
+export default function Schedules() {
     const [selectedSchedule, setSelectedSchedule] = useState(121);
 
+    const [page, setPage] = usePage();
+
     return (
-        <div hidden={hidden}>
+        <div hidden={page !== "schedules"}>
             <Menu>
                 <MenuButton as={Button} rightIcon={<ChevronDownIcon />} margin="5">
                     Schedules
