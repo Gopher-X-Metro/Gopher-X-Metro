@@ -8,6 +8,8 @@ import SideBar from "src/frontend/NavBar/components/Sidebar";
 import ResponsiveDropdown from "src/frontend/NavBar/components/MobileDropdown";
 import { WarningIcon, WarningTwoIcon } from "@chakra-ui/icons";
 
+import useIsMobile from "src/hook/useIsMobile";
+
 /**
  * Navbar Component
  * 
@@ -18,7 +20,7 @@ import { WarningIcon, WarningTwoIcon } from "@chakra-ui/icons";
  * @param isMovile prop to check if mobile or not
  * @returns rendered NavBar component
  */
-export default function NavBar({ setPage, isMobile }) {
+export default function NavBar({ setPage }) {
     return (
         <div id="title-bar">
             <HStack padding="2%" gap="3%" width="100%" className="items-center justify-content">
@@ -31,9 +33,9 @@ export default function NavBar({ setPage, isMobile }) {
                 </Box>
                 <div className="flex-grow" />
 
-                { /*Display NavBar buttons or drop-down menu depending if the user is on mobile or not*/ }
-                {isMobile ? (
-                    <ResponsiveDropdown setPage={setPage} isMobile={isMobile} />
+                { /*Display NavBar buttons or drop-down menu depending if the user is on mobile or not*/}
+                {useIsMobile() ? (
+                    <ResponsiveDropdown setPage={setPage} />
                 ) : (
                     <div className="flex flex-row gap-2 max-lg:hidden">
 

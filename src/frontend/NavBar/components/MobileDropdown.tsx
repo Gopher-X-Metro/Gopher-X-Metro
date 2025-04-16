@@ -1,7 +1,9 @@
 import React from "react";
 import { Menu, MenuButton, MenuList, MenuItem, Button } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import { ChevronDownIcon } from "@chakra-ui/icons"; 
+import { ChevronDownIcon } from "@chakra-ui/icons";
+
+import useIsMobile from "src/hook/useIsMobile";
 
 /**
  * ResponsiveDropdown Component
@@ -17,17 +19,17 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
  * 
  * @returns rendered dropdown component
  */
-const ResponsiveDropdown = ({ setPage, isMobile }) => {
+const ResponsiveDropdown = ({ setPage }) => {
   return (
     <>
-    {isMobile && (
-      <Menu>
-        <MenuButton as={Button} rightIcon={<ChevronDownIcon />} colorScheme="yellow"></MenuButton>
-        <MenuList>
-            <MenuItem as={Link} onClick={() => setPage("schedules")}> 
+      {useIsMobile() && (
+        <Menu>
+          <MenuButton as={Button} rightIcon={<ChevronDownIcon />} colorScheme="yellow"></MenuButton>
+          <MenuList>
+            <MenuItem as={Link} onClick={() => setPage("schedules")}>
               Schedules
             </MenuItem>
-            <MenuItem as={"a"} href="https://pts.umn.edu/sites/pts.umn.edu/files/2020-07/bus_outline_map_printable.jpg" target="_blank" rel="noreferrer"> 
+            <MenuItem as={"a"} href="https://pts.umn.edu/sites/pts.umn.edu/files/2020-07/bus_outline_map_printable.jpg" target="_blank" rel="noreferrer">
               Campus Bus Map
             </MenuItem>
             <MenuItem as={"a"} href="https://umn.rider.peaktransit.com" target="_blank" rel="noreferrer">
@@ -40,8 +42,8 @@ const ResponsiveDropdown = ({ setPage, isMobile }) => {
               About Us
             </MenuItem>
           </MenuList>
-      </Menu>
-    )}
+        </Menu>
+      )}
     </>
   );
 }
