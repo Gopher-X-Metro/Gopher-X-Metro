@@ -97,7 +97,12 @@ export default class Data{
     public getUniversityRouteId(routeId: string) : number | undefined {
         return Data.#UNIVERSITY_ROUTES[routeId];
     }
-
+    
+    /**
+     * @param {Array<IPoint>} path - An array of IPoint objects representing a path.
+     * @returns {Array<google.maps.LatLng>} An array of google.maps.LatLng objects representing the same path, sorted by sequence.
+     * @description Converts an array of IPoint objects to an array of google.maps.LatLng objects, ensuring the points are sorted by their sequence.
+     */
     public pathPointsToGoogleLatLng(path: Array<IPoint>) : Array<google.maps.LatLng>  {
         return path.sort((pointA, pointB) => pointA.sequence - pointB.sequence).map(point => new google.maps.LatLng(point.lat, point.lng));
     }
