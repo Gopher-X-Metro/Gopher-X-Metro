@@ -1,8 +1,8 @@
-import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import { APIProvider } from '@vis.gl/react-google-maps';
+import React from "react";
+import { BrowserRouter } from "react-router-dom";
+import { APIProvider } from "@vis.gl/react-google-maps";
 
-import Pages from 'src/frontend/Pages/Pages.tsx';
+import Pages from "src/frontend/Pages/Pages.tsx";
 
 import "src/styles.css";
 

@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-
 import { Icon } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
-
 import URL from "src/backend/URL";
 import Schedule from "src/backend/Schedule";
 import RouteButton from "src/frontend/NavBar/components/RouteButton";

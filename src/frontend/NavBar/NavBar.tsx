@@ -17,8 +17,6 @@ import usePage from "src/hook/usePage";
  * Displays navigation bar with buttons for different pages.
  * The layout changes based on if the user is on mobile or not
  * 
- * @param setPage prop to set page
- * @param isMovile prop to check if mobile or not
  * @returns rendered NavBar component
  */
 export default function NavBar() {

@@ -1,6 +1,5 @@
 import { Map, useMap } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
-
 import Resources from "src/backend/Resources";
 import Marker from "src/frontend/Pages/Map/components/Marker";
 import Routes from "src/frontend/Pages/Map/components/Routes";
