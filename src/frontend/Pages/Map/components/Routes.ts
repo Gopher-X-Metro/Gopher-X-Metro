@@ -240,7 +240,7 @@ namespace Routes {
             if (paths) {
                 paths.forEach(async path => {
                     loadPath(routeId, path.shapeId, await Resources.getColor(routeId), DataNetwork.instance.pathPointsToGoogleLatLng(path.points))
-                })
+                });
             } else {
                 // Does not exist
                 console.warn(`Route with ID: ${routeId} not found`);
