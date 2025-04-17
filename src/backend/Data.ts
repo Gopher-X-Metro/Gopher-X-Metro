@@ -4,7 +4,7 @@
  * @reference ./Network.ts
  */
 
-import Network, { IMetroShape, IMetroTrip, IPeakShape, IPeakTrip } from "./Network";
+import Network, { IMetroShape, IMetroTrip, IPeakShape, IPeakTrip } from "src/backend/Network";
 
 /**
  * @interface IPoint
@@ -31,8 +31,9 @@ interface IPath {
  * @description A singleton class responsible for providing processed transit data,
  * abstracting the direct network requests made by the {@link Network} class.
  */
-export default class Data{
+export default class Data {
     static #instance: Data;
+    
     /**
      * @private
      * @readonly
