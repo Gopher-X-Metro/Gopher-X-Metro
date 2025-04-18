@@ -179,7 +179,7 @@ export default class Network {
 
      /**
      * @param {string} routeId - The ID of the metro route to fetch.
-     * @returns {Promise<IMetroRoute | undefined>} A promise that resolves to a metro route object or undefined if an error occurs.
+     * @returns {Promise<Array<IMetroRoute> | undefined>} A promise that resolves to an array containing a metro route object or undefined if an error occurs. Note: The API might return an array even for a single route ID.
      * @description Fetches a metro route for a given route ID.
      */
     public async getMetroRoute(routeId : string) : Promise<Array<IMetroRoute> | undefined> {
@@ -395,8 +395,8 @@ class RoutesMetroNetworkRetriever extends MetroNetworkRetriever {
 
     /**
      * @param {string} routeId - The ID of the metro route to fetch.
-     * @returns {Promise<IMetroRoute | undefined>} A promise that resolves to a metro route object or undefined if an error occurs.
-     * @description Fetches a metro route for a given route ID from the API.
+     * @returns {Promise<Array<IMetroRoute> | undefined>} A promise that resolves to an array containing a metro route object or undefined if an error occurs.
+     * @description Fetches a metro route for a given route ID from the API. Note: The API might return an array even for a single route ID.
      */
     async retrieve(routeId : string): Promise<Array<IMetroRoute> | undefined> {
         return fetch(`${this.API_URL}/api/get-routes?route_id=${routeId}`)
