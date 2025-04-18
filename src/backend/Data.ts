@@ -64,24 +64,6 @@ export default class Data {
     }
 
     /**
-     * @param {string} routeId - The ID of the route to fetch trips for.
-     * @returns {Promise<Array<IMetroTrip | IPeakTrip> | undefined>} A promise that resolves to an array of metro or peak trips, or undefined if an error occurs.
-     * @description Retrieves trips for a given route ID, handling both metro and peak transit systems.
-     */
-    public async getTrips(routeId: string) : Promise<Array<IMetroTrip | IPeakTrip> | undefined> {
-        return TripsDataRetriever.instance.retrieve(routeId);
-    }
-
-    /**
-     * @param {string} shapeId - The ID of the shape to fetch.
-     * @returns {Promise<Array<IMetroShape | IPeakShape> | undefined>} A promise that resolves to an array of metro or peak shape points, or undefined if an error occurs.
-     * @description Retrieves shape points for a given shape ID, handling both metro and peak transit systems.
-     */
-    public async getShapes(shapeId: string) : Promise<Array<IMetroShape | IPeakShape> | undefined> {
-        return ShapesDataRetriever.instance.retrieve(shapeId);
-    }
-
-    /**
      * @param {string} routeId - The ID of the route to fetch paths for.
      * @returns {Promise<Array<IPath> | undefined>} A promise that resolves to an array of route paths, or undefined if an error occurs.
      * @description Retrieves processed paths (route ID, shape ID, and points) for a given route ID.
