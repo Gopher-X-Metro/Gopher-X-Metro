@@ -224,7 +224,7 @@ class PathsDataRetriever extends DataRetriever {
     async retrieve(routeId : string): Promise<Array<IPath> | undefined> {
         // Check if the route ID corresponds to a university-specific route.
         // University routes are handled differently as they use the Peak Transit API and have specific IDs.
-        const university = Data.instance.getUniversityRouteId(routeId) != undefined;
+        const university = Data.instance.getUniversityRouteId(routeId) !== undefined;
 
         const trips = await TripsDataRetriever.instance.retrieve(routeId);
 
@@ -255,7 +255,7 @@ class PathsDataRetriever extends DataRetriever {
                     (shape as IPeakShape).points.split(";").forEach((point, index) => {
                         const split = point.split(",");
                         // Ensure we have both latitude and longitude.
-                        if (split.length == 2) {
+                        if (split.length === 2) {
                             points.add({lat: Number(split[0]), lng: Number(split[1]), sequence: index});
                         }
                     })

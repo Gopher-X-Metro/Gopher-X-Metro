@@ -42,7 +42,7 @@ namespace Routes {
     export async function refreshVehicles() : Promise<void> {
         // Updates Vehicle Data
         for (const routeId of URL.getRoutes()) {
-            if (routeId != "FOOTBALL") {
+            if (routeId !== "FOOTBALL") {
                 Data.Vehicle.reload(routeId);
             }
         }
@@ -101,7 +101,7 @@ namespace Routes {
     export async function refreshStops() : Promise<void> {
         // Updates Stop Data
         for (const routeId in URL.getRoutes()) {
-            if (routeId != "FOOTBALL") {
+            if (routeId !== "FOOTBALL") {
                 Data.Departure.reload(routeId);
             }
         }
@@ -228,7 +228,7 @@ namespace Routes {
      * @param routeId ID of route
      */
     async function loadRoute(routeId: string) : Promise<void> {
-        if (routeId != "FOOTBALL") {
+        if (routeId !== "FOOTBALL") {
             Data.Route.load(routeId);
         }
 
