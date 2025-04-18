@@ -7,16 +7,6 @@ import RouteButton from "src/frontend/NavBar/components/RouteButton";
 import SearchFeature from "src/frontend/NavBar/components/SearchFeature";
 import SearchIcon from "src/img/CustomBus.png";
 
-// Add "FOOTBALL" route only if its a Saturday in-season
-const currentDate = new Date();
-const currentDay = currentDate.getDay(); // 0 = Sunday ... 6 = Saturday
-
-const startDate = new Date(currentDate.getFullYear(), 7, 24); // August 24
-const endDate = new Date(currentDate.getFullYear(), 11, 7);  // December 7
-
-const isSaturday = currentDay === 6;
-const isInSeason = currentDate >= startDate && currentDate <= endDate;
-
 const predefinedRoutes = new Map([
     ["121", "121 Campus Connector"],
     ["122", "122 University Avenue Circulator"],
@@ -30,10 +20,6 @@ const predefinedRoutes = new Map([
     ["902", "Metro Green Line"],
     ["901", "Metro Blue Line"],
 ]);
-
-if (isSaturday && isInSeason) {
-    predefinedRoutes.set("FOOTBALL", "Football Game Day Route");
-}
 
 /**
  * Sidebar Component
@@ -58,6 +44,20 @@ export default function SideBar() {
         // Allows user to hit "Enter" to enter a route
         const searchBox = document.getElementById("search_route");
         searchBox?.addEventListener("keydown", event => event.code === "Enter" ? SearchFeature.searchRoute() : null);
+
+        // Add "FOOTBALL" route only if its a Saturday in-season
+        const currentDate = new Date();
+        const currentDay = currentDate.getDay(); // 0 = Sunday ... 6 = Saturday
+
+        const startDate = new Date(currentDate.getFullYear(), 7, 24); // August 24
+        const endDate = new Date(currentDate.getFullYear(), 11, 7);  // December 7
+
+        const isSaturday = currentDay === 6;
+        const isInSeason = currentDate >= startDate && currentDate <= endDate;
+
+        if (isSaturday && isInSeason) {
+            predefinedRoutes.set("FOOTBALL", "Football Game Day Route");
+        }
 
         /**
          * Convert a string to a properly cased title
