@@ -182,7 +182,7 @@ export default class Network {
      * @returns {Promise<IMetroRoute | undefined>} A promise that resolves to a metro route object or undefined if an error occurs.
      * @description Fetches a metro route for a given route ID.
      */
-    public async getMetroRoute(routeId : string) : Promise<IMetroRoute | undefined> {
+    public async getMetroRoute(routeId : string) : Promise<Array<IMetroRoute> | undefined> {
         return RoutesMetroNetworkRetriever.instance.retrieve(routeId);
     }
 
@@ -398,11 +398,11 @@ class RoutesMetroNetworkRetriever extends MetroNetworkRetriever {
      * @returns {Promise<IMetroRoute | undefined>} A promise that resolves to a metro route object or undefined if an error occurs.
      * @description Fetches a metro route for a given route ID from the API.
      */
-    async retrieve(routeId : string): Promise<IMetroRoute | undefined> {
+    async retrieve(routeId : string): Promise<Array<IMetroRoute> | undefined> {
         return fetch(`${this.API_URL}/api/get-routes?route_id=${routeId}`)
         .then((response : Response) =>
             response.ok ?
-            response.json().then((json : IMetroRoute) => json)
+            response.json().then((json : Array<IMetroRoute>) => json)
             : undefined
         );
     }

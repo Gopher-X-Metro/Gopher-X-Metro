@@ -4,7 +4,7 @@
  * @reference ./Network.ts
  */
 
-import Network, { IMetroShape, IMetroTrip, IPeakShape, IPeakTrip } from "src/backend/Network";
+import Network, { IMetroShape, IMetroTrip, IPeakShape, IPeakRoute, IMetroRoute } from "src/backend/Network";
 
 /**
  * @interface IPoint
@@ -72,6 +72,10 @@ export default class Data {
         return PathsDataRetriever.instance.retrieve(routeId);
     }
 
+    public async getColor(routeId: string) : Promise<string> {
+        return ColorDataRetriever.instance.retrieve(routeId);
+    }
+
     /**
      * @param {string} routeId - The string ID of the route to look up.
      * @returns {number | undefined} The numerical university-specific route ID if found, otherwise undefined.
@@ -127,14 +131,14 @@ class TripsDataRetriever extends DataRetriever {
      * @returns {Promise<Array<IMetroTrip | IPeakTrip> | undefined>} A promise that resolves to an array of metro or peak trips, or undefined if an error occurs.
      * @description Retrieves trip data for a given route ID. It first checks if it's a university route and fetches from the Peak API if so, otherwise it fetches from the Metro API.
      */
-    async retrieve(routeId : string): Promise<Array<IMetroTrip | IPeakTrip> | undefined> {
+    async retrieve(routeId : string): Promise<Array<IMetroTrip | IPeakRoute> | undefined> {
         const id = Data.instance.getUniversityRouteId(routeId);
 
         if (!id) {
             return await Network.instance.getMetroTrips(routeId);
         }
 
-        return await Network.instance.getPeakTrips(id?.toString());
+        return await Network.instance.getPeakRoutes(id?.toString());
     }
 }
 
@@ -217,7 +221,7 @@ class PathsDataRetriever extends DataRetriever {
 
         for (const trip of trips) {
             // Determine the shape ID. For university routes (Peak), it's directly available as `shapeID`. For regular routes (Metro), it's `shape_id`.
-            const shapeId = university ? (trip as IPeakTrip).shapeID : (trip as IMetroTrip).shape_id;
+            const shapeId = university ? (trip as IPeakRoute).shapeID : (trip as IMetroTrip).shape_id;
 
             // If we have already processed a path with this shape ID, we can skip it. This prevents duplicate path entries if multiple trips follow the same shape.
             if (paths.has(shapeId)) {
@@ -252,5 +256,85 @@ class PathsDataRetriever extends DataRetriever {
         }
 
         return Array.from(paths.values());
+    }
+}
+
+class RoutesDataRetriever extends DataRetriever {
+    static #instance: RoutesDataRetriever;
+
+    private constructor() { super(); }
+
+    /**
+     * @returns {RoutesDataRetriever} The singleton instance of the TripsDataRetriever class.
+     * @description Returns the single instance of the `TripsDataRetriever` class, creating it if it doesn't exist.
+     */
+    public static get instance(): RoutesDataRetriever {
+        if (!RoutesDataRetriever.#instance) {
+            RoutesDataRetriever.#instance = new RoutesDataRetriever();
+        }
+
+        return RoutesDataRetriever.#instance;
+    }
+
+    /**
+     * @param {string} routeId - The ID of the route to fetch trips for.
+     * @returns {Promise<Array<IMetroTrip | IPeakTrip> | undefined>} A promise that resolves to an array of metro or peak trips, or undefined if an error occurs.
+     * @description Retrieves trip data for a given route ID. It first checks if it's a university route and fetches from the Peak API if so, otherwise it fetches from the Metro API.
+     */
+    async retrieve(routeId : string): Promise<Array<IMetroRoute | IPeakRoute> | undefined> {
+        const id = Data.instance.getUniversityRouteId(routeId);
+
+        if (!id) {
+            return await Network.instance.getMetroRoute(routeId);
+        }
+
+        return await Network.instance.getPeakRoutes(id?.toString());
+    }
+}
+
+class ColorDataRetriever extends DataRetriever {
+    static #instance: ColorDataRetriever;
+
+    /* Override Route Colors */
+    static #ROUTE_COLORS = {
+        "120": "FFC0CB", 
+        "121": "FF0000", 
+        "122": "800080", 
+        "123": "1ab7b7", 
+        "124": "90EE90",
+        "125": "c727e2",
+        "FOOTBALL": "964B00",
+        "2": "bab832",
+        "3": "d18528",
+        "6": "236918",
+        "902": "00843D",
+        "901": "003DA5"
+    };
+
+    private constructor() { super(); }
+
+    public static get instance(): ColorDataRetriever {
+        if (!ColorDataRetriever.#instance) {
+            ColorDataRetriever.#instance = new ColorDataRetriever();
+        }
+
+        return ColorDataRetriever.#instance;
+    }
+
+    async retrieve(routeId : string): Promise<string> {
+        let color = ColorDataRetriever.#ROUTE_COLORS[routeId];
+
+        if (color) { return color; }
+
+        const university = Data.instance.getUniversityRouteId(routeId) !== undefined;
+        const route = await RoutesDataRetriever.instance.retrieve(routeId);
+
+        if ((route) && (route.length > 0)) {
+            color = university ? (route[0] as IPeakRoute).color : (route[0] as IMetroRoute).route_color;
+        }
+
+        if (color) { return color }
+
+        return "#222222" //TODO: Figure out what to do as a default route color
     }
 }
