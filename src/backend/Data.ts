@@ -149,11 +149,10 @@ class TripsDataRetriever extends DataRetriever {
         const id = Data.instance.getUniversityRouteId(routeId);
 
         if (!id) {
-            const data = await Network.instance.getMetroTrips(routeId);
-            return data
+            return await Network.instance.getMetroTrips(routeId);
         }
 
-        return Network.instance.getPeakTrips(id?.toString());
+        return await Network.instance.getPeakTrips(id?.toString());
     }
 }
 
@@ -191,7 +190,7 @@ class ShapesDataRetriever extends DataRetriever {
             return data
         }
 
-        return Network.instance.getPeakShapes(shapeId);
+        return await Network.instance.getPeakShapes(shapeId);
     }
 }
 
