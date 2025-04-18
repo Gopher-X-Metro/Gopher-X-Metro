@@ -4,6 +4,8 @@ import Plan from "src/backend/Plan";
 import Routes from "src/frontend/Pages/Map/components/Routes";
 import Search from "src/frontend/Pages/Map/elements/Search";
 
+import useIsMobile from "src/hook/useIsMobile";
+
 const searches = new Map<string, Search>();
 
 /**
@@ -15,7 +17,7 @@ const searches = new Map<string, Search>();
  * 
  * @returns rendered LocationSearchBar component
  */
-export default function LocationSearchBar({ isMobile }) {
+export default function LocationSearchBar() {
     const input = useRef<HTMLInputElement>(null);
     const map = useMap("map");
 
@@ -31,8 +33,8 @@ export default function LocationSearchBar({ isMobile }) {
 
     return (
         <>
-            <MapControl position={isMobile ? ControlPosition.BOTTOM_CENTER : ControlPosition.TOP_CENTER}>
-                <input id="location-search-bar" className={"location-search-bar" + (isMobile ? " mobile" : "")} type="text" ref={input} />
+            <MapControl position={useIsMobile() ? ControlPosition.BOTTOM_CENTER : ControlPosition.TOP_CENTER}>
+                <input id="location-search-bar" className={"location-search-bar" + (useIsMobile() ? " mobile" : "")} type="text" ref={input} />
             </MapControl>
         </>
     );

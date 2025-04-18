@@ -1,5 +1,6 @@
 import React from "react";
 import "./styles.css";
+import usePage from "src/hook/usePage";
 
 /**
  * About Page
@@ -8,15 +9,14 @@ import "./styles.css";
  * target audience along with some helpful FAQs for the user to help
  * guide our application
  * 
- * @param hidden prop to hide page
- * @param setPage prop to set page
  * @returns rendered About Page
  */
-function About({ hidden, setPage }) {
+function About() {
     const googleFormUrl = "https://forms.gle/o7cDFtZ65vhic9uD9";
+    const [page, setPage] = usePage();
 
     return (
-        <div hidden={hidden} className="about-page">
+        <div hidden={page !== "about"} className="about-page">
             {/* <!-- Responsive navbar--> */}
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div className="container">
@@ -27,10 +27,10 @@ function About({ hidden, setPage }) {
             <div className="about-container">
                 <div className="text-center mt-5">
                     <h1 className="title">About <strong>Gopher X Metro Bus</strong></h1>
-                    <p className="highlight-text">The University of Minnesota has included 
-                        the <a href="https://pts.umn.edu/Transit/Transit-Passes/Universal-Transit-Pass" target="_blank" rel="noreferrer" className="highlight-link">transit pass</a> for 
-                        students who pay the Transportation and Safety Fee. 
-                        The transit pass allows students to have access to 
+                    <p className="highlight-text">The University of Minnesota has included
+                        the <a href="https://pts.umn.edu/Transit/Transit-Passes/Universal-Transit-Pass" target="_blank" rel="noreferrer" className="highlight-link">transit pass</a> for
+                        students who pay the Transportation and Safety Fee.
+                        The transit pass allows students to have access to
                         the city buses and Metro green and blue lines.</p>
 
                     {/* Feedback Section */}
@@ -69,8 +69,8 @@ function About({ hidden, setPage }) {
                             <h4 className="question">6. Can I see which stop my bus is heading to next?</h4>
                             <p className="answer"> You can see the next stop of your bus by tapping the bus icon for the bus you are currently riding. A popup will then appear with information including the next stop your bus is heading to.</p>
                         </div>
-                        <br/>
-                        <br/>
+                        <br />
+                        <br />
                     </div>
                 </div>
             </div>
