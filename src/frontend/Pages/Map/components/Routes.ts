@@ -239,7 +239,7 @@ namespace Routes {
         .then(paths => {
             if (paths) {
                 paths.forEach(async path => {
-                    loadPath(routeId, path.shapeId, await Resources.getColor(routeId), DataNetwork.instance.pathPointsToGoogleLatLng(path.points))
+                    loadPath(routeId, path.shapeId, await DataNetwork.instance.getColor(routeId), DataNetwork.instance.pathPointsToGoogleLatLng(path.points))
                 });
             } else {
                 // Does not exist

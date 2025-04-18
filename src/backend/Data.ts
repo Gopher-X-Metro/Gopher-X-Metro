@@ -33,7 +33,7 @@ interface IPath {
  */
 export default class Data {
     static #instance: Data;
-    
+
     /**
      * @private
      * @readonly
@@ -49,6 +49,10 @@ export default class Data {
         "FOOTBALL": 12604
     };
 
+    /**
+     * @private
+     * @description Private constructor to enforce the singleton pattern.
+     */
     private constructor() {}
 
     /**
@@ -72,25 +76,30 @@ export default class Data {
         return PathsDataRetriever.instance.retrieve(routeId);
     }
 
+    /**
+     * @param {string} routeId - The ID of the route to fetch the color for.
+     * @returns {Promise<string>} A promise that resolves to the route color (as a hex string). Returns a default color if the color cannot be determined.
+     * @description Retrieves the color for a given route ID, checking a local override list before fetching from the appropriate API.
+     */
     public async getColor(routeId: string) : Promise<string> {
         return ColorDataRetriever.instance.retrieve(routeId);
     }
 
     /**
      * @param {string} routeId - The string ID of the route to look up.
-     * @returns {number | undefined} The numerical university-specific route ID if found, otherwise undefined.
+     * @returns {number | undefined} The numerical university-specific route ID if found in the mapping, otherwise undefined.
      * @description Returns the university-specific route ID if the provided route ID is in the mapping.
      */
     public getUniversityRouteId(routeId: string) : number | undefined {
         return Data.#UNIVERSITY_ROUTES[routeId];
     }
-    
+
     /**
      * @param {Array<IPoint>} path - An array of IPoint objects representing a path.
      * @returns {Array<google.maps.LatLng>} An array of google.maps.LatLng objects representing the same path, sorted by sequence.
      * @description Converts an array of IPoint objects to an array of google.maps.LatLng objects, ensuring the points are sorted by their sequence.
      */
-    public pathPointsToGoogleLatLng(path: Array<IPoint>) : Array<google.maps.LatLng>  {
+    public pathPointsToGoogleLatLng(path: Array<IPoint>) : Array<google.maps.LatLng> {
         return path.sort((pointA, pointB) => pointA.sequence - pointB.sequence).map(point => new google.maps.LatLng(point.lat, point.lng));
     }
 }
@@ -101,6 +110,12 @@ export default class Data {
  * @description An abstract base class for data retrievers, defining the basic structure for fetching processed data.
  */
 abstract class DataRetriever {
+    /**
+     * @abstract
+     * @param {...string[]} args - Arguments required for the data retrieval operation.
+     * @returns {any | undefined} The retrieved and processed data or undefined if the retrieval fails.
+     * @description Abstract method to be implemented by concrete retriever classes for fetching and processing data.
+     */
     abstract retrieve(...args: string[]) : any | undefined;
 }
 
@@ -112,6 +127,9 @@ abstract class DataRetriever {
 class TripsDataRetriever extends DataRetriever {
     static #instance: TripsDataRetriever;
 
+    /**
+     * @description Private constructor to enforce the singleton pattern.
+     */
     private constructor() { super(); }
 
     /**
@@ -128,7 +146,7 @@ class TripsDataRetriever extends DataRetriever {
 
     /**
      * @param {string} routeId - The ID of the route to fetch trips for.
-     * @returns {Promise<Array<IMetroTrip | IPeakTrip> | undefined>} A promise that resolves to an array of metro or peak trips, or undefined if an error occurs.
+     * @returns {Promise<Array<IMetroTrip | IPeakRoute> | undefined>} A promise that resolves to an array of metro or peak trips, or undefined if an error occurs.
      * @description Retrieves trip data for a given route ID. It first checks if it's a university route and fetches from the Peak API if so, otherwise it fetches from the Metro API.
      */
     async retrieve(routeId : string): Promise<Array<IMetroTrip | IPeakRoute> | undefined> {
@@ -150,6 +168,9 @@ class TripsDataRetriever extends DataRetriever {
 class ShapesDataRetriever extends DataRetriever {
     static #instance: ShapesDataRetriever;
 
+    /**
+     * @description Private constructor to enforce the singleton pattern.
+     */
     private constructor() { super(); }
 
     /**
@@ -188,6 +209,9 @@ class ShapesDataRetriever extends DataRetriever {
 class PathsDataRetriever extends DataRetriever {
     static #instance: PathsDataRetriever;
 
+    /**
+     * @description Private constructor to enforce the singleton pattern.
+     */
     private constructor() { super(); }
 
     /**
@@ -259,14 +283,22 @@ class PathsDataRetriever extends DataRetriever {
     }
 }
 
+/**
+ * @class RoutesDataRetriever
+ * @extends DataRetriever
+ * @description A concrete class responsible for retrieving route data, handling the logic for fetching from the appropriate source (Metro or Peak). Implements the singleton pattern.
+ */
 class RoutesDataRetriever extends DataRetriever {
     static #instance: RoutesDataRetriever;
 
+    /**
+     * @description Private constructor to enforce the singleton pattern.
+     */
     private constructor() { super(); }
 
     /**
-     * @returns {RoutesDataRetriever} The singleton instance of the TripsDataRetriever class.
-     * @description Returns the single instance of the `TripsDataRetriever` class, creating it if it doesn't exist.
+     * @returns {RoutesDataRetriever} The singleton instance of the RoutesDataRetriever class.
+     * @description Returns the single instance of the `RoutesDataRetriever` class, creating it if it doesn't exist.
      */
     public static get instance(): RoutesDataRetriever {
         if (!RoutesDataRetriever.#instance) {
@@ -277,9 +309,9 @@ class RoutesDataRetriever extends DataRetriever {
     }
 
     /**
-     * @param {string} routeId - The ID of the route to fetch trips for.
-     * @returns {Promise<Array<IMetroTrip | IPeakTrip> | undefined>} A promise that resolves to an array of metro or peak trips, or undefined if an error occurs.
-     * @description Retrieves trip data for a given route ID. It first checks if it's a university route and fetches from the Peak API if so, otherwise it fetches from the Metro API.
+     * @param {string} routeId - The ID of the route to fetch.
+     * @returns {Promise<Array<IMetroRoute | IPeakRoute> | undefined>} A promise that resolves to an array containing the metro or peak route(s), or undefined if an error occurs.
+     * @description Retrieves route data for a given route ID. It first checks if it's a university route and fetches from the Peak API if so, otherwise it fetches from the Metro API.
      */
     async retrieve(routeId : string): Promise<Array<IMetroRoute | IPeakRoute> | undefined> {
         const id = Data.instance.getUniversityRouteId(routeId);
@@ -292,15 +324,24 @@ class RoutesDataRetriever extends DataRetriever {
     }
 }
 
+/**
+ * @class ColorDataRetriever
+ * @extends DataRetriever
+ * @description A concrete class responsible for retrieving the color for a given route, using a local override list or fetching from the appropriate API. Implements the singleton pattern.
+ */
 class ColorDataRetriever extends DataRetriever {
     static #instance: ColorDataRetriever;
 
-    /* Override Route Colors */
+    /**
+     * @private
+     * @readonly
+     * @property {#ROUTE_COLORS: Record<string, string>} - A mapping of route IDs to their preferred color (as a hex string). This overrides the API colors.
+     */
     static #ROUTE_COLORS = {
-        "120": "FFC0CB", 
-        "121": "FF0000", 
-        "122": "800080", 
-        "123": "1ab7b7", 
+        "120": "FFC0CB",
+        "121": "FF0000",
+        "122": "800080",
+        "123": "1ab7b7",
         "124": "90EE90",
         "125": "c727e2",
         "FOOTBALL": "964B00",
@@ -311,8 +352,15 @@ class ColorDataRetriever extends DataRetriever {
         "901": "003DA5"
     };
 
+    /**
+     * @description Private constructor to enforce the singleton pattern.
+     */
     private constructor() { super(); }
 
+    /**
+     * @returns {ColorDataRetriever} The singleton instance of the ColorDataRetriever class.
+     * @description Returns the single instance of the `ColorDataRetriever` class, creating it if it doesn't exist.
+     */
     public static get instance(): ColorDataRetriever {
         if (!ColorDataRetriever.#instance) {
             ColorDataRetriever.#instance = new ColorDataRetriever();
@@ -321,6 +369,11 @@ class ColorDataRetriever extends DataRetriever {
         return ColorDataRetriever.#instance;
     }
 
+    /**
+     * @param {string} routeId - The ID of the route to retrieve the color for.
+     * @returns {Promise<string>} A promise that resolves to the route color (as a hex string). Returns "222222" as a default if the color cannot be determined.
+     * @description Retrieves the color for a given route ID. It first checks the local `#ROUTE_COLORS` map. If not found, it fetches route data from the appropriate API (Metro or Peak) and uses the color from the route data.
+     */
     async retrieve(routeId : string): Promise<string> {
         let color = ColorDataRetriever.#ROUTE_COLORS[routeId];
 
@@ -335,6 +388,7 @@ class ColorDataRetriever extends DataRetriever {
 
         if (color) { return color }
 
-        return "#222222" //TODO: Figure out what to do as a default route color
+        // TODO: Figure out what to do as a default route color
+        return "222222"
     }
 }
