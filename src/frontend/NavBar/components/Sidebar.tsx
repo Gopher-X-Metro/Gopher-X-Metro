@@ -111,52 +111,35 @@ export default function SideBar() {
                         <button className ="routes-tab" onClick = {() => updateToggle(1)}>Routes</button>
                         <button className="favorite-tab" onClick = {() => updateToggle(2)}>Favorites</button>
                     </div>
-                <div className={toggle === 1 ? "tab-content" : "content"}>
-
-                    <div className="Clear-container">
-                        <button className="Clear-all-btn" onClick={Clearall.clearRoutes}>Clear Routes</button>  
-                    </div>
-
-                <div className="select-header">
-                    <h3>Select Routes</h3>
-                    <div className="underline"></div>
-                </div>
-
-                    {Array.from(routes.keys()).map(routeId => (<RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)} />))}
-             
-                <div className="search-header">
-                    <h3> Search Routes </h3>
-                    <div className="underline"></div>
-                </div>
-
-                <div className="searchContainer">
-                    <input type="text" id="search_route" placeholder="902"></input>
-                    <button onClick={SearchFeature.searchRoute} id="searchButton">
-                        <img className="busImg" height="50" alt="error" width="50" src={SearchIcon}></img>
-                    </button>
-                </div>
-
-                <div className="error_text" id="error_text"></div>
-
-                </div>
-
-                <div className={toggle === 2 ? "tab-content" : "content"}>
-                        <div className="favorite-header">
-                            <h3> Favorited Routes </h3>
+                    <div className={toggle === 1 ? "tab-content" : "content"}>
+                        <div className="Clear-container">
+                            <button className="Clear-all-btn" onClick={Clearall.clearRoutes}>Clear Routes</button>  
+                        </div>
+                        <div className="select-header">
+                            <h3>Select Routes</h3>
                             <div className="underline"></div>
                         </div>
-                        <div id="Favorite-tab" ></div> 
+                        {Array.from(routes.keys()).map(routeId => (<RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)} />))}
+                        <div className="search-header">
+                            <h3> Search Routes </h3>
+                            <div className="underline"></div>
+                        </div>
+                        <div className="searchContainer">
+                            <input type="text" id="search_route" placeholder="902"></input>
+                            <button onClick={SearchFeature.searchRoute} id="searchButton">
+                                <img className="busImg" height="50" alt="error" width="50" src={SearchIcon}></img>
+                            </button>
+                        </div>
+                        <div className="error_text" id="error_text"></div>
+                    </div>
+                    <div className={toggle === 2 ? "tab-content" : "content"}>
+                            <div className="favorite-header">
+                                <h3> Favorited Routes </h3>
+                                <div className="underline"></div>
+                            </div>
+                            <div id="Favorite-tab" ></div> 
+                    </div>
                 </div>
-
-
-                </div>
-                
-
-           
-
-               
-
-               
             </div>
         </>
     );
