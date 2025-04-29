@@ -6,6 +6,7 @@ import Schedule from "src/backend/Schedule";
 import RouteButton from "src/frontend/NavBar/components/RouteButton";
 import SearchFeature from "src/frontend/NavBar/components/SearchFeature";
 import SearchIcon from "src/img/CustomBus.png";
+import Clearall from "src/frontend/NavBar/components/ClearAll";
 
 const predefinedRoutes = new Map([
     ["121", "121 Campus Connector"],
@@ -39,6 +40,9 @@ export default function SideBar() {
 
     // State to track whether sidebar is open or closed
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [toggle, setToggle] = useState(1); //switching between tabs
+
+    const updateToggle = (id) => {setToggle(id)};
 
     useEffect(() => {
         // Allows user to hit "Enter" to enter a route
@@ -102,21 +106,27 @@ export default function SideBar() {
             </div>
 
             <div id="nav-bar" className={sidebarOpen ? "sidebar open" : "sidebar"}>
-                <div className="nav-header">
+                <div className="sidebar-content">
+                    <div className="tab-container-sidebar">
+                        <button className ="routes-tab" onClick = {() => updateToggle(1)}>Routes</button>
+                        <button className="favorite-tab" onClick = {() => updateToggle(2)}>Favorites</button>
+                    </div>
+                <div className={toggle === 1 ? "tab-content" : "content"}>
+
+                    <div className="Clear-container">
+                        <button className="Clear-all-btn" onClick={Clearall.clearRoutes}>Clear Routes</button>  
+                    </div>
+
+                <div className="select-header">
                     <h3>Select Routes</h3>
                     <div className="underline"></div>
                 </div>
 
-                <div className="sidebar-content flex flex-col items-center">
-                    {Array.from(routes.keys()).map(routeId => (
-                        <RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)} />
-                    ))}
-                </div>
-
-                <div className="nav-header">
-                    <h1> Search Routes </h1>
+                    {Array.from(routes.keys()).map(routeId => (<RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)} />))}
+             
+                <div className="search-header">
+                    <h3> Search Routes </h3>
                     <div className="underline"></div>
-                    <br></br>
                 </div>
 
                 <div className="searchContainer">
@@ -127,6 +137,26 @@ export default function SideBar() {
                 </div>
 
                 <div className="error_text" id="error_text"></div>
+
+                </div>
+
+                <div className={toggle === 2 ? "tab-content" : "content"}>
+                        <div className="favorite-header">
+                            <h3> Favorited Routes </h3>
+                            <div className="underline"></div>
+                        </div>
+                        <div id="Favorite-tab" ></div> 
+                </div>
+
+
+                </div>
+                
+
+           
+
+               
+
+               
             </div>
         </>
     );
