@@ -123,17 +123,14 @@ body {
   z-index: 1;
   top: 10%;
   left: 0;
-  background-color: #f9f9f9;
+  background-color: #F0FFFF;
   overflow-x: clip;
-  padding-top: 15px;
+  padding-top: 0;
   transition: 0.5s;
-  overflow-y: scroll;
-  scrollbar-color:  black; /* only works for firefox */
-  scrollbar-width: thin;
 }
 
 /* WebKit-based browsers (Chrome, Safari, Edge) sidebar scrollbar */
-.sidebar::-webkit-scrollbar {
+ .sidebar::-webkit-scrollbar {
   width:  8px; 
 }
 
@@ -144,7 +141,7 @@ body {
 
 .sidebar::-webkit-scrollbar-track {
   background-color: transparent;
-}
+} 
 
 /* The sidebar container when it's open */
 .sidebar.open {
@@ -152,8 +149,12 @@ body {
 }
 
 .sidebar-content {
-  width: 285px;
+  width: 290px;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x:hidden;
 }
+
 
 /* The sidebar links */
 /* .sidebar a {
@@ -183,7 +184,7 @@ body {
   font-size: 17px;
   font-family: 'Neutraface Text', sans-serif;
   white-space: nowrap;
-  width: 285px;
+  width: 280px;
   display: block;
   transition: background-color 0.3s;
   position: relative;
@@ -347,6 +348,7 @@ body {
  float:center;
  position: relative;
  width: 250px;
+ padding-bottom: 5px;
 }
 
 .searchContainer input {
@@ -377,9 +379,7 @@ body {
 }
 
 #searchButton:active{
-  background-color:rgb(226, 226, 226);
-  box-shadow: 0 5px rgb(226, 226, 226);
-  transform: translateY(1px);
+  transform: translate(1px);
 }
 
 #error_text{
@@ -440,7 +440,6 @@ body.mobile .pac-container {
 }
 
 /* Center Button */
-
 #center-button.center-button.centered .icon {
   color: #111111;
 }
@@ -469,4 +468,161 @@ body.mobile .pac-container {
   cursor: pointer;
   border: none;
   padding-right: 10px;
+}
+
+/*  CSS for tab containers */
+
+.tab-container-sidebar{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #7a0019;
+  width: 290px;
+  border-top: 2px solid black;
+  border-left: 2px solid black;
+  border-right: 2px solid black;
+}
+
+.tab-container-sidebar button{
+  color: #F0FFFF;
+  text-align: center;
+  width: 100%;
+  padding:0;
+  
+}
+
+.tab-container-sidebar .routes-tab {
+  font-family: 'Neutraface Text', sans-serif;
+  font-size: 17px;
+  text-decoration: none;
+  text-align: center;
+  width: 100%;
+  border-right: 2px solid black;
+}
+
+.tab-container-sidebar .favorite-tab{
+  font-family: 'Neutraface Text', sans-serif;
+  font-size: 17px;
+  text-decoration: none;
+  width: 100%;
+}
+
+.tab-container-sidebar .favorite-tab:hover{
+  cursor: pointer;
+  background-color: rgb(255, 204, 51);
+  color: #F0FFFF;
+}
+
+.tab-container-sidebar .routes-tab:hover{
+  cursor: pointer;
+  background-color: rgb(255, 204, 51);
+  color: #F0FFFF;
+}
+
+.tab-container-sidebar .favorite-tab:active{
+  transform: scale(0.95);
+}
+
+.tab-container-sidebar .favorite-tab:focus{
+  background-color: rgb(255, 204, 51);
+}
+
+.tab-container-sidebar .routes-tab:active{
+  transform: scale(0.95);
+}
+
+.tab-container-sidebar .routes-tab:focus{
+  background-color: rgb(255, 204, 51);
+}
+
+.Clear-container{
+  border-bottom: 2px solid black;
+  background-color: #7a0019;
+  font-size: 17px;
+  width: 290px;
+  border-left: 2px solid black;
+  border-right: 2px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 2px solid black;
+}
+
+.Clear-container .Clear-all-btn {
+  text-align: center;
+  color: #F0FFFF;
+  text-decoration: none;
+  font-family: 'Neutraface Text', sans-serif;
+  width: 100%;
+  padding:0;
+}
+
+.Clear-container .Clear-all-btn:hover{
+  cursor: pointer;
+  background-color:  rgb(255, 204, 51);
+  color: #F0FFFF;
+}
+
+.Clear-container .Clear-all-btn:active{
+  transform: scale(0.95);
+}
+
+/* sidebar headers */
+.search-header .select-header h3 {
+  color: black;
+  font-family: 'Neutraface Text', sans-serif;
+  white-space: nowrap;
+}
+
+.search-header {
+  text-align: center;
+  width: 100%;
+  padding-bottom: 15px;
+}
+
+.select-header  {
+  text-align: center;
+  padding-top:10px;
+  margin-bottom: 5px;
+  width: 100%;
+}
+
+#bookmark-button.bookmark-button.bookmark-highlight {
+  background-color: rgb(255, 204, 51); 
+}
+
+#bookmark-button.bookmark-button.bookmark-highlight.icon:active {
+  transform: scale(0.95);
+}
+
+#bookmark-button.bookmark-button.bookmark-default{
+  color: #666666;
+}
+
+.Favorite-header {
+  text-align: center;
+  width: 100%;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.favorite-header .favorite-header h3 {
+  color: black;
+  font-family: 'Neutraface Text', sans-serif;
+  white-space: nowrap;
+}
+
+.favorite-header {
+  text-align: center;
+  width: 100%;
+  padding-bottom: 5px;
+  padding-top: 10px;
+}
+
+/* Controls tab switching */ 
+.content{  /* Hides the favorite tab content originally */
+  display: none;
+}
+.tab-content {
+  display: block;
 }
