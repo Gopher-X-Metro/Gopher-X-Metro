@@ -1,11 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import {
     Button,
     HStack,
     Box
 } from '@chakra-ui/react'
 import TitleBar from './components/TitleBar.tsx';
+import { centerMap, getMap } from 'src/frontend/Pages/Map/Map';
 import SideBar from './components/Sidebar.tsx';
 import ResponsiveDropdown from './components/MobileDropdown.tsx';
 
@@ -19,9 +19,9 @@ export default function NavBar({ setPage, isMobile }) {
                 <SideBar />
 
                 <Box>
-                    <Link to="/" >
+                    <button type="button" aria-label="Back to the map, centered on campus" onClick={() => { setPage("map"); centerMap(getMap()); }}>
                         <TitleBar />
-                    </Link>
+                    </button>
                 </Box>
                 <div className="flex-grow"/>
 

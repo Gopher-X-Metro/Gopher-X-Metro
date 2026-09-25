@@ -31,7 +31,8 @@ function saveFavorites(favorites: StopView[]) : void {
 export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMobile: boolean }) {
     const [favorites, setFavorites] = useState<StopView[]>(loadFavorites);
     const [nearby, setNearby] = useState<StopView[]>([]);
-    const [open, setOpen] = useState(() => loadFavorites().length > 0);
+    // Opens on its own when there are favorites, except on phones where it would cover the map
+    const [open, setOpen] = useState(() => loadFavorites().length > 0 && !window.matchMedia("(max-width: 1024px)").matches);
     const [status, setStatus] = useState("");
     const [colors, setColors] = useState<Record<string, string>>({});
     const [position, setPosition] = useState<{ lat: number, lng: number } | null>(null);
@@ -138,7 +139,7 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
                     </button>
                 </div>
                 {minutes !== undefined && <p className="walk">🚶 {minutes} min walk</p>}
-                {stop.alerts?.map((alert, i) => <p key={i} className="stop-alert">⚠ {alert}</p>)}
+                {stop.alerts?.map((alert, i) => <p key={i} className="stop-alert" onClick={e => e.currentTarget.classList.toggle("full")}>⚠ {alert}</p>)}
                 {stop.error && <p className="muted">Couldn't load departures.</p>}
                 {stop.departures && stop.departures.length === 0 && <p className="muted">No departures soon.</p>}
                 <ul className="departures">
