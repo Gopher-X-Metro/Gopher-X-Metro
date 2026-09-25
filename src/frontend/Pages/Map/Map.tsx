@@ -16,7 +16,8 @@ import AlertBanner from "./components/AlertBanner";
 
 const UMNLocation = { lat: 44.97369560732433, lng: -93.2317259515601 };
 const defaultZoom = 15;
-const TWIN_CITIES = L.latLngBounds([44.84, -93.42], [45.08, -92.98]);
+// Every Metro Transit stop, with a little margin
+const TWIN_CITIES = L.latLngBounds([44.66, -93.80], [45.38, -92.74]);
 
 let currentMap: L.Map | null = null;
 
@@ -48,7 +49,7 @@ export default function MapPage({ hidden, setPage, isMobile }) {
                 // Keeps the map on the Twin Cities metro, where these routes run
                 maxBounds: TWIN_CITIES,
                 maxBoundsViscosity: 1,
-                minZoom: 11,
+                minZoom: 10,
             }).setView(UMNLocation, defaultZoom);
             L.control.zoom({ position: "bottomright" }).addTo(leafletMap);
             L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
