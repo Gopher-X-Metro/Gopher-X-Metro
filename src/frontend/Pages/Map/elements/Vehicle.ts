@@ -32,13 +32,13 @@ class Vehicle extends InfoWindowElement {
         // Create bus image
         const busImage = document.createElement("img")
         busImage.src = images[0];
-        busImage.width = 25;
+        busImage.style.width = "25px";
         busContainer.appendChild(busImage);
 
         // Create arrow image
         const arrowImage = document.createElement("img")
         arrowImage.src = images[1];
-        arrowImage.width = 40;
+        arrowImage.style.width = "40px";
         arrowContainer.appendChild(arrowImage);
 
         // Store reference to arrow image and container
