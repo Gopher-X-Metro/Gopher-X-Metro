@@ -25,6 +25,14 @@ abstract class InfoWindowElement extends Element {
     }
 
     /**
+     * Sets the visibility of the marker, closing its info window when it's hidden
+     * @param visible if the marker should be visible
+     */
+    public setVisible(visible: boolean) : void {
+        super.setVisible(visible);
+        if (!visible) this.infoWindow?.setVisible(false);
+    }
+    /**
      * Updates the info window information
      */
     abstract updateWindow() : void;
