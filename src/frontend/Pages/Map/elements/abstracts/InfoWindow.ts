@@ -11,7 +11,7 @@ export default class InfoWindow {
      */
     constructor(location: L.LatLng | undefined, map: L.Map, offset: [number, number] = [0, 0]) {
         this.map = map;
-        this.window = L.popup({ offset: offset, autoPan: false });
+        this.window = L.popup({ offset: offset, autoPanPaddingTopLeft: [20, 90] });
 
         if (location) this.window.setLatLng(location);
     }   
