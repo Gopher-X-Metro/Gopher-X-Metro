@@ -48,6 +48,9 @@ namespace Routes {
      * @param _map map object
      */
     export function init(_map: L.Map) : void {
+        _map.on("zoomend", async () => {
+            for (const stop of stops.values()) (await stop)?.setZoomSize(_map.getZoom());
+        });
         map = _map;
         
         URL.addListener(() => refresh());
@@ -77,10 +80,6 @@ namespace Routes {
      */
     export async function refreshVehicles() 
     {
-        // Updates Vehicle Data
-        for (const routeId of URL.getRoutes())
-            Data.Vehicle.reload(routeId);
-
         // Updates Vehicles
         URL.getRoutes()?.forEach(async routeId => {
             const route = routes.get(routeId)

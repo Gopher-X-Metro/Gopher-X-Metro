@@ -36,7 +36,7 @@ namespace Realtime {
         
         // Check if University Route
         if (Object.keys(Peak.UNIVERSITY_ROUTES).includes(routeId)) {
-            let json = (await getRealtimeGTFSUniversity()).vehicles
+            let json = ((await getRealtimeGTFSUniversity())?.vehicles ?? [])
             .filter(vehicle => Peak.UNIVERSITY_ROUTES[routeId] === vehicle.routeID || Peak.NIGHT_ROUTES[routeId] === vehicle.routeID);
 
             json.forEach(vehicle => {
@@ -53,7 +53,14 @@ namespace Realtime {
         // Check if the route exists in Transit
         if (!(await getRoute(routeId))) return 
 
-        // Run on Metro Routes
+        // Run on Metro Routes; Metro Transit only refreshes positions every ~30 seconds, so poll every 5
+        const cached = metroVehicles.get(routeId);
+        if (cached && Date.now() - cached.time < METRO_POLL_MS) return cached.data;
+        const request = fetchMetroVehicles(routeId);
+        metroVehicles.set(routeId, { time: Date.now(), data: request });
+        return request;
+    }
+    async function fetchMetroVehicles(routeId: string) : Promise<any> {
         return await fetch("https://svc.metrotransit.org/nextrip/vehicles/"+routeId).then(async response => {
             if (response.ok && response.status === 200){
                 let json = await response.json();
@@ -98,6 +105,14 @@ namespace Realtime {
      * Gets the fetched data of the university busses
      */
     export async function getRealtimeGTFSUniversity(): Promise<any> {
+        // One shared request for every campus route; Peak positions refresh every few seconds
+        if (!universityRequest || Date.now() - universityTime > PEAK_POLL_MS) {
+            universityTime = Date.now();
+            universityRequest = fetchUniversity().catch(() => undefined);
+        }
+        return universityRequest;
+    }
+    async function fetchUniversity(): Promise<any> {
         return await fetch(GTFS_REALTIME_URL_UMN).then(async response => {
             if (response.ok && response.status === 200)
                 return await response.json();
@@ -105,6 +120,12 @@ namespace Realtime {
                 console.warn(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${await response.text()}`);
         })
     }
+
+    const PEAK_POLL_MS = 2000;
+    const METRO_POLL_MS = 5000;
+    let universityRequest: Promise<any> | undefined;
+    let universityTime = 0;
+    const metroVehicles = new Map<string, { time: number, data: Promise<any> }>();
 
     const GTFS_REALTIME_URL_UMN = "https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=vehicles2&action=list&agencyID=88";
     const GTFS_REALTIME_URL_VEHICLE_POSITIONS = 'https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb';

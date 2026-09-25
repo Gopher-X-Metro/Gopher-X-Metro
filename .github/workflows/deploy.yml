@@ -32,7 +32,7 @@ jobs:
       - name: Download Metro Transit GTFS
         run: |
           curl -sSfL -o gtfs.zip https://svc.metrotransit.org/mtgtfs/gtfs.zip
-          unzip -q gtfs.zip calendar.txt calendar_dates.txt routes.txt trips.txt shapes.txt stops.txt -d gtfs
+          unzip -q gtfs.zip calendar.txt calendar_dates.txt routes.txt trips.txt shapes.txt stops.txt stop_times.txt -d gtfs
       - run: node scripts/build-gtfs.mjs gtfs
       - run: npm run build
         env:

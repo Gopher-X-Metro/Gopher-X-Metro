@@ -14,6 +14,7 @@ namespace Live {
     }
 
     export interface Departure {
+        tripId: string;
         routeId: string;
         routeName: string;
         text: string;
@@ -32,6 +33,10 @@ namespace Live {
         id: string;
         header: string;
         routes: string[];
+        description?: string;
+        created?: number;
+        start?: number;
+        end?: number;
     }
 
     /**
@@ -77,6 +82,7 @@ namespace Live {
         const data = await Realtime.getStop(stopId);
         return {
             departures: (data?.departures ?? []).map((d: any) => ({
+                tripId: String(d.trip_id),
                 routeId: d.route_id,
                 routeName: d.route_short_name ?? d.route_id,
                 text: formatDeparture(d.departure_text, d.departure_time),
@@ -130,6 +136,9 @@ namespace Live {
                         .map(entity => ({
                             id: entity.id,
                             header: entity.alert?.headerText?.translation?.[0]?.text ?? "",
+                            description: entity.alert?.descriptionText?.translation?.[0]?.text ?? "",
+                            start: Number(entity.alert?.activePeriod?.[0]?.start ?? 0) || undefined,
+                            end: Number(entity.alert?.activePeriod?.[0]?.end ?? 0) || undefined,
                             routes: [...new Set((entity.alert?.informedEntity ?? []).map(i => i.routeId).filter(Boolean) as string[])],
                         }));
                 })
@@ -186,15 +195,17 @@ namespace Live {
      * Gets recent campus bus notices (detours, game days) for campus routes on the map
      * @param routeIds IDs of the routes on the map
      */
-    export async function getCampusNotices(routeIds: Set<string>) : Promise<Alert[]> {
+    export async function getCampusNotices(routeIds: Set<string> | null, days = NOTICE_DAYS) : Promise<Alert[]> {
         if (!notices || Date.now() - noticesFetched > 300000) {
             noticesFetched = Date.now();
-            const since = Math.floor(Date.now() / 1000) - NOTICE_DAYS * 86400;
+            const since = Math.floor(Date.now() / 1000) - 30 * 86400;
             notices = fetch(PEAK_URL.replace("&action=list", "") + `Fcm_notifications&action=since&agency_id=88&topic=alerts&created=${since}`)
                 .then(response => response.json())
                 .then(data => (data.fcm_notifications ?? []).map((n: any) => ({
                     id: "peak-" + n.id,
                     header: n.body ? `${n.title}: ${n.body}` : n.title,
+                    description: n.body,
+                    title: n.title,
                     routes: [...new Set<string>((n.title + " " + n.body).match(/12[0-6]/g) ?? [])],
                     created: n.created,
                     end: n.display_end,
@@ -203,8 +214,9 @@ namespace Live {
         }
         const now = Date.now() / 1000;
         return (await notices)
-            .filter((n: any) => (n.end ? n.end > now : n.created > now - NOTICE_DAYS * 86400))
-            .filter((n: Alert) => n.routes.some(route => routeIds.has(route)));
+            .filter((n: any) => (n.end ? n.end > now : n.created > now - days * 86400))
+            .filter((n: Alert) => !routeIds || n.routes.some(route => routeIds.has(route)))
+            .sort((a: Alert, b: Alert) => (b.created ?? 0) - (a.created ?? 0));
     }
 
     /**

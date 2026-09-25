@@ -1,0 +1,14 @@
+{
+  "name": "Gopher X Metro",
+  "short_name": "Gopher X Metro",
+  "description": "Live map of UMN campus buses and Metro Transit buses and trains",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#7a0019",
+  "theme_color": "#7a0019",
+  "icons": [
+    { "src": "favicon/favicon-196x196.png", "sizes": "196x196", "type": "image/png", "purpose": "any" },
+    { "src": "favicon/favicon-128.png", "sizes": "128x128", "type": "image/png" }
+  ]
+}
