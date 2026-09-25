@@ -1,66 +1,111 @@
-import { ControlPosition, MapControl, useMap } from "@vis.gl/react-google-maps";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import L from "leaflet";
 import Plan from "src/backend/Plan";
 import Routes from "src/frontend/Pages/Map/components/Routes";
 import Search from "src/frontend/Pages/Map/elements/Search";
 
+interface Place {
+    id: string;
+    name: string;
+    detail: string;
+    location: L.LatLng;
+}
+
 const searches = new Map<string, Search>();
 
-export default function LocationSearchBar( { isMobile } ) {
-    const input = useRef<HTMLInputElement>(null);
-    const map = useMap("map");
+// Free OpenStreetMap geocoder, biased toward the Twin Cities
+const PHOTON_URL = "https://photon.komoot.io/api/?limit=5&lat=44.9737&lon=-93.2317&bbox=-93.8,44.6,-92.7,45.3&q=";
+
+export default function LocationSearchBar({ map, isMobile }: { map: L.Map | null, isMobile: boolean }) {
+    const [query, setQuery] = useState("");
+    const [results, setResults] = useState<Place[]>([]);
+    const container = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (input.current && map) {
-            const autocomplete = new google.maps.places.Autocomplete(input.current, { fields: ["place_id", "geometry", "name", "formatted_address"] });
-            const geocoder = new google.maps.Geocoder();
-    
-            autocomplete.bindTo("bounds", map);
-            autocomplete.addListener("place_changed", () => onPlaceChange(map, autocomplete, geocoder));
+        // Keeps clicks and scrolls on the search bar from moving the map
+        if (container.current) {
+            L.DomEvent.disableClickPropagation(container.current);
+            L.DomEvent.disableScrollPropagation(container.current);
         }
-    }, [input, map])
+    }, [container])
+
+    useEffect(() => {
+        if (query.trim().length < 3) {
+            setResults([]);
+            return;
+        }
+        const controller = new AbortController();
+        const timeout = setTimeout(() => {
+            fetch(PHOTON_URL + encodeURIComponent(query), { signal: controller.signal })
+            .then(response => response.json())
+            .then(data => setResults(data.features.map((feature: any) => {
+                const p = feature.properties;
+                return {
+                    id: `${p.osm_type}${p.osm_id}`,
+                    name: p.name ?? [p.housenumber, p.street].filter(Boolean).join(" "),
+                    detail: [p.name ? p.street : null, p.city].filter(Boolean).join(", "),
+                    location: L.latLng(feature.geometry.coordinates[1], feature.geometry.coordinates[0]),
+                };
+            })))
+            .catch(() => {});
+        }, 300);
+        return () => { clearTimeout(timeout); controller.abort(); };
+    }, [query])
+
+    const onSelect = (place: Place) => {
+        setQuery(place.name);
+        setResults([]);
+        if (map) onPlaceChange(map, place);
+    }
 
     return (
-        <>
-            <MapControl position={isMobile ? ControlPosition.BOTTOM_CENTER : ControlPosition.TOP_CENTER}>
-                <input id="location-search-bar" className={"location-search-bar" + (isMobile ? " mobile" : "")} type="text" ref={input}/>
-            </MapControl>
-        </>
+        <div ref={container}
+             className={"absolute z-[1000] left-1/2 -translate-x-1/2 " + (isMobile ? "bottom-[30px] w-[90%]" : "top-0")}>
+            <input id="location-search-bar"
+                   className={"location-search-bar"}
+                   style={isMobile ? { margin: 0, width: "100%" } : undefined}
+                   type="text"
+                   placeholder="Search for a place"
+                   value={query}
+                   onChange={e => setQuery(e.target.value)}
+                   onKeyDown={e => { if (e.key === "Enter" && results.length > 0) onSelect(results[0]); }}/>
+            {results.length > 0 && (
+                <ul className={"bg-white shadow-md rounded text-sm " + (isMobile ? "absolute bottom-full w-full mb-1" : "ml-[17px] w-[400px]")}>
+                    {results.map(place => (
+                        <li key={place.id}
+                            className="px-3 py-2 cursor-pointer hover:bg-gray-100 text-black"
+                            onClick={() => onSelect(place)}>
+                            <b>{place.name}</b> <span className="text-gray-500">{place.detail}</span>
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
     )
 }
 
 /**
-     * Sets the new location of the marker, and focuses on the spot
-     */
-function onPlaceChange(map : google.maps.Map, autocomplete : google.maps.places.Autocomplete, geocoder : google.maps.Geocoder) : void {
-    const place = autocomplete.getPlace();
+ * Sets the new location of the marker, and focuses on the spot
+ */
+function onPlaceChange(map : L.Map, place : Place) : void {
+    map.setView(place.location, 15);
 
-    if (!place.place_id) return;
-
-    if (searches.has(place.place_id)) {
-        searches.get(place.place_id)?.setVisible(true);
-    } else {
-        geocoder
-        .geocode({ placeId: place.place_id })
-        .then(async ({ results }) => {
-            const location = results[0].geometry.location;
-
-            searches.set(place.place_id as string, new Search(place.place_id as string, place.name, location, map));
-
-            map.setZoom(15);
-            map.setCenter(location);
-
-            Plan.serviceNearby(location.lat(), location.lng(), null, 0, 0.3).then(async nearest => {
-                if (nearest.version !== 0) {
-                    for (const stop of nearest.atstop) {
-                        Routes.loadStop(stop.stopid, "").then(s => {
-                            if (s) searches.get(place.place_id as string)?.addElement(s);
-                            s?.addElement(searches.get(place.place_id as string) as Search);
-                            s?.updateVisibility();
-                        });
-                    }
-                }
-            })
-        }).catch((error) => window.alert("Geocoder failed due to: " + error));
+    if (searches.has(place.id)) {
+        searches.get(place.id)?.setVisible(true);
+        return;
     }
+
+    searches.set(place.id, new Search(place.id, place.name, place.location, map));
+
+    Plan.serviceNearby(place.location.lat, place.location.lng, null, 0, 0.3).then(async nearest => {
+        if (nearest.version !== 0) {
+            for (const stop of nearest.atstop) {
+                Routes.loadStop(stop.stopid, "").then(s => {
+                    if (s) searches.get(place.id)?.addElement(s);
+                    s?.addElement(searches.get(place.id) as Search);
+                    s?.updateVisibility();
+                });
+            }
+        }
+    })
 }

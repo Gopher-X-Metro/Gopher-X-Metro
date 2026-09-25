@@ -1,34 +1,7 @@
+import L from "leaflet";
 import proj4 from "proj4";
 
 namespace Plan {
-    export async function trip(origin: string, destination: string) 
-      {
-        let response = await fetch("https://routes.googleapis.com/directions/v2:computeRoutes", {
-          method: "POST",
-          body: JSON.stringify({
-            "origin": {
-              "address": origin
-            },
-            "destination": {
-              "address": destination
-            },
-            "travelMode": "TRANSIT",
-            "computeAlternativeRoutes": true,
-            "transitPreferences": {
-               routingPreference: "LESS_WALKING",
-               allowedTravelModes: ["TRAIN"]
-            },
-          }),
-          headers: {
-              "Content-type": "application/json; charset=UTF-8",
-              "X-Goog-Api-Key": process.env.REACT_APP_API_KEY ? process.env.REACT_APP_API_KEY : "",
-              "X-Goog-FieldMask": "routes.legs.steps.transitDetails"
-          }
-      });
-
-        return response;
-    }
-
     export async function routeLandmarks(routeId: string, category: string | null) {
         let response = await fetch("https://svc.metrotransit.org/tripplanner/routelandmarks", {
             method: "POST",
@@ -130,9 +103,9 @@ namespace Plan {
     return response.json();
   }
 
-  function fromUTMtoLatLng(x: number, y: number) : google.maps.LatLng {
+  function fromUTMtoLatLng(x: number, y: number) : L.LatLng {
     const coordinates = proj4("+proj=utm +zone=15", "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs", [x, y]);
-    return new google.maps.LatLng(coordinates["1"], coordinates["0"]);
+    return L.latLng(coordinates["1"], coordinates["0"]);
   }
 
   function fromLatLngtoUTM(latitude: number, longitude: number) : { x:number, y:number } {

@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 
 import { BrowserRouter } from 'react-router-dom';
-import { APIProvider } from '@vis.gl/react-google-maps';
 import { useMediaQuery } from '@chakra-ui/react';
 
 import Pages from './frontend/Pages/Pages.tsx';
@@ -20,10 +19,8 @@ export default function App() {
   }, [isMobile])
 
   return (
-    <APIProvider apiKey={process.env.REACT_APP_API_KEY} libraries={["places", "marker"]}>
-      <BrowserRouter>
-          <Pages isMobile={isMobile}/>
-      </BrowserRouter>
-    </APIProvider>
+    <BrowserRouter>
+        <Pages isMobile={isMobile}/>
+    </BrowserRouter>
   );
 }

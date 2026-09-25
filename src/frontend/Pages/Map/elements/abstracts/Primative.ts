@@ -1,3 +1,4 @@
+import L from "leaflet";
 
 abstract class Primative {
     /**
@@ -5,7 +6,7 @@ abstract class Primative {
      * @param id   id of the primative object
      * @param map   map of the primative object
      */
-    constructor (id: string, map: google.maps.Map) {
+    constructor (id: string, map: L.Map) {
         this.id = id;
         this.map = map;
     }
@@ -20,7 +21,7 @@ abstract class Primative {
     abstract isVisible() : boolean;
 
     protected readonly id: string;
-    protected readonly map: google.maps.Map;
+    protected readonly map: L.Map;
 }
 
 export default Primative;

@@ -1,3 +1,4 @@
+import L from 'leaflet';
 import InfoWindowElement from './abstracts/InfoWindowElement';
 
 import Resources from 'src/backend/Resources.ts';
@@ -23,17 +24,14 @@ class Stop extends InfoWindowElement {
      * @param location location of the stop
      * @param map map the stop displays on
      */
-    constructor(stopId: string, color: string, name: string, direction: string, location: google.maps.LatLng, map: google.maps.Map) {
-        super(stopId, map, new window.google.maps.Circle({
+    constructor(stopId: string, color: string, name: string, direction: string, location: L.LatLng, map: L.Map) {
+        super(stopId, map, L.circle(location, {
             fillColor: color,
             fillOpacity: 1,
-            strokeWeight: 8,
-            strokeColor: color,
-            center: location,
+            weight: 8,
+            color: color,
             radius: 6.5,
-            clickable: true,
-            strokeOpacity: 0.5,
-            map: map
+            opacity: 0.5
         }));
 
         this.departures = new Map<string, Array<departure>>();
@@ -165,8 +163,7 @@ class Stop extends InfoWindowElement {
      * @param color  the new color
      */
     public setColor(color: string) : void {
-        (this.marker as google.maps.Circle).set("fillColor", color);
-        (this.marker as google.maps.Circle).set("strokeColor", color);
+        (this.marker as L.Circle).setStyle({ fillColor: color, color: color });
     }
     /**
      * Adds an element to the set of elements

@@ -1,3 +1,4 @@
+import L from "leaflet";
 import Primative from "./Primative";
 
 /**
@@ -9,40 +10,34 @@ abstract class Element extends Primative {
     /**
      * Element Constructor
      * @param id ID of the element
-     * @param color color of the element
      * @param map map the element displays on 
+     * @param marker layer that represents the element
      */
-    constructor(id: string, map: google.maps.Map, marker: google.maps.MVCObject | google.maps.marker.AdvancedMarkerElement) {
+    constructor(id: string, map: L.Map, marker: L.Layer) {
         super(id, map);
         this.marker = marker;
     }
     /**
      * Gets the marker object on the map
      */
-    public getMarker() : google.maps.MVCObject | google.maps.marker.AdvancedMarkerElement { return this.marker; }
+    public getMarker() : L.Layer { return this.marker; }
     /**
      * Sets the visibility of the marker
      * @param visible if the marker should be visible
      */
     public setVisible(visible: boolean) : void {
-        if (this.marker instanceof google.maps.MVCObject)
-            this.marker.set("map", visible ? this.map : undefined);
-        else if (this.marker instanceof google.maps.marker.AdvancedMarkerElement)
-            this.marker.map = visible ? this.map : undefined;
+        if (visible)
+            this.marker.addTo(this.map);
+        else
+            this.marker.remove();
     }
     /**
      * Tells if the marker is visible
      */
-    public isVisible() : boolean {
-        if (this.marker instanceof google.maps.MVCObject)
-            return this.marker.get("map") !== undefined;
-        else if (this.marker instanceof google.maps.marker.AdvancedMarkerElement)
-            return this.marker.map !== undefined;
-        return false;
-    }
+    public isVisible() : boolean { return this.map.hasLayer(this.marker); }
 
     /* Private */
-    protected readonly marker: google.maps.MVCObject | google.maps.marker.AdvancedMarkerElement;
+    protected readonly marker: L.Layer;
 }
 
 export default Element;

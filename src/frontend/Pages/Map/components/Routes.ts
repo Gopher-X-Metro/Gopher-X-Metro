@@ -1,3 +1,5 @@
+import L from "leaflet";
+import { LINE_BOLD, LINE_NORMAL } from "../elements/Path";
 import Resources from "src/backend/Resources.ts";
 import Schedule from "src/backend/Schedule.ts";
 import Vehicle from "../elements/Vehicle.ts";
@@ -43,7 +45,7 @@ namespace Routes {
      * Initalzes Routes
      * @param _map map object
      */
-    export function init(_map: google.maps.Map) : void {
+    export function init(_map: L.Map) : void {
         map = _map;
         
         URL.addListener(() => refresh());
@@ -66,7 +68,7 @@ namespace Routes {
      * @param bolded should the route be boolded
      */
     export function setBolded(routeId: string, bolded: boolean) {
-        getRoute(routeId)?.getPaths()?.forEach(paths => (paths.getMarker() as google.maps.MVCObject).set("strokeWeight", bolded ? process.env.REACT_APP_LINE_BOLD : process.env.REACT_APP_LINE_NORMAL));
+        getRoute(routeId)?.getPaths()?.forEach(paths => (paths.getMarker() as L.Polyline).setStyle({ weight: bolded ? LINE_BOLD : LINE_NORMAL }));
     }
     /**
      * Refreshes the vehicles
@@ -90,12 +92,12 @@ namespace Routes {
                         route.addVehicleObject(info.trip_id, vehicles.get(info.trip_id));
 
                         // If the user hovers over the vehicle, change the width of the line
-                        route.getVehicles().get(info.trip_id)?.getMarker().addListener("mouseover", () => {
+                        route.getVehicles().get(info.trip_id)?.getMarker().on("mouseover", () => {
                             setBolded(route.getId(), true)
                         });
 
                         // If the user hovers over the vehicle, change the width of the line
-                        route.getVehicles().get(info.trip_id)?.getMarker().addListener("mouseout", () => {
+                        route.getVehicles().get(info.trip_id)?.getMarker().on("mouseout", () => {
                             setBolded(route.getId(), false)
                         });
                     }
@@ -110,7 +112,7 @@ namespace Routes {
                     vehicles.get(info.trip_id)?.setBusBearing(info.bearing);
                 }
 
-                vehicles.get(info.trip_id)?.setPosition(new google.maps.LatLng(info.latitude as number, info.longitude as number), info.timestamp);
+                vehicles.get(info.trip_id)?.setPosition(L.latLng(info.latitude as number, info.longitude as number), info.timestamp);
                 vehicles.get(info.trip_id)?.updateWindow();
                 vehicles.get(info.trip_id)?.updateTimestamp();
             }
@@ -145,12 +147,12 @@ namespace Routes {
                                     route.addStopObject(info.stop_id, stop);
 
                                     // If the user hovers over the stop, change the width of the line
-                                    stop?.getMarker().addListener("mouseover", () => {
+                                    stop?.getMarker().on("mouseover", () => {
                                         setBolded(route.getId(), true)
                                     });
 
                                     // If the user stops hovering over the stop, return back
-                                    stop?.getMarker().addListener("mouseout", () => {
+                                    stop?.getMarker().on("mouseout", () => {
                                         setBolded(route.getId(), false)
                                     });
                                 }
@@ -178,10 +180,10 @@ namespace Routes {
 
                 if (info.status !== 400) {
                     if (properties.stop_id === stopId || !stops.has(properties.stop_id)) {
-                        stop = new Stop(properties.stop_id, "#4169e1", properties.description, direction, new google.maps.LatLng(properties.latitude, properties.longitude), map);
+                        stop = new Stop(properties.stop_id, "#4169e1", properties.description, direction, L.latLng(properties.latitude, properties.longitude), map);
                         stops.set(properties.stop_id, Promise.resolve(stop));
 
-                        stop.getMarker().addListener("click", async () => {
+                        stop.getMarker().on("click", async () => {
                             for (let s of stops) 
                                 if ((await s[1])?.getId() !== properties.stop_id)
                                     (await s[1])?.infoWindow?.setVisible(false);
@@ -201,7 +203,7 @@ namespace Routes {
     const routes = new Map<string, Route>();
     const stops = new Map<string, Promise<Stop | undefined>>();
     const vehicles = new Map<string, Vehicle>();
-    let map: google.maps.Map;
+    let map: L.Map;
 
     /**
      * Loads a route into the routes hash
@@ -237,17 +239,17 @@ namespace Routes {
         }
     }
 
-    async function loadPath(routeId: string, shapeId: string, color: string, locations: Array<google.maps.LatLng>) {
+    async function loadPath(routeId: string, shapeId: string, color: string, locations: Array<L.LatLng>) {
         const route = getRoute(routeId);
 
         if (route) {
             route.addPath(shapeId, color, locations)
 
             // If the user hovers over the line, change the width
-            route.getPaths().get(shapeId)?.getMarker().addListener("mouseover", () => setBolded(route.getId(), true));
+            route.getPaths().get(shapeId)?.getMarker().on("mouseover", () => setBolded(route.getId(), true));
 
             // If the user stops hovering over the line, return back
-            route.getPaths().get(shapeId)?.getMarker().addListener("mouseout", () => setBolded(route.getId(), false));
+            route.getPaths().get(shapeId)?.getMarker().on("mouseout", () => setBolded(route.getId(), false));
         }
     }
 
@@ -283,7 +285,7 @@ namespace Routes {
         vehicleId: string,
         tripId: string,
         timestamp: number,
-        location: google.maps.LatLng,
+        location: L.LatLng,
         bearing: number,
         direction_id: number) {
 
@@ -312,7 +314,7 @@ namespace Routes {
      * @param _map map object
      * @deprecated  Use init() instead
      */
-    export function setMap(_map: google.maps.Map): void { map = _map; }
+    export function setMap(_map: L.Map): void { map = _map; }
 }
 
 export default Routes;
