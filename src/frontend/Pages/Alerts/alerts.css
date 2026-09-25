@@ -1,0 +1,8 @@
+.alerts-section { margin-top: 10px; padding-bottom: 12px; scroll-margin-top: 10px; }
+.alert-card { border: 1px solid #eee; border-left: 4px solid #f0b54a; border-radius: 6px; padding: 10px 12px; margin: 10px 0; background: #fff; }
+.alert-routes { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 4px; }
+.alert-route { background: #7a0019; color: #fff; font-weight: bold; font-size: 12px; border-radius: 4px; padding: 1px 6px; }
+.alert-date { color: #777; font-size: 12px; margin-left: auto; }
+.alert-title { font-weight: bold; font-size: 14px; }
+.alert-body { font-size: 14px; color: #333; margin-top: 4px; white-space: pre-line; }
+.alerts-link { display: inline-block; margin-top: 6px; color: #0053a0; text-decoration: underline; font-size: 14px; }

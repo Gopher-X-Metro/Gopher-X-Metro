@@ -29,9 +29,9 @@ class Stop extends InfoWindowElement {
         super(stopId, map, L.circleMarker(location, {
             fillColor: color,
             fillOpacity: 1,
-            weight: 10,
+            weight: stopSize(map.getZoom()).weight,
             color: color,
-            radius: 7,
+            radius: stopSize(map.getZoom()).radius,
             opacity: 0.35,
             bubblingMouseEvents: false
         }));
@@ -185,6 +185,15 @@ class Stop extends InfoWindowElement {
         (this.marker as L.CircleMarker).setStyle({ fillColor: color, color: color });
     }
     /**
+     * Resizes the stop for the map's zoom level
+     * @param zoom the map's zoom level
+     */
+    public setZoomSize(zoom: number) : void {
+        const size = stopSize(zoom);
+        (this.marker as L.CircleMarker).setRadius(size.radius);
+        (this.marker as L.CircleMarker).setStyle({ weight: size.weight });
+    }
+    /**
      * Adds an element to the set of elements
      * @param element   the element to add
      */
@@ -229,5 +238,12 @@ class Stop extends InfoWindowElement {
 }
 
 const SOON_SECONDS = 90 * 60;
+
+/** Stops shrink when zoomed in close, so stops on opposite sides of a street don't overlap */
+function stopSize(zoom: number) : { radius: number, weight: number } {
+    if (zoom >= 18) return { radius: 5, weight: 5 };
+    if (zoom >= 17) return { radius: 6, weight: 7 };
+    return { radius: 7, weight: 10 };
+}
 
 export default Stop;

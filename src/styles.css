@@ -508,3 +508,10 @@ body:not(.mobile) .alert-banner { top: calc(var(--header-h, 80px) + 64px); }
 .vehicle-popup h3 { font-weight: bold; font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
 .vehicle-popup .route-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 .vehicle-popup p { margin: 2px 0 !important; }
+
+/* Late campus bus badge */
+.delay-badge { position: absolute; left: 6px; top: -22px; background: #d0021b; color: #fff; font: bold 11px/1 Arial, sans-serif; padding: 2px 4px; border-radius: 8px; border: 1.5px solid #fff; white-space: nowrap; pointer-events: none; }
+
+.departures .bell { font-size: 13px; opacity: .55; padding: 0 2px; }
+.departures .bell.on { opacity: 1; }
+.nearby-body .notice { background: #eef5ff; color: #0b3d7a; border-radius: 6px; padding: 6px 8px; font-size: 12px; margin: 6px 0; cursor: pointer; }

@@ -39,7 +39,7 @@ Live vehicle locations still come straight from the Metro Transit and Peak Trans
 ```bash
 npm install
 curl -L -o gtfs.zip https://svc.metrotransit.org/mtgtfs/gtfs.zip
-unzip gtfs.zip calendar.txt calendar_dates.txt routes.txt trips.txt shapes.txt stops.txt -d gtfs
+unzip gtfs.zip calendar.txt calendar_dates.txt routes.txt trips.txt shapes.txt stops.txt stop_times.txt -d gtfs
 npm run gtfs gtfs
 npm start
 ```

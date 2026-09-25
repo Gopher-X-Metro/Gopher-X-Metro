@@ -1,0 +1,13 @@
+.schedules-page { max-width: 720px; margin: 0 auto; padding: 16px; font-family: Arial, sans-serif; color: #222; }
+.schedules-controls { display: flex; flex-wrap: wrap; gap: 10px; }
+.schedules-title { font-size: 24px; font-weight: bold; color: #7a0019; margin: 16px 0 8px; }
+.schedule-day { margin-top: 18px; }
+.schedule-day h2 { font-size: 18px; font-weight: bold; border-bottom: 2px solid #ffcc33; padding-bottom: 4px; margin-bottom: 8px; }
+.schedule-direction { margin: 10px 0 14px; }
+.schedule-direction h3 { font-weight: bold; font-size: 15px; margin-bottom: 4px; }
+.schedule-direction h3 span { font-weight: normal; color: #555; }
+.schedule-direction table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.schedule-direction td { padding: 5px 8px; border-bottom: 1px solid #eee; }
+.schedule-direction td:last-child { text-align: right; color: #444; white-space: nowrap; }
+.schedules-note { color: #666; font-size: 13px; margin: 10px 0; }
+.schedules-note a { color: #0053a0; text-decoration: underline; }

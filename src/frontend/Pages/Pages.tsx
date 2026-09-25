@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Map from './Map/Map.tsx';
 import About from './About/About.tsx';
 import Schedules from './Schedule/Schedules.tsx';
+import Alerts from './Alerts/Alerts.tsx';
 
 export default function Pages( { isMobile } ) {
     const [page, setPage] = useState("map");
@@ -12,6 +13,7 @@ export default function Pages( { isMobile } ) {
             <Map hidden={page!=="map"} setPage={setPage} isMobile={isMobile}/>
             <About hidden={page!=="about"} setPage={setPage}/>
             <Schedules hidden={page!=="schedules"} setPage={setPage}/>
+            <Alerts hidden={!page.startsWith("alerts")} setPage={setPage} section={page === "alerts-metro" ? "metro" : "campus"}/>
         </>
     )
 }

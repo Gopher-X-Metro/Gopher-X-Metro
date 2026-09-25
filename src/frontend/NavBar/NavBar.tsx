@@ -15,7 +15,7 @@ import ResponsiveDropdown from './components/MobileDropdown.tsx';
 export default function NavBar({ setPage, isMobile }) {
     return (
         <div id="title-bar">
-            <HStack padding="2%" gap="3%" width="100%" className="items-center justify-content">
+            <HStack paddingX={4} paddingY={3} gap={4} width="100%" flexWrap="nowrap" className="items-center justify-content">
                 <SideBar />
 
                 <Box>
@@ -34,11 +34,9 @@ export default function NavBar({ setPage, isMobile }) {
                         <Button colorScheme='yellow' onClick={() => setPage("schedules")}>
                             Schedules
                         </Button>
-                        <a href='https://www.metrotransit.org/routes-services/closures' target="_blank" rel="noreferrer">
-                            <Button colorScheme='yellow'>
-                                Service Alerts
-                            </Button>
-                        </a>
+                        <Button colorScheme='yellow' onClick={() => setPage("alerts-campus")}>
+                            Alerts
+                        </Button>
                         <a href='https://campusmaps.umn.edu/' target="_blank" rel="noreferrer">
                             <Button colorScheme='yellow'>
                                 Campus Bus Map

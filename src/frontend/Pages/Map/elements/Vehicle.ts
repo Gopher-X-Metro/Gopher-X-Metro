@@ -49,6 +49,12 @@ class Vehicle extends InfoWindowElement {
 
         contents.appendChild(busContainer);
         contents.appendChild(arrowContainer);
+
+        // Red "+N" badge for campus buses running late
+        this.badge = document.createElement("div");
+        this.badge.className = "delay-badge";
+        this.badge.hidden = true;
+        contents.appendChild(this.badge);
     }
     /**
      * Stores the latest realtime data of the vehicle
@@ -58,6 +64,13 @@ class Vehicle extends InfoWindowElement {
     public setInfo(routeId: string, info: any) : void {
         this.routeId = routeId;
         this.info = info;
+
+        const late = info?.nextStopID ? info.minsLate : 0;
+        this.badge.hidden = !(late > 1);
+        if (late > 1) {
+            this.badge.textContent = "+" + late;
+            this.badge.title = `About ${late} minutes late`;
+        }
     }
     /**
      * Dims stale vehicles and refreshes the info window while it is open
@@ -147,9 +160,33 @@ class Vehicle extends InfoWindowElement {
     public setPosition(position : L.LatLng, timestamp : number) : void {
         if (!(this.marker as L.Marker).getLatLng().equals(position)) {
             this.infoWindow?.setPosition(position);
-            (this.marker as L.Marker).setLatLng(position);
+            this.glideTo(position);
             this.positionTimestamp = timestamp;
         }
+    }
+    /**
+     * Moves the icon smoothly to a new position instead of jumping
+     * @param position the new position
+     */
+    private glideTo(position: L.LatLng) : void {
+        const marker = this.marker as L.Marker;
+        const from = marker.getLatLng();
+        if (this.glide) cancelAnimationFrame(this.glide);
+
+        // Jump when there's nothing to glide from, the tab is hidden, or the move is too far to be driving
+        if ((from.lat === 0 && from.lng === 0) || document.hidden || from.distanceTo(position) > 1500) {
+            marker.setLatLng(position);
+            return;
+        }
+
+        const start = performance.now();
+        const step = (now: number) => {
+            const t = Math.min(1, (now - start) / GLIDE_MS);
+            const ease = t * (2 - t);
+            marker.setLatLng([from.lat + (position.lat - from.lat) * ease, from.lng + (position.lng - from.lng) * ease]);
+            if (t < 1) this.glide = requestAnimationFrame(step);
+        };
+        this.glide = requestAnimationFrame(step);
     }
     /**
      * Gets the direction the bus is heading
@@ -251,6 +288,8 @@ class Vehicle extends InfoWindowElement {
     private routeId: string | undefined;
     private info: any;
     private windowUpdated = 0;
+    private glide = 0;
+    private badge: HTMLDivElement;
     private updatedTimestamp: number | undefined;
     private tripId: string | undefined;
     private positionTimestamp : number | undefined;
@@ -261,6 +300,7 @@ class Vehicle extends InfoWindowElement {
 }
 
 const STALE_SECONDS = 120;
+const GLIDE_MS = 1500;
 
 const DIRECTIONS = { NB: "Northbound", SB: "Southbound", EB: "Eastbound", WB: "Westbound" };
 
