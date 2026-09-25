@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 
-import { BrowserRouter } from 'react-router-dom';
 import { useMediaQuery } from '@chakra-ui/react';
 
 import Pages from './frontend/Pages/Pages.tsx';
@@ -19,8 +18,6 @@ export default function App() {
   }, [isMobile])
 
   return (
-    <BrowserRouter>
-        <Pages isMobile={isMobile}/>
-    </BrowserRouter>
+    <Pages isMobile={isMobile}/>
   );
 }
