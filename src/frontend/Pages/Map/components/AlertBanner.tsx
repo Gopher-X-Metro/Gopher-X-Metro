@@ -45,6 +45,10 @@ export default function AlertBanner() {
                 {shown.map(alert => (
                     <p key={alert.id}><strong>⚠ {alert.routes.join(", ")}:</strong> {alert.header}</p>
                 ))}
+                <a className="alert-more" href="https://www.metrotransit.org/routes-services/closures" target="_blank" rel="noreferrer">All Metro Transit alerts</a>
+                {" · "}
+                <a className="alert-more" href="https://umn.rider.peaktransit.com" target="_blank" rel="noreferrer">Campus bus notices</a>
+                {visible.length > 1 && " · "}
                 {visible.length > 1 && (
                     <button className="alert-more" onClick={() => setExpanded(!expanded)}>
                         {expanded ? "Show less" : `+${visible.length - 1} more alert${visible.length > 2 ? "s" : ""}`}

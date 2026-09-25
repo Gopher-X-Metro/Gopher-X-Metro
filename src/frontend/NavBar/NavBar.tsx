@@ -34,6 +34,11 @@ export default function NavBar({ setPage, isMobile }) {
                         <Button colorScheme='yellow' onClick={() => setPage("schedules")}>
                             Schedules
                         </Button>
+                        <a href='https://www.metrotransit.org/routes-services/closures' target="_blank" rel="noreferrer">
+                            <Button colorScheme='yellow'>
+                                Service Alerts
+                            </Button>
+                        </a>
                         <a href='https://campusmaps.umn.edu/' target="_blank" rel="noreferrer">
                             <Button colorScheme='yellow'>
                                 Campus Bus Map

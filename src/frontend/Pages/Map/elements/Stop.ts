@@ -107,13 +107,30 @@ class Stop extends InfoWindowElement {
                         listItemElement.appendChild(buttonElement);
                         listItemElement.appendChild(routeIdElement);
 
-                        departures.forEach(departure => {
+                        // Shows the next 90 minutes (at least 3 times), with the rest behind "Show more"
+                        const cutoff = Date.now() / 1000 + SOON_SECONDS;
+                        const soon = Math.max(3, departures.filter(d => d.departure_time <= cutoff).length);
+                        const expanded = this.expanded.has(routeId);
+
+                        departures.forEach((departure, i) => {
+                            if (i >= soon && !expanded) return;
                             const timeElement = document.createElement("p");
                             timeElement.innerHTML = departure.departure_text;
                             timeElement.style.cssText = "margin: 5px 0; font-size: 14px;";
                             
                             listItemElement.appendChild(timeElement);
                         })
+
+                        if (departures.length > soon) {
+                            const moreElement = document.createElement("button");
+                            moreElement.textContent = expanded ? "Show less" : `Show ${departures.length - soon} more`;
+                            moreElement.style.cssText = "margin-top: 4px; font-size: 12px; text-decoration: underline;";
+                            moreElement.addEventListener("click", () => {
+                                if (expanded) this.expanded.delete(routeId); else this.expanded.add(routeId);
+                                this.updateWindow();
+                            });
+                            listItemElement.appendChild(moreElement);
+                        }
 
                         listElement.append(listItemElement);
                     }
@@ -190,6 +207,7 @@ class Stop extends InfoWindowElement {
     /* Private */
 
     private name: string;
+    private expanded = new Set<string>();
     private departures: Map<string, Array<departure>>;
     private direction: string;
     private elements: Set<Primative>;
@@ -208,5 +226,7 @@ class Stop extends InfoWindowElement {
      */
     public closeInfoWindow() : void { this.infoWindow?.setVisible(false); }   
 }
+
+const SOON_SECONDS = 90 * 60;
 
 export default Stop;
