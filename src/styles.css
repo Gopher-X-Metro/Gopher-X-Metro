@@ -204,8 +204,13 @@ body {
     background-color: #d18528; /* Color for route "3" */
 }
 
-.sidebar-content button.route-6::before {
-    background-color: #236918; /* Color for route "6" */
+.sidebar-content button.route-6::before,
+.sidebar-content button.route-925::before {
+    background-color: #236918; /* Color for route "6" and the E Line that replaced it */
+}
+
+.sidebar-content button.route-126::before {
+    background-color: #7a4a14; /* Brown, matching the campus rider site */
 }
 
 .sidebar-content button.route-902::before {
