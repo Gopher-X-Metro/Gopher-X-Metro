@@ -19,7 +19,7 @@ export default function SideBar() {
     routes.set("125", "125 Dinkytown Connector");
     routes.set("120", "120 East Bank Circulator");
     routes.set("2", "2 Franklin Av / To Hennepin");
-    routes.set("6", "6U 27Av-Univ / Via France");
+    routes.set("925", "METRO E Line (replaced 6)");
     routes.set("3", "3 U of M / Como Av / Dwtn Mpls");
     routes.set("902", "Metro Green Line");
     routes.set("901", "Metro Blue Line");
