@@ -21,6 +21,18 @@ export default function MapPage({ hidden, setPage, isMobile }) {
     const [mapLoaded, setMapLoaded] = useState(false);
     const [map, setMap] = useState<L.Map | null>(null);
     const mapDiv = useRef<HTMLDivElement>(null);
+    const page = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        // The header's height scales with the window, so map controls are placed below its measured bottom
+        const header = page.current?.querySelector(".chakra-stack") as HTMLElement | null;
+        if (!header || !page.current) return;
+        const update = () => page.current?.style.setProperty("--header-h", header.getBoundingClientRect().bottom + "px");
+        const observer = new ResizeObserver(update);
+        observer.observe(header);
+        update();
+        return () => observer.disconnect();
+    }, [])
 
     useEffect(() => {
         // Creates the Leaflet map once the container exists
@@ -54,7 +66,7 @@ export default function MapPage({ hidden, setPage, isMobile }) {
 
     return (
     <>
-        <div className="h-[100%] w-full bg-black" hidden={hidden}>
+        <div ref={page} className="h-[100%] w-full bg-black" hidden={hidden}>
             <NavBar setPage={setPage} isMobile={isMobile}/>
             <LoadingScreen hidden={mapLoaded}/>
             <div className="map relative h-full w-full">
