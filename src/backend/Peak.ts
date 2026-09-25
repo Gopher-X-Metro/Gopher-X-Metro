@@ -1,4 +1,7 @@
 import L from "leaflet";
+import { getCachedJSON } from "src/backend/Fetch.ts";
+
+const PEAK_URL = "https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&action=list&agencyID=88&controller=";
 namespace Peak {
     /**
      * Gets the running routes
@@ -16,7 +19,7 @@ namespace Peak {
         const shape = await getPeakShapes(shapeId);
         const shapeLocations: Array<L.LatLng> = [];
 
-        const pointString = shape.points;
+        const pointString = shape?.points ?? "";
         const pointArray = pointString.split(';');
 
         // console.log("Points array: ", pointArray);
@@ -37,31 +40,20 @@ namespace Peak {
      * @param routeId ID of the route
      */
     export async function getPeakTrips(routeId: string) : Promise<any> {
-        if (!trips.has(routeId))
-            // Load Trips
-            await fetch("https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=route2&action=list&agencyID=88")
-            .then(async response => response.json()
-            .then(data => data.routes?.forEach(route => trips.set(route.routeID, route))));
-
-        return new Array(trips.get(routeId));
+        const routes = await getCachedJSON(PEAK_URL + "route2", 60 * 60 * 1000);
+        const route = routes?.routes?.find((r: any) => String(r.routeID) === String(routeId));
+        return route ? [route] : [];
     }
     /**
      * Gets the shape data of a shapeId
      * @param shapeId ID of the shape
      */
     export async function getPeakShapes(shapeId: string) : Promise<any> {
-        if (!shapes.has(shapeId))
-            await fetch("https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=shape2&action=list&agencyID=88")
-            .then(async response => response.json()
-            .then(data => data.shape?.forEach(shape => shapes.set(shape.shapeID, shape))))
-
-        return shapes.get(shapeId); 
+        // One shared download of every campus shape, reused for an hour
+        const data = await getCachedJSON(PEAK_URL + "shape2", 60 * 60 * 1000);
+        return data?.shape?.find((shape: any) => String(shape.shapeID) === String(shapeId));
     }
-
-    const shapes : Map<string, any> = new Map<string, any>();
-    const trips : Map<string, any> = new Map<string, any>();    
-
-    /* University Routes and ID */
+/* University Routes and ID */
     export const UNIVERSITY_ROUTES = {
         "120": 11324, 
         "121": 11278, 

@@ -84,6 +84,8 @@ class Vehicle extends InfoWindowElement {
             return;
         }
         if (Date.now() - this.windowUpdated < 5000) return;
+        // Placeholder while the next stop and route details load
+        if (this.windowUpdated === 0) this.infoWindow?.setContent(`<div class="vehicle-popup"><p class="muted">Loading bus info…</p></div>`);
         this.windowUpdated = Date.now();
 
         this.buildWindow().then(content => this.infoWindow?.setContent(content));
@@ -108,14 +110,19 @@ class Vehicle extends InfoWindowElement {
 
         let nextStop: string | undefined;
         let eta: number | undefined;
+        let metro: Live.MetroTrip | undefined;
         if (info.nextStopID) {
             nextStop = await Live.getPeakStopName(info.nextStopID);
             const arrival = await Live.getPeakEta(info.nextStopID, info.routeID);
             if (arrival) eta = Math.round((arrival - Date.now() / 1000) / 60);
         } else if (this.tripId || this.id) {
-            nextStop = await Live.getMetroNextStop(this.tripId ?? this.id);
+            metro = await Live.getMetroTrip(this.tripId ?? this.id);
+            nextStop = metro.nextStop;
+            if (metro.arrival) eta = Math.round((metro.arrival - Date.now() / 1000) / 60);
         }
-        if (nextStop) lines.push("Next stop: " + nextStop + (eta !== undefined && eta >= 0 ? ` (${eta === 0 ? "now" : eta + " min"})` : ""));
+        if (nextStop) lines.push((metro?.stopped ? "At stop: " : "Next stop: ") + nextStop + (!metro?.stopped && eta !== undefined && eta >= 0 ? ` (${eta === 0 ? "now" : eta + " min"})` : ""));
+        if (metro?.delayMinutes !== undefined)
+            lines.push(metro.delayMinutes > 1 ? `About ${metro.delayMinutes} min late` : metro.delayMinutes < -1 ? `About ${-metro.delayMinutes} min early` : "On time");
 
         // Campus buses report schedule adherence and how full they are
         if (info.nextStopID !== undefined && info.minsLate !== undefined && info.nextStopID)
@@ -127,6 +134,9 @@ class Vehicle extends InfoWindowElement {
         lines.push(age > STALE_SECONDS 
             ? `Location may be out of date (${Math.round(age / 60)} min old)` 
             : `Location updated ${age < 5 ? "just now" : age + "s ago"}`);
+
+        const busNumber = metro?.busNumber ?? info.vehicleName;
+        if (busNumber) lines.push("Bus #" + busNumber);
 
         lines.forEach((line, i) => {
             const p = document.createElement("p");

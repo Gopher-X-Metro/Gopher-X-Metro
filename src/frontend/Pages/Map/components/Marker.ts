@@ -21,7 +21,8 @@ namespace Marker {
 
         // Centers at User Location
         navigator.geolocation.getCurrentPosition(position => { 
-            if (position.coords.accuracy < 1000) // If accuraccy is too low, don't center
+            // Don't center if accuracy is too low or the rider is outside the map's area
+            if (position.coords.accuracy < 1000 && (!map.options.maxBounds || (map.options.maxBounds as L.LatLngBounds).contains([position.coords.latitude, position.coords.longitude])))
                 map.setView([position.coords.latitude, position.coords.longitude])
         })
     }

@@ -10,7 +10,6 @@ import Route from "../elements/Route.ts";
 import Realtime from "src/backend/Realtime.ts";
 import Peak from "src/backend/Peak.ts";
 import Stop from "../elements/Stop.ts";
-import Data from "src/data/Data.ts";
 
 
 namespace Routes {
@@ -84,7 +83,7 @@ namespace Routes {
         URL.getRoutes()?.forEach(async routeId => {
             const route = routes.get(routeId)
 
-            for (const info of (await Realtime.getVehicles(routeId))) {
+            for (const info of (await Realtime.getVehicles(routeId)) ?? []) {
                 if (!vehicles.has(info.trip_id)) {
                     // Add Vehicle
                     vehicles.set(info.trip_id, new Vehicle(info.trip_id, Resources.getRouteImages(routeId), map))
@@ -129,9 +128,6 @@ namespace Routes {
      * Refresh the stops
      */
     export async function refreshStops() {
-        // Updates Stop Data
-        for (const routeId in URL.getRoutes())
-            Data.Departure.reload(routeId);
 
         // Updates Stops
         URL.getRoutes()?.forEach(async routeId => {
@@ -146,7 +142,7 @@ namespace Routes {
             for (const schedule of details.schedules) {
                 if (schedule.schedule_type_name === Schedule.getWeekDate()) {
                     for (const timetable of schedule.timetables) {
-                        for (const info of await Schedule.getStopList(routeId, timetable.schedule_number)) {
+                        for (const info of (await Schedule.getStopList(routeId, timetable.schedule_number)) ?? []) {
                             // Load the stop
                             loadStop(info.stop_id, timetable.direction)?.then(async stop => {
                                 // Adds the stop if it has not been added yet
@@ -251,8 +247,6 @@ namespace Routes {
      * @param routeId ID of the route
      */
     async function loadRoute(routeId: string) {
-        Data.Route.load(routeId);
-        // Data.Stop.all(routeId).then(thing => console.log(thing));
 
         const route = new Route(routeId, map);
         routes.set(routeId, route);
@@ -309,47 +303,6 @@ namespace Routes {
                 }
             })
     } 
-
-    /* Depreciated */
-
-    /**
-     * Updates the current list of vehicles
-     * @param routeId ID of vehicle's route
-     * @param vehicleId ID of the vehicle
-     * @param tripId 
-     * @param timestamp time of last update
-     * @param location location of vehicle
-     * @deprecated We nolonger need to use this
-     */
-    async function updateVehicle(
-        routeId: string,
-        vehicleId: string,
-        tripId: string,
-        timestamp: number,
-        location: L.LatLng,
-        bearing: number,
-        direction_id: number) {
-
-        // Find the vehicle
-        let vehicle = Routes.getRoute(routeId)?.getVehicles()?.get(vehicleId);
-
-        // Check if the vehicle exists
-        if (vehicle !== undefined) {
-            // If the id exists, modify the vehicle
-            vehicle.setPosition(location, timestamp);
-
-            vehicle.setTripId(tripId);
-            if (routeId === "901") {
-                vehicle.setBlueDirectionID(direction_id);
-            } else if (routeId === "902") {
-                vehicle.setGreenDirectionID(direction_id);
-            } else {
-                vehicle.setBusBearing(bearing);
-            }
-
-            vehicle.updateWindow();
-        }
-    }
     /**
      * Sets the map for the routes
      * @param _map map object

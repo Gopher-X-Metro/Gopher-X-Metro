@@ -89,31 +89,6 @@ class Route extends Primative {
     private vehicles: Map<string, Vehicle>;
 
     private visible: boolean;
-
-    /* Depreciated */
-
-    /**
-     * Adds a stop to the route
-     * @param stopId ID of the stop
-     * @param color color of the stop
-     * @param location location of the stop
-     * @deprecated We no longer use addStop to create stops
-     */
-    public addStop(stopId: string, color: string, name: string, direction: string, location: L.LatLng) : void {
-        this.stops.set(stopId, new Stop(stopId, color, name, direction, location, this.map));
-        this.stops.get(stopId)?.setVisible(this.visible);
-    }
-    /**
-     * Adds a vehicle to the route
-     * @param vehicleId ID of the vehicle
-     * @param tripId trip ID of the vehicle
-     * @param color color of the vehicle's marker
-     * @deprecated We no longer use addVehicle to create vehicles
-     */
-    public addVehicle(vehicleId: string, color: string, images: string[2]) : void {
-        this.vehicles.set(vehicleId, new Vehicle(vehicleId, images, this.map));
-        this.vehicles.get(vehicleId)?.setVisible(this.visible);
-    }
 }
 
 export default Route;

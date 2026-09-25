@@ -95,14 +95,33 @@ namespace Live {
         };
     }
 
+    export interface MetroTrip {
+        nextStop?: string;
+        arrival?: number;
+        delayMinutes?: number;
+        stopped?: boolean;
+        busNumber?: string;
+    }
+
     /**
-     * Gets the stop a Metro Transit trip is heading to next
+     * Gets the live details of a Metro Transit trip: next stop, predicted arrival, delay and bus number
      * @param tripId ID of the trip
      */
-    export async function getMetroNextStop(tripId: string) : Promise<string | undefined> {
-        const positions = await getMetroPositions();
-        const stopId = positions.get(tripId);
-        return stopId ? await getStopName(stopId) ?? undefined : undefined;
+    export async function getMetroTrip(tripId: string) : Promise<MetroTrip> {
+        const [positions, updates] = await Promise.all([getMetroPositions(), getMetroUpdates()]);
+        const position = positions.get(tripId);
+        const now = Date.now() / 1000;
+        // The first stop still ahead of the bus
+        const next = updates.get(tripId)?.find(u => Number(u.arrival?.time ?? u.departure?.time ?? 0) >= now - 30);
+        const stopId = next?.stopId ?? position?.stopId;
+        const event = next?.arrival ?? next?.departure;
+        return {
+            nextStop: stopId ? await getStopName(stopId) : undefined,
+            arrival: event?.time ? Number(event.time) : undefined,
+            delayMinutes: event?.delay !== undefined && event?.delay !== null ? Math.round(Number(event.delay) / 60) : undefined,
+            stopped: position?.stopped && (!next || next.stopId === position.stopId),
+            busNumber: position?.label,
+        };
     }
 
     /**
@@ -254,23 +273,46 @@ namespace Live {
     let noticesFetched = 0;
     // Campus notices have no end date, so only recent ones are shown
     const NOTICE_DAYS = 3;
-    let positions : Promise<Map<string, string>> | undefined;
+    let positions : Promise<Map<string, any>> | undefined;
     let positionsFetched = 0;
 
+    let updates : Promise<Map<string, any[]>> | undefined;
+    let updatesFetched = 0;
+
     /**
-     * Maps trip IDs to the stop each Metro Transit vehicle is heading to, refreshed every 15 seconds
+     * Maps trip IDs to each Metro Transit vehicle's current stop, status and bus number, refreshed every 15 seconds
      */
-    function getMetroPositions() : Promise<Map<string, string>> {
+    function getMetroPositions() : Promise<Map<string, { stopId?: string, stopped: boolean, label?: string }>> {
         if (!positions || Date.now() - positionsFetched > 15000) {
             positionsFetched = Date.now();
             positions = fetch("https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb")
                 .then(response => response.arrayBuffer())
                 .then(buffer => new Map(GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)).entity
-                    .filter(entity => entity.vehicle?.trip?.tripId && entity.vehicle?.stopId)
-                    .map(entity => [entity.vehicle?.trip?.tripId as string, entity.vehicle?.stopId as string])))
+                    .filter(entity => entity.vehicle?.trip?.tripId)
+                    .map(entity => [entity.vehicle?.trip?.tripId as string, {
+                        stopId: entity.vehicle?.stopId ?? undefined,
+                        stopped: entity.vehicle?.currentStatus === GtfsRealtimeBindings.transit_realtime.VehiclePosition.VehicleStopStatus.STOPPED_AT,
+                        label: entity.vehicle?.vehicle?.label ?? undefined,
+                    }])))
                 .catch(() => new Map());
         }
-        return positions;
+        return positions as Promise<Map<string, any>>;
+    }
+
+    /**
+     * Maps trip IDs to their predicted stop times, refreshed every 15 seconds
+     */
+    function getMetroUpdates() : Promise<Map<string, any[]>> {
+        if (!updates || Date.now() - updatesFetched > 15000) {
+            updatesFetched = Date.now();
+            updates = fetch("https://svc.metrotransit.org/mtgtfs/tripupdates.pb")
+                .then(response => response.arrayBuffer())
+                .then(buffer => new Map(GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)).entity
+                    .filter(entity => entity.tripUpdate?.trip?.tripId)
+                    .map(entity => [entity.tripUpdate?.trip?.tripId as string, entity.tripUpdate?.stopTimeUpdate ?? []])))
+                .catch(() => new Map());
+        }
+        return updates;
     }
 
     /**
