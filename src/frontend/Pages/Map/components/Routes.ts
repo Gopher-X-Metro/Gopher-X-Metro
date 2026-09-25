@@ -1,4 +1,6 @@
 import L from "leaflet";
+import Live from "src/backend/Live.ts";
+import { ROUTE_NAMES } from "../elements/Vehicle";
 import { LINE_BOLD, LINE_NORMAL } from "../elements/Path";
 import Resources from "src/backend/Resources.ts";
 import Schedule from "src/backend/Schedule.ts";
@@ -134,7 +136,15 @@ namespace Routes {
 
         // Updates Stops
         URL.getRoutes()?.forEach(async routeId => {
-            for (const schedule of (await Schedule.getRouteDetails(routeId)).schedules) {
+            const details = await Schedule.getRouteDetails(routeId);
+
+            // Campus routes Metro Transit doesn't publish (like 126) use Peak Transit's stops
+            if (details.schedules.length === 0 && Peak.UNIVERSITY_ROUTES[routeId]) {
+                loadPeakStops(routeId);
+                return;
+            }
+
+            for (const schedule of details.schedules) {
                 if (schedule.schedule_type_name === Schedule.getWeekDate()) {
                     for (const timetable of schedule.timetables) {
                         for (const info of await Schedule.getStopList(routeId, timetable.schedule_number)) {
@@ -200,6 +210,37 @@ namespace Routes {
     }
 
     /* Private */
+
+    /**
+     * Shows a campus route's stops and arrival times from Peak Transit
+     * @param routeId ID of the route
+     */
+    async function loadPeakStops(routeId: string) {
+        const peakRouteId = Peak.UNIVERSITY_ROUTES[routeId];
+        const route = routes.get(routeId);
+        if (!route) return;
+
+        for (const info of await Live.getPeakRouteStops(peakRouteId)) {
+            const stopId = "peak-" + info.id;
+            if (!stops.has(stopId))
+                stops.set(stopId, Promise.resolve(new Stop(stopId, "#4169e1", info.name, ROUTE_NAMES[routeId] ?? routeId, L.latLng(info.lat, info.lng), map)));
+            const stop = await stops.get(stopId);
+            if (!stop) continue;
+
+            if (!route.getStops().has(stopId)) {
+                route.addStopObject(stopId, stop);
+                stop.getMarker().on("mouseover", () => setBolded(routeId, true));
+                stop.getMarker().on("mouseout", () => setBolded(routeId, false));
+            }
+
+            stop.clearDepartures();
+            for (const time of await Live.getPeakArrivals(info.id, peakRouteId)) {
+                const minutes = Math.round((time - Date.now() / 1000) / 60);
+                stop.addDeparture(routeId, "", minutes <= 0 ? "Due" : minutes + " Min", "", "", time);
+            }
+            stop.updateWindow();
+        }
+    }
 
     const routes = new Map<string, Route>();
     const stops = new Map<string, Promise<Stop | undefined>>();

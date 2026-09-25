@@ -148,10 +148,38 @@ namespace Live {
             peakEtasFetched = Date.now();
             peakEtas = fetch(PEAK_URL + "eta")
                 .then(response => response.json())
-                .then(data => new Map((data.stop ?? []).map((eta: any) => [eta.stopID + "|" + eta.routeID, eta.ETA1])))
+                .then(data => new Map((data.stop ?? []).map((eta: any) => [eta.stopID + "|" + eta.routeID, eta])))
                 .catch(() => new Map());
         }
-        return (await peakEtas).get(stopId + "|" + routeId);
+        return (await peakEtas).get(stopId + "|" + routeId)?.ETA1 || undefined;
+    }
+
+    /**
+     * Gets the next two arrivals (epoch seconds) of a campus route at a stop
+     */
+    export async function getPeakArrivals(stopId: number, routeId: number) : Promise<number[]> {
+        await getPeakEta(stopId, routeId);
+        const eta = (await peakEtas as Map<any, any>).get(stopId + "|" + routeId);
+        return [eta?.ETA1, eta?.ETA2].filter(time => time && time > Date.now() / 1000);
+    }
+
+    /**
+     * Gets the stops served by a campus route
+     * @param routeId Peak Transit route ID
+     */
+    export async function getPeakRouteStops(routeId: number) : Promise<Array<{ id: number, name: string, lat: number, lng: number }>> {
+        if (!peakRouteStops)
+            peakRouteStops = Promise.all([
+                fetch(PEAK_URL + "routestop2").then(response => response.json()),
+                fetch(PEAK_URL + "stop2").then(response => response.json()),
+            ]).then(([routeStops, stops]) => {
+                const byId = new Map((stops.stop ?? []).filter((stop: any) => !stop.disabled && !stop.closed).map((stop: any) => [stop.stopID, stop]));
+                return (routeStops.routeStops ?? []).filter((rs: any) => !rs.disabled && byId.has(rs.stopID)).map((rs: any) => {
+                    const stop: any = byId.get(rs.stopID);
+                    return { routeId: rs.routeID, id: stop.stopID, name: stop.longName, lat: Number(stop.lat), lng: Number(stop.lng) };
+                });
+            }).catch(() => []);
+        return (await peakRouteStops).filter((stop: any) => stop.routeId === routeId);
     }
 
     /**
@@ -198,6 +226,7 @@ namespace Live {
     let alerts : Promise<Alert[]> | undefined;
     let alertsFetched = 0;
     let peakEtas : Promise<Map<any, any>> | undefined;
+    let peakRouteStops : Promise<any[]> | undefined;
     let peakEtasFetched = 0;
     let notices : Promise<any[]> | undefined;
     let noticesFetched = 0;
