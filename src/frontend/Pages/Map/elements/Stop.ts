@@ -91,13 +91,16 @@ class Stop extends InfoWindowElement {
             } else {
                 // One row per route: tappable route chip, then its next few times
                 const listElement = document.createElement("ul");
-                for (const [routeId, departures] of this.departures) {
+                // Work from a snapshot: departures can refresh while colors load, which would repeat rows
+                const snapshot = [...this.departures].map(([routeId, departures]) => [routeId, [...departures]] as [string, departure[]]);
+                const colors = await Promise.all(snapshot.map(([routeId]) => Resources.getColor(routeId)));
+                for (const [i, [routeId, departures]] of snapshot.entries()) {
                     const row = document.createElement("li");
 
                     const chip = document.createElement("button");
                     chip.className = "stop-popup-chip";
                     chip.textContent = ROUTE_CHIPS[routeId] ?? routeId;
-                    chip.style.background = "#" + await Resources.getColor(routeId);
+                    chip.style.background = "#" + colors[i];
                     chip.title = URL.getRoutes().has(routeId) ? "Hide this route" : "Show this route on the map";
                     chip.addEventListener("click", event => {
                         event.stopPropagation();
@@ -123,9 +126,11 @@ class Stop extends InfoWindowElement {
             return divElement;
         }
 
-        // Load infowindow
+        // Load infowindow; if a newer update started meanwhile, let it win
+        const build = ++this.builds;
         try {
-            this.infoWindow?.setContent(await generateContent());
+            const content = await generateContent();
+            if (build === this.builds) this.infoWindow?.setContent(content);
         } catch (e) {
             console.error(`Failed to update info window:`, e);
             this.infoWindow?.setContent(await generateContent("Failed to load departure information."));
@@ -197,6 +202,7 @@ class Stop extends InfoWindowElement {
     /* Private */
 
     private name: string;
+    private builds = 0;
     private departures: Map<string, Array<departure>>;
     private direction: string;
     private elements: Set<Primative>;
