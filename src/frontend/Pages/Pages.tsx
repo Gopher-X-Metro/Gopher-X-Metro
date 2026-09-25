@@ -13,7 +13,7 @@ export default function Pages( { isMobile } ) {
             <Map hidden={page!=="map"} setPage={setPage} isMobile={isMobile}/>
             <About hidden={page!=="about"} setPage={setPage}/>
             <Schedules hidden={page!=="schedules"} setPage={setPage}/>
-            <Alerts hidden={!page.startsWith("alerts")} setPage={setPage} section={page === "alerts-metro" ? "metro" : "campus"}/>
+            <Alerts hidden={page !== "alerts"} setPage={setPage}/>
         </>
     )
 }

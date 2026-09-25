@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@chakra-ui/react';
 
 import Live from 'src/backend/Live';
@@ -19,11 +19,9 @@ function date(seconds?: number) : string {
 /**
  * Campus bus notices and Metro Transit service alerts, in two sections
  */
-export default function Alerts({ hidden, setPage, section }) {
+export default function Alerts({ hidden, setPage }) {
     const [campus, setCampus] = useState<Live.Alert[] | undefined>();
     const [metro, setMetro] = useState<Live.Alert[] | undefined>();
-    const campusRef = useRef<HTMLElement>(null);
-    const metroRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         if (hidden) return;
@@ -34,9 +32,6 @@ export default function Alerts({ hidden, setPage, section }) {
             .sort((a, b) => (b.start ?? 0) - (a.start ?? 0))));
     }, [hidden])
 
-    useEffect(() => {
-        if (!hidden) (section === "metro" ? metroRef : campusRef).current?.scrollIntoView({ block: "start" });
-    }, [hidden, section, campus, metro])
 
     const card = (alert: Live.Alert, when: string) => (
         <li key={alert.id} className="alert-card">
@@ -51,14 +46,15 @@ export default function Alerts({ hidden, setPage, section }) {
 
     return (
         <div hidden={hidden} className="schedules-page">
+            <h1 className="schedules-title">Bus Alerts</h1>
             <div className="schedules-controls">
                 <Button colorScheme='yellow' onClick={() => setPage("map")}>
                     Back to Map
                 </Button>
             </div>
 
-            <section ref={campusRef} className="alerts-section">
-                <h1 className="schedules-title">Campus Bus Alerts</h1>
+            <section className="alerts-section">
+                <h2 className="alerts-heading">Campus Buses</h2>
                 <p className="schedules-note">Notices from University Parking & Transportation Services in the last 30 days, newest first.</p>
                 {campus === undefined && <p className="schedules-note">Loading…</p>}
                 {campus?.length === 0 && <p className="schedules-note">No campus bus notices in the last 30 days.</p>}
@@ -66,8 +62,8 @@ export default function Alerts({ hidden, setPage, section }) {
                 <a className="alerts-link" href="https://umn.rider.peaktransit.com" target="_blank" rel="noreferrer">Campus rider site</a>
             </section>
 
-            <section ref={metroRef} className="alerts-section">
-                <h1 className="schedules-title">Metro Transit Alerts</h1>
+            <section className="alerts-section">
+                <h2 className="alerts-heading">Metro Transit</h2>
                 <p className="schedules-note">Alerts in effect now for the routes on this site.</p>
                 {metro === undefined && <p className="schedules-note">Loading…</p>}
                 {metro?.length === 0 && <p className="schedules-note">No active alerts for these routes.</p>}

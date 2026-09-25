@@ -13,11 +13,8 @@ const ResponsiveDropdown = ({ setPage, isMobile }) => {
                     <MenuItem onClick={() => setPage("schedules")}> 
                       Schedules
                     </MenuItem>
-                    <MenuItem onClick={() => setPage("alerts-campus")}> 
-                      Campus Bus Alerts
-                    </MenuItem>
-                    <MenuItem onClick={() => setPage("alerts-metro")}> 
-                      Metro Transit Alerts
+                    <MenuItem onClick={() => setPage("alerts")}> 
+                      Bus Alerts
                     </MenuItem>
                     <MenuItem as={'a'} href='https://campusmaps.umn.edu/' target="_blank" rel="noreferrer"> 
                       Campus Bus Map

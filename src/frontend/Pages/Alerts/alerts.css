@@ -6,3 +6,4 @@
 .alert-title { font-weight: bold; font-size: 14px; }
 .alert-body { font-size: 14px; color: #333; margin-top: 4px; white-space: pre-line; }
 .alerts-link { display: inline-block; margin-top: 6px; color: #0053a0; text-decoration: underline; font-size: 14px; }
+.alerts-heading { font-size: 18px; font-weight: bold; border-bottom: 2px solid #ffcc33; padding-bottom: 4px; margin: 14px 0 6px; }
