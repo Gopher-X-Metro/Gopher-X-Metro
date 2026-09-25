@@ -25,9 +25,9 @@ export default function MapPage({ hidden, setPage, isMobile }) {
         if (mapDiv.current && !map) {
             const leafletMap = L.map(mapDiv.current, { zoomControl: false }).setView(UMNLocation, defaultZoom);
             L.control.zoom({ position: "bottomright" }).addTo(leafletMap);
-            L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-                maxZoom: 20,
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(leafletMap);
             setMap(leafletMap);
         }
@@ -55,7 +55,7 @@ export default function MapPage({ hidden, setPage, isMobile }) {
         <div className="h-[100%] w-full bg-black" hidden={hidden}>
             <NavBar setPage={setPage} isMobile={isMobile}/>
             <LoadingScreen hidden={mapLoaded}/>
-            <div className="map relative">
+            <div className="map relative h-full w-full">
                 <div ref={mapDiv} className="h-full w-full z-0"/>
                 <LocationSearchBar map={map} isMobile={isMobile}/>
                 <CenterButton map={map}/>
