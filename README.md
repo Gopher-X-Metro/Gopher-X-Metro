@@ -20,11 +20,13 @@ The Transit Pass allows students to have access to the Metro Transit buses and t
 
 
 [Github](https://github.umn.edu/joh20327/Gopher-City-Bus) \
-[Original Gopher X Metro Bus Website](https://gopher-bus-x-metro-buses.vercel.app/)
+[Original 2024 website](https://gopher-bus-x-metro-buses.vercel.app/) (no longer maintained)
 
 
 ## About this revival
-This repository is a revival of [Gopher-X-Metro/Gopher-X-Metro](https://github.com/Gopher-X-Metro/Gopher-X-Metro), the original project built by **Adam, Ken, Riley, Will, Babacar, Alex, Mike, and Andy**. The full commit history from the original team is preserved here.
+The original project was built in 2024 by **Adam, Ken, Riley, Will, Babacar, Alex, Mike, and Andy**. In 2026 Ken revived it after the original hosting lapsed; the full commit history from the original team is preserved here.
+
+Live site: https://gopher-x-metro.github.io/Gopher-X-Metro/
 
 Changes made to bring it back online with no paid services or API keys:
 - The map moved from Google Maps to [Leaflet](https://leafletjs.com/) with OpenStreetMap data, and place search uses [Photon](https://photon.komoot.io/).

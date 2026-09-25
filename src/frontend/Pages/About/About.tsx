@@ -2,7 +2,7 @@ import React from "react";
 import "./styles.css";
 
 function About({ hidden, setPage }) {
-    const feedbackUrl = "https://github.com/KennedyJohnson/Gopher-X-Metro/issues";
+    const feedbackUrl = "https://github.com/Gopher-X-Metro/Gopher-X-Metro/issues";
 
     return (
         <div hidden={hidden} className="about-page">
