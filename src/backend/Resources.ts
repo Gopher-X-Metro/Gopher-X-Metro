@@ -59,11 +59,7 @@ namespace Resources {
      * @param shapeId ID of the shape
      */
     export async function getShapeLocations(shapeId: string) : Promise<Array<L.LatLng>> {
-        const shapeLocations = await (await Static.getShapes(shapeId))
-        // Sorts to keep the order of the path
-        .sort((a: { shape_dist_traveled: number; }, b: { shape_dist_traveled: number; }) => a.shape_dist_traveled - b.shape_dist_traveled)
-        // Converts into locations
-        .map((shape: {shape_pt_lat: any, shape_pt_lon: any}) => L.latLng(Number(shape.shape_pt_lat), Number(shape.shape_pt_lon)))
+        const shapeLocations = (await Static.getShapes(shapeId)).map(([lat, lon]) => L.latLng(lat, lon));
 
         return shapeLocations
     }

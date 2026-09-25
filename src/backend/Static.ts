@@ -2,13 +2,13 @@ namespace Data {
     /* Public */
 
     /**
-     * Loads the API
+     * Loads the calendar
      */
     export async function load() : Promise<void> {        
-        // Load calendar
-        await fetch(API_URL + "/get-calendar?date="+date())
-        .then(async response => (await response.json())
-        .forEach((element: { service_id: string; }) => calendar.set(element.service_id, element)));
+        const data = await getJSON("/calendar.json");
+        data?.calendar.forEach((element: { service_id: string; }) => calendar.set(element.service_id, element));
+        data?.dates.forEach((element: { service_id: string; date: string; exception_type: string }) => 
+            exceptions.set(element.service_id + "|" + element.date, element.exception_type));
     }
 
     /* API */
@@ -19,7 +19,12 @@ namespace Data {
      * @returns if its running
      */
     export function isServiceRunning(serviceId: string) : boolean {
-        return getCalendar(serviceId) ? getCalendar(serviceId)[days[(new Date()).getDay()]] : false
+        const today = date();
+        const exception = exceptions.get(serviceId + "|" + today);
+        if (exception) return exception === "1"; // 1 = added, 2 = removed
+
+        const service = getCalendar(serviceId);
+        return service ? service.start_date <= today && today <= service.end_date && service[days[(new Date()).getDay()]] === "1" : false;
     }
     /**
      * Gets the calendar of metro
@@ -28,58 +33,29 @@ namespace Data {
         return calendar.get(serviceId); 
     }
     /**
-     * Gets the stop data of a trip id
-     * @param tripId ID of the trip
-     */
-    export async function getStops(tripId: string) : Promise<any> {
-        if (!stops.has(tripId))
-            // Load Stops
-            await fetch(API_URL + "/get-stops?trip_id=" + tripId)
-            .then(async response => stops.set(tripId, await response.json()));
-        
-        return stops.get(tripId);
-    }
-    /**
-     * Gets the trips of a route
+     * Gets the trips (service and shape ids) of a route
      * @param routeId ID of the route
      */
     export async function getTrips(routeId: string) : Promise<any> {
-        if (!trips.has(routeId))
-            // Load Trips
-            await fetch(API_URL + "/get-trips?route_id=" + routeId)
-            .then(async response => trips.set(routeId, await response.json()));
-
-        return trips.get(routeId)
+        return (await getRoute(routeId))?.trips ?? [];
     }
     /**
      * Gets the route data of a route
      * @param routeId ID of the route
      */
     export async function getRoutes(routeId: string) : Promise<any> {
-        return await fetch(API_URL + "/get-routes?route_id=" + routeId)
-        .then(async response => await response.json());
+        const route = await getRoute(routeId);
+        return route ? [route.route] : [];
     }
     /**
-     * Gets the shape data of a shapeId
+     * Gets the points of a shape as [lat, lon] pairs in order
      * @param shapeId ID of the shape
      */
-    export async function getShapes(shapeId: string) : Promise<any> {
+    export async function getShapes(shapeId: string) : Promise<Array<[number, number]>> {
         if (!shapes.has(shapeId))
-            await fetch(API_URL + "/get-shapes?shape_id=" + shapeId)
-            .then(async response => shapes.set(shapeId, await response.json()));
+            shapes.set(shapeId, await getJSON("/shapes/" + shapeId + ".json") ?? []);
         
         return shapes.get(shapeId); 
-    }
-    /**
-     * Gets the stop_times data of a shapeId
-     * @param tripId ID of the trip
-     */
-    export async function getStopTimes(tripId: string) : Promise<any> {
-        if (!stop_times.has(tripId))
-            await fetch(API_URL + "/get-stop-times?trip_id=" + tripId)
-            .then(async response => stop_times.set(tripId, await response.json()));
-        
-        return stop_times.get(tripId); 
     }
 
     /**
@@ -101,10 +77,28 @@ namespace Data {
 
     /* Private */
     const calendar : Map<string, any> = new Map<string, any>();
-    const stops : Map<string, any> = new Map<string, any>();
-    const trips : Map<string, any> = new Map<string, any>();    
+    const exceptions : Map<string, string> = new Map<string, string>();
+    const routes : Map<string, Promise<any>> = new Map<string, Promise<any>>();
     const shapes : Map<string, any> = new Map<string, any>();
-    const stop_times : Map<string, any> = new Map<string, any>();
+
+    /**
+     * Gets a route's file, sharing one request between callers
+     * @param routeId ID of the route
+     */
+    function getRoute(routeId: string) : Promise<any> {
+        if (!routes.has(routeId))
+            routes.set(routeId, getJSON("/routes/" + routeId + ".json"));
+        return routes.get(routeId) as Promise<any>;
+    }
+
+    /**
+     * Fetches a generated GTFS file, or undefined if it doesn't exist
+     * @param file path of the file within the gtfs folder
+     */
+    async function getJSON(file: string) : Promise<any> {
+        const response = await fetch(DATA_URL + file);
+        return response.ok ? response.json() : undefined;
+    }
     
     /* Days of the week */
     const days = [
@@ -117,8 +111,8 @@ namespace Data {
         "saturday"
     ];
 
-    //https://svc.metrotransit.org/index.html
-    const API_URL = process.env.REACT_APP_SUPABASE_FUNCTION_URL
+    // Generated from Metro Transit's GTFS feed by scripts/build-gtfs.mjs
+    const DATA_URL = process.env.PUBLIC_URL + "/gtfs"
 }
 
 export default Data
