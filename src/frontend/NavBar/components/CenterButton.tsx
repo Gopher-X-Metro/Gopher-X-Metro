@@ -37,7 +37,7 @@ export default function CenterButton({ map }: { map: L.Map | null }) {
                     type="button"
                     className={"center-button" + (centered ? " centered" : "")}
                     onClick={() => onClick()}>
-                <IoMdLocate className="icon"/>
+                <span className="icon"><IoMdLocate size="100%"/></span>
             </button>
         </div>
     )

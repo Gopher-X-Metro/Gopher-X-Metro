@@ -34,10 +34,10 @@ jobs:
           curl -sSfL -o gtfs.zip https://svc.metrotransit.org/mtgtfs/gtfs.zip
           unzip -q gtfs.zip calendar.txt calendar_dates.txt routes.txt trips.txt shapes.txt stops.txt stop_times.txt -d gtfs
       - run: node scripts/build-gtfs.mjs gtfs
+      - run: npx tsc --noEmit
       - run: npm run build
         env:
           CI: false
-          TSC_COMPILE_ON_ERROR: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: build

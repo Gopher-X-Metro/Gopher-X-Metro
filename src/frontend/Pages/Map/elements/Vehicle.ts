@@ -322,6 +322,7 @@ export const ROUTE_NAMES = {
     "124": "124 St. Paul Circulator",
     "125": "125 Dinkytown Connector",
     "126": "126 Campus Express",
+    "FOOTBALL": "Football Game Day Shuttle",
     "901": "METRO Blue Line",
     "902": "METRO Green Line",
     "925": "METRO E Line",

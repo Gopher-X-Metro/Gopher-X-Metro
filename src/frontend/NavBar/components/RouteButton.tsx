@@ -9,7 +9,7 @@ import Routes from 'src/frontend/Pages/Map/components/Routes';
  * @param text Display text of the button
  * @returns 
  */
-function RouteButton({ routeId, text }) {
+function RouteButton({ routeId, text }: { routeId: string, text?: string }) {
   useEffect(() => {
     // updates color of button click immediately
     URL.addListener(() => setActive(URL.getRoutes().has(routeId)))
