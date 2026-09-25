@@ -515,3 +515,7 @@ body:not(.mobile) .alert-banner { top: calc(var(--header-h, 80px) + 64px); }
 .departures .bell { font-size: 13px; opacity: .55; padding: 0 2px; }
 .departures .bell.on { opacity: 1; }
 .nearby-body .notice { background: #eef5ff; color: #0b3d7a; border-radius: 6px; padding: 6px 8px; font-size: 12px; margin: 6px 0; cursor: pointer; }
+
+.sidebar-content button.route-FOOTBALL::before {
+    background-color: #964B00; /* Football game day shuttle */
+}

@@ -6,11 +6,28 @@ import URL from 'src/backend/URL.ts';
 import SearchIcon from "src/img/CustomBus.png";
 import SearchFeature from 'src/frontend/NavBar/components/SearchFeature.tsx';
 import Schedule from 'src/backend/Schedule.ts';
+import Realtime from 'src/backend/Realtime.ts';
+import Peak from 'src/backend/Peak.ts';
+
+/** Saturdays during the Gopher football season, roughly late August to early December */
+function isGameDaySaturday() : boolean {
+    const today = new Date();
+    const start = new Date(today.getFullYear(), 7, 24), end = new Date(today.getFullYear(), 11, 7);
+    return today.getDay() === 6 && today >= start && today <= end;
+}
 
 export default function SideBar() {
     const [_, forceReload] = useState(0);
     const [routes, setRoutes] = useState(new Map<string, string>());
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [footballDay, setFootballDay] = useState(isGameDaySaturday());
+
+    useEffect(() => {
+        // The football shuttle only runs on game days; also show it whenever its buses are out
+        Realtime.getRealtimeGTFSUniversity().then(data => {
+            if (data?.vehicles?.some((v: any) => v.routeID === Peak.UNIVERSITY_ROUTES["FOOTBALL"] && !v.hidden)) setFootballDay(true);
+        });
+    }, [])
 
     routes.set("121", "121 Campus Connector");
     routes.set("122", "122 University Avenue Circulator");
@@ -19,6 +36,7 @@ export default function SideBar() {
     routes.set("125", "125 Dinkytown Connector");
     routes.set("120", "120 East Bank Circulator");
     routes.set("126", "126 Campus Express");
+    if (footballDay) routes.set("FOOTBALL", "Football Game Day Shuttle");
     routes.set("2", "2 Franklin Av / To Hennepin");
     routes.set("925", "METRO E Line (replaced 6)");
     routes.set("3", "3 U of M / Como Av / Dwtn Mpls");
@@ -77,7 +95,7 @@ export default function SideBar() {
                 </div>
                 
                 <div className='sidebar-content flex flex-col items-center'>
-                    {Array.from(routes.keys()).map(routeId => (<RouteButton key={routeId} routeId={routeId} text={routes.get(routeId)}/>))}
+                    {Array.from(routes.keys()).map(routeId => (<React.Fragment key={routeId as string}><RouteButton routeId={routeId as string} text={routes.get(routeId)}/></React.Fragment>))}
                 </div>
 
                 <div className = "nav-header"> 

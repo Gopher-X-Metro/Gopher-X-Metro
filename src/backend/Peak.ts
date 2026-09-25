@@ -61,7 +61,8 @@ namespace Peak {
         "123": 11280, 
         "124": 11281,
         "125": 12527,
-        "126": 12958
+        "126": 12958,
+        "FOOTBALL": 12604
     };
 
     /* Night and weekend versions of routes, shown under the same route */

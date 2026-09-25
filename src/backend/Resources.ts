@@ -10,6 +10,8 @@ import busImage124 from "../img/124_bus.png"
 import busImage125 from "../img/125_bus.png"
 import busImage2 from "../img/2_bus.png"
 import busImage3 from "../img/3_bus.png"
+import busImageFOOTBALL from "src/img/FOOTBALL_bus.png";
+import arrowImageFOOTBALL from "src/img/FOOTBALL_arrow.png";
 import busImage6 from "../img/6_bus.png"
 import busImage902 from "../img/902_greenline.png"
 import busImage901 from "../img/901_blueline.png"
@@ -131,6 +133,7 @@ namespace Resources {
         "3": [busImage3, arrowImage3],
         "6": [busImage6, arrowImage6],
         "925": [busImage6, arrowImage6],
+        "FOOTBALL": [busImageFOOTBALL, arrowImageFOOTBALL],
         "902": [busImage902, arrowImage902],
         "901": [busImage901, arrowImage901]
     }
@@ -144,6 +147,7 @@ namespace Resources {
         "124": "90EE90",
         "125": "c727e2",
         "126": "7a4a14",
+        "FOOTBALL": "964B00",
         "2": "bab832",
         "3": "d18528",
         "6": "236918",
