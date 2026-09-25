@@ -1,4 +1,4 @@
-import GtfsRealtimeBindings from 'gtfs-realtime-bindings';
+import { getCachedJSON, getJSON } from "src/backend/Fetch.ts";
 import Peak from "src/backend/Peak.ts";
 
 namespace Realtime {
@@ -7,7 +7,7 @@ namespace Realtime {
      * @returns list of routes data
      */
     export async function getRoutes() : Promise<Array<any>> {
-        return await (await fetch("https://svc.metrotransit.org/nextrip/routes")).json();
+        return await getCachedJSON("https://svc.metrotransit.org/nextrip/routes", 10 * 60 * 1000);
     }
     /**
      * Gets the specific route if its running
@@ -15,7 +15,7 @@ namespace Realtime {
      * @returns route data
      */
     export async function getRoute(routeId: string) : Promise<any> {
-        for (const route of await getRoutes())
+        for (const route of (await getRoutes()) ?? [])
             if (route.route_id === routeId) 
                 return route;
     }
@@ -25,7 +25,7 @@ namespace Realtime {
      * @returns the stop data
      */
     export async function getStop(stopId: string) : Promise<any> {
-        return await (await fetch("https://svc.metrotransit.org/nextrip/"+stopId)).json()
+        return await getCachedJSON("https://svc.metrotransit.org/nextrip/"+stopId, 10000)
     }
     /**
      * Gets the current vehicles running on the route
@@ -75,33 +75,6 @@ namespace Realtime {
         })
     }
     /**
-     * Gets the stops that are in the route in the specified direction
-     * @param routeId the route ID
-     * @param directionId the direction ID
-     * @returns a list of stops
-     */
-    export async function getStops(routeId: string, directionId: number) : Promise<Array<any>> {
-        return await (await fetch("https://svc.metrotransit.org/nextrip/stops/"+routeId+"/"+directionId)).json()
-    }
-    /**
-     * Gets the information about the specified stop on the route in the specified direction
-     * @param routeId the route ID
-     * @param directionId the direction ID
-     * @param placeCode the place code of the stop
-     * @returns the description of the stop
-     */
-    export async function getStopInfo(routeId: string, directionId: number, placeCode: string) : Promise<any> {
-        return await (await fetch("https://svc.metrotransit.org/nextrip/"+routeId+"/"+directionId+"/"+placeCode)).json()
-    }
-    /**
-     * Gets the directions that vehicles are currently running
-     * @param routeId the route ID
-     * @returns the direcitons data
-     */
-    export async function getDirections(routeId: string) : Promise<Array<any>> {
-        return await (await fetch("https://svc.metrotransit.org/nextrip/directions/"+routeId)).json()
-    }
-    /**
      * Gets the fetched data of the university busses
      */
     export async function getRealtimeGTFSUniversity(): Promise<any> {
@@ -128,33 +101,6 @@ namespace Realtime {
     const metroVehicles = new Map<string, { time: number, data: Promise<any> }>();
 
     const GTFS_REALTIME_URL_UMN = "https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=vehicles2&action=list&agencyID=88";
-    const GTFS_REALTIME_URL_VEHICLE_POSITIONS = 'https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb';
-    const GTFS_REALTIME_URL_TRIP_UPDATES = 'https://svc.metrotransit.org/mtgtfs/tripupdates.pb';
-    const GTFS_REALTIME_URL_SERVICE_ALERTS = 'https://svc.metrotransit.org/mtgtfs/alerts.pb';
-
-    /* Depreciated */
-    
-    /**
-     * Gets the fetched vehicle position data
-     * @depreciated
-     */
-    export async function getRealtimeGTFSVehiclePositions() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage> {
-        const response = await fetch(GTFS_REALTIME_URL_VEHICLE_POSITIONS);
-
-        return response?.arrayBuffer().then(buffer => GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)))
-    }
-    /**
-     * Gets the fetched trip updates data
-     * @deprecated
-     */
-    export async function getRealtimeGTFSTripUpdates() : Promise<GtfsRealtimeBindings.transit_realtime.FeedMessage | undefined> {
-        return await fetch(GTFS_REALTIME_URL_TRIP_UPDATES).then(async response => {
-            if (response.ok && response.status === 200)
-                return await response.arrayBuffer().then(buffer => GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)))
-            else
-                console.warn(`Data fetching encountered status code ${response.status} with Trip Updates.`);
-        })
-    }
 
 
 }

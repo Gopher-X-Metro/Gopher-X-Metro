@@ -19,6 +19,8 @@ abstract class InfoWindowElement extends Element {
         marker.on("click", () => {
             this.infoWindow.setPosition((this.marker as L.Marker | L.CircleMarker).getLatLng());
             this.infoWindow.setVisible(!this.infoWindow.isVisible());
+            // Fill the window right away instead of waiting for the next refresh
+            if (this.infoWindow.isVisible()) this.updateWindow();
         });
     }
 

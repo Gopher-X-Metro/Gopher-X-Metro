@@ -160,8 +160,12 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
     const toggleWatch = (stop: StopView, d: Live.Departure) => {
         const key = stop.id + "|" + d.tripId;
         const next = { ...watching };
+        const minutes = Math.round((d.time - Date.now() / 1000) / 60);
         if (next[key]) delete next[key];
-        else {
+        else if (d.time - Date.now() / 1000 <= NOTIFY_SECONDS) {
+            setNotice(`${d.routeName} leaves ${stop.name} ${minutes <= 0 ? "now" : `in ${minutes} min`}. Head there now!`);
+            return;
+        } else {
             next[key] = { stopId: stop.id, stopName: stop.name, routeName: d.routeName, tripId: d.tripId, time: d.time };
             try {
                 if ("Notification" in window && Notification.permission === "default") Notification.requestPermission();

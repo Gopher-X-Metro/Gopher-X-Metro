@@ -1,6 +1,5 @@
 import React from 'react';
 import { Menu, MenuButton, MenuList, MenuItem, Button, useMediaQuery } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
 import { ChevronDownIcon } from '@chakra-ui/icons'; 
 
 const ResponsiveDropdown = ({ setPage, isMobile }) => {
@@ -11,7 +10,7 @@ const ResponsiveDropdown = ({ setPage, isMobile }) => {
                 <MenuButton as={Button} rightIcon={<ChevronDownIcon />} colorScheme='yellow'>
                 </MenuButton>
                 <MenuList>
-                    <MenuItem as={Link} onClick={() => setPage("schedules")}> 
+                    <MenuItem onClick={() => setPage("schedules")}> 
                       Schedules
                     </MenuItem>
                     <MenuItem onClick={() => setPage("alerts-campus")}> 
@@ -26,7 +25,7 @@ const ResponsiveDropdown = ({ setPage, isMobile }) => {
                     <MenuItem as={'a'} href= 'https://umn.rider.peaktransit.com' target="_blank" rel="noreferrer">
                       Gopher Trip Map
                     </MenuItem>
-                    <MenuItem as={Link} onClick={() => setPage("about")}>
+                    <MenuItem onClick={() => setPage("about")}>
                       About Us
                     </MenuItem>
                 </MenuList>

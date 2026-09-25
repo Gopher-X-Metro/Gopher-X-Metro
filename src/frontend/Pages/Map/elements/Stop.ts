@@ -33,7 +33,8 @@ class Stop extends InfoWindowElement {
             color: color,
             radius: stopSize(map.getZoom()).radius,
             opacity: 0.35,
-            bubblingMouseEvents: false
+            bubblingMouseEvents: false,
+            pane: stopPane(map)
         }));
 
         this.departures = new Map<string, Array<departure>>();
@@ -108,30 +109,14 @@ class Stop extends InfoWindowElement {
                         listItemElement.appendChild(buttonElement);
                         listItemElement.appendChild(routeIdElement);
 
-                        // Shows the next 90 minutes (3 to 6 times), with the rest behind "Show more"
-                        const cutoff = Date.now() / 1000 + SOON_SECONDS;
-                        const soon = Math.min(6, Math.max(3, departures.filter(d => d.departure_time <= cutoff).length));
-                        const expanded = this.expanded.has(routeId);
-
-                        departures.forEach((departure, i) => {
-                            if (i >= soon && !expanded) return;
+                        // The next few departures per route keep the popup short
+                        departures.slice(0, DEPARTURES_SHOWN).forEach(departure => {
                             const timeElement = document.createElement("p");
                             timeElement.textContent = Live.formatDeparture(departure.departure_text, departure.departure_time);
                             timeElement.style.cssText = "margin: 5px 0; font-size: 14px;";
                             
                             listItemElement.appendChild(timeElement);
                         })
-
-                        if (departures.length > soon) {
-                            const moreElement = document.createElement("button");
-                            moreElement.textContent = expanded ? "Show less" : `Show ${departures.length - soon} more`;
-                            moreElement.style.cssText = "margin-top: 4px; font-size: 12px; text-decoration: underline;";
-                            moreElement.addEventListener("click", () => {
-                                if (expanded) this.expanded.delete(routeId); else this.expanded.add(routeId);
-                                this.updateWindow();
-                            });
-                            listItemElement.appendChild(moreElement);
-                        }
 
                         listElement.append(listItemElement);
                     }
@@ -217,27 +202,18 @@ class Stop extends InfoWindowElement {
     /* Private */
 
     private name: string;
-    private expanded = new Set<string>();
     private departures: Map<string, Array<departure>>;
     private direction: string;
     private elements: Set<Primative>;
-
-    /* Depreciated */
-    
-    /**
-     * Sets the description of the info window
-     * @param description   the html text for the info window
-     * @deprecated
-     */
-    public setDescription(description: string) : void { this.infoWindow?.setContent(description); }
-    /**
-     * Updates the info window information
-     * @deprecated
-     */
-    public closeInfoWindow() : void { this.infoWindow?.setVisible(false); }   
 }
 
-const SOON_SECONDS = 90 * 60;
+const DEPARTURES_SHOWN = 5;
+
+/** Stops get their own layer above route lines, so a line never covers a stop's tap target */
+function stopPane(map: L.Map) : string {
+    if (!map.getPane("stops")) map.createPane("stops").style.zIndex = "450";
+    return "stops";
+}
 
 /** Stops shrink when zoomed in close, so stops on opposite sides of a street don't overlap */
 function stopSize(zoom: number) : { radius: number, weight: number } {

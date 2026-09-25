@@ -16,6 +16,7 @@ import AlertBanner from "./components/AlertBanner";
 
 const UMNLocation = { lat: 44.97369560732433, lng: -93.2317259515601 };
 const defaultZoom = 15;
+const TWIN_CITIES = L.latLngBounds([44.84, -93.42], [45.08, -92.98]);
 
 let currentMap: L.Map | null = null;
 
@@ -42,7 +43,13 @@ export default function MapPage({ hidden, setPage, isMobile }) {
     useEffect(() => {
         // Creates the Leaflet map once the container exists
         if (mapDiv.current && !map) {
-            const leafletMap = L.map(mapDiv.current, { zoomControl: false }).setView(UMNLocation, defaultZoom);
+            const leafletMap = L.map(mapDiv.current, {
+                zoomControl: false,
+                // Keeps the map on the Twin Cities metro, where these routes run
+                maxBounds: TWIN_CITIES,
+                maxBoundsViscosity: 1,
+                minZoom: 11,
+            }).setView(UMNLocation, defaultZoom);
             L.control.zoom({ position: "bottomright" }).addTo(leafletMap);
             L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
                 maxZoom: 19,
