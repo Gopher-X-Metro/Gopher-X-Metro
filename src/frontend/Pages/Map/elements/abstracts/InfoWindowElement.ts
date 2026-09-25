@@ -1,3 +1,4 @@
+import L from "leaflet";
 import Element from "./Element";
 import InfoWindow from "./InfoWindow";
 
@@ -8,16 +9,17 @@ abstract class InfoWindowElement extends Element {
      * @param id        ID of the element
      * @param map       map the element appears on
      * @param marker    marker the element represents
+     * @param offset    pixel offset of the info window from the marker
      */
-    constructor(id: string, map: google.maps.Map, marker: google.maps.MVCObject | google.maps.marker.AdvancedMarkerElement) {
+    constructor(id: string, map: L.Map, marker: L.Marker | L.Circle, offset?: [number, number]) {
         super(id, map, marker);
 
-        if (this.marker instanceof google.maps.MVCObject)
-            this.infoWindow = new InfoWindow(this.marker.get("center"), map);
-        else if (this.marker instanceof google.maps.marker.AdvancedMarkerElement)
-            this.infoWindow = new InfoWindow(this.marker.position as google.maps.LatLng, map);
+        this.infoWindow = new InfoWindow(marker.getLatLng(), map, offset);
 
-        this.marker.addListener("click", () => this.infoWindow?.setVisible(!this.infoWindow?.isVisible()));
+        marker.on("click", () => {
+            this.infoWindow.setPosition((this.marker as L.Marker | L.Circle).getLatLng());
+            this.infoWindow.setVisible(!this.infoWindow.isVisible());
+        });
     }
 
     /**
@@ -25,15 +27,7 @@ abstract class InfoWindowElement extends Element {
      */
     abstract updateWindow() : void;
 
-    public readonly infoWindow: InfoWindow | undefined;
-
-    /* Depreciated */
-
-    /**
-     * Updates the info window information
-     * @deprecated
-     */
-    public updateInfoWindow() { this.updateWindow(); }
+    public readonly infoWindow: InfoWindow;
 }
 
 export default InfoWindowElement;

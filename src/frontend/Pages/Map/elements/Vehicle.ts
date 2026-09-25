@@ -1,3 +1,4 @@
+import L from "leaflet";
 import InfoWindowElement from "./abstracts/InfoWindowElement";
 
 class Vehicle extends InfoWindowElement {
@@ -10,14 +11,13 @@ class Vehicle extends InfoWindowElement {
      * @param color color of vehicle image
      * @param map map the vehicle displays on
      */
-    constructor (vehicleId: string, images: string[2], map: google.maps.Map) {
+    constructor (vehicleId: string, images: string[2], map: L.Map) {
         const contents = document.createElement("div");
         contents.style.position = "relative";
 
-        super(vehicleId, map, new window.google.maps.marker.AdvancedMarkerElement({
-            map: map,
-            content: contents,
-        }));
+        super(vehicleId, map, L.marker([0, 0], {
+            icon: L.divIcon({ html: contents, className: "", iconSize: [0, 0] }),
+        }), [0, -15]);
 
         // Create bus container
         const busContainer = document.createElement("div");
@@ -47,8 +47,6 @@ class Vehicle extends InfoWindowElement {
 
         contents.appendChild(busContainer);
         contents.appendChild(arrowContainer);
-
-        this.infoWindow?.getWindow().set("pixelOffset", new google.maps.Size(0, -15));
     }
     /**
      * Updates the info window information
@@ -79,10 +77,10 @@ class Vehicle extends InfoWindowElement {
      * @param position position of the vehicle
      * @param timestamp when this position was updated
      */
-    public setPosition(position : google.maps.LatLng, timestamp : number) : void {
-        if (!((this.marker as google.maps.marker.AdvancedMarkerElement).position?.toString() === position.toString())) {
+    public setPosition(position : L.LatLng, timestamp : number) : void {
+        if (!(this.marker as L.Marker).getLatLng().equals(position)) {
             this.infoWindow?.setPosition(position);
-            (this.marker as google.maps.marker.AdvancedMarkerElement).position = position;
+            (this.marker as L.Marker).setLatLng(position);
             this.positionTimestamp = timestamp;
         }
     }

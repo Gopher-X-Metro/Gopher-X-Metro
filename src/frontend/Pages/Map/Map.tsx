@@ -1,6 +1,7 @@
-import { Map, useMap } from "@vis.gl/react-google-maps";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Resources from "src/backend/Resources";
 import Marker from "./components/Marker";
@@ -11,15 +12,31 @@ import NavBar from "src/frontend/NavBar/NavBar";
 import CenterButton from "src/frontend/NavBar/components/CenterButton";
 import LocationSearchBar from "src/frontend/NavBar/components/LocationSearchBar";
 
-const APIKey = process.env.REACT_APP_API_KEY; // Comes from the .env.local file, just for security. Won't appear in main -- all api keys should be added to Vercel console. 
 const UMNLocation = { lat: 44.97369560732433, lng: -93.2317259515601 };
 const defaultZoom = 15;
 
-if (!APIKey) throw new Error("API Key was not loaded, or was not found!"); 
-
 export default function MapPage({ hidden, setPage, isMobile }) {
     const [mapLoaded, setMapLoaded] = useState(false);
-    const map = useMap("map");
+    const [map, setMap] = useState<L.Map | null>(null);
+    const mapDiv = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        // Creates the Leaflet map once the container exists
+        if (mapDiv.current && !map) {
+            const leafletMap = L.map(mapDiv.current, { zoomControl: false }).setView(UMNLocation, defaultZoom);
+            L.control.zoom({ position: "bottomright" }).addTo(leafletMap);
+            L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+                maxZoom: 20,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            }).addTo(leafletMap);
+            setMap(leafletMap);
+        }
+    }, [map])
+
+    useEffect(() => {
+        // The map's size is unknown while the page is hidden
+        if (map && !hidden) map.invalidateSize();
+    }, [map, hidden])
 
     useEffect(() => {
         // Initalizes Map Component
@@ -38,40 +55,28 @@ export default function MapPage({ hidden, setPage, isMobile }) {
         <div className="h-[100%] w-full bg-black" hidden={hidden}>
             <NavBar setPage={setPage} isMobile={isMobile}/>
             <LoadingScreen hidden={mapLoaded}/>
-            <Map
-                id="map"
-                className="map"
-                mapId={process.env.REACT_APP_MAP_ID}
-                defaultCenter={UMNLocation}
-                defaultZoom={defaultZoom}
-                gestureHandling={'greedy'}
-                disableDefaultUI={true}
-                zoomControl={true}
-                streetViewControl={false}
-                fullscreenControl={false}
-                mapTypeControl={false}
-            > 
-                <LocationSearchBar isMobile={isMobile}/>
-                <CenterButton/>
-            </Map>
+            <div className="map relative">
+                <div ref={mapDiv} className="h-full w-full z-0"/>
+                <LocationSearchBar map={map} isMobile={isMobile}/>
+                <CenterButton map={map}/>
+            </div>
         </div>
     </>);
 }
 
 /** Focus the map at a the UMN */
-export function centerMap(map: google.maps.Map | null) : void
+export function centerMap(map: L.Map | null) : void
 /** Focus the map at a specified location */
-export function centerMap(map: google.maps.Map | null, location: {lat: number, lng: number} | google.maps.LatLng) : void
+export function centerMap(map: L.Map | null, location: {lat: number, lng: number} | L.LatLng) : void
 /** Focus the map at a specific location and zoom */
-export function centerMap(map: google.maps.Map | null, location: {lat: number, lng: number} | google.maps.LatLng, zoom: number) : void
-export function centerMap(map: google.maps.Map | null, location?: {lat: number, lng: number} | google.maps.LatLng, zoom?: number) : void {
+export function centerMap(map: L.Map | null, location: {lat: number, lng: number} | L.LatLng, zoom: number) : void
+export function centerMap(map: L.Map | null, location?: {lat: number, lng: number} | L.LatLng, zoom?: number) : void {
     if (map !== null) {
-        map.setZoom((zoom === undefined) ? defaultZoom : zoom);
-        map.panTo((location === undefined) ? UMNLocation : location);
+        map.setView((location === undefined) ? UMNLocation : location, (zoom === undefined) ? defaultZoom : zoom);
     }
 }
 
-async function initalize( map: google.maps.Map ) {
+async function initalize( map: L.Map ) {
     // Loads the Route's Resources
     await Resources.load()
     // Sets the Routes map to this map

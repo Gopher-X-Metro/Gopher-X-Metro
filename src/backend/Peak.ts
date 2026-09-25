@@ -1,3 +1,4 @@
+import L from "leaflet";
 namespace Peak {
     /**
      * Gets the running routes
@@ -11,9 +12,9 @@ namespace Peak {
      * Gets the location of each point on a shape line as an Array
      * @param shapeId ID of the shape
      */
-    export async function getPeakShapeLocations(shapeId: string) : Promise<Array<google.maps.LatLng>> {
+    export async function getPeakShapeLocations(shapeId: string) : Promise<Array<L.LatLng>> {
         const shape = await getPeakShapes(shapeId);
-        const shapeLocations: Array<google.maps.LatLng> = [];
+        const shapeLocations: Array<L.LatLng> = [];
 
         const pointString = shape.points;
         const pointArray = pointString.split(';');
@@ -23,7 +24,7 @@ namespace Peak {
             const [latStr, lngStr] = point.split(',');
 
             if (latStr && lngStr)
-                shapeLocations.push(new google.maps.LatLng(latStr, lngStr));
+                shapeLocations.push(L.latLng(latStr, lngStr));
             else
                 console.warn(`Invalid latitude/longitude pair: ${latStr}, ${lngStr}`);
         })

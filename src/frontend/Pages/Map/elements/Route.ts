@@ -1,3 +1,4 @@
+import L from "leaflet";
 import Primative from "./abstracts/Primative.ts";
 
 import Path from "./Path.ts";
@@ -13,7 +14,7 @@ class Route extends Primative {
      * @param routeId ID of the route
      * @param map map to display the route
      */
-    constructor(routeId: string, map: google.maps.Map) {
+    constructor(routeId: string, map: L.Map) {
         super(routeId, map);
 
         this.paths = new Map<string, Path>();
@@ -40,7 +41,7 @@ class Route extends Primative {
      * @param color color of the path
      * @param locations array of locations that describes the line 
      */
-    public addPath(shapeId: string, color: string, locations: Array<google.maps.LatLng>) : void {
+    public addPath(shapeId: string, color: string, locations: Array<L.LatLng>) : void {
         this.paths.set(shapeId, new Path(shapeId, color, locations, this.map));
         this.paths.get(shapeId)?.setVisible(this.visible);
     }
@@ -98,7 +99,7 @@ class Route extends Primative {
      * @param location location of the stop
      * @deprecated We no longer use addStop to create stops
      */
-    public addStop(stopId: string, color: string, name: string, direction: string, location: google.maps.LatLng) : void {
+    public addStop(stopId: string, color: string, name: string, direction: string, location: L.LatLng) : void {
         this.stops.set(stopId, new Stop(stopId, color, name, direction, location, this.map));
         this.stops.get(stopId)?.setVisible(this.visible);
     }

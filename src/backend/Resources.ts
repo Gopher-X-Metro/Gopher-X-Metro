@@ -1,3 +1,4 @@
+import L from "leaflet";
 import Static from "./Static.ts";
 import Realtime from "./Realtime.ts";
 
@@ -57,12 +58,12 @@ namespace Resources {
      * Gets the location of each point on a shape line as an Array
      * @param shapeId ID of the shape
      */
-    export async function getShapeLocations(shapeId: string) : Promise<Array<google.maps.LatLng>> {
+    export async function getShapeLocations(shapeId: string) : Promise<Array<L.LatLng>> {
         const shapeLocations = await (await Static.getShapes(shapeId))
         // Sorts to keep the order of the path
         .sort((a: { shape_dist_traveled: number; }, b: { shape_dist_traveled: number; }) => a.shape_dist_traveled - b.shape_dist_traveled)
         // Converts into locations
-        .map((shape: {shape_pt_lat: any, shape_pt_lon: any}) => new google.maps.LatLng(Number(shape.shape_pt_lat), Number(shape.shape_pt_lon)))
+        .map((shape: {shape_pt_lat: any, shape_pt_lon: any}) => L.latLng(Number(shape.shape_pt_lat), Number(shape.shape_pt_lon)))
 
         return shapeLocations
     }

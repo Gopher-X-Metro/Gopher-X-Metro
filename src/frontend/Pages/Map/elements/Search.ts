@@ -1,20 +1,15 @@
+import L from "leaflet";
 import Stop from "./Stop";
 import InfoWindowElement from "./abstracts/InfoWindowElement";
 
 class Search extends InfoWindowElement {
     /* Public */
-    constructor(searchId: string, name: string | undefined, location: google.maps.LatLng, map: google.maps.Map) {
-        super(searchId, map, new google.maps.marker.AdvancedMarkerElement({
-            map: map,
-            content: new window.google.maps.marker.PinElement({scale: 0.8}).element,
-            position: location
-        }));
+    constructor(searchId: string, name: string | undefined, location: L.LatLng, map: L.Map) {
+        super(searchId, map, L.marker(location).addTo(map), [0, -30]);
 
         this.name = name;
         
         this.elements = new Set<Stop>();
-
-        this.infoWindow?.getWindow().set("pixelOffset", new google.maps.Size(0, -15));
         
         this.updateWindow();
     }
@@ -53,7 +48,7 @@ class Search extends InfoWindowElement {
      * @override
      */
     public setVisible(visible: boolean): void {
-        (this.marker as google.maps.marker.AdvancedMarkerElement).map = (visible ? this.map : undefined);
+        super.setVisible(visible);
         this.elements.forEach(element => element.updateVisibility());
     }
 
