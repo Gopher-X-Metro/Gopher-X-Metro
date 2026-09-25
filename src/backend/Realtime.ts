@@ -39,7 +39,7 @@ namespace Realtime {
             let json = ((await getRealtimeGTFSUniversity())?.vehicles ?? [])
             .filter(vehicle => Peak.UNIVERSITY_ROUTES[routeId] === vehicle.routeID || Peak.NIGHT_ROUTES[routeId] === vehicle.routeID)
             // Buses without a trip are parked or heading to the garage, not carrying riders
-            .filter(vehicle => vehicle.tripID && !vehicle.hidden);
+            .filter(vehicle => vehicle.tripID && !vehicle.hidden && !atGarage(vehicle.lat, vehicle.lng));
 
             json.forEach(vehicle => {
                 // Keyed by bus, since trip IDs aren't unique between campus buses
@@ -95,6 +95,14 @@ namespace Realtime {
             else
                 console.warn(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${await response.text()}`);
         })
+    }
+
+    // The campus bus garage off SE Como Ave and 30th Ave SE, where buses sit overnight
+    const GARAGE = { south: 44.9846, north: 44.9905, west: -93.2155, east: -93.2068 };
+
+    /** If a position is inside the campus bus garage */
+    function atGarage(lat: number, lng: number) : boolean {
+        return lat >= GARAGE.south && lat <= GARAGE.north && lng >= GARAGE.west && lng <= GARAGE.east;
     }
 
     const PEAK_POLL_MS = 2000;

@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import Resources from "src/backend/Resources";
 import Marker from "./components/Marker";
 import Routes from "./components/Routes";
+import URL from "src/backend/URL";
 
 import LoadingScreen from "./components/LoadingScreen";
 import NavBar from "src/frontend/NavBar/NavBar";
@@ -112,7 +113,10 @@ async function initalize( map: L.Map ) {
     // Sets the Routes map to this map
     Routes.init(map)
     // Initalizes the user's marker
-    Marker.init(map);
+    // A link to routes away from campus (like ?route=777) opens looking at them, even after centering on the rider
+    const showLinkedRoutes = () => Routes.showRoute(...Array.from(URL.getRoutes()));
+    Marker.init(map, showLinkedRoutes);
+    showLinkedRoutes();
 
     // Updates vehicle and marker postions every 0.5 seconds
     setInterval(() => {

@@ -38,6 +38,21 @@ namespace Routes {
         refreshStops();
     }
     /**
+     * Moves the map to show routes if none of them are in view, waiting briefly for their lines to load
+     * @param routeIds IDs of the routes
+     */
+    export async function showRoute(...routeIds: string[]) : Promise<void> {
+        for (let attempt = 0; attempt < 40; attempt++) {
+            const bounds = L.latLngBounds([]);
+            routeIds.forEach(id => getRoute(id)?.getPaths().forEach(path => bounds.extend((path.getMarker() as L.Polyline).getBounds())));
+            if (bounds.isValid()) {
+                if (!map.getBounds().intersects(bounds)) map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+                return;
+            }
+            await new Promise(resolve => setTimeout(resolve, 250));
+        }
+    }
+    /**
      * Gets a route object
      * @param routeId ID of the route
      */
@@ -181,10 +196,10 @@ namespace Routes {
         if (!stops.has(stopId)) {
             stops.set(stopId, (async () => {
                 const info = await Realtime.getStop(stopId);
-                const properties = info.stops[0]
+                const properties = info?.stops?.[0];
                 let stop: Stop | undefined;
 
-                if (info.status !== 400) {
+                if (properties) {
                     if (properties.stop_id === stopId || !stops.has(properties.stop_id)) {
                         stop = new Stop(properties.stop_id, "#4169e1", properties.description, direction, L.latLng(properties.latitude, properties.longitude), map);
                         stops.set(properties.stop_id, Promise.resolve(stop));
@@ -197,6 +212,8 @@ namespace Routes {
                     } else stop = await stops.get(properties.stop_id);
                 }
 
+                // A failed lookup is forgotten so the next refresh tries again
+                if (!stop) stops.delete(stopId);
                 return stop;
             })());
         }
@@ -268,8 +285,12 @@ namespace Routes {
                     })
                 )
         } else {
-            // Does not exist
+            // Does not exist; drop it from the link once we know the route list loaded
             console.warn(`Route with ID: ${routeId} not found`);
+            if ((await Schedule.getRoutes())?.length) {
+                routes.delete(routeId);
+                URL.removeRoute(routeId);
+            }
             Resources.createInactiveRoutePopup();
         }
     }
@@ -293,7 +314,7 @@ namespace Routes {
             Realtime.getStop(stop.getId())
             .then( response => 
             {
-                if (response.status !== 400) {
+                if (response?.departures) {
                     stop.clearDepartures();
                     
                     for (const departure of response.departures) 

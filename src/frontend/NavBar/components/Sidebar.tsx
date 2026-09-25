@@ -62,11 +62,11 @@ export default function SideBar() {
          * Updates the displayed routes on the sidebar
          */ 
         const change = async () => {
+            // Extra routes from the link or the route box; only real ones are listed
             for (const routeId of URL.getRoutes()) {
                 if (!routes.has(routeId)) {
                     const info = await Schedule.getRoute(routeId);
-                    const name = info ? info.route_label : routeId;
-                    routes.set(routeId, toTitleCase(name));
+                    if (info) routes.set(routeId, toTitleCase(info.route_label));
                 }
             }
 

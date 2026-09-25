@@ -9,7 +9,7 @@ namespace Marker {
      * Initalizes the marker on the map
      * @param _map map the user marker will display on
      */
-    export function init(_map: L.Map) : void {
+    export function init(_map: L.Map, onCentered?: () => void) : void {
         map = _map;
         marker = L.circleMarker([0, 0], {
             radius: 8,
@@ -23,7 +23,10 @@ namespace Marker {
         navigator.geolocation.getCurrentPosition(position => { 
             // Don't center if accuracy is too low or the rider is outside the map's area
             if (position.coords.accuracy < 1000 && (!map.options.maxBounds || (map.options.maxBounds as L.LatLngBounds).contains([position.coords.latitude, position.coords.longitude])))
-                map.setView([position.coords.latitude, position.coords.longitude])
+            {
+                map.setView([position.coords.latitude, position.coords.longitude]);
+                onCentered?.();
+            }
         })
     }
     /**
