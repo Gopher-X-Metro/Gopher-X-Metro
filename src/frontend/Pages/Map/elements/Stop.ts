@@ -25,13 +25,14 @@ class Stop extends InfoWindowElement {
      * @param map map the stop displays on
      */
     constructor(stopId: string, color: string, name: string, direction: string, location: L.LatLng, map: L.Map) {
-        super(stopId, map, L.circle(location, {
+        super(stopId, map, L.circleMarker(location, {
             fillColor: color,
             fillOpacity: 1,
-            weight: 8,
+            weight: 10,
             color: color,
-            radius: 6.5,
-            opacity: 0.5
+            radius: 7,
+            opacity: 0.35,
+            bubblingMouseEvents: false
         }));
 
         this.departures = new Map<string, Array<departure>>();
@@ -163,7 +164,7 @@ class Stop extends InfoWindowElement {
      * @param color  the new color
      */
     public setColor(color: string) : void {
-        (this.marker as L.Circle).setStyle({ fillColor: color, color: color });
+        (this.marker as L.CircleMarker).setStyle({ fillColor: color, color: color });
     }
     /**
      * Adds an element to the set of elements

@@ -11,13 +11,13 @@ abstract class InfoWindowElement extends Element {
      * @param marker    marker the element represents
      * @param offset    pixel offset of the info window from the marker
      */
-    constructor(id: string, map: L.Map, marker: L.Marker | L.Circle, offset?: [number, number]) {
+    constructor(id: string, map: L.Map, marker: L.Marker | L.CircleMarker, offset?: [number, number]) {
         super(id, map, marker);
 
         this.infoWindow = new InfoWindow(marker.getLatLng(), map, offset);
 
         marker.on("click", () => {
-            this.infoWindow.setPosition((this.marker as L.Marker | L.Circle).getLatLng());
+            this.infoWindow.setPosition((this.marker as L.Marker | L.CircleMarker).getLatLng());
             this.infoWindow.setVisible(!this.infoWindow.isVisible());
         });
     }

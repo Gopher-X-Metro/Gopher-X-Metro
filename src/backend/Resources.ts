@@ -130,6 +130,7 @@ namespace Resources {
         "2": [busImage2, arrowImage2],
         "3": [busImage3, arrowImage3],
         "6": [busImage6, arrowImage6],
+        "925": [busImage6, arrowImage6],
         "902": [busImage902, arrowImage902],
         "901": [busImage901, arrowImage901]
     }
@@ -145,6 +146,7 @@ namespace Resources {
         "2": "bab832",
         "3": "d18528",
         "6": "236918",
+        "925": "236918",
         "902": "00843D",
         "901": "003DA5"
     };

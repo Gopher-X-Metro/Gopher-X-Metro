@@ -97,7 +97,7 @@ namespace Data {
      */
     async function getJSON(file: string) : Promise<any> {
         const response = await fetch(DATA_URL + file);
-        return response.ok ? response.json() : undefined;
+        return response.ok && response.headers.get("content-type")?.includes("json") ? response.json() : undefined;
     }
     
     /* Days of the week */
