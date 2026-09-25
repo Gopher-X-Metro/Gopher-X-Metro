@@ -79,7 +79,7 @@ namespace Live {
             departures: (data?.departures ?? []).map((d: any) => ({
                 routeId: d.route_id,
                 routeName: d.route_short_name ?? d.route_id,
-                text: d.departure_text,
+                text: formatDeparture(d.departure_text, d.departure_time),
                 time: d.departure_time,
                 actual: d.actual,
                 description: d.description,
@@ -205,6 +205,16 @@ namespace Live {
         return (await notices)
             .filter((n: any) => (n.end ? n.end > now : n.created > now - NOTICE_DAYS * 86400))
             .filter((n: Alert) => n.routes.some(route => routeIds.has(route)));
+    }
+
+    /**
+     * Adds AM/PM to clock-time departures ("1:12" -> "1:12 PM"); "5 Min" and "Due" stay as they are
+     * @param text  departure text from Metro Transit
+     * @param time  departure time in epoch seconds
+     */
+    export function formatDeparture(text: string, time: number) : string {
+        if (!/^\d{1,2}:\d{2}$/.test(text) || !time) return text;
+        return new Date(time * 1000).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
     }
 
     /**
