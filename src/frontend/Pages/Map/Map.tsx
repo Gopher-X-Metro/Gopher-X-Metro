@@ -17,6 +17,11 @@ import AlertBanner from "./components/AlertBanner";
 const UMNLocation = { lat: 44.97369560732433, lng: -93.2317259515601 };
 const defaultZoom = 15;
 
+let currentMap: L.Map | null = null;
+
+/** The map shown on the page, for controls outside it */
+export function getMap() : L.Map | null { return currentMap; }
+
 export default function MapPage({ hidden, setPage, isMobile }) {
     const [mapLoaded, setMapLoaded] = useState(false);
     const [map, setMap] = useState<L.Map | null>(null);
@@ -44,6 +49,7 @@ export default function MapPage({ hidden, setPage, isMobile }) {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(leafletMap);
             setMap(leafletMap);
+            currentMap = leafletMap;
         }
     }, [map])
 

@@ -107,9 +107,9 @@ class Stop extends InfoWindowElement {
                         listItemElement.appendChild(buttonElement);
                         listItemElement.appendChild(routeIdElement);
 
-                        // Shows the next 90 minutes (at least 3 times), with the rest behind "Show more"
+                        // Shows the next 90 minutes (3 to 6 times), with the rest behind "Show more"
                         const cutoff = Date.now() / 1000 + SOON_SECONDS;
-                        const soon = Math.max(3, departures.filter(d => d.departure_time <= cutoff).length);
+                        const soon = Math.min(6, Math.max(3, departures.filter(d => d.departure_time <= cutoff).length));
                         const expanded = this.expanded.has(routeId);
 
                         departures.forEach((departure, i) => {
