@@ -60,7 +60,7 @@ export default function LocationSearchBar({ map, isMobile }: { map: L.Map | null
 
     return (
         <div ref={container}
-             className={"absolute z-[1000] left-1/2 -translate-x-1/2 " + (isMobile ? "bottom-[30px] w-[90%]" : "top-0")}>
+             className={"absolute z-[1000] left-1/2 -translate-x-1/2 " + (isMobile ? "bottom-[30px] w-[90%]" : "top-[80px]")}>
             <input id="location-search-bar"
                    className={"location-search-bar"}
                    style={isMobile ? { margin: 0, width: "100%" } : undefined}

@@ -68,7 +68,14 @@ namespace Peak {
         "122": 11279, 
         "123": 11280, 
         "124": 11281,
-        "125": 12527
+        "125": 12527,
+        "126": 12958
+    };
+
+    /* Night and weekend versions of routes, shown under the same route */
+    export const NIGHT_ROUTES = {
+        "121": 12591,
+        "122": 12819
     };
 }
 

@@ -1,5 +1,7 @@
 import L from "leaflet";
 import InfoWindowElement from "./abstracts/InfoWindowElement";
+import Live from "src/backend/Live.ts";
+import Resources from "src/backend/Resources.ts";
 
 class Vehicle extends InfoWindowElement {
     /* Public */
@@ -49,12 +51,77 @@ class Vehicle extends InfoWindowElement {
         contents.appendChild(arrowContainer);
     }
     /**
-     * Updates the info window information
+     * Stores the latest realtime data of the vehicle
+     * @param routeId   route the vehicle is running
+     * @param info      realtime data from Metro Transit or Peak Transit
+     */
+    public setInfo(routeId: string, info: any) : void {
+        this.routeId = routeId;
+        this.info = info;
+    }
+    /**
+     * Dims stale vehicles and refreshes the info window while it is open
      */
     public updateWindow() {
-        this.infoWindow?.setContent(
-            String(Math.ceil(Number(this.getLastUpdated())))
-        );
+        const stale = (this.getLastUpdated() ?? 0) > STALE_SECONDS;
+        (this.marker as L.Marker).setOpacity(stale ? 0.4 : 1);
+
+        if (!this.infoWindow?.isVisible()) {
+            this.windowUpdated = 0;
+            return;
+        }
+        if (Date.now() - this.windowUpdated < 5000) return;
+        this.windowUpdated = Date.now();
+
+        this.buildWindow().then(content => this.infoWindow?.setContent(content));
+    }
+    /**
+     * Builds the info window: route, direction, next stop, and how fresh the position is
+     */
+    private async buildWindow() : Promise<HTMLElement> {
+        const div = document.createElement("div");
+        div.className = "vehicle-popup";
+        const info = this.info ?? {};
+        const routeId = this.routeId ?? "";
+
+        const title = document.createElement("h3");
+        const color = await Resources.getColor(routeId);
+        title.innerHTML = `<span class="route-dot" style="background:#${color}"></span>`;
+        title.append(ROUTE_NAMES[routeId] ?? "Route " + routeId);
+        div.appendChild(title);
+
+        const lines: string[] = [];
+        if (info.direction) lines.push(DIRECTIONS[info.direction] ?? info.direction);
+
+        let nextStop: string | undefined;
+        let eta: number | undefined;
+        if (info.nextStopID) {
+            nextStop = await Live.getPeakStopName(info.nextStopID);
+            const arrival = await Live.getPeakEta(info.nextStopID, info.routeID);
+            if (arrival) eta = Math.round((arrival - Date.now() / 1000) / 60);
+        } else if (this.tripId || this.id) {
+            nextStop = await Live.getMetroNextStop(this.tripId ?? this.id);
+        }
+        if (nextStop) lines.push("Next stop: " + nextStop + (eta !== undefined && eta >= 0 ? ` (${eta === 0 ? "now" : eta + " min"})` : ""));
+
+        // Campus buses report schedule adherence and how full they are
+        if (info.nextStopID !== undefined && info.minsLate !== undefined && info.nextStopID)
+            lines.push(info.minsLate > 1 ? `About ${info.minsLate} min late` : info.minsLate < -1 ? `About ${-info.minsLate} min early` : "On time");
+        if (info.HasAPC && info.APCPercentage > 0)
+            lines.push(info.APCPercentage >= 90 ? "Crowded (standing room only)" : info.APCPercentage >= 50 ? "Some seats open" : "Plenty of seats");
+
+        const age = Math.round(this.getLastUpdated() ?? 0);
+        lines.push(age > STALE_SECONDS 
+            ? `Location may be out of date (${Math.round(age / 60)} min old)` 
+            : `Location updated ${age < 5 ? "just now" : age + "s ago"}`);
+
+        lines.forEach((line, i) => {
+            const p = document.createElement("p");
+            p.textContent = line;
+            if (i === lines.length - 1) p.className = "muted";
+            div.appendChild(p);
+        });
+        return div;
     }
     /**
      * Gets the length in ms of the time between when position was updated and now
@@ -181,6 +248,9 @@ class Vehicle extends InfoWindowElement {
     }
     
     /* Private */
+    private routeId: string | undefined;
+    private info: any;
+    private windowUpdated = 0;
     private updatedTimestamp: number | undefined;
     private tripId: string | undefined;
     private positionTimestamp : number | undefined;
@@ -189,5 +259,22 @@ class Vehicle extends InfoWindowElement {
     private arrowImg: HTMLImageElement | null = null;
     private arrowCont: HTMLDivElement;
 }
+
+const STALE_SECONDS = 120;
+
+const DIRECTIONS = { NB: "Northbound", SB: "Southbound", EB: "Eastbound", WB: "Westbound" };
+
+export const ROUTE_NAMES = {
+    "120": "120 East Bank Circulator",
+    "121": "121 Campus Connector",
+    "122": "122 University Ave Circulator",
+    "123": "123 4th Street Circulator",
+    "124": "124 St. Paul Circulator",
+    "125": "125 Dinkytown Connector",
+    "126": "126 Campus Express",
+    "901": "METRO Blue Line",
+    "902": "METRO Green Line",
+    "925": "METRO E Line",
+};
 
 export default Vehicle;

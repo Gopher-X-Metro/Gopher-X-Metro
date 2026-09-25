@@ -18,6 +18,7 @@ export default function SideBar() {
     routes.set("124", "124 St. Paul Circulator");
     routes.set("125", "125 Dinkytown Connector");
     routes.set("120", "120 East Bank Circulator");
+    routes.set("126", "126 Campus Express");
     routes.set("2", "2 Franklin Av / To Hennepin");
     routes.set("925", "METRO E Line (replaced 6)");
     routes.set("3", "3 U of M / Como Av / Dwtn Mpls");

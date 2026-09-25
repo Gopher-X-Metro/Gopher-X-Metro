@@ -34,7 +34,7 @@ export default function NavBar({ setPage, isMobile }) {
                         <Button colorScheme='yellow' onClick={() => setPage("schedules")}>
                             Schedules
                         </Button>
-                        <a href='https://pts.umn.edu/sites/pts.umn.edu/files/2020-07/bus_outline_map_printable.jpg' target="_blank" rel="noreferrer">
+                        <a href='https://campusmaps.umn.edu/' target="_blank" rel="noreferrer">
                             <Button colorScheme='yellow'>
                                 Campus Bus Map
                             </Button>

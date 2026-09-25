@@ -24,7 +24,9 @@ namespace Schedule {
      * @returns the specified data about the route
      */
     export async function getRouteDetails(routeId: string) : Promise<any> {
-        return await (await fetch("https://svc.metrotransit.org/schedule/routedetails/"+(await getRoute(routeId)).route_url_param)).json()
+        const route = await getRoute(routeId);
+        if (!route) return { schedules: [] };
+        return await (await fetch("https://svc.metrotransit.org/schedule/routedetails/"+route.route_url_param)).json()
     }
     /**
      * Gets the time table for the route and schedule
