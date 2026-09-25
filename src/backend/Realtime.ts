@@ -37,10 +37,13 @@ namespace Realtime {
         // Check if University Route
         if (Object.keys(Peak.UNIVERSITY_ROUTES).includes(routeId)) {
             let json = ((await getRealtimeGTFSUniversity())?.vehicles ?? [])
-            .filter(vehicle => Peak.UNIVERSITY_ROUTES[routeId] === vehicle.routeID || Peak.NIGHT_ROUTES[routeId] === vehicle.routeID);
+            .filter(vehicle => Peak.UNIVERSITY_ROUTES[routeId] === vehicle.routeID || Peak.NIGHT_ROUTES[routeId] === vehicle.routeID)
+            // Buses without a trip are parked or heading to the garage, not carrying riders
+            .filter(vehicle => vehicle.tripID && !vehicle.hidden);
 
             json.forEach(vehicle => {
-                vehicle.trip_id = vehicle.tripID;
+                // Keyed by bus, since trip IDs aren't unique between campus buses
+                vehicle.trip_id = "peak-" + vehicle.vehicleID;
                 vehicle.latitude = vehicle.lat;
                 vehicle.longitude = vehicle.lng;
                 vehicle.timestamp = vehicle.positionUpdated;

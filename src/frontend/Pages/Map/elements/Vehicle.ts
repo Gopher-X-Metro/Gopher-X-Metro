@@ -115,7 +115,7 @@ class Vehicle extends InfoWindowElement {
             nextStop = await Live.getPeakStopName(info.nextStopID);
             const arrival = await Live.getPeakEta(info.nextStopID, info.routeID);
             if (arrival) eta = Math.round((arrival - Date.now() / 1000) / 60);
-        } else if (this.tripId || this.id) {
+        } else if (!this.id.startsWith("peak-")) {
             metro = await Live.getMetroTrip(this.tripId ?? this.id);
             nextStop = metro.nextStop;
             if (metro.arrival) eta = Math.round((metro.arrival - Date.now() / 1000) / 60);
