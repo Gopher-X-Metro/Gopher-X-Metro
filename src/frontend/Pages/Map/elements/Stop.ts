@@ -1,4 +1,5 @@
 import L from 'leaflet';
+import Live from 'src/backend/Live.ts';
 import InfoWindowElement from './abstracts/InfoWindowElement';
 
 import Resources from 'src/backend/Resources.ts';
@@ -115,7 +116,7 @@ class Stop extends InfoWindowElement {
                         departures.forEach((departure, i) => {
                             if (i >= soon && !expanded) return;
                             const timeElement = document.createElement("p");
-                            timeElement.innerHTML = departure.departure_text;
+                            timeElement.textContent = Live.formatDeparture(departure.departure_text, departure.departure_time);
                             timeElement.style.cssText = "margin: 5px 0; font-size: 14px;";
                             
                             listItemElement.appendChild(timeElement);
