@@ -14,7 +14,7 @@ const ResponsiveDropdown = ({ setPage, isMobile }) => {
                     <MenuItem as={Link} onClick={() => setPage("schedules")}> 
                       Schedules
                     </MenuItem>
-                    <MenuItem as={'a'} href='https://pts.umn.edu/sites/pts.umn.edu/files/2020-07/bus_outline_map_printable.jpg' target="_blank" rel="noreferrer"> 
+                    <MenuItem as={'a'} href='https://campusmaps.umn.edu/' target="_blank" rel="noreferrer"> 
                       Campus Bus Map
                     </MenuItem>
                     <MenuItem as={'a'} href= 'https://umn.rider.peaktransit.com' target="_blank" rel="noreferrer">

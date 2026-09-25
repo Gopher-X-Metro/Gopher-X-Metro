@@ -11,6 +11,8 @@ import LoadingScreen from "./components/LoadingScreen";
 import NavBar from "src/frontend/NavBar/NavBar";
 import CenterButton from "src/frontend/NavBar/components/CenterButton";
 import LocationSearchBar from "src/frontend/NavBar/components/LocationSearchBar";
+import NearbyPanel from "./components/NearbyPanel";
+import AlertBanner from "./components/AlertBanner";
 
 const UMNLocation = { lat: 44.97369560732433, lng: -93.2317259515601 };
 const defaultZoom = 15;
@@ -59,6 +61,8 @@ export default function MapPage({ hidden, setPage, isMobile }) {
                 <div ref={mapDiv} className="h-full w-full z-0"/>
                 <LocationSearchBar map={map} isMobile={isMobile}/>
                 <CenterButton map={map}/>
+                <AlertBanner/>
+                <NearbyPanel map={map} isMobile={isMobile}/>
             </div>
         </div>
     </>);

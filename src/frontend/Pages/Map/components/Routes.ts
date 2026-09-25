@@ -113,6 +113,7 @@ namespace Routes {
                 }
 
                 vehicles.get(info.trip_id)?.setPosition(L.latLng(info.latitude as number, info.longitude as number), info.timestamp);
+                vehicles.get(info.trip_id)?.setInfo(routeId, info);
                 vehicles.get(info.trip_id)?.updateWindow();
                 vehicles.get(info.trip_id)?.updateTimestamp();
             }

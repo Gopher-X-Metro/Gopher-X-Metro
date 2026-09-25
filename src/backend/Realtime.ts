@@ -37,7 +37,7 @@ namespace Realtime {
         // Check if University Route
         if (Object.keys(Peak.UNIVERSITY_ROUTES).includes(routeId)) {
             let json = (await getRealtimeGTFSUniversity()).vehicles
-            .filter(vehicle => Peak.UNIVERSITY_ROUTES[routeId] === vehicle.routeID);
+            .filter(vehicle => Peak.UNIVERSITY_ROUTES[routeId] === vehicle.routeID || Peak.NIGHT_ROUTES[routeId] === vehicle.routeID);
 
             json.forEach(vehicle => {
                 vehicle.trip_id = vehicle.tripID;

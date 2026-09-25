@@ -1,6 +1,6 @@
 // Converts Metro Transit's static GTFS feed into small JSON files the site loads directly.
 // Usage: node scripts/build-gtfs.mjs <folder with extracted gtfs .txt files>
-// Output: public/gtfs/{calendar.json, routes/<route_id>.json, shapes/<shape_id>.json}
+// Output: public/gtfs/{calendar.json, stops.json, routes/<route_id>.json, shapes/<shape_id>.json}
 
 import fs from "fs";
 import path from "path";
@@ -53,6 +53,14 @@ const calendar = [], dates = [];
 await eachRow("calendar.txt", row => calendar.push(row));
 await eachRow("calendar_dates.txt", row => dates.push(row));
 fs.writeFileSync(path.join(output, "calendar.json"), JSON.stringify({ calendar, dates }));
+
+// Stops as [stop_id, name, lat, lon] for the nearby-stops list
+const stops = [];
+await eachRow("stops.txt", row => {
+    if (!row.location_type || row.location_type === "0")
+        stops.push([row.stop_id, row.stop_name, Number(Number(row.stop_lat).toFixed(5)), Number(Number(row.stop_lon).toFixed(5))]);
+});
+fs.writeFileSync(path.join(output, "stops.json"), JSON.stringify(stops));
 
 // Routes and the unique service/shape pairs of their trips
 const routes = new Map();
