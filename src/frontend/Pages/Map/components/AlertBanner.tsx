@@ -37,25 +37,36 @@ export default function AlertBanner() {
         setDismissed(next);
     }
 
-    const shown = expanded ? visible : visible.slice(0, 1);
+    // Collapsed, the banner is one line so it doesn't cover the map
+    if (!expanded) return (
+        <div className="alert-banner collapsed" role="status">
+            <button className="alert-summary" onClick={() => setExpanded(true)} aria-expanded="false">
+                <span className="alert-icon">⚠</span>
+                <span className="alert-summary-text">
+                    <strong>{visible[0].routes.map(label).join(", ")}</strong> {visible[0].header}
+                </span>
+                {visible.length > 1 && <span className="alert-count">+{visible.length - 1}</span>}
+            </button>
+            <button className="alert-close" onClick={dismissAll} aria-label="Dismiss alerts">✕</button>
+        </div>
+    );
 
     return (
         <div className="alert-banner" role="status">
             <div className="alert-list">
-                {shown.map(alert => (
-                    <p key={alert.id}><strong>⚠ {alert.routes.join(", ")}:</strong> {alert.header}</p>
+                {visible.map(alert => (
+                    <p key={alert.id}><strong>⚠ {alert.routes.map(label).join(", ")}:</strong> {alert.header}</p>
                 ))}
-                <a className="alert-more" href="https://www.metrotransit.org/routes-services/closures" target="_blank" rel="noreferrer">All Metro Transit alerts</a>
-                {" · "}
-                <a className="alert-more" href="https://umn.rider.peaktransit.com" target="_blank" rel="noreferrer">Campus bus notices</a>
-                {visible.length > 1 && " · "}
-                {visible.length > 1 && (
-                    <button className="alert-more" onClick={() => setExpanded(!expanded)}>
-                        {expanded ? "Show less" : `+${visible.length - 1} more alert${visible.length > 2 ? "s" : ""}`}
-                    </button>
-                )}
+                <p className="alert-links">
+                    <button className="alert-more" onClick={() => document.dispatchEvent(new CustomEvent("gxm:open-page", { detail: "alerts" }))}>All bus alerts</button>
+                    {" · "}
+                    <button className="alert-more" onClick={() => setExpanded(false)}>Show less</button>
+                </p>
             </div>
             <button className="alert-close" onClick={dismissAll} aria-label="Dismiss alerts">✕</button>
         </div>
     )
 }
+
+const LABELS = { "901": "Blue Line", "902": "Green Line", "925": "E Line", "FOOTBALL": "Football" };
+const label = (route: string) => LABELS[route] ?? route;

@@ -49,7 +49,7 @@ class Stop extends InfoWindowElement {
      * Updates the info window information
      */
     public async updateWindow() : Promise<void> {
-        this.setColor(this.departures.size === 0 ? "#F35708" : "#4169e1");
+        this.setColor(this.departures.size === 0 ? STOP_IDLE : STOP_ACTIVE);
 
         /**
          * Generate the content of the infowindow
@@ -57,72 +57,67 @@ class Stop extends InfoWindowElement {
          */
         const generateContent = async (errorMessage?: string) => {
             const divElement = document.createElement("div");
-            divElement.style.cssText = "text-align:center; font-family: Arial, sans-serif;";
+            divElement.className = "stop-popup";
 
-            const directionElement = document.createElement("h2");
-            directionElement.textContent = this.direction
-            directionElement.style.cssText = "margin-bottom: 10px; font-weight: bold; border-bottom: 2px solid #000;";
-
-            const nameElement = document.createElement("p");
+            const nameElement = document.createElement("h3");
             nameElement.textContent = this.name;
-            nameElement.style.cssText = "margin-bottom: 20px; font-size: 16px;";
-
-            divElement.appendChild(directionElement);
             divElement.appendChild(nameElement);
-            
+
+            if (this.direction) {
+                const directionElement = document.createElement("p");
+                directionElement.className = "stop-popup-direction";
+                directionElement.textContent = this.direction;
+                divElement.appendChild(directionElement);
+            }
+
             if (errorMessage) {
                 const errorElement = document.createElement("p");
-                errorElement.innerHTML = errorMessage;
-                errorElement.style.cssText = "color: red;";
-
+                errorElement.className = "stop-popup-empty";
+                errorElement.textContent = errorMessage;
                 divElement.appendChild(errorElement);
+            } else if (this.departures.size === 0) {
+                const warningElement = document.createElement("p");
+                warningElement.className = "stop-popup-empty";
+                warningElement.textContent = "No buses scheduled here right now. ";
+                const link = document.createElement("a");
+                link.textContent = "See schedules";
+                link.href = "#";
+                link.addEventListener("click", event => {
+                    event.preventDefault();
+                    document.dispatchEvent(new CustomEvent("gxm:open-page", { detail: "schedules" }));
+                });
+                warningElement.appendChild(link);
+                divElement.appendChild(warningElement);
             } else {
-                if (this.departures.size === 0) {
-                    const warningElement = document.createElement("p");
-                    warningElement.innerHTML = `There are no buses for this stop at this time<br><a href="./schedules" rel="noopener noreferrer">Check the scheduling page for more information</a>`;
-                    warningElement.style.cssText = 'color: red;';
-                    warningElement.style.fontSize = "12px";
-                
-                    divElement.appendChild(warningElement);
+                // One row per route: tappable route chip, then its next few times
+                const listElement = document.createElement("ul");
+                for (const [routeId, departures] of this.departures) {
+                    const row = document.createElement("li");
+
+                    const chip = document.createElement("button");
+                    chip.className = "stop-popup-chip";
+                    chip.textContent = ROUTE_CHIPS[routeId] ?? routeId;
+                    chip.style.background = "#" + await Resources.getColor(routeId);
+                    chip.title = URL.getRoutes().has(routeId) ? "Hide this route" : "Show this route on the map";
+                    chip.addEventListener("click", event => {
+                        event.stopPropagation();
+                        if (!URL.getRoutes().has(routeId)) URL.addRoute(routeId);
+                        else URL.removeRoute(routeId);
+                    });
+                    row.appendChild(chip);
+
+                    const times = document.createElement("span");
+                    times.className = "stop-popup-times";
+                    departures.slice(0, DEPARTURES_SHOWN).forEach((departure, i) => {
+                        const time = document.createElement("span");
+                        time.textContent = Live.formatDeparture(departure.departure_text, departure.departure_time);
+                        if (i === 0) time.className = "next";
+                        times.appendChild(time);
+                    });
+                    row.appendChild(times);
+                    listElement.appendChild(row);
                 }
-                else {
-                    const listElement = document.createElement("ul")
-                    listElement.style.cssText = "margin-top: 20px; list-style: none;";
-
-                    for (const [routeId, departures] of this.departures) {
-                        const listItemElement = document.createElement("li");
-                        listItemElement.style.cssText = "display: inline-block; margin-left: 10px; margin-right: 10px; vertical-align: text-top;";
-
-                        const buttonElement = document.createElement("button");
-                        buttonElement.innerHTML = `<svg width="12" height="12" style="display: block; margin: 0 auto 5px;"><circle cx="6" cy="6" r="6" fill="#${await Resources.getColor(routeId)}"/></svg>`
-                        buttonElement.addEventListener("click", () => {
-                            if (!URL.getRoutes().has(routeId))
-                                URL.addRoute(routeId);
-                            else
-                                URL.removeRoute(routeId);
-                        });
-
-                        const routeIdElement = document.createElement("h3");
-                        routeIdElement.innerHTML = `- ${routeId} -`;
-                        routeIdElement.style.cssText = "margin-top: 10px;";
-                        
-                        listItemElement.appendChild(buttonElement);
-                        listItemElement.appendChild(routeIdElement);
-
-                        // The next few departures per route keep the popup short
-                        departures.slice(0, DEPARTURES_SHOWN).forEach(departure => {
-                            const timeElement = document.createElement("p");
-                            timeElement.textContent = Live.formatDeparture(departure.departure_text, departure.departure_time);
-                            timeElement.style.cssText = "margin: 5px 0; font-size: 14px;";
-                            
-                            listItemElement.appendChild(timeElement);
-                        })
-
-                        listElement.append(listItemElement);
-                    }
-                    
-                    divElement.appendChild(listElement);
-                }
+                divElement.appendChild(listElement);
             }
 
             return divElement;
@@ -208,6 +203,13 @@ class Stop extends InfoWindowElement {
 }
 
 const DEPARTURES_SHOWN = 5;
+
+// Stops with upcoming buses stand out; ones without fade back
+const STOP_ACTIVE = "#1f5fbf";
+const STOP_IDLE = "#9aa3ad";
+
+/** Short labels for route chips */
+const ROUTE_CHIPS = { "901": "Blue", "902": "Green", "925": "E Line", "FOOTBALL": "Football" };
 
 /** Stops get their own layer above route lines, so a line never covers a stop's tap target */
 function stopPane(map: L.Map) : string {

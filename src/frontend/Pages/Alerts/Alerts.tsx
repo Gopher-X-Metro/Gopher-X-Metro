@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from '@chakra-ui/react';
+import PageHeader from '../PageHeader';
 
 import Live from 'src/backend/Live';
 import URL from 'src/backend/URL';
@@ -45,13 +45,9 @@ export default function Alerts({ hidden, setPage }) {
     );
 
     return (
-        <div hidden={hidden} className="schedules-page">
-            <h1 className="schedules-title">Bus Alerts</h1>
-            <div className="schedules-controls">
-                <Button colorScheme='yellow' onClick={() => setPage("map")}>
-                    Back to Map
-                </Button>
-            </div>
+        <div hidden={hidden} className="schedules-page-wrap">
+            <PageHeader title="Bus Alerts" setPage={setPage}/>
+            <div className="schedules-page">
 
             <section className="alerts-section">
                 <h2 className="alerts-heading">Campus Buses</h2>
@@ -70,6 +66,7 @@ export default function Alerts({ hidden, setPage }) {
                 <ul>{metro?.map(alert => card(alert, alert.end ? "Until " + date(alert.end) : alert.start ? "Since " + date(alert.start) : ""))}</ul>
                 <a className="alerts-link" href="https://www.metrotransit.org/routes-services/closures" target="_blank" rel="noreferrer">All Metro Transit closures and detours</a>
             </section>
+            </div>
         </div>
     )
 }

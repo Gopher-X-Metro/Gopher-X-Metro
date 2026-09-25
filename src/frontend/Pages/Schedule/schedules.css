@@ -11,3 +11,17 @@
 .schedule-direction td:last-child { text-align: right; color: #444; white-space: nowrap; }
 .schedules-note { color: #666; font-size: 13px; margin: 10px 0; }
 .schedules-note a { color: #0053a0; text-decoration: underline; }
+
+/* Shared page layout */
+.schedules-page-wrap { min-height: 100%; background: #fafafa; }
+.page-header { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 12px; background: #7a0019; color: #fff; padding: 12px 16px; font-family: Arial, sans-serif; box-shadow: 0 2px 6px rgba(0,0,0,.2); }
+.page-header h1 { font-size: 20px; font-weight: bold; color: #ffcc33; margin: 0; }
+.page-back { background: rgba(255,255,255,.15); color: #fff; font-weight: bold; border-radius: 8px; padding: 6px 12px; font-size: 14px; }
+.page-back:hover { background: rgba(255,255,255,.25); }
+.schedules-title { font-size: 22px; }
+.about-lead { font-size: 16px; line-height: 1.5; margin: 8px 0 4px; }
+.about-text { font-size: 15px; line-height: 1.5; }
+.schedules-page a, .about-lead a, .about-text a { color: #0053a0; text-decoration: underline; }
+.faq > div { margin: 10px 0 14px; }
+.faq dt { font-weight: bold; font-size: 15px; }
+.faq dd { font-size: 14px; color: #444; line-height: 1.5; margin: 2px 0 0; }

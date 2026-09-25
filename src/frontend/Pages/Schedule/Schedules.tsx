@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 
 import "./schedules.css";
+import PageHeader from "../PageHeader";
 
 const CAMPUS_ROUTES: [string, string][] = [
     ["120", "120 East Bank Circulator"],
@@ -72,7 +73,9 @@ export default function Schedules({ hidden, setPage }) {
     );
 
     return (
-        <div hidden={hidden} className="schedules-page">
+        <div hidden={hidden} className="schedules-page-wrap">
+            <PageHeader title="Schedules" setPage={setPage}/>
+            <div className="schedules-page">
             <div className="schedules-controls">
                 <Menu>
                     <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
@@ -88,12 +91,9 @@ export default function Schedules({ hidden, setPage }) {
                         </MenuOptionGroup>
                     </MenuList>
                 </Menu>
-                <Button colorScheme='yellow' onClick={() => setPage("map")}>
-                    Back to Map
-                </Button>
             </div>
 
-            <h1 className="schedules-title">{name}</h1>
+            <h2 className="schedules-title">{name}</h2>
 
             {schedule === undefined && <p className="schedules-note">Loading…</p>}
 
@@ -132,6 +132,7 @@ export default function Schedules({ hidden, setPage }) {
                     and refreshed weekly. Late-night service can differ on Thursday and Friday.
                 </p>
             )}
+            </div>
         </div>
     )
 }

@@ -1,79 +1,60 @@
 import React from "react";
-import "./styles.css";
+
+import PageHeader from "../PageHeader";
+import "../Schedule/schedules.css";
+
+const FEEDBACK_URL = "https://github.com/Gopher-X-Metro/Gopher-X-Metro/issues";
+
+const FAQ: [string, React.ReactNode][] = [
+    ["What can I track?",
+        "Every campus bus (routes 120–126, plus the football shuttle on game days), and any Metro Transit bus or light rail line. Campus bus locations refresh every couple of seconds and Metro every few seconds. Buses whose location hasn't updated in over two minutes are faded out."],
+    ["How do I add a route that isn't in the menu?",
+        "Open the route menu (☰) and type the route number into \"Add a route\" at the bottom."],
+    ["How do I find stops near me?",
+        "Tap \"Stops near me\" for the closest stops, when the next buses leave, and how long the walk is. Tap the star on a stop to keep it at the top of that list, or the bell next to a departure to get a notification 5 minutes before it leaves."],
+    ["What does tapping a bus show?",
+        "Its route, direction, next stop and when it gets there, whether it's running late, and its bus number. Campus buses also show how full they are."],
+    ["How does place search work?",
+        "Search for a building or address to drop a pin there and show the stops around it. Tap any stop for its upcoming departures."],
+    ["Can I put it on my home screen?",
+        "Yes. In Safari tap Share → Add to Home Screen, or in Chrome tap ⋮ → Add to Home screen. It opens like an app."],
+];
 
 function About({ hidden, setPage }) {
-    const feedbackUrl = "https://github.com/Gopher-X-Metro/Gopher-X-Metro/issues";
-
     return (
-        <div hidden={hidden} className="about-page">
-            {/* <!-- Responsive navbar--> */}
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-                <div className="container">
-                    <button className="navbar-brand" onClick={() => setPage("map")}>Back to Map</button>
-                </div>
-            </nav>
-            {/* <!-- Page content--> */}
-            <div className="container">
-                <div className="text-center mt-5">
-                    <h1 className="title">About <strong>Gopher X Metro Bus</strong></h1>
-                    <p className="highlight-text">The University of Minnesota has included the <a href="https://pts.umn.edu/transit/passes/universal-student-transit-pass" target="_blank" rel="noreferrer">transit pass</a> for students who pay the Transportation and Safety Fee (students can also opt in each semester). 
-                        Your U Card works as the pass on Metro Transit buses and METRO lines, plus several suburban providers. 
-                        The campus buses are free for everyone. 
-                    </p>
+        <div hidden={hidden} className="schedules-page-wrap">
+            <PageHeader title="About" setPage={setPage}/>
+            <div className="schedules-page">
+                <p className="about-lead">
+                    Gopher X Metro shows University of Minnesota campus buses and Metro Transit buses and trains on one live map.
+                    The campus buses are free, and students who pay the Transportation and Safety Fee get
+                    a <a href="https://pts.umn.edu/transit/passes/universal-student-transit-pass" target="_blank" rel="noreferrer">Universal Transit Pass</a> on
+                    their U Card for Metro Transit and several suburban providers.
+                </p>
 
-                    {/* Feedback Section */}
-                    <div className="feedback-section mt-4">
-                        <h2><strong>Feedback</strong></h2>
-                        <p>We would love to hear your thoughts! Report a bug or suggest a feature on <a href={feedbackUrl} target="_blank" rel="noreferrer" className="highlight-link">GitHub</a>.</p>
-                    </div>
+                <h2 className="alerts-heading">Questions</h2>
+                <dl className="faq">
+                    {FAQ.map(([question, answer]) => (
+                        <div key={question}>
+                            <dt>{question}</dt>
+                            <dd>{answer}</dd>
+                        </div>
+                    ))}
+                </dl>
 
-                    {/* FAQ Section */}
-                    <div className="faq-section mt-5">
-                        <h2 className="faq-title"><strong>Frequently Asked Questions</strong></h2>
-                        <div className="faq-item">
-                            <h4 className="question">1. What routes am I able to track?</h4>
-                            <p className="answer">You can track the live location of every campus bus (routes 120–126), Metro Transit bus, and light rail train. Vehicle positions refresh every few seconds and stop departure times every thirty seconds. Buses whose location hasn't updated in over two minutes are faded out.</p>
-                        </div>
-                        <div className="faq-item">
-                            <h4 className="question">2. How does the search function work?</h4>
-                            <p className="answer">Search for a place with the search bar to drop a pin there and show the bus stops nearby. Tap any stop to see its upcoming departures.
-                            </p>
-                        </div>
-                        <div className="faq-item">
-                            <h4 className="question">3. Does this work outside of UMN?</h4>
-                            <p className="answer">Yes! The Gopher-X-Metro Transit app works throughout the entire Twin Cities Metropolitan Area. Though we cater our app towards use on the UMN campus, the transit app is highly applicable for travel throughout the Twin Cities
-                            </p>
-                        </div>
+                <h2 className="alerts-heading">Feedback</h2>
+                <p className="about-text">
+                    Found a bug or want a feature? <a href={FEEDBACK_URL} target="_blank" rel="noreferrer">Open an issue on GitHub</a>.
+                </p>
 
-                        <div className="faq-item">
-                            <h4 className="question">4. Can I favorite specific routes?</h4>
-                            <p className="answer">Yes, you can favorite stops. Open "Stops near me" and tap the star next to any stop. Your favorite stops and their next departures show up at the top of that panel every time you open the site. Favorites are saved in your browser.
-                            </p>
-                        </div>
-
-                        <div className="faq-item">
-                            <h4 className="question">5. How can I add routes that are not already on the Navigation Bar?</h4>
-                            <p className="answer"> At the bottom of the routes menu (the ☰ button) there is a small search box. Enter any Metro Transit route number and it will appear on your map.
-                            </p>
-                        </div>
-
-                        <div className="faq-item">
-                            <h4 className="question">6. Can I see which stop my bus is heading to next?</h4>
-                            <p className="answer"> Yes. Tap any bus or train on the map to see its route, direction, the next stop it is heading to, and how recently its location updated. For campus buses it also shows the estimated minutes to that stop. 
-                            </p>
-                        </div>
-                        <br/>
-                        <br/>
-
-                    </div>
-                </div>
+                <h2 className="alerts-heading">Credits</h2>
+                <p className="about-text">
+                    Built in 2024 by Adam, Ken, Riley, Will, Babacar, Alex, Mike and Andy, and revived in 2026.
+                    Live data from Metro Transit and Peak Transit. Map data © OpenStreetMap contributors.
+                </p>
             </div>
-            {/* <!-- Bootstrap core JS--> */}
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-            {/* <!-- Core theme JS--> */}
-            <script src="js/scripts.js"></script>
         </div>
-    )
+    );
 }
 
 export default About;
