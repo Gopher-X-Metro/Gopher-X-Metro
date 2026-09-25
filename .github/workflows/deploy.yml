@@ -1,0 +1,45 @@
+name: Build and deploy
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 10 * * 1" # Mondays, to pick up Metro Transit schedule changes
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Download Metro Transit GTFS
+        run: |
+          curl -sSfL -o gtfs.zip https://svc.metrotransit.org/mtgtfs/gtfs.zip
+          unzip -q gtfs.zip calendar.txt calendar_dates.txt routes.txt trips.txt shapes.txt -d gtfs
+      - run: node scripts/build-gtfs.mjs gtfs
+      - run: npm run build
+        env:
+          CI: false
+          TSC_COMPILE_ON_ERROR: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -2,6 +2,7 @@
   "name": "gohper-x-metro",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/react": "^2.8.2",
@@ -20,7 +21,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "knip": "knip"
+    "knip": "knip",
+    "gtfs": "node scripts/build-gtfs.mjs"
   },
   "eslintConfig": {
     "extends": [

@@ -16,8 +16,28 @@ The Transit Pass allows students to have access to the Metro Transit buses and t
 - React
 - Metro Transit API
 - Peak Transit API
-- Google Maps API 
+- Leaflet + OpenStreetMap (CARTO tiles, Photon search)
 
 
 [Github](https://github.umn.edu/joh20327/Gopher-City-Bus) \
-[Gopher X Metro Bus Website](https://gopher-bus-x-metro-buses.vercel.app/)
+[Original Gopher X Metro Bus Website](https://gopher-bus-x-metro-buses.vercel.app/)
+
+
+## About this revival
+This repository is a revival of [Gopher-X-Metro/Gopher-X-Metro](https://github.com/Gopher-X-Metro/Gopher-X-Metro), the original project built by **Adam, Ken, Riley, Will, Babacar, Alex, Mike, and Andy**. The full commit history from the original team is preserved here.
+
+Changes made to bring it back online with no paid services or API keys:
+- The map moved from Google Maps to [Leaflet](https://leafletjs.com/) with OpenStreetMap data, and place search uses [Photon](https://photon.komoot.io/).
+- The Supabase backend was replaced with static JSON built from [Metro Transit's GTFS feed](https://svc.metrotransit.org/) by `scripts/build-gtfs.mjs`.
+- A GitHub Action (`.github/workflows/deploy.yml`) rebuilds that data and redeploys to GitHub Pages every Monday and on every push to `main`.
+
+Live vehicle locations still come straight from the Metro Transit and Peak Transit APIs in the browser.
+
+### Running locally
+```bash
+npm install
+curl -L -o gtfs.zip https://svc.metrotransit.org/mtgtfs/gtfs.zip
+unzip gtfs.zip calendar.txt calendar_dates.txt routes.txt trips.txt shapes.txt -d gtfs
+npm run gtfs gtfs
+npm start
+```
