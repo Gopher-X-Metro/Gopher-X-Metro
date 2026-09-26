@@ -154,8 +154,23 @@ body {
 }
 
 .sidebar-content button.active {
-  background-color: #9f9090; 
+  background-color: #9f9090;
   color: #a71010;
+}
+
+/* Routes outside their scheduled hours with no buses out */
+.sidebar-content button.inactive {
+  color: #8a8080;
+}
+
+.sidebar-content button.inactive::before {
+  opacity: 0.35;
+}
+
+.sidebar-content .not-running {
+  font-size: 12px;
+  font-style: italic;
+  margin-left: 8px;
 }
 
 .sidebar-content button::before {
