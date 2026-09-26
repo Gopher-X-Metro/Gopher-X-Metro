@@ -61,6 +61,13 @@ export default function Schedules({ hidden, setPage }) {
     const name = [...CAMPUS_ROUTES, ...METRO_ROUTES].find(([id]) => id === routeId)?.[1] ?? routeId;
 
     useEffect(() => {
+        // Lets a stop popup on the map pick which route to show
+        const open = (event: Event) => setRouteId((event as CustomEvent).detail);
+        document.addEventListener("gxm:open-schedule", open);
+        return () => document.removeEventListener("gxm:open-schedule", open);
+    }, [])
+
+    useEffect(() => {
         setSchedule(undefined);
         fetch(process.env.PUBLIC_URL + "/gtfs/schedules/" + routeId + ".json")
             .then(response => response.ok && response.headers.get("content-type")?.includes("json") ? response.json() : null)

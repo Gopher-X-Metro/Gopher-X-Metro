@@ -162,6 +162,7 @@ namespace Routes {
                             loadStop(info.stop_id, timetable.direction)?.then(async stop => {
                                 // Adds the stop if it has not been added yet
                                 const route = routes.get(routeId)
+                                stop?.routeIds.add(routeId);
 
                                 if (route && !route?.getStops().has(info.stop_id)) {
                                     // Add stop
@@ -238,6 +239,7 @@ namespace Routes {
                 stops.set(stopId, Promise.resolve(new Stop(stopId, "#4169e1", info.name, ROUTE_NAMES[routeId] ?? routeId, L.latLng(info.lat, info.lng), map)));
             const stop = await stops.get(stopId);
             if (!stop) continue;
+            stop.routeIds.add(routeId);
 
             if (!route.getStops().has(stopId)) {
                 route.addStopObject(stopId, stop);

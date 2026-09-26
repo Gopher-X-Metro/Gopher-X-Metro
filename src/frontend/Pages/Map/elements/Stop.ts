@@ -18,6 +18,9 @@ interface departure {
 class Stop extends InfoWindowElement {
     /* Public */
 
+    /** Routes on the map that serve this stop */
+    public routeIds = new Set<string>();
+
     /**
      * Stop Constructor
      * @param stopId ID of the stop
@@ -80,10 +83,13 @@ class Stop extends InfoWindowElement {
                 warningElement.className = "stop-popup-empty";
                 warningElement.textContent = "No buses scheduled here right now. ";
                 const link = document.createElement("a");
-                link.textContent = "See schedules";
+                // Prefer a route that's currently shown on the map
+                const routeId = [...this.routeIds].find(id => URL.getRoutes().has(id)) ?? [...this.routeIds][0];
+                link.textContent = "See schedule";
                 link.href = "#";
                 link.addEventListener("click", event => {
                     event.preventDefault();
+                    if (routeId) document.dispatchEvent(new CustomEvent("gxm:open-schedule", { detail: routeId }));
                     document.dispatchEvent(new CustomEvent("gxm:open-page", { detail: "schedules" }));
                 });
                 warningElement.appendChild(link);
