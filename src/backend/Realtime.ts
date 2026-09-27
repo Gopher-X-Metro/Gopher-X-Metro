@@ -111,7 +111,7 @@ namespace Realtime {
     let universityTime = 0;
     const metroVehicles = new Map<string, { time: number, data: Promise<any> }>();
 
-    const GTFS_REALTIME_URL_UMN = "https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&controller=vehicles2&action=list&agencyID=88";
+    const GTFS_REALTIME_URL_UMN = `https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=${process.env.REACT_APP_PEAK_KEY}&controller=vehicles2&action=list&agencyID=88`;
 
 
 }

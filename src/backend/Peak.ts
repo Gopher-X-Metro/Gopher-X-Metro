@@ -1,7 +1,7 @@
 import L from "leaflet";
 import { getCachedJSON } from "src/backend/Fetch.ts";
 
-const PEAK_URL = "https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=c620b8fe5fdbd6107da8c8381f4345b4&action=list&agencyID=88&controller=";
+const PEAK_URL = `https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=${process.env.REACT_APP_PEAK_KEY}&action=list&agencyID=88&controller=`;
 namespace Peak {
     /**
      * Gets the running routes
