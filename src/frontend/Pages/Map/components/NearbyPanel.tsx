@@ -3,6 +3,7 @@ import L from "leaflet";
 import Live from "src/backend/Live";
 import Resources from "src/backend/Resources";
 import RouteURL from "src/backend/URL";
+import Alerts from "src/backend/Alerts";
 
 interface StopView {
     id: string;
@@ -18,16 +19,6 @@ interface StopView {
 const FAVORITES_KEY = "gxm-favorite-stops";
 
 /** A departure the rider asked to be told about */
-interface Watch {
-    stopId: string;
-    stopName: string;
-    routeName: string;
-    tripId: string;
-    time: number;
-}
-
-// Riders get a heads-up this long before the bus leaves
-const NOTIFY_SECONDS = 5 * 60;
 
 /** Reads saved stops, which may be unavailable in private browsing */
 function loadFavorites() : StopView[] {
@@ -55,8 +46,10 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
         shownRoutes.has(routeId) ? RouteURL.removeRoute(routeId) : RouteURL.addRoute(routeId);
     const [position, setPosition] = useState<{ lat: number, lng: number } | null>(null);
     const container = useRef<HTMLDivElement>(null);
-    const [watching, setWatching] = useState<Record<string, Watch>>({});
     const [notice, setNotice] = useState("");
+    // Re-render when alerts change anywhere (this panel or a stop popup), and show their messages
+    const [, setAlertsVersion] = useState(0);
+    useEffect(() => Alerts.addListener(() => setAlertsVersion(v => v + 1)), []);
 
     useEffect(() => {
         if (container.current) {
@@ -126,60 +119,11 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
     const nearbyRef = useRef<StopView[]>([]);
     nearbyRef.current = nearby;
 
-    // Keeps watched departure times current and alerts the rider when one is close
-    useEffect(() => {
-        const ids = Object.keys(watching);
-        if (ids.length === 0) return;
-        const check = () => {
-            const all = [...favoritesRef.current, ...nearbyRef.current];
-            const now = Date.now() / 1000;
-            const next = { ...watching };
-            let changed = false;
-            for (const [key, watch] of Object.entries(watching) as [string, Watch][]) {
-                const latest = all.find(stop => stop.id === watch.stopId)?.departures?.find(d => d.tripId === watch.tripId);
-                const time = latest?.time ?? watch.time;
-                if (time - now <= NOTIFY_SECONDS) {
-                    const minutes = Math.max(0, Math.round((time - now) / 60));
-                    const message = `${watch.routeName} leaves ${watch.stopName} ${minutes === 0 ? "now" : `in ${minutes} min`}`;
-                    try {
-                        if ("Notification" in window && Notification.permission === "granted") new Notification("Gopher X Metro", { body: message, tag: key });
-                    } catch {}
-                    navigator.vibrate?.(300);
-                    setNotice("🔔 " + message);
-                    delete next[key];
-                    changed = true;
-                } else if (time !== watch.time) {
-                    next[key] = { ...watch, time };
-                    changed = true;
-                }
-            }
-            if (changed) setWatching(next);
-        };
-        check();
-        const interval = setInterval(check, 15000);
-        return () => clearInterval(interval);
-    }, [watching])
-
     const favoritesRef = useRef<StopView[]>([]);
     favoritesRef.current = favorites;
 
-    const toggleWatch = (stop: StopView, d: Live.Departure) => {
-        const key = stop.id + "|" + d.tripId;
-        const next = { ...watching };
-        const minutes = Math.round((d.time - Date.now() / 1000) / 60);
-        if (next[key]) delete next[key];
-        else if (d.time - Date.now() / 1000 <= NOTIFY_SECONDS) {
-            setNotice(`${d.routeName} leaves ${stop.name} ${minutes <= 0 ? "now" : `in ${minutes} min`}. Head there now!`);
-            return;
-        } else {
-            next[key] = { stopId: stop.id, stopName: stop.name, routeName: d.routeName, tripId: d.tripId, time: d.time };
-            try {
-                if ("Notification" in window && Notification.permission === "default") Notification.requestPermission();
-            } catch {}
-            setNotice(`We'll alert you 5 min before ${d.routeName} leaves ${stop.name}. Keep this page open.`);
-        }
-        setWatching(next);
-    }
+    const toggleWatch = (stop: StopView, d: Live.Departure) =>
+        Alerts.toggle({ stopId: stop.id, stopName: stop.name, routeName: d.routeName, tripId: d.tripId, time: d.time });
 
     const isFavorite = (id: string) => favorites.some(f => f.id === id);
 
@@ -256,11 +200,11 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
                                         title={(shownRoutes.has(d.routeId) ? "Hide" : "Show") + ` route ${d.routeName} on the map`}>{d.routeName}</button>
                                 <span className="dest" role="button" tabIndex={0} onClick={() => toggleRoute(d.routeId)} onKeyDown={e => e.key === "Enter" && toggleRoute(d.routeId)}>{d.description}</span>
                                 <span className="time">{d.actual && "📡 "}{d.text}</span>
-                                <button className={"bell" + (watching[stop.id + "|" + d.tripId] ? " on" : "")}
+                                <button className={"bell" + (Alerts.isWatching(stop.id, d.tripId) ? " on" : "")}
                                         onClick={() => toggleWatch(stop, d)}
-                                        aria-label={watching[stop.id + "|" + d.tripId] ? "Stop alert" : "Alert me 5 minutes before"}
-                                        title={watching[stop.id + "|" + d.tripId] ? "Stop alert" : "Alert me 5 minutes before"}>
-                                    {watching[stop.id + "|" + d.tripId] ? "🔔" : "🔕"}
+                                        aria-label={Alerts.isWatching(stop.id, d.tripId) ? "Stop alert" : "Alert me 5 minutes before"}
+                                        title={Alerts.isWatching(stop.id, d.tripId) ? "Stop alert" : "Alert me 5 minutes before"}>
+                                    {Alerts.isWatching(stop.id, d.tripId) ? "🔔" : "🔕"}
                                 </button>
                             </li>
                         );
@@ -336,6 +280,7 @@ function stopPopup(stop: StopView, colors: Record<string, string>, toggleRoute: 
             times.appendChild(time);
         });
         row.appendChild(times);
+        row.appendChild(Alerts.routeBell(stop.id, stop.name, departures[0].routeName, departures));
         list.appendChild(row);
     }
     root.appendChild(list);

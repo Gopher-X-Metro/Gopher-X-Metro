@@ -102,7 +102,7 @@ export default function SideBar() {
                 <h3 className="sidebar-heading">Add a route</h3>
                 
                 <div className="route-search">
-                    <input type="text" id="search_route" placeholder="Route number, like 16" inputMode="numeric" aria-label="Route number"/>
+                    <input type="text" id="search_route" placeholder="Route number, like 61" inputMode="numeric" aria-label="Route number"/>
                     <button onClick={SearchFeature.searchRoute} id="searchButton">Add</button>
                 </div>
                 

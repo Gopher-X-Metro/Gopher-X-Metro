@@ -4,6 +4,7 @@ import InfoWindowElement from './abstracts/InfoWindowElement';
 
 import Resources from 'src/backend/Resources.ts';
 import RouteURL from 'src/backend/URL.ts';
+import Alerts from 'src/backend/Alerts.ts';
 import Primative from './abstracts/Primative';
 
 interface departure {
@@ -124,6 +125,8 @@ class Stop extends InfoWindowElement {
                         times.appendChild(time);
                     });
                     row.appendChild(times);
+                    row.appendChild(Alerts.routeBell(this.getId(), this.name, ROUTE_CHIPS[routeId] ?? routeId,
+                        departures.map(d => ({ tripId: d.tripId, time: d.departure_time }))));
                     listElement.appendChild(row);
                 }
                 divElement.appendChild(listElement);
