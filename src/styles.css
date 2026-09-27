@@ -505,7 +505,10 @@ body.mobile .leaflet-control-zoom { display: none; }
 .walk { font-size: 12px; color: #555; margin: 2px 0; }
 .stop-alert { font-size: 12px; color: #a15c00; background: #fff4e0; border-radius: 4px; padding: 3px 6px; margin: 4px 0; }
 .departures li { display: flex; align-items: center; gap: 6px; font-size: 13px; padding: 2px 0; }
-.departures li.late { opacity: .45; }
+/* Leaves before you could walk there: dim the trip, but keep the route chip clearly live */
+.departures li.late .dest, .departures li.late .time { opacity: .5; }
+/* Live-tracked buses are never dimmed; they just get the runner */
+.departures li.late .time::after, .departures li.hurry .time::after { content: " \1F3C3"; }
 .departures .chip { color: #fff; font-weight: bold; font-size: 11px; border-radius: 4px; padding: 1px 6px; min-width: 34px; text-align: center; }
 .departures .chip { border: none; cursor: pointer; font-family: inherit; line-height: inherit; }
 .departures .chip:hover { filter: brightness(1.2); }

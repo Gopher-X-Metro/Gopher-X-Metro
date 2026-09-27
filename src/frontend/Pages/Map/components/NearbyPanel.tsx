@@ -221,7 +221,7 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
                     {stop.departures?.map((d, i) => {
                         const late = minutes !== undefined && d.time * 1000 - Date.now() < minutes * 60000;
                         return (
-                            <li key={i} className={(late ? "late" : "") + (shownRoutes.has(d.routeId) ? " route-on" : "")} title={late ? "You may not make this one on foot" : undefined}>
+                            <li key={i} className={(late ? (d.actual ? "hurry" : "late") : "") + (shownRoutes.has(d.routeId) ? " route-on" : "")} title={late ? "You may not make this one on foot" : undefined}>
                                 <button className="chip" style={{ background: "#" + (colors[d.routeId] ?? "444444") }}
                                         onClick={() => toggleRoute(d.routeId)}
                                         aria-pressed={shownRoutes.has(d.routeId)}
@@ -260,7 +260,7 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
                     {status && <p className="muted">{status}</p>}
                     {notice && <p className="notice" onClick={() => setNotice("")}>{notice}</p>}
                     <ul>{nearby.filter(stop => !isFavorite(stop.id)).map(renderStop)}</ul>
-                    <p className="muted legend">📡 = live time from a tracked vehicle. Faded times leave before you could walk there. Tap 🔕 to get an alert 5 min before a bus leaves.</p>
+                    <p className="muted legend">📡 = live time from a tracked vehicle. 🏃 = leaves before you could walk there (dimmed if no live bus is tracking it). Tap 🔕 to get an alert 5 min before a bus leaves.</p>
                 </div>
             )}
         </div>
