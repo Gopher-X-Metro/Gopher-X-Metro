@@ -1,4 +1,4 @@
-import URL from 'src/backend/URL.ts';
+import RouteURL from 'src/backend/URL.ts';
 import Schedule from 'src/backend/Schedule'; 
 import Peak from 'src/backend/Peak';
 import Routes from 'src/frontend/Pages/Map/components/Routes';
@@ -13,13 +13,13 @@ namespace SearchFeature {
         const routeInput = document.getElementById("search_route") as HTMLInputElement | null;
         
         if (routeInput) {
-            const routeId = URL.normalize(routeInput.value);
+            const routeId = RouteURL.normalize(routeInput.value);
             // Checks if the route exists
             if (routeId && (Peak.UNIVERSITY_ROUTES[routeId] || (await Schedule.getRoute(routeId)))) {
                 showError(false);
                 routeInput.value = "";
                 // Adding never removes: a route already on the map is just brought into view
-                URL.addRoute(routeId);
+                RouteURL.addRoute(routeId);
                 Routes.showRoute(routeId);
             } else showError(true);
         } else {

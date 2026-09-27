@@ -3,7 +3,7 @@ import Live from 'src/backend/Live.ts';
 import InfoWindowElement from './abstracts/InfoWindowElement';
 
 import Resources from 'src/backend/Resources.ts';
-import URL from 'src/backend/URL.ts';
+import RouteURL from 'src/backend/URL.ts';
 import Primative from './abstracts/Primative';
 
 interface departure {
@@ -84,7 +84,7 @@ class Stop extends InfoWindowElement {
                 warningElement.textContent = "No buses scheduled here right now. ";
                 const link = document.createElement("a");
                 // Prefer a route that's currently shown on the map
-                const routeId = [...this.routeIds].find(id => URL.getRoutes().has(id)) ?? [...this.routeIds][0];
+                const routeId = [...this.routeIds].find(id => RouteURL.getRoutes().has(id)) ?? [...this.routeIds][0];
                 link.textContent = "See schedule";
                 link.href = "#";
                 link.addEventListener("click", event => {
@@ -107,11 +107,11 @@ class Stop extends InfoWindowElement {
                     chip.className = "stop-popup-chip";
                     chip.textContent = ROUTE_CHIPS[routeId] ?? routeId;
                     chip.style.background = "#" + colors[i];
-                    chip.title = URL.getRoutes().has(routeId) ? "Hide this route" : "Show this route on the map";
+                    chip.title = RouteURL.getRoutes().has(routeId) ? "Hide this route" : "Show this route on the map";
                     chip.addEventListener("click", event => {
                         event.stopPropagation();
-                        if (!URL.getRoutes().has(routeId)) URL.addRoute(routeId);
-                        else URL.removeRoute(routeId);
+                        if (!RouteURL.getRoutes().has(routeId)) RouteURL.addRoute(routeId);
+                        else RouteURL.removeRoute(routeId);
                     });
                     row.appendChild(chip);
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Live from "src/backend/Live";
-import URL from "src/backend/URL";
+import RouteURL from "src/backend/URL";
 
 const DISMISSED_KEY = "gxm-dismissed-alerts";
 
@@ -18,7 +18,7 @@ export default function AlertBanner() {
 
     useEffect(() => {
         const refresh = async () => {
-            const routes = URL.getRoutes();
+            const routes = RouteURL.getRoutes();
             const [metro, campus] = await Promise.all([Live.getAlerts(routes), Live.getCampusNotices(routes)]);
             setAlerts([...campus, ...metro]);
         };

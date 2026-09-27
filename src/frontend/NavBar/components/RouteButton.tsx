@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 
-import URL from 'src/backend/URL.ts';
+import RouteURL from 'src/backend/URL.ts';
 import Routes from 'src/frontend/Pages/Map/components/Routes';
 import Realtime from 'src/backend/Realtime.ts';
 
@@ -13,8 +13,8 @@ import Realtime from 'src/backend/Realtime.ts';
 function RouteButton({ routeId, text }: { routeId: string, text?: string }) {
   useEffect(() => {
     // updates color of button click immediately
-    URL.addListener(() => setActive(URL.getRoutes().has(routeId)))
-    setActive(URL.getRoutes().has(routeId));
+    RouteURL.addListener(() => setActive(RouteURL.getRoutes().has(routeId)))
+    setActive(RouteURL.getRoutes().has(routeId));
   }, [])
 
   const [isActive, setActive] = useState(false);
@@ -47,9 +47,9 @@ function RouteButton({ routeId, text }: { routeId: string, text?: string }) {
     onClick: () => {
       // selects specific route depending on button pressed
       if (!isActive)
-        URL.addRoute(routeId);
+        RouteURL.addRoute(routeId);
       else
-        URL.removeRoute(routeId);
+        RouteURL.removeRoute(routeId);
 
       // Remove info windows associated with the routeId
       removeInfoWindows();

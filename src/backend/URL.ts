@@ -1,4 +1,4 @@
-namespace URL {
+namespace RouteURL {
 
     /* Public */
 
@@ -21,7 +21,7 @@ namespace URL {
      * @param routeId route ID to add
      */
     export function addRoute(routeId: string) : void {
-        if (!URL.getRoutes().has(routeId)) {
+        if (!RouteURL.getRoutes().has(routeId)) {
             window.history.replaceState(window.history.state, getQuerySelectorTextContext(), "./?route=" + ((getRoutes().size === 0) ? routeId : (Array.from(getRoutes()).join(",") + "," + (routeId))));
             onChange(); 
         }
@@ -76,4 +76,4 @@ namespace URL {
     }
 }
 
-export default URL;
+export default RouteURL;

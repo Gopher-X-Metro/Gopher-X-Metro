@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PageHeader from '../PageHeader';
 
 import Live from 'src/backend/Live';
-import URL from 'src/backend/URL';
+import RouteURL from 'src/backend/URL';
 
 import "../Schedule/schedules.css";
 import "./alerts.css";
@@ -25,7 +25,7 @@ export default function Alerts({ hidden, setPage }) {
 
     useEffect(() => {
         if (hidden) return;
-        const routes = new Set([...SIDEBAR_ROUTES, ...URL.getRoutes()]);
+        const routes = new Set([...SIDEBAR_ROUTES, ...RouteURL.getRoutes()]);
         Live.getCampusNotices(null, 30).then(setCampus);
         Live.getAlerts(routes).then(alerts => setMetro(alerts
             .filter(alert => !alert.routes.every(route => /^12[0-6]$/.test(route)))

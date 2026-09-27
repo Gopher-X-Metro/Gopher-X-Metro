@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import Resources from "src/backend/Resources";
 import Marker from "./components/Marker";
 import Routes from "./components/Routes";
-import URL from "src/backend/URL";
+import RouteURL from "src/backend/URL";
 
 import LoadingScreen from "./components/LoadingScreen";
 import NavBar from "src/frontend/NavBar/NavBar";
@@ -114,7 +114,7 @@ async function initalize( map: L.Map ) {
     Routes.init(map)
     // Initalizes the user's marker
     // A link to routes away from campus (like ?route=777) opens looking at them, even after centering on the rider
-    const showLinkedRoutes = () => Routes.showRoute(...Array.from(URL.getRoutes()));
+    const showLinkedRoutes = () => Routes.showRoute(...Array.from(RouteURL.getRoutes()));
     Marker.init(map, showLinkedRoutes);
     showLinkedRoutes();
 

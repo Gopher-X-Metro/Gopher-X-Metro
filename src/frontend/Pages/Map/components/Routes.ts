@@ -5,7 +5,7 @@ import { LINE_BOLD, LINE_NORMAL } from "../elements/Path";
 import Resources from "src/backend/Resources.ts";
 import Schedule from "src/backend/Schedule.ts";
 import Vehicle from "../elements/Vehicle.ts";
-import URL from "src/backend/URL.ts";
+import RouteURL from "src/backend/URL.ts";
 import Route from "../elements/Route.ts";
 import Realtime from "src/backend/Realtime.ts";
 import Peak from "src/backend/Peak.ts";
@@ -22,11 +22,11 @@ namespace Routes {
     export function refresh() {
         // Goes through each route that is not on the URL, and hides it
         routes.forEach(route => {
-            if (!URL.getRoutes().has(route.getId())) route.setVisible(false);
+            if (!RouteURL.getRoutes().has(route.getId())) route.setVisible(false);
         })
 
         // Goes through each route that is on the URL, and unhides it or creates it
-        URL.getRoutes().forEach(routeId => {
+        RouteURL.getRoutes().forEach(routeId => {
             if (!routes.has(routeId)) loadRoute(routeId);
             if (!getRoute(routeId)?.isVisible()) getRoute(routeId)?.setVisible(true);
         })
@@ -67,7 +67,7 @@ namespace Routes {
         });
         map = _map;
         
-        URL.addListener(() => refresh());
+        RouteURL.addListener(() => refresh());
 
         // Loads the static routes
         refresh()
@@ -95,7 +95,7 @@ namespace Routes {
     export async function refreshVehicles() 
     {
         // Updates Vehicles
-        URL.getRoutes()?.forEach(async routeId => {
+        RouteURL.getRoutes()?.forEach(async routeId => {
             const route = routes.get(routeId)
 
             for (const info of (await Realtime.getVehicles(routeId)) ?? []) {
@@ -145,7 +145,7 @@ namespace Routes {
     export async function refreshStops() {
 
         // Updates Stops
-        URL.getRoutes()?.forEach(async routeId => {
+        RouteURL.getRoutes()?.forEach(async routeId => {
             const details = await Schedule.getRouteDetails(routeId);
 
             // Campus routes Metro Transit doesn't publish (like 126) use Peak Transit's stops
@@ -291,7 +291,7 @@ namespace Routes {
             console.warn(`Route with ID: ${routeId} not found`);
             if ((await Schedule.getRoutes())?.length) {
                 routes.delete(routeId);
-                URL.removeRoute(routeId);
+                RouteURL.removeRoute(routeId);
             }
             Resources.createInactiveRoutePopup();
         }

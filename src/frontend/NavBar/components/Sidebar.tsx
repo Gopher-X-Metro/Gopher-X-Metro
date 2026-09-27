@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import RouteButton from './RouteButton.tsx';
 import { Icon } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
-import URL from 'src/backend/URL.ts';
+import RouteURL from 'src/backend/URL.ts';
 import SearchFeature from 'src/frontend/NavBar/components/SearchFeature.tsx';
 import Schedule from 'src/backend/Schedule.ts';
 import Realtime from 'src/backend/Realtime.ts';
@@ -63,7 +63,7 @@ export default function SideBar() {
          */ 
         const change = async () => {
             // Extra routes from the link or the route box; only real ones are listed
-            for (const routeId of URL.getRoutes()) {
+            for (const routeId of RouteURL.getRoutes()) {
                 if (!routes.has(routeId)) {
                     const info = await Schedule.getRoute(routeId);
                     if (info) routes.set(routeId, toTitleCase(info.route_label));
@@ -74,7 +74,7 @@ export default function SideBar() {
             forceReload(Math.random());
         }
 
-        URL.addListener(() => change());
+        RouteURL.addListener(() => change());
 
         change();
     }, [])
