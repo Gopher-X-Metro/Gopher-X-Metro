@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import Live from "src/backend/Live";
 import Resources from "src/backend/Resources";
+import RouteURL from "src/backend/URL";
 
 interface StopView {
     id: string;
@@ -47,6 +48,11 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
     const [open, setOpen] = useState(() => loadFavorites().length > 0 && !window.matchMedia("(max-width: 1024px)").matches);
     const [status, setStatus] = useState("");
     const [colors, setColors] = useState<Record<string, string>>({});
+    // Routes shown on the map; departure chips toggle them, same as the sidebar route buttons
+    const [shownRoutes, setShownRoutes] = useState<Set<string>>(() => RouteURL.getRoutes());
+    useEffect(() => RouteURL.addListener(() => setShownRoutes(RouteURL.getRoutes())), []);
+    const toggleRoute = (routeId: string) =>
+        shownRoutes.has(routeId) ? RouteURL.removeRoute(routeId) : RouteURL.addRoute(routeId);
     const [position, setPosition] = useState<{ lat: number, lng: number } | null>(null);
     const container = useRef<HTMLDivElement>(null);
     const [watching, setWatching] = useState<Record<string, Watch>>({});
@@ -215,9 +221,12 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
                     {stop.departures?.map((d, i) => {
                         const late = minutes !== undefined && d.time * 1000 - Date.now() < minutes * 60000;
                         return (
-                            <li key={i} className={late ? "late" : ""} title={late ? "You may not make this one on foot" : undefined}>
-                                <span className="chip" style={{ background: "#" + (colors[d.routeId] ?? "444444") }}>{d.routeName}</span>
-                                <span className="dest">{d.description}</span>
+                            <li key={i} className={(late ? "late" : "") + (shownRoutes.has(d.routeId) ? " route-on" : "")} title={late ? "You may not make this one on foot" : undefined}>
+                                <button className="chip" style={{ background: "#" + (colors[d.routeId] ?? "444444") }}
+                                        onClick={() => toggleRoute(d.routeId)}
+                                        aria-pressed={shownRoutes.has(d.routeId)}
+                                        title={(shownRoutes.has(d.routeId) ? "Hide" : "Show") + ` route ${d.routeName} on the map`}>{d.routeName}</button>
+                                <span className="dest" role="button" tabIndex={0} onClick={() => toggleRoute(d.routeId)} onKeyDown={e => e.key === "Enter" && toggleRoute(d.routeId)}>{d.description}</span>
                                 <span className="time">{d.actual && "📡 "}{d.text}</span>
                                 <button className={"bell" + (watching[stop.id + "|" + d.tripId] ? " on" : "")}
                                         onClick={() => toggleWatch(stop, d)}
