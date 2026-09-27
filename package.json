@@ -12,48 +12,24 @@
     "proj4": "^2.11.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-icons": "^5.3.0",
-    "react-scripts": "5.0.1"
+    "react-icons": "^5.3.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "vite",
+    "build": "vite build",
     "knip": "knip",
-    "gtfs": "node scripts/build-gtfs.mjs"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "gtfs": "node scripts/build-gtfs.mjs",
+    "preview": "vite preview"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@babel/plugin-transform-private-property-in-object": "^7.25.8",
     "@types/node": "^20.14.10",
-    "file-loader": "^6.2.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "autoprefixer": "^10.6.1",
     "knip": "^5.25.1",
+    "postcss": "^8.5.28",
     "tailwind-scrollbar": "^3.1.0",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5.5.3"
-  },
-  "overrides": {
-    "react-scripts": {
-      "typescript": "^5"
-    }
+    "typescript": "^5.5.3",
+    "vite": "^8.3.1"
   }
 }

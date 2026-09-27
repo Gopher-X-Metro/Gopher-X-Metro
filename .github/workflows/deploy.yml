@@ -41,7 +41,6 @@ jobs:
           echo "{\"updated\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\", \"source\": \"Metro Transit GTFS\"}" > public/data/last_updated.json
       - run: npm run build
         env:
-          CI: false
           REACT_APP_PEAK_KEY: ${{ secrets.REACT_APP_PEAK_KEY }}
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -73,4 +72,7 @@ jobs:
     permissions:
       actions: write
     steps:
-      - uses: gautamkrishnar/keepalive-workflow@v2
+      # Re-enabling the workflow resets GitHub's 60-day inactivity timer.
+      - run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/deploy.yml/enable"
+        env:
+          GH_TOKEN: ${{ github.token }}
