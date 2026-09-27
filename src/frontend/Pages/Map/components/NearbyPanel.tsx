@@ -189,8 +189,36 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
         setFavorites(next);
     }
 
+    // The stop picked from the list: ringed on the map with its departures window open
+    const [focusedId, setFocusedId] = useState<string | null>(null);
+    const focusLayer = useRef<L.LayerGroup | null>(null);
+
+    const clearFocus = useCallback(() => {
+        focusLayer.current?.remove();
+        focusLayer.current = null;
+        setFocusedId(null);
+    }, []);
+
     const focusStop = (stop: StopView) => {
-        map?.setView([stop.lat, stop.lng], 17);
+        if (!map) return;
+        focusLayer.current?.remove();
+        map.closePopup();
+
+        const ring = L.circleMarker([stop.lat, stop.lng], {
+            radius: 16, color: "#ffcc33", weight: 4, fill: false, className: "focus-ring", interactive: false,
+        });
+        const popup = L.popup({ autoPanPaddingTopLeft: [20, 90] })
+            .setLatLng([stop.lat, stop.lng])
+            .setContent(stopPopup(stop, colors, toggleRoute));
+        focusLayer.current = L.layerGroup([ring]).addTo(map);
+        popup.on("remove", () => { if (focusLayer.current?.hasLayer(ring)) clearFocus(); });
+
+        map.setView([stop.lat, stop.lng], 17, { animate: false });
+        // Keep the stop clear of the panel, which covers the map's left side on desktop
+        const covered = !isMobile ? container.current?.querySelector(".nearby-body")?.getBoundingClientRect().right ?? 0 : 0;
+        if (covered) map.panBy([-covered / 2, 0], { animate: false });
+        popup.openOn(map);
+        setFocusedId(stop.id);
         if (isMobile) setOpen(false);
     }
 
@@ -203,7 +231,7 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
     const renderStop = (stop: StopView) => {
         const minutes = walk(stop);
         return (
-            <li key={stop.id} className="stop-row">
+            <li key={stop.id} className={"stop-row" + (focusedId === stop.id ? " focused" : "")}>
                 <div className="stop-head">
                     <button className="stop-name" onClick={() => focusStop(stop)} title="Show on map">{stop.name}</button>
                     <button className={"star" + (isFavorite(stop.id) ? " on" : "")}
@@ -265,4 +293,51 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
             )}
         </div>
     )
+}
+
+/**
+ * The departures window for a stop picked from the list, matching the map's stop popup:
+ * one row per route with its next few times
+ */
+function stopPopup(stop: StopView, colors: Record<string, string>, toggleRoute: (routeId: string) => void) : HTMLElement {
+    const root = document.createElement("div");
+    root.className = "stop-popup";
+    const name = document.createElement("h3");
+    name.textContent = stop.name;
+    root.appendChild(name);
+
+    const byRoute = new Map<string, Live.Departure[]>();
+    for (const d of stop.departures ?? []) byRoute.set(d.routeId, [...(byRoute.get(d.routeId) ?? []), d]);
+    if (byRoute.size === 0) {
+        const empty = document.createElement("p");
+        empty.className = "stop-popup-empty";
+        empty.textContent = stop.error ? "Couldn't load departures." : "No departures soon.";
+        root.appendChild(empty);
+        return root;
+    }
+
+    const list = document.createElement("ul");
+    for (const [routeId, departures] of byRoute) {
+        const row = document.createElement("li");
+        const chip = document.createElement("button");
+        chip.className = "stop-popup-chip";
+        chip.textContent = departures[0].routeName;
+        chip.style.background = "#" + (colors[routeId] ?? "444444");
+        chip.title = "Show or hide this route on the map";
+        chip.addEventListener("click", event => { event.stopPropagation(); toggleRoute(routeId); });
+        row.appendChild(chip);
+
+        const times = document.createElement("span");
+        times.className = "stop-popup-times";
+        departures.slice(0, 5).forEach((d, i) => {
+            const time = document.createElement("span");
+            time.textContent = (d.actual ? "📡 " : "") + d.text;
+            if (i === 0) time.className = "next";
+            times.appendChild(time);
+        });
+        row.appendChild(times);
+        list.appendChild(row);
+    }
+    root.appendChild(list);
+    return root;
 }
