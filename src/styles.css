@@ -561,6 +561,20 @@ body:not(.mobile) .alert-banner { top: calc(var(--header-h, 80px) + 64px); }
 .stop-popup-bell:hover, .stop-popup-bell.on { opacity: 1; }
 .next-stop-link { color: #0053a0; text-decoration: underline; cursor: pointer; }
 #alert-toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); z-index: 3000; max-width: min(92vw, 420px); background: #1f2937; color: #fff; font-size: 14px; padding: 10px 14px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,.3); opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; }
+#bus-alert { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; box-sizing: border-box; z-index: 4000; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, .55); padding: 16px; animation: bus-alert-in .2s ease-out; }
+.bus-alert-card { position: relative; box-sizing: border-box; width: 100%; max-width: 640px; min-height: min(70vh, 520px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center; background: #7a0019; color: #fff; border: 6px solid #ffcc33; border-radius: 20px; padding: 40px 28px; box-shadow: 0 12px 40px rgba(0,0,0,.45); }
+.bus-alert-close { position: absolute; top: 12px; right: 14px; width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,.15); color: #fff; font-size: 26px; line-height: 1; cursor: pointer; }
+.bus-alert-close:hover { background: rgba(255,255,255,.3); }
+.bus-alert-bell { font-size: 72px; animation: bus-alert-ring 1s ease-in-out infinite; }
+.bus-alert-card h2 { font-size: clamp(24px, 5vw, 36px); font-weight: bold; color: #ffcc33; margin: 0; }
+.bus-alert-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.bus-alert-list li { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.bus-alert-list strong { font-size: clamp(40px, 10vw, 64px); line-height: 1; background: #fff; color: #7a0019; border-radius: 10px; padding: 4px 18px; }
+.bus-alert-when { font-size: clamp(26px, 6vw, 40px); font-weight: bold; margin-top: 8px; }
+.bus-alert-stop { font-size: clamp(16px, 3.5vw, 22px); opacity: .9; }
+.bus-alert-ok { margin-top: 8px; background: #ffcc33; color: #7a0019; font-weight: bold; font-size: 20px; border-radius: 999px; padding: 12px 40px; cursor: pointer; }
+@keyframes bus-alert-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes bus-alert-ring { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-15deg); } 75% { transform: rotate(15deg); } }
 #alert-toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; cursor: pointer; }
 .stop-popup-empty { font-size: 13px; color: #666; margin: 4px 0 0 !important; }
 .stop-popup-empty a { color: #0053a0; text-decoration: underline; }

@@ -125,7 +125,49 @@ namespace Alerts {
         el.textContent = message;
         el.classList.add("show");
         clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => el!.classList.remove("show"), message.startsWith("🔔") ? 15000 : 5000);
+        toastTimer = setTimeout(() => el!.classList.remove("show"), 5000);
+    }
+
+    /**
+     * Full-screen alert when a watched bus is about to leave, so it can't be missed.
+     * Stays up until dismissed; several alerts at once stack into the same card.
+     */
+    function showAlert(watch: Watch, minutes: number) {
+        document.getElementById("alert-toast")?.classList.remove("show");
+        let overlay = document.getElementById("bus-alert");
+        if (!overlay) {
+            overlay = document.createElement("div");
+            overlay.id = "bus-alert";
+            overlay.setAttribute("role", "alertdialog");
+            overlay.setAttribute("aria-modal", "true");
+            overlay.setAttribute("aria-labelledby", "bus-alert-title");
+            overlay.innerHTML = `<div class="bus-alert-card">
+                <button class="bus-alert-close" aria-label="Dismiss">✕</button>
+                <div class="bus-alert-bell" aria-hidden="true">🔔</div>
+                <h2 id="bus-alert-title">Your bus is almost here</h2>
+                <ul class="bus-alert-list"></ul>
+                <button class="bus-alert-ok">Got it</button>
+            </div>`;
+            const close = () => { overlay!.remove(); document.removeEventListener("keydown", onKey); };
+            const onKey = (event: KeyboardEvent) => { if (event.key === "Escape") close(); };
+            overlay.querySelector(".bus-alert-close")!.addEventListener("click", close);
+            overlay.querySelector(".bus-alert-ok")!.addEventListener("click", close);
+            overlay.addEventListener("click", event => { if (event.target === overlay) close(); });
+            document.addEventListener("keydown", onKey);
+            document.body.appendChild(overlay);
+        }
+        const item = document.createElement("li");
+        const route = document.createElement("strong");
+        route.textContent = watch.routeName;
+        const when = document.createElement("span");
+        when.className = "bus-alert-when";
+        when.textContent = minutes === 0 ? "leaving now" : `leaves in ${minutes} min`;
+        const stop = document.createElement("span");
+        stop.className = "bus-alert-stop";
+        stop.textContent = "from " + watch.stopName;
+        item.append(route, when, stop);
+        overlay.querySelector(".bus-alert-list")!.appendChild(item);
+        (overlay.querySelector(".bus-alert-ok") as HTMLButtonElement).focus();
     }
 
     function start() {
@@ -158,7 +200,8 @@ namespace Alerts {
                 if ("Notification" in window && Notification.permission === "granted") new Notification("Gopher X Metro", { body: message, tag: k });
             } catch {}
             navigator.vibrate?.(300);
-            notify("🔔 " + message);
+            noticeListeners.forEach(fn => fn("🔔 " + message));
+            showAlert(watch, minutes);
             watches.delete(k);
             any = true;
         }
