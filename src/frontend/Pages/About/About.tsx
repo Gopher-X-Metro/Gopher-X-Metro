@@ -47,6 +47,29 @@ function About({ hidden, setPage }) {
                     Found a bug or want a feature? <a href={FEEDBACK_URL} target="_blank" rel="noreferrer">Open an issue on GitHub</a>.
                 </p>
 
+                <h2 className="alerts-heading">Disclaimer</h2>
+                <p className="about-text">
+                    Gopher X Metro is an independent, student-built project. It is not affiliated with, endorsed by,
+                    or sponsored by the University of Minnesota, Metro Transit, the Metropolitan Council, or Peak Transit.
+                    "Gophers," "Metro Transit" and other names and marks belong to their respective owners and are used
+                    here only to describe the services shown.
+                </p>
+                <p className="about-text">
+                    Arrival times, bus locations, routes, alerts and schedules come from third-party feeds and are
+                    provided "as is," without warranty of any kind. They can be late, missing or wrong. Please confirm
+                    with <a href="https://www.metrotransit.org" target="_blank" rel="noreferrer">Metro Transit</a> or{" "}
+                    <a href="https://bus.umn.edu/" target="_blank" rel="noreferrer">UMN Parking &amp; Transportation</a>{" "}
+                    before relying on it. The authors aren't responsible for missed buses, delays or any other loss
+                    from using this site. Departure alerts only work while this page stays open and aren't guaranteed.
+                    Don't use the site while driving. In an emergency, call 911.
+                </p>
+                <p className="about-text">
+                    Privacy: there are no accounts and no tracking. Your location is used in your browser to find
+                    nearby stops and isn't stored by us. Favorites stay on your device. Place searches are sent
+                    to <a href="https://photon.komoot.io" target="_blank" rel="noreferrer">Photon</a> to find addresses.
+                    The code is open source under the MIT License.
+                </p>
+
                 <h2 className="alerts-heading">Credits</h2>
                 <p className="about-text">
                     Built in 2024 by Adam, Ken, Riley, Will, Babacar, Alex, Mike and Andy, and revived in 2026.

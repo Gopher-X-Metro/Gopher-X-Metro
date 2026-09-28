@@ -97,6 +97,7 @@ namespace Live {
 
     export interface MetroTrip {
         nextStop?: string;
+        nextStopId?: string;
         arrival?: number;
         delayMinutes?: number;
         stopped?: boolean;
@@ -117,12 +118,27 @@ namespace Live {
         const event = next?.arrival ?? next?.departure;
         return {
             nextStop: stopId ? await getStopName(stopId) : undefined,
+            nextStopId: stopId,
             arrival: event?.time ? Number(event.time) : undefined,
             delayMinutes: event?.delay !== undefined && event?.delay !== null ? Math.round(Number(event.delay) / 60) : undefined,
             stopped: position?.stopped && (!next || next.stopId === position.stopId),
             busNumber: position?.label,
         };
     }
+
+    /**
+     * Gets a campus bus stop's name and location
+     * @param stopId Peak Transit ID of the stop
+     */
+    export async function getPeakStop(stopId: number) : Promise<{ name: string, lat: number, lng: number } | undefined> {
+        type PeakStop = { name: string, lat: number, lng: number };
+        peakStopDetails ??= fetch(PEAK_URL + "stop2")
+            .then(response => response.json())
+            .then(data => new Map<number, PeakStop>((data.stop ?? []).map((stop: any) => [stop.stopID, { name: stop.longName, lat: Number(stop.lat), lng: Number(stop.lng) }])))
+            .catch(() => new Map<number, PeakStop>());
+        return (await peakStopDetails)?.get(stopId);
+    }
+    let peakStopDetails: Promise<Map<number, { name: string, lat: number, lng: number }>> | undefined;
 
     /**
      * Gets the name of a campus bus stop

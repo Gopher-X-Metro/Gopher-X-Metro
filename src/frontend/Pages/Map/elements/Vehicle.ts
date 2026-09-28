@@ -109,15 +109,18 @@ class Vehicle extends InfoWindowElement {
         if (info.direction) lines.push(DIRECTIONS[info.direction] ?? info.direction);
 
         let nextStop: string | undefined;
+        let nextStopId: string | undefined;
         let eta: number | undefined;
         let metro: Live.MetroTrip | undefined;
         if (info.nextStopID) {
             nextStop = await Live.getPeakStopName(info.nextStopID);
+            nextStopId = "peak-" + info.nextStopID;
             const arrival = await Live.getPeakEta(info.nextStopID, info.routeID);
             if (arrival) eta = Math.round((arrival - Date.now() / 1000) / 60);
         } else if (!this.id.startsWith("peak-")) {
             metro = await Live.getMetroTrip(this.tripId ?? this.id);
             nextStop = metro.nextStop;
+            nextStopId = metro.nextStopId;
             if (metro.arrival) eta = Math.round((metro.arrival - Date.now() / 1000) / 60);
         }
         if (nextStop) lines.push((metro?.stopped ? "At stop: " : "Next stop: ") + nextStop + (!metro?.stopped && eta !== undefined && eta >= 0 ? ` (${eta === 0 ? "now" : eta + " min"})` : ""));
@@ -140,7 +143,22 @@ class Vehicle extends InfoWindowElement {
 
         lines.forEach((line, i) => {
             const p = document.createElement("p");
-            p.textContent = line;
+            // The next stop's name opens that stop's departures
+            const label = line.match(/^(Next stop|At stop): /)?.[0];
+            if (label && nextStop && nextStopId) {
+                const link = document.createElement("a");
+                link.href = "#";
+                link.className = "next-stop-link";
+                link.textContent = nextStop;
+                link.title = "Show this stop's departures";
+                const id = nextStopId;
+                link.addEventListener("click", event => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    document.dispatchEvent(new CustomEvent("gxm:open-stop", { detail: id }));
+                });
+                p.append(label, link, line.slice(label.length + nextStop.length));
+            } else p.textContent = line;
             if (i === lines.length - 1) p.className = "muted";
             div.appendChild(p);
         });

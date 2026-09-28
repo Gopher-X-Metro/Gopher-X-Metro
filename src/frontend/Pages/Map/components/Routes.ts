@@ -68,6 +68,8 @@ namespace Routes {
         map = _map;
         
         RouteURL.addListener(() => refresh());
+        // Bus popups link their next stop here (an event avoids a Vehicle -> Routes import cycle)
+        document.addEventListener("gxm:open-stop", event => openStop((event as CustomEvent<string>).detail));
 
         // Loads the static routes
         refresh()
@@ -221,6 +223,38 @@ namespace Routes {
 
         return stops.get(stopId);
     }
+
+    /**
+     * Opens a stop's departures window and brings it into view
+     * @param stopId Metro Transit stop ID, or "peak-<id>" for a campus stop
+     */
+    export async function openStop(stopId: string) : Promise<void> {
+        let stop = await stops.get(stopId);
+        // Campus buses report Peak Transit stop IDs, but routes drawn from Metro Transit data use Metro IDs,
+        // so fall back to the loaded stop nearest the Peak stop's location
+        if (!stop && stopId.startsWith("peak-")) {
+            const peak = await Live.getPeakStop(Number(stopId.slice(5)));
+            if (peak) {
+                let best: [number, Stop | undefined] = [NEAREST_STOP_METERS, undefined];
+                for (const candidate of stops.values()) {
+                    const s = await candidate;
+                    const meters = s ? (s.getMarker() as L.CircleMarker).getLatLng().distanceTo([peak.lat, peak.lng]) : Infinity;
+                    if (meters < best[0]) best = [meters, s];
+                }
+                stop = best[1];
+            }
+        } else if (!stop) stop = await loadStop(stopId, "");
+        if (!stop) return;
+        for (const other of stops.values()) (await other)?.infoWindow?.setVisible(false);
+        const location = (stop.getMarker() as L.CircleMarker).getLatLng();
+        map.panTo(location);
+        stop.infoWindow.setPosition(location);
+        stop.infoWindow.setVisible(true);
+        stop.updateWindow();
+    }
+
+    /** How close a loaded stop must be to count as the same stop as a Peak Transit one */
+    const NEAREST_STOP_METERS = 60;
 
     /* Private */
 

@@ -42,8 +42,9 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
     // Routes shown on the map; departure chips toggle them, same as the sidebar route buttons
     const [shownRoutes, setShownRoutes] = useState<Set<string>>(() => RouteURL.getRoutes());
     useEffect(() => RouteURL.addListener(() => setShownRoutes(RouteURL.getRoutes())), []);
+    // Reads the URL, not state, since stop popups keep this function after the state changes
     const toggleRoute = (routeId: string) =>
-        shownRoutes.has(routeId) ? RouteURL.removeRoute(routeId) : RouteURL.addRoute(routeId);
+        RouteURL.getRoutes().has(routeId) ? RouteURL.removeRoute(routeId) : RouteURL.addRoute(routeId);
     const [position, setPosition] = useState<{ lat: number, lng: number } | null>(null);
     const container = useRef<HTMLDivElement>(null);
     const [notice, setNotice] = useState("");
