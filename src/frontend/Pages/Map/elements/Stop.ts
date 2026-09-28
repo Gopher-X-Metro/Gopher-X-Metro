@@ -21,6 +21,8 @@ class Stop extends InfoWindowElement {
 
     /** Routes on the map that serve this stop */
     public routeIds = new Set<string>();
+    /** Routes at this stop with no service today */
+    public inactiveRouteIds = new Set<string>();
 
     /**
      * Stop Constructor
@@ -82,7 +84,10 @@ class Stop extends InfoWindowElement {
             } else if (this.departures.size === 0) {
                 const warningElement = document.createElement("p");
                 warningElement.className = "stop-popup-empty";
-                warningElement.textContent = "No buses scheduled here right now. ";
+                const allInactive = this.routeIds.size > 0 && [...this.routeIds].every(id => this.inactiveRouteIds.has(id));
+                warningElement.textContent = allInactive
+                    ? "Sorry, this route is not active right now, please check the scheduling page for more information. "
+                    : "No buses scheduled here right now. ";
                 const link = document.createElement("a");
                 // Prefer a route that's currently shown on the map
                 const routeId = [...this.routeIds].find(id => RouteURL.getRoutes().has(id)) ?? [...this.routeIds][0];

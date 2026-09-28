@@ -7,6 +7,8 @@ import Live from "./Live";
 namespace Alerts {
     /** Riders get a heads-up this long before the bus leaves */
     export const NOTIFY_SECONDS = 5 * 60;
+    /** Riders also get alerted when the bus is this close to the stop (half a mile), in case it runs early */
+    export const NOTIFY_METERS = 800;
 
     export interface Watch {
         stopId: string;
@@ -14,6 +16,8 @@ namespace Alerts {
         routeName: string;
         tripId: string;
         time: number;
+        /** Set inside the 5 min window: only fire once the bus is close or about to leave */
+        late?: boolean;
     }
 
     /** If this departure has an alert set */
@@ -36,15 +40,17 @@ namespace Alerts {
         let message: string;
         if (watches.delete(k)) {
             message = `Alert off for ${watch.routeName} at ${watch.stopName}.`;
-        } else if (seconds <= NOTIFY_SECONDS) {
-            const minutes = Math.round(seconds / 60);
-            return notify(`${watch.routeName} leaves ${watch.stopName} ${minutes <= 0 ? "now" : `in ${minutes} min`}. Head there now!`);
+        } else if (seconds <= 60) {
+            return notify(`${watch.routeName} leaves ${watch.stopName} now. Head there now!`);
         } else {
-            watches.set(k, { ...watch });
+            const late = seconds <= NOTIFY_SECONDS;
+            watches.set(k, { ...watch, late });
             try {
                 if ("Notification" in window && Notification.permission === "default") Notification.requestPermission();
             } catch {}
-            message = `We'll alert you 5 min before ${watch.routeName} leaves ${watch.stopName}. Keep this page open.`;
+            message = late
+                ? `${watch.routeName} leaves ${watch.stopName} in ${Math.round(seconds / 60)} min. We'll alert you again when it's close.`
+                : `We'll alert you 5 min before ${watch.routeName} leaves ${watch.stopName}, or sooner if it's close. Keep this page open.`;
             start();
         }
         changed();
@@ -192,7 +198,12 @@ namespace Alerts {
         for (const [k, watch] of [...watches]) {
             const time = latest.get(watch.stopId)?.find(d => d.tripId === watch.tripId)?.time ?? watch.time;
             watch.time = time;
-            if (time - now > NOTIFY_SECONDS) continue;
+            const threshold = watch.late ? 60 : NOTIFY_SECONDS;
+            if (time - now > threshold) {
+                // Bus running ahead of its prediction: fire once it's close to the stop
+                const meters = watch.stopId.startsWith("peak-") ? undefined : await Live.busDistanceToStop(watch.tripId, watch.stopId).catch(() => undefined);
+                if (meters === undefined || meters > NOTIFY_METERS) continue;
+            }
 
             const minutes = Math.max(0, Math.round((time - now) / 60));
             const message = `${watch.routeName} leaves ${watch.stopName} ${minutes === 0 ? "now" : `in ${minutes} min`}`;

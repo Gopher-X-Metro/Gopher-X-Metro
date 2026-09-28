@@ -151,13 +151,16 @@ namespace Routes {
             const details = await Schedule.getRouteDetails(routeId);
 
             // Campus routes Metro Transit doesn't publish (like 126) use Peak Transit's stops
-            if (details.schedules.length === 0 && Peak.UNIVERSITY_ROUTES[routeId]) {
-                loadPeakStops(routeId);
+            // Routes with no service today still show their stops, marked as not active
+            const today = details.schedules.filter((s: any) => s.schedule_type_name === Schedule.getWeekDate());
+            const inactive = today.length === 0;
+            if (inactive && Peak.UNIVERSITY_ROUTES[routeId]) {
+                loadPeakStops(routeId, true);
                 return;
             }
 
-            for (const schedule of details.schedules) {
-                if (schedule.schedule_type_name === Schedule.getWeekDate()) {
+            for (const schedule of inactive ? details.schedules.slice(0, 1) : today) {
+                {
                     for (const timetable of schedule.timetables) {
                         for (const info of (await Schedule.getStopList(routeId, timetable.schedule_number)) ?? []) {
                             // Load the stop
@@ -165,6 +168,7 @@ namespace Routes {
                                 // Adds the stop if it has not been added yet
                                 const route = routes.get(routeId)
                                 stop?.routeIds.add(routeId);
+                                if (stop && inactive) stop.inactiveRouteIds.add(routeId);
 
                                 if (route && !route?.getStops().has(info.stop_id)) {
                                     // Add stop
@@ -262,7 +266,7 @@ namespace Routes {
      * Shows a campus route's stops and arrival times from Peak Transit
      * @param routeId ID of the route
      */
-    async function loadPeakStops(routeId: string) {
+    async function loadPeakStops(routeId: string, inactive = false) {
         const peakRouteId = Peak.UNIVERSITY_ROUTES[routeId];
         const route = routes.get(routeId);
         if (!route) return;
@@ -274,6 +278,7 @@ namespace Routes {
             const stop = await stops.get(stopId);
             if (!stop) continue;
             stop.routeIds.add(routeId);
+            if (inactive) stop.inactiveRouteIds.add(routeId);
 
             if (!route.getStops().has(stopId)) {
                 route.addStopObject(stopId, stop);

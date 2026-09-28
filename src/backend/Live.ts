@@ -138,6 +138,20 @@ namespace Live {
     }
 
     /**
+     * Straight-line meters from a Metro Transit trip's bus to a stop, or undefined if either location is unknown
+     * @param tripId ID of the trip
+     * @param stopId ID of the stop
+     */
+    export async function busDistanceToStop(tripId: string, stopId: string) : Promise<number | undefined> {
+        const [position, stop] = await Promise.all([
+            getMetroPositions().then(p => p.get(tripId)),
+            getStops().then(all => all.find(s => s[0] === stopId)),
+        ]);
+        if (position?.lat === undefined || position?.lng === undefined || !stop) return undefined;
+        return distance(position.lat, position.lng, stop[2], stop[3]);
+    }
+
+    /**
      * Gets a campus bus stop's name and location
      * @param stopId Peak Transit ID of the stop
      */
@@ -309,7 +323,7 @@ namespace Live {
     /**
      * Maps trip IDs to each Metro Transit vehicle's current stop, status and bus number, refreshed every 15 seconds
      */
-    function getMetroPositions() : Promise<Map<string, { stopId?: string, stopped: boolean, label?: string }>> {
+    function getMetroPositions() : Promise<Map<string, { stopId?: string, stopped: boolean, label?: string, lat?: number, lng?: number }>> {
         if (!positions || Date.now() - positionsFetched > 15000) {
             positionsFetched = Date.now();
             positions = fetch("https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb")
@@ -320,6 +334,8 @@ namespace Live {
                         stopId: entity.vehicle?.stopId ?? undefined,
                         stopped: entity.vehicle?.currentStatus === GtfsRealtimeBindings.transit_realtime.VehiclePosition.VehicleStopStatus.STOPPED_AT,
                         label: entity.vehicle?.vehicle?.label ?? undefined,
+                        lat: entity.vehicle?.position?.latitude ?? undefined,
+                        lng: entity.vehicle?.position?.longitude ?? undefined,
                     }])))
                 .catch(() => new Map());
         }
