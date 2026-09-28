@@ -112,16 +112,27 @@ namespace Live {
         const [positions, updates] = await Promise.all([getMetroPositions(), getMetroUpdates()]);
         const position = positions.get(tripId);
         const now = Date.now() / 1000;
-        // The first stop still ahead of the bus
-        const next = updates.get(tripId)?.find(u => Number(u.arrival?.time ?? u.departure?.time ?? 0) >= now - 30);
-        const stopId = next?.stopId ?? position?.stopId;
-        const event = next?.arrival ?? next?.departure;
+        // The first listed stop still ahead of the bus. Trip updates are sparse (unchanged stops are omitted),
+        // so the vehicle position's own stop_id is preferred as the true next stop.
+        const tripUpdates = updates.get(tripId);
+        const next = tripUpdates?.find(u => Number(u.arrival?.time ?? u.departure?.time ?? 0) >= now - 30);
+        const stopId = position?.stopId ?? next?.stopId;
+        const match = tripUpdates?.find(u => u.stopId === stopId);
+        const event = match?.arrival ?? match?.departure;
+        const delay = (event ?? next?.arrival ?? next?.departure)?.delay;
+        let arrival = event?.time ? Number(event.time) : undefined;
+        // Stop omitted from the trip updates: fall back to the stop's NexTrip prediction for this trip
+        if (arrival === undefined && stopId) {
+            const data = await Realtime.getStop(stopId);
+            const departure = (data?.departures ?? []).find((d: any) => String(d.trip_id) === tripId);
+            if (departure?.departure_time) arrival = Number(departure.departure_time);
+        }
         return {
             nextStop: stopId ? await getStopName(stopId) : undefined,
             nextStopId: stopId,
-            arrival: event?.time ? Number(event.time) : undefined,
-            delayMinutes: event?.delay !== undefined && event?.delay !== null ? Math.round(Number(event.delay) / 60) : undefined,
-            stopped: position?.stopped && (!next || next.stopId === position.stopId),
+            arrival,
+            delayMinutes: delay !== undefined && delay !== null ? Math.round(Number(delay) / 60) : undefined,
+            stopped: position?.stopped,
             busNumber: position?.label,
         };
     }
