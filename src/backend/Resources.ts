@@ -97,7 +97,7 @@ namespace Resources {
      * Gets the color of a route as a string
      * @param routeId ID of the route
      */
-    export function getRouteImages(routeId: string) : string[2] {
+    export function getRouteImages(routeId: string) : [string, string] {
         // It defaults to the colors manually defined. If the color is not defined, it defaults to the one if found. 
         return ROUTE_IMAGES[routeId] ? ROUTE_IMAGES[routeId] : [defaultBusImage, defaultArrowImage];
     }

@@ -13,7 +13,7 @@ class Vehicle extends InfoWindowElement {
      * @param color color of vehicle image
      * @param map map the vehicle displays on
      */
-    constructor (vehicleId: string, images: string[2], map: L.Map) {
+    constructor (vehicleId: string, images: [string, string], map: L.Map) {
         const contents = document.createElement("div");
         contents.style.position = "relative";
 

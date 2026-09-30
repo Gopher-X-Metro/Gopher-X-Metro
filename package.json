@@ -4,15 +4,15 @@
   "private": true,
   "homepage": ".",
   "dependencies": {
-    "@chakra-ui/icons": "^2.1.1",
-    "@chakra-ui/react": "^2.8.2",
+    "@chakra-ui/react": "^3.37.0",
+    "@emotion/react": "^11.14.0",
     "@types/leaflet": "^1.9.22",
-    "gtfs-realtime-bindings": "^1.1.1",
+    "gtfs-realtime-bindings": "^2.2.0",
     "leaflet": "^1.9.4",
-    "proj4": "^2.11.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-icons": "^5.3.0"
+    "proj4": "^2.22.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-icons": "^5.7.0"
   },
   "scripts": {
     "start": "vite",
@@ -22,14 +22,15 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@types/node": "^20.14.10",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.6.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
-    "autoprefixer": "^10.6.1",
-    "knip": "^5.25.1",
+    "knip": "^6.38.0",
     "postcss": "^8.5.28",
-    "tailwind-scrollbar": "^3.1.0",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5.5.3",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
     "vite": "^8.3.1"
   }
 }

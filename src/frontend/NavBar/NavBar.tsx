@@ -8,6 +8,7 @@ import TitleBar from './components/TitleBar.tsx';
 import { centerMap, getMap } from 'src/frontend/Pages/Map/Map';
 import SideBar from './components/Sidebar.tsx';
 import ResponsiveDropdown from './components/MobileDropdown.tsx';
+import { YELLOW_BUTTON } from './buttonStyle.ts';
 
 /**
  * Navbar Component
@@ -31,25 +32,25 @@ export default function NavBar({ setPage, isMobile }) {
                 ) : (
                     <div className="flex flex-row gap-2 max-lg:hidden ">
 
-                        <Button colorScheme='yellow' onClick={() => setPage("schedules")}>
+                        <Button {...YELLOW_BUTTON} onClick={() => setPage("schedules")}>
                             Schedules
                         </Button>
-                        <Button colorScheme='yellow' onClick={() => setPage("alerts")}>
+                        <Button {...YELLOW_BUTTON} onClick={() => setPage("alerts")}>
                             Bus Alerts
                         </Button>
                         <a href='https://campusmaps.umn.edu/' target="_blank" rel="noreferrer">
-                            <Button colorScheme='yellow'>
+                            <Button {...YELLOW_BUTTON}>
                                 Campus Bus Map
                             </Button>
                         </a>
 
                         <a href='https://umn.rider.peaktransit.com' target="_blank" rel="noreferrer">
-                            <Button colorScheme='yellow'>
+                            <Button {...YELLOW_BUTTON}>
                                 GopherTrip Map
                             </Button>
                         </a>
 
-                        <Button rounded='full' colorScheme='yellow' onClick={() => setPage("about")}>
+                        <Button rounded='full' {...YELLOW_BUTTON} onClick={() => setPage("about")}>
                             ?
                         </Button>
 

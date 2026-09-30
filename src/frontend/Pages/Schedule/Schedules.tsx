@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
-import { ChevronDownIcon } from '@chakra-ui/icons';
+import { FiChevronDown } from 'react-icons/fi';
 
-import {
-    Menu,
-    MenuButton,
-    MenuList,
-    MenuItemOption,
-    MenuOptionGroup,
-    MenuDivider,
-    Button,
-} from '@chakra-ui/react';
+import { Menu, Button, Portal } from '@chakra-ui/react';
+import { MENU_ITEM } from 'src/frontend/NavBar/buttonStyle.ts';
 
 import "./schedules.css";
 import PageHeader from "../PageHeader";
@@ -76,7 +69,18 @@ export default function Schedules({ hidden, setPage }) {
     }, [routeId])
 
     const option = ([id, label]: [string, string]) => (
-        <MenuItemOption key={id} value={id} onClick={() => setRouteId(id)}>{label}</MenuItemOption>
+        <Menu.RadioItem {...MENU_ITEM} ps="9" key={id} value={id}>
+            {label}
+            <Menu.ItemIndicator />
+        </Menu.RadioItem>
+    );
+    const group = (title: string, routes: [string, string][]) => (
+        <Menu.ItemGroup>
+            <Menu.ItemGroupLabel fontSize="sm" fontWeight="bold" px="4">{title}</Menu.ItemGroupLabel>
+            <Menu.RadioItemGroup value={routeId} onValueChange={e => setRouteId(e.value)}>
+                {routes.map(option)}
+            </Menu.RadioItemGroup>
+        </Menu.ItemGroup>
     );
 
     return (
@@ -84,20 +88,22 @@ export default function Schedules({ hidden, setPage }) {
             <PageHeader title="Schedules" setPage={setPage}/>
             <div className="schedules-page">
             <div className="schedules-controls">
-                <Menu>
-                    <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                        {name}
-                    </MenuButton>
-                    <MenuList maxHeight="70vh" overflowY="auto">
-                        <MenuOptionGroup value={routeId} title="Campus Buses" type='radio'>
-                            {CAMPUS_ROUTES.map(option)}
-                        </MenuOptionGroup>
-                        <MenuDivider />
-                        <MenuOptionGroup value={routeId} title="Metro Transit" type='radio'>
-                            {METRO_ROUTES.map(option)}
-                        </MenuOptionGroup>
-                    </MenuList>
-                </Menu>
+                <Menu.Root>
+                    <Menu.Trigger asChild>
+                        <Button bg="#EDF2F7" color="#1A202C" fontWeight="semibold" fontSize="md" _hover={{ bg: "#E2E8F0" }} _expanded={{ bg: "#CBD5E0" }}>
+                            {name} <FiChevronDown />
+                        </Button>
+                    </Menu.Trigger>
+                    <Portal>
+                        <Menu.Positioner>
+                            <Menu.Content maxHeight="70vh" overflowY="auto" zIndex={2000}>
+                                {group("Campus Buses", CAMPUS_ROUTES)}
+                                <Menu.Separator />
+                                {group("Metro Transit", METRO_ROUTES)}
+                            </Menu.Content>
+                        </Menu.Positioner>
+                    </Portal>
+                </Menu.Root>
             </div>
 
             <h2 className="schedules-title">{name}</h2>

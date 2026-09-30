@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
   return {
     base: "./",
     plugins: [react()],
-    resolve: { alias: { src: path.resolve(__dirname, "src") } },
+    resolve: { alias: { src: path.resolve(import.meta.dirname, "src") } },
     define: {
       "process.env.PUBLIC_URL": JSON.stringify("."),
       ...Object.fromEntries(Object.entries(env).map(([k, v]) => [`process.env.${k}`, JSON.stringify(v)])),

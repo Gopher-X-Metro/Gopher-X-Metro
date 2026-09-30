@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import RouteButton from './RouteButton.tsx';
 import { Icon } from '@chakra-ui/react';
-import { HamburgerIcon } from '@chakra-ui/icons';
+import { GiHamburgerMenu } from 'react-icons/gi';
 import RouteURL from 'src/backend/URL.ts';
 import SearchFeature from 'src/frontend/NavBar/components/SearchFeature.tsx';
 import Schedule from 'src/backend/Schedule.ts';
@@ -83,7 +83,7 @@ export default function SideBar() {
         <>
             <div id="nav-bar">
                 <button className="openbtn" onClick={() => setSidebarOpen(!sidebarOpen)}>
-                    <Icon as={ HamburgerIcon} w={6} h={6} />
+                    <Icon as={GiHamburgerMenu} boxSize={6} />
                 </button>
             </div>
 
