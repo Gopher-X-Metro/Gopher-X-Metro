@@ -4,6 +4,7 @@ import Live from "src/backend/Live";
 import Resources from "src/backend/Resources";
 import RouteURL from "src/backend/URL";
 import Alerts from "src/backend/Alerts";
+import Delays from "src/backend/Delays";
 
 interface StopView {
     id: string;
@@ -51,6 +52,17 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
     // Re-render when alerts change anywhere (this panel or a stop popup), and show their messages
     const [, setAlertsVersion] = useState(0);
     useEffect(() => Alerts.addListener(() => setAlertsVersion(v => v + 1)), []);
+    // Delay estimates for scheduled (not yet tracked) departures, loaded after the departures show;
+    // only confident ones come back, keyed "stopId|tripId"
+    const [estimates, setEstimates] = useState<Record<string, Delays.Estimate>>({});
+    useEffect(() => {
+        let cancelled = false;
+        Promise.all([...favorites, ...nearby].map(async stop =>
+            [...(await Delays.estimates(stop.id, stop.departures ?? []))].map(([tripId, e]) => [stop.id + "|" + tripId, e] as const)))
+            .then(found => { if (!cancelled) setEstimates(Object.fromEntries(found.flat())); })
+            .catch(() => {});
+        return () => { cancelled = true; };
+    }, [favorites, nearby]);
 
     useEffect(() => {
         if (container.current) {
@@ -201,6 +213,12 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
                                         title={(shownRoutes.has(d.routeId) ? "Hide" : "Show") + ` route ${d.routeName} on the map`}>{d.routeName}</button>
                                 <span className="dest" role="button" tabIndex={0} onClick={() => toggleRoute(d.routeId)} onKeyDown={e => e.key === "Enter" && toggleRoute(d.routeId)}>{d.description}</span>
                                 <span className="time">{d.actual && "📡 "}{d.text}</span>
+                                {!d.actual && estimates[stop.id + "|" + d.tripId] && (
+                                    <span className={"delay-est " + estimates[stop.id + "|" + d.tripId].kind}
+                                          title={estimates[stop.id + "|" + d.tripId].title}>
+                                        {estimates[stop.id + "|" + d.tripId].text}
+                                    </span>
+                                )}
                                 <button className={"bell" + (Alerts.isWatching(stop.id, d.tripId) ? " on" : "")}
                                         onClick={() => toggleWatch(stop, d)}
                                         aria-label={Alerts.isWatching(stop.id, d.tripId) ? "Stop alert" : "Alert me 5 minutes before"}
@@ -233,7 +251,7 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
                     {status && <p className="muted">{status}</p>}
                     {notice && <p className="notice" onClick={() => setNotice("")}>{notice}</p>}
                     <ul>{nearby.filter(stop => !isFavorite(stop.id)).map(renderStop)}</ul>
-                    <p className="muted legend">📡 = live time from a tracked vehicle. 🏃 = leaves before you could walk there (dimmed if no live bus is tracking it). Tap 🔕 to get an alert 5 min before a bus leaves.</p>
+                    <p className="muted legend">📡 = live time from a tracked vehicle. 🏃 = leaves before you could walk there (dimmed if no live bus is tracking it). Tap 🔕 to get an alert 5 min before a bus leaves. Scheduled times may note a bus that usually runs late or leaves early, <a href="https://kennedyjohnson.github.io/metro-transit-delays/" target="_blank" rel="noreferrer">from its past runs</a>.</p>
                 </div>
             )}
         </div>

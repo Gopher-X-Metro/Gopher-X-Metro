@@ -521,6 +521,10 @@ body.mobile .leaflet-control-zoom { display: none; }
 .departures li.route-on .chip { outline: 2px solid #ffcc33; outline-offset: 1px; }
 .departures .dest { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .departures .time { font-weight: bold; white-space: nowrap; }
+/* Planning estimate on a scheduled (not live) time, only shown when the model is confident */
+.departures .delay-est { font-size: 11px; font-weight: 600; white-space: nowrap; border-radius: 999px; padding: 0 6px; cursor: help; }
+.departures .delay-est.late { background: #fff4e0; color: #8a5a00; }
+.departures .delay-est.early { background: #fde8e6; color: #a8231b; }
 
 /* Service alerts */
 .alert-banner { position: absolute; top: calc(var(--header-h, 100px) + 10px); left: 50%; transform: translateX(-50%); z-index: 1001; width: min(560px, calc(100% - 24px)); display: flex; gap: 8px; align-items: flex-start; background: #fff4e0; border: 1px solid #f0b54a; color: #5c3900; border-radius: 8px; padding: 8px 10px; font-size: 13px; box-shadow: 0 2px 6px rgba(0,0,0,.2); }
