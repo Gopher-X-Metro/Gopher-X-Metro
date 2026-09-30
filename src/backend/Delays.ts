@@ -22,9 +22,11 @@ namespace Delays {
         try {
             const scheduled = departures.filter(d => !d.actual && d.tripId && d.time);
             if (!scheduled.length) return out;
-            const [meta, cal, routes] = await Promise.all([json("meta.json"), json("calendar.json"), json("routes.json")]);
-            if (!meta?.model || !cal?.services || !routes?.routes) return out;
-            if (Date.now() - Date.parse(meta.updated) > MAX_AGE_MS) return out;
+            // meta.json is tiny; only fetch the rest once the model exists and is fresh
+            const meta = await json("meta.json");
+            if (!meta?.model || !(Date.now() - Date.parse(meta.updated) <= MAX_AGE_MS)) return out;
+            const [cal, routes] = await Promise.all([json("calendar.json"), json("routes.json")]);
+            if (!cal?.services || !routes?.routes) return out;
 
             for (const d of scheduled) {
                 const route = routes.routes.find((r: any) => r.id === d.routeId);
