@@ -75,7 +75,7 @@ namespace Realtime {
                 return json;
             } else
                 console.warn(`Data fetching encountered status code ${response.status} with Metro Vehicles`);
-        })
+        }).catch(() => undefined)
     }
     /**
      * Gets the fetched data of the university busses

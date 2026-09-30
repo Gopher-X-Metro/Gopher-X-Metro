@@ -4,8 +4,13 @@ namespace Data {
     /**
      * Loads the calendar
      */
-    export async function load() : Promise<void> {        
-        const data = await getJSON("/calendar.json");
+    export async function load() : Promise<void> {
+        // Without the calendar no route counts as running, so a flaky first request gets a few retries
+        let data = await getJSON("/calendar.json");
+        for (let attempt = 1; !data && attempt < 4; attempt++) {
+            await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+            data = await getJSON("/calendar.json");
+        }
         data?.calendar.forEach((element: { service_id: string; }) => calendar.set(element.service_id, element));
         data?.dates.forEach((element: { service_id: string; date: string; exception_type: string }) => 
             exceptions.set(element.service_id + "|" + element.date, element.exception_type));
@@ -52,10 +57,12 @@ namespace Data {
      * @param shapeId ID of the shape
      */
     export async function getShapes(shapeId: string) : Promise<Array<[number, number]>> {
-        if (!shapes.has(shapeId))
-            shapes.set(shapeId, await getJSON("/shapes/" + shapeId + ".json") ?? []);
-        
-        return shapes.get(shapeId); 
+        if (!shapes.has(shapeId)) {
+            const points = await getJSON("/shapes/" + shapeId + ".json");
+            if (!points) return []; // not cached, so the next load tries again
+            shapes.set(shapeId, points);
+        }
+        return shapes.get(shapeId);
     }
 
     /**
@@ -87,17 +94,26 @@ namespace Data {
      */
     function getRoute(routeId: string) : Promise<any> {
         if (!routes.has(routeId))
-            routes.set(routeId, getJSON("/routes/" + routeId + ".json"));
+            routes.set(routeId, getJSON("/routes/" + routeId + ".json", true).catch(() => {
+                routes.delete(routeId); // network error: forget it so the next request retries
+                return undefined;
+            }));
         return routes.get(routeId) as Promise<any>;
     }
 
     /**
-     * Fetches a generated GTFS file, or undefined if it doesn't exist
-     * @param file path of the file within the gtfs folder
+     * Fetches a generated GTFS file, or undefined if it doesn't exist or can't be reached
+     * @param file          path of the file within the gtfs folder
+     * @param throwOnError  throw on a network error instead of returning undefined
      */
-    async function getJSON(file: string) : Promise<any> {
-        const response = await fetch(DATA_URL + file);
-        return response.ok && response.headers.get("content-type")?.includes("json") ? response.json() : undefined;
+    async function getJSON(file: string, throwOnError = false) : Promise<any> {
+        try {
+            const response = await fetch(DATA_URL + file);
+            return response.ok && response.headers.get("content-type")?.includes("json") ? await response.json() : undefined;
+        } catch (e) {
+            if (throwOnError) throw e;
+            return undefined;
+        }
     }
     
     /* Days of the week */

@@ -325,14 +325,16 @@ namespace Routes {
                         loadPath(routeId, shapeId, await Resources.getColor(routeId), await Resources.getShapeLocations(shapeId))
                     })
                 )
-        } else {
-            // Does not exist; drop it from the link once we know the route list loaded
+        } else if ((await Schedule.getRoutes())?.length) {
+            // Does not exist; drop it from the link
             console.warn(`Route with ID: ${routeId} not found`);
-            if ((await Schedule.getRoutes())?.length) {
-                routes.delete(routeId);
-                RouteURL.removeRoute(routeId);
-            }
+            routes.delete(routeId);
+            RouteURL.removeRoute(routeId);
             Resources.createInactiveRoutePopup();
+        } else {
+            // Metro Transit's route list didn't load (offline?), so try this route again shortly
+            routes.delete(routeId);
+            setTimeout(refresh, 5000);
         }
     }
 
