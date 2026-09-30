@@ -65,6 +65,32 @@ jobs:
               labels: ['stale-data'],
             });
 
+  # Campus buses come from Peak Transit with REACT_APP_PEAK_KEY. If that key is revoked the map
+  # still deploys but campus buses silently vanish, so check it each week and open an issue.
+  peak-key:
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Peak Transit key returns campus routes
+        env:
+          KEY: ${{ secrets.REACT_APP_PEAK_KEY }}
+        run: |
+          curl -sS --retry 3 --retry-delay 10 -o routes.json \
+            "https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=$KEY&controller=route2&action=list&agencyID=88"
+          python3 -c "import json; n = len(json.load(open('routes.json')).get('routes') or []); print(n, 'campus routes'); assert n > 0, 'no routes: key rejected or API changed'"
+      - if: failure() && github.event_name == 'schedule'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            await github.rest.issues.create({
+              ...context.repo,
+              title: `Peak Transit key check failed (${new Date().toISOString().slice(0,10)})`,
+              body: `Peak Transit returned no campus routes for REACT_APP_PEAK_KEY, so campus buses may be missing from the map. Check whether the key was revoked or the API changed.\n\nRun: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              labels: ['stale-data'],
+            });
+
   # GitHub disables cron workflows after 60 days without repo activity.
   keepalive:
     if: github.event_name == 'schedule'
