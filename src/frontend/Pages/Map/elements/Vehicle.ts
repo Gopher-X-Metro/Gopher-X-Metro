@@ -189,8 +189,9 @@ class Vehicle extends InfoWindowElement {
         if (!(this.marker as L.Marker).getLatLng().equals(position)) {
             this.infoWindow?.setPosition(position);
             this.glideTo(position);
-            this.positionTimestamp = timestamp;
         }
+        // A bus waiting at a layover reports the same spot with a fresh time; it's still live
+        if (timestamp) this.positionTimestamp = timestamp;
     }
     /**
      * Moves the icon smoothly to a new position instead of jumping

@@ -118,10 +118,9 @@ async function initalize( map: L.Map ) {
     Marker.init(map, showLinkedRoutes);
     showLinkedRoutes();
 
-    // Updates vehicle and marker postions every 0.5 seconds
+    // Updates vehicle postions every 0.5 seconds (the rider's marker follows their location on its own)
     setInterval(() => {
         Routes.refreshVehicles();
-        Marker.update();
     }, 500); // ms of wait
 
     // Updates stops every 30 seconds

@@ -98,8 +98,8 @@ function onPlaceChange(map : L.Map, place : Place) : void {
     searches.set(place.id, new Search(place.id, place.name, place.location, map));
 
     Plan.serviceNearby(place.location.lat, place.location.lng, null, 0, 0.3).then(async nearest => {
-        if (nearest.version !== 0) {
-            for (const stop of nearest.atstop) {
+        if (nearest?.version !== 0) {
+            for (const stop of nearest?.atstop ?? []) {
                 Routes.loadStop(stop.stopid, "").then(s => {
                     if (s) searches.get(place.id)?.addElement(s);
                     s?.addElement(searches.get(place.id) as Search);
@@ -107,5 +107,5 @@ function onPlaceChange(map : L.Map, place : Place) : void {
                 });
             }
         }
-    })
+    }).catch(() => {}); // nearby stops are extra; the place marker still shows
 }

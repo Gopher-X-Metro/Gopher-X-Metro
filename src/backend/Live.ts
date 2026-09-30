@@ -80,8 +80,10 @@ namespace Live {
      */
     export async function getDepartures(stopId: string) : Promise<StopDepartures> {
         const data = await Realtime.getStop(stopId);
+        // No answer (offline, or Metro Transit down) is an error, not a stop with no buses
+        if (!data) throw new Error("Departures unavailable for stop " + stopId);
         return {
-            departures: (data?.departures ?? []).map((d: any) => ({
+            departures: (data.departures ?? []).map((d: any) => ({
                 tripId: String(d.trip_id),
                 routeId: d.route_id,
                 routeName: d.route_short_name ?? d.route_id,
@@ -91,7 +93,7 @@ namespace Live {
                 description: d.description,
                 direction: d.direction_text,
             })),
-            alerts: (data?.alerts ?? []).map((a: any) => a.alert_text).filter(Boolean),
+            alerts: (data.alerts ?? []).map((a: any) => a.alert_text).filter(Boolean),
         };
     }
 
@@ -191,8 +193,9 @@ namespace Live {
                     const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer));
                     const now = Date.now() / 1000;
                     return feed.entity
-                        .filter(entity => entity.alert && (entity.alert.activePeriod ?? []).some(p =>
-                            Number(p.start ?? 0) <= now && (!p.end || Number(p.end) >= now)))
+                        // An alert without active periods is active for as long as it's in the feed
+                        .filter(entity => entity.alert && (!entity.alert.activePeriod?.length || entity.alert.activePeriod.some(p =>
+                            Number(p.start ?? 0) <= now && (!p.end || Number(p.end) >= now))))
                         .map(entity => ({
                             id: entity.id,
                             header: entity.alert?.headerText?.translation?.[0]?.text ?? "",
