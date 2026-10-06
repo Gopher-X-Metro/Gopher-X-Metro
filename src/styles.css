@@ -540,7 +540,7 @@ body:not(.mobile) .alert-banner { top: calc(var(--header-h, 80px) + 64px); }
 .vehicle-popup p { margin: 2px 0 !important; }
 
 /* Late campus bus badge */
-.delay-badge { position: absolute; left: 6px; top: -22px; background: #d0021b; color: #fff; font: bold 11px/1 Arial, sans-serif; padding: 2px 4px; border-radius: 8px; border: 1.5px solid #fff; white-space: nowrap; pointer-events: none; }
+.delay-badge { position: absolute; left: 21px; top: -38px; background: #d0021b; color: #fff; font: bold 11px/1 Arial, sans-serif; padding: 2px 4px; border-radius: 8px; border: 1.5px solid #fff; white-space: nowrap; pointer-events: none; }
 
 .departures .bell { font-size: 13px; opacity: .55; padding: 0 2px; }
 .departures .bell.on { opacity: 1; }
@@ -637,3 +637,6 @@ input, button, select, textarea { font-family: inherit; }
 @media (pointer: coarse) {
   [role="menuitem"], [role="menuitemradio"] { min-height: 44px; }
 }
+
+/* Route number tag above each bus or train */
+.route-tag { position: absolute; left: 0; top: -31px; transform: translateX(-50%); padding: 2px 5px; border-radius: 6px; border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3); font: bold 11px/1 Arial, sans-serif; white-space: nowrap; background: #555; color: #fff; pointer-events: none; }

@@ -10,11 +10,11 @@ class Vehicle extends InfoWindowElement {
     /**
      * Vehicle Constructor
      * @param vehicleId vehicle ID
-     * @param tripId 
-     * @param color color of vehicle image
+     * @param routeId route the vehicle runs, tagged above its icon
+     * @param images [vehicle, arrow] images
      * @param map map the vehicle displays on
      */
-    constructor (vehicleId: string, images: [string, string], map: L.Map) {
+    constructor (vehicleId: string, routeId: string, images: [string, string], map: L.Map) {
         const contents = document.createElement("div");
         contents.style.position = "relative";
 
@@ -50,6 +50,17 @@ class Vehicle extends InfoWindowElement {
 
         contents.appendChild(busContainer);
         contents.appendChild(arrowContainer);
+
+        // Route number tag above the icon, in the route's color, so similar colors are easy to tell apart
+        const tag = document.createElement("div");
+        tag.className = "route-tag";
+        tag.textContent = ROUTE_TAGS[routeId] ?? routeId;
+        contents.appendChild(tag);
+        Resources.getColor(routeId).then(color => {
+            const hex = "#" + color.replace("#", "");
+            tag.style.background = hex;
+            tag.style.color = isLight(hex) ? "#1a1a1a" : "#ffffff";
+        });
 
         // Red "+N" badge for campus buses running late
         this.badge = document.createElement("div");
@@ -276,6 +287,14 @@ class Vehicle extends InfoWindowElement {
 }
 
 const STALE_SECONDS = 120;
+// Tag text where the route number isn't what riders call it
+const ROUTE_TAGS: Record<string, string> = { "901": "Blue", "902": "Green", "925": "E", "FOOTBALL": "Game day" };
+
+/** If dark text reads better than white on this color */
+function isLight(hex: string) : boolean {
+    const [r, g, b] = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
+    return 0.299 * r + 0.587 * g + 0.114 * b > 170;
+}
 // Blue Line runs north-south (0 = north), Green Line east-west (0 = east)
 const RAIL_BEARINGS = { "901": [0, 180], "902": [90, 270] };
 const GLIDE_MS = 1500;
