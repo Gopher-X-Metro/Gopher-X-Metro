@@ -7,24 +7,11 @@ import { MENU_ITEM } from 'src/frontend/NavBar/buttonStyle.ts';
 
 import "./schedules.css";
 import PageHeader from "../PageHeader";
+import Schedule from "src/backend/Schedule.ts";
+import { ROUTE_NAMES } from "src/backend/RouteNames.ts";
 
-const CAMPUS_ROUTES: [string, string][] = [
-    ["120", "120 East Bank Circulator"],
-    ["121", "121 Campus Connector"],
-    ["122", "122 University Avenue Circulator"],
-    ["123", "123 4th Street Circulator"],
-    ["124", "124 St. Paul Circulator"],
-    ["125", "125 Dinkytown Connector"],
-    ["126", "126 Campus Express"],
-];
-
-const METRO_ROUTES: [string, string][] = [
-    ["902", "METRO Green Line"],
-    ["901", "METRO Blue Line"],
-    ["925", "METRO E Line"],
-    ["2", "2 Franklin Av / To Hennepin"],
-    ["3", "3 U of M / Como Av / Dwtn Mpls"],
-];
+const CAMPUS_ROUTES = ["120", "121", "122", "123", "124", "125", "126"];
+const METRO_ROUTES = ["902", "901", "925", "2", "3"];
 
 const DAY_LABELS = { Weekday: "Monday–Friday", Saturday: "Saturday", Sunday: "Sunday" };
 
@@ -51,7 +38,7 @@ export default function Schedules({ hidden, setPage, initialRouteId }: { hidden:
     const [routeId, setRouteId] = useState(initialRouteId ?? "121");
     const [schedule, setSchedule] = useState<Record<string, DirectionSchedule[]> | null | undefined>(undefined);
 
-    const name = [...CAMPUS_ROUTES, ...METRO_ROUTES].find(([id]) => id === routeId)?.[1] ?? routeId;
+    const name = ROUTE_NAMES[routeId] ?? routeId;
 
     useEffect(() => {
         // Lets a stop popup on the map pick which route to show
@@ -62,19 +49,16 @@ export default function Schedules({ hidden, setPage, initialRouteId }: { hidden:
 
     useEffect(() => {
         setSchedule(undefined);
-        fetch(process.env.PUBLIC_URL + "/gtfs/schedules/" + routeId + ".json")
-            .then(response => response.ok && response.headers.get("content-type")?.includes("json") ? response.json() : null)
-            .then(setSchedule)
-            .catch(() => setSchedule(null));
+        Schedule.getTimetable(routeId).then(setSchedule);
     }, [routeId])
 
-    const option = ([id, label]: [string, string]) => (
+    const option = (id: string) => (
         <Menu.RadioItem {...MENU_ITEM} ps="9" key={id} value={id}>
-            {label}
+            {ROUTE_NAMES[id]}
             <Menu.ItemIndicator />
         </Menu.RadioItem>
     );
-    const group = (title: string, routes: [string, string][]) => (
+    const group = (title: string, routes: string[]) => (
         <Menu.ItemGroup>
             <Menu.ItemGroupLabel fontSize="sm" fontWeight="bold" px="4">{title}</Menu.ItemGroupLabel>
             <Menu.RadioItemGroup value={routeId} onValueChange={e => setRouteId(e.value)}>

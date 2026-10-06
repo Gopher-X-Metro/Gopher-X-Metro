@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Live from "src/backend/Live";
 import RouteURL from "src/backend/URL";
+import { routeLabel } from "src/backend/RouteNames";
 
 const DISMISSED_KEY = "gxm-dismissed-alerts";
 
@@ -43,7 +44,7 @@ export default function AlertBanner() {
             <button className="alert-summary" onClick={() => setExpanded(true)} aria-expanded="false">
                 <span className="alert-icon">⚠</span>
                 <span className="alert-summary-text">
-                    <strong>{visible[0].routes.map(label).join(", ")}</strong> {visible[0].header}
+                    <strong>{visible[0].routes.map(routeLabel).join(", ")}</strong> {visible[0].header}
                 </span>
                 {visible.length > 1 && <span className="alert-count">+{visible.length - 1}</span>}
             </button>
@@ -55,7 +56,7 @@ export default function AlertBanner() {
         <div className="alert-banner" role="status">
             <div className="alert-list">
                 {visible.map(alert => (
-                    <p key={alert.id}><strong>⚠ {alert.routes.map(label).join(", ")}:</strong> {alert.header}</p>
+                    <p key={alert.id}><strong>⚠ {alert.routes.map(routeLabel).join(", ")}:</strong> {alert.header}</p>
                 ))}
                 <p className="alert-links">
                     <button className="alert-more" onClick={() => document.dispatchEvent(new CustomEvent("gxm:open-page", { detail: "alerts" }))}>All bus alerts</button>
@@ -68,5 +69,3 @@ export default function AlertBanner() {
     )
 }
 
-const LABELS = { "901": "Blue Line", "902": "Green Line", "925": "E Line", "FOOTBALL": "Football" };
-const label = (route: string) => LABELS[route] ?? route;

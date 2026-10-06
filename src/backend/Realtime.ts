@@ -15,9 +15,7 @@ namespace Realtime {
      * @returns route data
      */
     export async function getRoute(routeId: string) : Promise<any> {
-        for (const route of (await getRoutes()) ?? [])
-            if (route.route_id === routeId) 
-                return route;
+        return (await getRoutes())?.find(route => route.route_id === routeId);
     }
     /**
      * Gets the data of the specific stop
@@ -64,18 +62,9 @@ namespace Realtime {
         return request;
     }
     async function fetchMetroVehicles(routeId: string) : Promise<any> {
-        return await fetch("https://svc.metrotransit.org/nextrip/vehicles/"+routeId).then(async response => {
-            if (response.ok && response.status === 200){
-                let json = await response.json();
-
-                json.forEach(vehicle => {
-                    vehicle.timestamp = vehicle.location_time;
-                })
-            
-                return json;
-            } else
-                console.warn(`Data fetching encountered status code ${response.status} with Metro Vehicles`);
-        }).catch(() => undefined)
+        const json = await getJSON("https://svc.metrotransit.org/nextrip/vehicles/" + routeId);
+        json?.forEach(vehicle => { vehicle.timestamp = vehicle.location_time; });
+        return json;
     }
     /**
      * Gets the fetched data of the university busses
@@ -84,19 +73,10 @@ namespace Realtime {
         // One shared request for every campus route; Peak positions refresh every few seconds
         if (!universityRequest || Date.now() - universityTime > PEAK_POLL_MS) {
             universityTime = Date.now();
-            universityRequest = fetchUniversity().catch(() => undefined);
+            universityRequest = getJSON(GTFS_REALTIME_URL_UMN);
         }
         return universityRequest;
     }
-    async function fetchUniversity(): Promise<any> {
-        return await fetch(GTFS_REALTIME_URL_UMN).then(async response => {
-            if (response.ok && response.status === 200)
-                return await response.json();
-            else
-                console.warn(`Data fetching encountered status code ${response.status} with University Data. Response Body: ${await response.text()}`);
-        })
-    }
-
     // The campus bus garage off SE Como Ave and 30th Ave SE, where buses sit overnight
     const GARAGE = { south: 44.9846, north: 44.9905, west: -93.2155, east: -93.2068 };
 

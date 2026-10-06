@@ -1,6 +1,7 @@
 import L from "leaflet";
 import Live from "src/backend/Live.ts";
-import { ROUTE_NAMES, setStopNameLookup } from "../elements/Vehicle";
+import { setStopNameLookup } from "../elements/Vehicle";
+import { ROUTE_NAMES } from "src/backend/RouteNames.ts";
 import { LINE_BOLD, LINE_NORMAL } from "../elements/Path";
 import Resources from "src/backend/Resources.ts";
 import Schedule from "src/backend/Schedule.ts";
@@ -77,15 +78,6 @@ namespace Routes {
         refresh()
     }
     /**
-     * Sets a route's visibility
-     * @param routeId ID of route
-     * @param visible should the route be visible
-     * @deprecated
-     */
-    export function setVisible(routeId: string, visible: boolean) {
-        getRoute(routeId)?.setVisible(visible);
-    }
-    /**
      * Sets a route's boldedness
      * @param routeId ID of route
      * @param bolded should the route be boolded
@@ -99,48 +91,32 @@ namespace Routes {
     export async function refreshVehicles() 
     {
         // Updates Vehicles
-        RouteURL.getRoutes()?.forEach(async routeId => {
+        RouteURL.getRoutes().forEach(async routeId => {
             const route = routes.get(routeId)
+            if (!route) return;
 
             for (const info of (await Realtime.getVehicles(routeId)) ?? []) {
-                if (!vehicles.has(info.trip_id)) {
-                    // Add Vehicle
-                    vehicles.set(info.trip_id, new Vehicle(info.trip_id, Resources.getRouteImages(routeId), map))
-                    
-                    if (route) {
-                        route.addVehicleObject(info.trip_id, vehicles.get(info.trip_id));
-
-                        // If the user hovers over the vehicle, change the width of the line
-                        route.getVehicles().get(info.trip_id)?.getMarker().on("mouseover", () => {
-                            setBolded(route.getId(), true)
-                        });
-
-                        // If the user hovers over the vehicle, change the width of the line
-                        route.getVehicles().get(info.trip_id)?.getMarker().on("mouseout", () => {
-                            setBolded(route.getId(), false)
-                        });
-                    }
+                // Vehicles belong to their route: a campus bus that switches routes gets a new marker on the new one
+                let vehicle = route.getVehicles().get(info.trip_id);
+                if (!vehicle) {
+                    vehicle = new Vehicle(info.trip_id, Resources.getRouteImages(routeId), map);
+                    route.addVehicleObject(info.trip_id, vehicle);
+                    // Hovering a vehicle bolds its route's line
+                    vehicle.getMarker().on("mouseover", () => setBolded(routeId, true));
+                    vehicle.getMarker().on("mouseout", () => setBolded(routeId, false));
                 }
 
-                // Modify the vehicle
-                if (routeId === "901") {
-                    vehicles.get(info.trip_id)?.setBlueDirectionID(info.direction_id);
-                } else if (routeId === "902") {
-                    vehicles.get(info.trip_id)?.setGreenDirectionID(info.direction_id);
-                } else {
-                    vehicles.get(info.trip_id)?.setBusBearing(info.bearing);
-                }
+                if (routeId === "901" || routeId === "902") vehicle.setRailDirection(routeId, info.direction_id);
+                else vehicle.setBusBearing(info.bearing);
 
-                vehicles.get(info.trip_id)?.setPosition(L.latLng(info.latitude as number, info.longitude as number), info.timestamp);
-                vehicles.get(info.trip_id)?.setInfo(routeId, info);
-                vehicles.get(info.trip_id)?.updateWindow();
-                vehicles.get(info.trip_id)?.updateTimestamp();
+                vehicle.setPosition(L.latLng(info.latitude, info.longitude), info.timestamp);
+                vehicle.setInfo(routeId, info);
+                vehicle.updateWindow();
+                vehicle.updateTimestamp();
             }
-            
-            // Sets all vehicles to be un-updated and set their visibility
-            route?.getVehicles().forEach(vehicle => {
-                vehicle.setVisible(vehicle.isUpdated() && route.isVisible());
-            });
+
+            // Hides vehicles missing from this update
+            route.getVehicles().forEach(vehicle => vehicle.setVisible(vehicle.isUpdated() && route.isVisible()));
         })
     }
     /**
@@ -149,7 +125,7 @@ namespace Routes {
     export async function refreshStops() {
 
         // Updates Stops
-        RouteURL.getRoutes()?.forEach(async routeId => {
+        RouteURL.getRoutes().forEach(async routeId => {
             const details = await Schedule.getRouteDetails(routeId);
 
             // Campus routes Metro Transit doesn't publish (like 126) use Peak Transit's stops
@@ -161,38 +137,24 @@ namespace Routes {
                 return;
             }
 
-            for (const schedule of inactive ? details.schedules.slice(0, 1) : today) {
-                {
-                    for (const timetable of schedule.timetables) {
-                        for (const info of (await Schedule.getStopList(routeId, timetable.schedule_number)) ?? []) {
-                            // Load the stop
-                            loadStop(info.stop_id, timetable.direction)?.then(async stop => {
-                                // Adds the stop if it has not been added yet
-                                const route = routes.get(routeId)
-                                stop?.routeIds.add(routeId);
-                                if (stop && inactive) stop.inactiveRouteIds.add(routeId);
+            for (const schedule of inactive ? details.schedules.slice(0, 1) : today)
+                for (const timetable of schedule.timetables)
+                    for (const info of (await Schedule.getStopList(routeId, timetable.schedule_number)) ?? [])
+                        loadStop(info.stop_id, timetable.direction).then(stop => {
+                            if (!stop) return;
+                            stop.routeIds.add(routeId);
+                            if (inactive) stop.inactiveRouteIds.add(routeId);
 
-                                if (route && !route?.getStops().has(info.stop_id)) {
-                                    // Add stop
-                                    route.addStopObject(info.stop_id, stop);
+                            const route = routes.get(routeId);
+                            if (route && !route.getStops().has(info.stop_id)) {
+                                route.addStopObject(info.stop_id, stop);
+                                // Hovering a stop bolds its route's line
+                                stop.getMarker().on("mouseover", () => setBolded(routeId, true));
+                                stop.getMarker().on("mouseout", () => setBolded(routeId, false));
+                            }
 
-                                    // If the user hovers over the stop, change the width of the line
-                                    stop?.getMarker().on("mouseover", () => {
-                                        setBolded(route.getId(), true)
-                                    });
-
-                                    // If the user stops hovering over the stop, return back
-                                    stop?.getMarker().on("mouseout", () => {
-                                        setBolded(route.getId(), false)
-                                    });
-                                }
-
-                                refreshDepartures(stop);
-                            })
-                        }
-                    }
-                }
-            }
+                            refreshDepartures(stop);
+                        });
         })
     }
     /**
@@ -308,7 +270,6 @@ namespace Routes {
 
     const routes = new Map<string, Route>();
     const stops = new Map<string, Promise<Stop | undefined>>();
-    const vehicles = new Map<string, Vehicle>();
     let map: L.Map;
 
     /**
@@ -363,27 +324,14 @@ namespace Routes {
         }
     }
 
-    async function refreshDepartures(stop: Stop | undefined) : Promise<void> {
-        if (stop)
-            Realtime.getStop(stop.getId())
-            .then( response => 
-            {
-                if (response?.departures) {
-                    stop.clearDepartures();
-                    
-                    for (const departure of response.departures) 
-                        stop?.addDeparture(departure.route_id, departure.trip_id, departure.departure_text, departure.direction_text, departure.description, departure.departure_time);
-
-                    stop.updateWindow();
-                }
-            })
-    } 
-    /**
-     * Sets the map for the routes
-     * @param _map map object
-     * @deprecated  Use init() instead
-     */
-    export function setMap(_map: L.Map): void { map = _map; }
+    async function refreshDepartures(stop: Stop) : Promise<void> {
+        const response = await Realtime.getStop(stop.getId());
+        if (!response?.departures) return;
+        stop.clearDepartures();
+        for (const departure of response.departures)
+            stop.addDeparture(departure.route_id, departure.trip_id, departure.departure_text, departure.direction_text, departure.description, departure.departure_time);
+        stop.updateWindow();
+    }
 }
 
 export default Routes;
