@@ -38,7 +38,8 @@ const BASEMAP_COLORS: [string, string, string][] = [
     ["landcover_grass", "fill-color", "#eef3ea"],
     ["landuse_residential", "fill-color", "#f3f3f1"],
     ["landuse_school", "fill-color", "#f0ede6"],
-    ["building", "fill-color", "#e6e4e0"],
+    ["building", "fill-color", "#d9d6d0"],
+    ["building-3d", "fill-extrusion-color", "#dcd9d3"],
     ["road_trunk_primary", "line-color", "#ffffff"],
     ["road_secondary_tertiary", "line-color", "#ffffff"],
     ["road_motorway", "line-color", "#e3e8ef"],
@@ -53,8 +54,8 @@ const BASEMAP_COLORS: [string, string, string][] = [
     ["bridge_path_pedestrian", "line-color", "#a9d8a9"],
 ];
 
-// The map's own transit icons would double up with this site's stops; 3D buildings are visual noise here
-const BASEMAP_HIDDEN = ["poi_transit", "building-3d"];
+// The map's own transit icons would double up with this site's stops
+const BASEMAP_HIDDEN = ["poi_transit"];
 
 export default function MapPage({ hidden, setPage, isMobile }) {
     const [mapLoaded, setMapLoaded] = useState(false);
