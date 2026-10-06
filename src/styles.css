@@ -623,4 +623,3 @@ input, button, select, textarea { font-family: inherit; }
 .leaflet-touch .leaflet-bar a { width: 40px; height: 40px; line-height: 40px; }
 .nearby-body .leave-by { font-size: 13px; font-weight: bold; color: #7a0019; margin: 2px 0 4px; }
 .nearby-body .leave-by.now { color: #b00020; }
-.about-links { list-style: disc; padding-left: 20px; }

@@ -20,7 +20,10 @@
 .page-back:hover { background: rgba(255,255,255,.25); }
 .schedules-title { font-size: 22px; }
 .about-lead { font-size: 16px; line-height: 1.5; margin: 8px 0 4px; }
-.about-text { font-size: 15px; line-height: 1.5; }
+.about-text { font-size: 15px; line-height: 1.5; margin: 0 0 10px; }
+.about-links { list-style: disc; padding-left: 20px; }
+.about-links li { margin: 4px 0; }
+.alerts-heading { font-size: 18px; font-weight: bold; border-bottom: 2px solid #ffcc33; padding-bottom: 4px; margin: 14px 0 6px; }
 .schedules-page a, .about-lead a, .about-text a { color: #0053a0; text-decoration: underline; }
 .faq > div { margin: 10px 0 14px; }
 .faq dt { font-weight: bold; font-size: 15px; }
