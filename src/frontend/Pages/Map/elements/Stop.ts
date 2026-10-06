@@ -47,6 +47,18 @@ class Stop extends InfoWindowElement {
         this.name = name;
         this.direction = direction;
 
+        // Rings the stop while its popup is open, so it's clear which stop the times are for
+        let highlight: L.LayerGroup | undefined;
+        this.infoWindow.getWindow().on("add", () => {
+            highlight?.remove();
+            const ring = { color: "#ffcc33", fill: false, interactive: false, pane: stopPane(map) };
+            highlight = L.layerGroup([
+                L.circleMarker(location, { ...ring, radius: 13, weight: 4 }),
+                L.circleMarker(location, { ...ring, radius: 16, weight: 4, className: "focus-ring" }),
+            ]).addTo(map);
+        });
+        this.infoWindow.getWindow().on("remove", () => { highlight?.remove(); highlight = undefined; });
+
         this.updateWindow();
     }
     /**
