@@ -2,34 +2,36 @@ import L from "leaflet";
 import Static from "./Static.ts";
 import Realtime from "./Realtime.ts";
 
-import busImage120 from "../img/120_bus.png"
-import busImage121 from "../img/121_bus.png"
-import busImage122 from "../img/122_bus.png"
-import busImage123 from "../img/123_bus.png"
-import busImage124 from "../img/124_bus.png"
-import busImage125 from "../img/125_bus.png"
-import busImage2 from "../img/2_bus.png"
-import busImage3 from "../img/3_bus.png"
-import busImageFOOTBALL from "src/img/FOOTBALL_bus.png";
-import arrowImageFOOTBALL from "src/img/FOOTBALL_arrow.png";
-import busImage6 from "../img/6_bus.png"
-import busImage902 from "../img/902_greenline.png"
-import busImage901 from "../img/901_blueline.png"
+// Vehicle images keep fixed names (in public/) so a page cached from before a deploy still finds them
+const VEHICLES = process.env.PUBLIC_URL + "/vehicles/";
+const busImage120 = VEHICLES + "120_bus.png";
+const busImage121 = VEHICLES + "121_bus.png";
+const busImage122 = VEHICLES + "122_bus.png";
+const busImage123 = VEHICLES + "123_bus.png";
+const busImage124 = VEHICLES + "124_bus.png";
+const busImage125 = VEHICLES + "125_bus.png";
+const busImage2 = VEHICLES + "2_bus.png";
+const busImage3 = VEHICLES + "3_bus.png";
+const busImageFOOTBALL = VEHICLES + "FOOTBALL_bus.png";
+const arrowImageFOOTBALL = VEHICLES + "FOOTBALL_arrow.png";
+const busImage6 = VEHICLES + "6_bus.png";
+const busImage902 = VEHICLES + "902_greenline.png";
+const busImage901 = VEHICLES + "901_blueline.png";
 
-import arrowImage120 from "../img/120_arrow.png"
-import arrowImage121 from "../img/121_arrow.png"
-import arrowImage122 from "../img/122_arrow.png"
-import arrowImage123 from "../img/123_arrow.png"
-import arrowImage124 from "../img/124_arrow.png"
-import arrowImage125 from "../img/125_arrow.png"
-import arrowImage2 from "../img/2_arrow.png"
-import arrowImage3 from "../img/3_arrow.png"
-import arrowImage6 from "../img/6_arrow.png"
-import arrowImage902 from "../img/902_greenline_arrow.png"
-import arrowImage901 from "../img/901_blueline_arrow.png"
+const arrowImage120 = VEHICLES + "120_arrow.png";
+const arrowImage121 = VEHICLES + "121_arrow.png";
+const arrowImage122 = VEHICLES + "122_arrow.png";
+const arrowImage123 = VEHICLES + "123_arrow.png";
+const arrowImage124 = VEHICLES + "124_arrow.png";
+const arrowImage125 = VEHICLES + "125_arrow.png";
+const arrowImage2 = VEHICLES + "2_arrow.png";
+const arrowImage3 = VEHICLES + "3_arrow.png";
+const arrowImage6 = VEHICLES + "6_arrow.png";
+const arrowImage902 = VEHICLES + "902_greenline_arrow.png";
+const arrowImage901 = VEHICLES + "901_blueline_arrow.png";
 
-import defaultBusImage from "../img/default_bus.png"
-import defaultArrowImage from "../img/default_arrow.png"
+const defaultBusImage = VEHICLES + "default_bus.png";
+const defaultArrowImage = VEHICLES + "default_arrow.png";
 
 // Backend and Frontend interface
 namespace Resources {
@@ -71,26 +73,25 @@ namespace Resources {
      * @param routeId ID of the route
      */
     export async function getColor(routeId: string) : Promise<string> {
+        // Check if color is defined in ROUTE_COLORS
+        if (ROUTE_COLORS[routeId]) return ROUTE_COLORS[routeId];
+        // Cache the lookup itself: a route's shapes ask at the same time, and each must get the same color
+        if (!colors.has(routeId)) colors.set(routeId, lookUpColor(routeId));
+        return colors.get(routeId) as Promise<string>;
+    }
+
+    async function lookUpColor(routeId: string) : Promise<string> {
         try {
-            // Check if color is defined in ROUTE_COLORS
-            if (ROUTE_COLORS[routeId]) return ROUTE_COLORS[routeId];
-    
-            // Check existing colors
-            if (colors.has(routeId)) return colors.get(routeId) as string;
-
-            // Fetch route color from Static.getRoutes
             const result = await Static.getRoutes(routeId);
-            if (result && result[0] && result[0].route_color && result[0].route_color !== "") {
-                colors.set(routeId, result[0].route_color);
-                return result[0].route_color;
-            }
+            const gtfsColor = result?.[0]?.route_color;
+            // Metro Transit gives whole groups of routes one color (every local bus is purple), which makes
+            // routes shown together look alike, so those get their own color instead
+            if (!result?.[0]) return "444444"; // unknown route, or its data didn't load
+            return gtfsColor && !SHARED_GTFS_COLORS.has(gtfsColor.toUpperCase()) ? gtfsColor : distinctColor(routeId);
         } catch (e) {
-            console.error(`Failed to fetch colors for routeId ${routeId}:`, e);  
+            console.error(`Failed to fetch colors for routeId ${routeId}:`, e);
+            return "444444";
         }
-
-        // Default color if no valid route color found
-        colors.set(routeId, "444444");
-        return "444444";
     }
 
     /**
@@ -156,7 +157,27 @@ namespace Resources {
         "901": "003DA5"
     };
 
-    const colors = new Map<string, string>();
+    const colors = new Map<string, Promise<string>>();
+
+    /* Route colors Metro Transit's GTFS shares across many routes (local, express, suburban, BRT) */
+    const SHARED_GTFS_COLORS = new Set(["771473", "8AF3FF", "DFAACC", "8A8B8A"]);
+    /* Colors for those routes: dark enough for white chip text (WCAG AA), and unlike the hand-picked ones above */
+    const DISTINCT_PALETTE = ["771473", "C0392B", "00798C", "B34700", "30638E", "8E5572", "267349", "B5446E", "5B5F97", "8B5A2B", "1F7A8C", "A23B72"];
+    const paletteUsed = new Set<string>();
+
+    /**
+     * Picks a palette color for a route, starting from one fixed by its ID and moving on from colors other routes already took
+     * @param routeId ID of the route
+     */
+    function distinctColor(routeId: string) : string {
+        let hash = 0;
+        for (const char of routeId) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+        let color = DISTINCT_PALETTE[hash % DISTINCT_PALETTE.length];
+        for (let i = 0; i < DISTINCT_PALETTE.length && paletteUsed.has(color); i++)
+            color = DISTINCT_PALETTE[(hash + i + 1) % DISTINCT_PALETTE.length];
+        paletteUsed.add(color);
+        return color;
+    }
 }
 
 export default Resources;
