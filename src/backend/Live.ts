@@ -33,6 +33,8 @@ namespace Live {
     export interface Alert {
         id: string;
         header: string;
+        /** Short headline, when the source has one separate from the text */
+        title?: string;
         routes: string[];
         description?: string;
         created?: number;
@@ -174,7 +176,8 @@ namespace Live {
         return ((await getCachedFeed("https://svc.metrotransit.org/mtgtfs/alerts.pb", 120000)) ?? [])
             // An alert without active periods is active for as long as it's in the feed
             .filter(entity => entity.alert && (!entity.alert.activePeriod?.length || entity.alert.activePeriod.some(p =>
-                Number(p.start ?? 0) <= now && (!p.end || Number(p.end) >= now))))
+                // Times decode as Long objects, so an open-ended alert's end is a truthy Long of 0
+                Number(p.start ?? 0) <= now && (!Number(p.end ?? 0) || Number(p.end) >= now))))
             .map(entity => ({
                 id: entity.id,
                 header: entity.alert?.headerText?.translation?.[0]?.text ?? "",
@@ -222,6 +225,7 @@ namespace Live {
                 id: "peak-" + n.id,
                 header: n.body ? `${n.title}: ${n.body}` : n.title,
                 description: n.body,
+                title: n.title,
                 routes: [...new Set<string>((n.title + " " + n.body).match(/12[0-6]/g) ?? [])],
                 created: n.created,
                 end: n.display_end,

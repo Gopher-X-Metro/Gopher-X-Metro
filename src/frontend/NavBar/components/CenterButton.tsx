@@ -29,7 +29,7 @@ export default function CenterButton({ map }: { map: L.Map | null }) {
     }, [map])
 
     return (
-        <div className="absolute right-0 bottom-[80px] z-[1000]">
+        <div className="absolute right-0 bottom-[80px] z-[999]">
             <button id="center-button"
                     draggable="false"
                     aria-label="Center"

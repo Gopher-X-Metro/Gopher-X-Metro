@@ -479,7 +479,7 @@ body.mobile .pac-container {
 }
 
 /* Stops near me / favorites panel */
-.nearby-panel { position: absolute; top: calc(var(--header-h, 80px) + 12px); left: 12px; z-index: 1000; width: 340px; max-height: calc(100% - var(--header-h, 80px) - 30px); display: flex; flex-direction: column; font-family: Arial, sans-serif; color: #222; }
+.nearby-panel { position: absolute; top: calc(var(--header-h, 80px) + 12px); left: 12px; z-index: 999; /* under the place search results */ width: 340px; max-height: calc(100% - var(--header-h, 80px) - 30px); display: flex; flex-direction: column; font-family: Arial, sans-serif; color: #222; }
 .nearby-panel.mobile { top: auto; bottom: 80px; left: 10px; right: 10px; width: auto; max-height: 48%; }
 .nearby-panel.mobile .nearby-toggle { font-size: 14px; padding: 6px 12px; }
 .nearby-panel.mobile.open { flex-direction: column-reverse; }
@@ -601,20 +601,20 @@ body:not(.mobile) .alert-banner { top: calc(var(--header-h, 80px) + 64px); }
 .sidebar.open { width: min(290px, 85vw); }
 .sidebar-content { width: 100%; padding: 0 8px; }
 .sidebar-heading { font-size: 11px; font-weight: bold; letter-spacing: .06em; text-transform: uppercase; color: #7a0019; margin: 12px 20px 4px; white-space: nowrap; }
-.sidebar-content button { width: 100%; font-family: inherit; font-size: 15px; padding: 9px 36px 9px 38px; border-radius: 8px; margin: 1px 0; color: #222; overflow: hidden; text-overflow: ellipsis; }
+.sidebar-content button { width: 100%; font-family: inherit; font-size: 15px; padding: 9px 12px 9px 38px; border-radius: 8px; margin: 1px 0; color: #222; overflow: hidden; text-overflow: ellipsis; }
 .sidebar-content button:hover { background-color: #f3f3f3; color: #222; }
-.sidebar-content button.active { background-color: #fff4d6; color: #7a0019; font-weight: bold; }
+.sidebar-content button.active { background-color: #fff4d6; color: #7a0019; font-weight: bold; padding-right: 32px; }
 .sidebar-content button.active::after { content: "✓"; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #7a0019; }
 .sidebar-content button::before { width: 14px; height: 14px; left: 14px; box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(0,0,0,.12); }
 .route-search { display: flex; gap: 6px; padding: 0 16px; }
-.route-search input { flex: 1; min-width: 0; border: 1px solid #ccc; border-radius: 8px; padding: 8px 10px; font-size: 15px; background: #fafafa; }
+.route-search input { flex: 1; min-width: 0; border: 1px solid #ccc; border-radius: 8px; padding: 8px 10px; font-size: 16px; background: #fafafa; }
 .route-search input:focus { outline: 2px solid #ffcc33; border-color: #e0b000; }
 .route-search button { background: #ffcc33; color: #7a0019; font-weight: bold; border-radius: 8px; padding: 0 14px; }
 .error_text { color: #b00020; font-size: 13px; padding: 4px 18px; }
 
 /* Form controls use the page font */
 input, button, select, textarea { font-family: inherit; }
-#location-search-bar { font-family: Arial, sans-serif; font-size: 15px; }
+#location-search-bar { font-family: Arial, sans-serif; font-size: 16px; } /* 16px+ stops iOS zooming in on focus */
 
 /* One look for everything floating on the map */
 :root { --ctl-radius: 10px; --ctl-shadow: 0 2px 8px rgba(0, 0, 0, 0.25); }
@@ -623,3 +623,17 @@ input, button, select, textarea { font-family: inherit; }
 .leaflet-touch .leaflet-bar a { width: 40px; height: 40px; line-height: 40px; }
 .nearby-body .leave-by { font-size: 13px; font-weight: bold; color: #7a0019; margin: 2px 0 4px; }
 .nearby-body .leave-by.now { color: #b00020; }
+
+/* Own line so the label is never cut off in the narrow phone sidebar */
+.sidebar-content .not-running { display: block; margin-left: 0; }
+
+/* Bigger tap targets on touch screens, without changing the layout */
+@media (pointer: coarse) {
+  .stop-popup-bell { padding: 10px; margin: -8px -8px -8px auto; }
+  .departures .bell { padding: 10px; margin: -10px -8px; }
+  .leaflet-popup-content h3 { padding-right: 22px; }
+  .leaflet-container a.leaflet-popup-close-button { width: 36px; height: 36px; font-size: 24px; line-height: 36px; }
+}
+@media (pointer: coarse) {
+  [role="menuitem"], [role="menuitemradio"] { min-height: 44px; }
+}

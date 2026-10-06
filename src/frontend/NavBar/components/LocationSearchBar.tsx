@@ -55,6 +55,8 @@ export default function LocationSearchBar({ map, isMobile }: { map: L.Map | null
     const onSelect = (place: Place) => {
         setQuery(place.name);
         setResults([]);
+        // Drops the phone keyboard so the map is visible again
+        (document.activeElement as HTMLElement | null)?.blur();
         if (map) onPlaceChange(map, place);
     }
 

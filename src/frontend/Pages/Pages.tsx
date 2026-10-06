@@ -15,7 +15,8 @@ class PageErrorBoundary extends React.Component<{ children: React.ReactNode }, {
 }
 
 export default function Pages( { isMobile } ) {
-    const [page, setShownPage] = useState("map");
+    // A reload keeps the page that was open
+    const [page, setShownPage] = useState<string>(() => window.history.state?.page ?? "map");
     // Pages stay mounted once opened (hidden, not unmounted) so their state survives like before
     const [opened, setOpened] = useState<string[]>([]);
     if (page !== "map" && !opened.includes(page)) setOpened([...opened, page]);
