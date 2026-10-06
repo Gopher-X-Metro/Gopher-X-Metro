@@ -99,7 +99,7 @@ namespace Routes {
                 // Vehicles belong to their route: a campus bus that switches routes gets a new marker on the new one
                 let vehicle = route.getVehicles().get(info.trip_id);
                 if (!vehicle) {
-                    vehicle = new Vehicle(info.trip_id, Resources.getRouteImages(routeId), map);
+                    vehicle = new Vehicle(info.trip_id, routeId, Resources.getRouteImages(routeId), map);
                     route.addVehicleObject(info.trip_id, vehicle);
                     // Hovering a vehicle bolds its route's line
                     vehicle.getMarker().on("mouseover", () => setBolded(routeId, true));
