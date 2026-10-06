@@ -42,6 +42,12 @@ function About({ hidden, setPage }) {
                     ))}
                 </dl>
 
+                <h2 className="alerts-heading">Other maps</h2>
+                <ul className="about-text about-links">
+                    <li><a href="https://campusmaps.umn.edu/" target="_blank" rel="noreferrer">UMN Campus Bus Map</a>: official campus maps, buildings and bus routes</li>
+                    <li><a href="https://umn.rider.peaktransit.com" target="_blank" rel="noreferrer">GopherTrip Map</a>: the University's own live campus bus tracker</li>
+                </ul>
+
                 <h2 className="alerts-heading">Feedback</h2>
                 <p className="about-text">
                     Found a bug or want a feature? <a href={FEEDBACK_URL} target="_blank" rel="noreferrer">Open an issue on GitHub</a>.
