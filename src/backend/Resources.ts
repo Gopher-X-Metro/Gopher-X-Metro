@@ -86,6 +86,7 @@ namespace Resources {
             const gtfsColor = result?.[0]?.route_color;
             // Metro Transit gives whole groups of routes one color (every local bus is purple), which makes
             // routes shown together look alike, so those get their own color instead
+            if (!result?.[0]) return "444444"; // unknown route, or its data didn't load
             return gtfsColor && !SHARED_GTFS_COLORS.has(gtfsColor.toUpperCase()) ? gtfsColor : distinctColor(routeId);
         } catch (e) {
             console.error(`Failed to fetch colors for routeId ${routeId}:`, e);
@@ -160,8 +161,8 @@ namespace Resources {
 
     /* Route colors Metro Transit's GTFS shares across many routes (local, express, suburban, BRT) */
     const SHARED_GTFS_COLORS = new Set(["771473", "8AF3FF", "DFAACC", "8A8B8A"]);
-    /* Colors for those routes: dark enough for white chip text, and unlike the hand-picked ones above */
-    const DISTINCT_PALETTE = ["771473", "C0392B", "00798C", "D35400", "30638E", "8E5572", "2E8B57", "B5446E", "5B5F97", "8B5A2B", "1F7A8C", "A23B72"];
+    /* Colors for those routes: dark enough for white chip text (WCAG AA), and unlike the hand-picked ones above */
+    const DISTINCT_PALETTE = ["771473", "C0392B", "00798C", "B34700", "30638E", "8E5572", "267349", "B5446E", "5B5F97", "8B5A2B", "1F7A8C", "A23B72"];
     const paletteUsed = new Set<string>();
 
     /**
