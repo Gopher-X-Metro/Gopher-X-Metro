@@ -3,7 +3,7 @@ import React from "react";
 import PageHeader from "../PageHeader";
 import "../Schedule/schedules.css";
 
-const FEEDBACK_URL = "https://github.com/Gopher-X-Metro/Gopher-X-Metro/issues";
+const FEEDBACK_URL = "https://github.com/Gopher-X-Metro/gopher-x-metro.github.io/issues";
 
 const FAQ: [string, React.ReactNode][] = [
     ["What can I track?",
