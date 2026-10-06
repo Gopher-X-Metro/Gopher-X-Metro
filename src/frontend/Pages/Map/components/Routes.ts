@@ -228,7 +228,7 @@ namespace Routes {
     }
 
     /** How close a loaded stop must be to count as the same stop as a Peak Transit one */
-    const NEAREST_STOP_METERS = 60;
+    const NEAREST_STOP_METERS = 120;
 
     /* Private */
 

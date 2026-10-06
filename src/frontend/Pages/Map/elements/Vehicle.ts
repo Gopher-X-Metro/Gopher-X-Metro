@@ -125,11 +125,23 @@ class Vehicle extends InfoWindowElement {
         let eta: number | undefined;
         let metro: Live.MetroTrip | undefined;
         let offDuty = false;
+        let atStop = false;
         if (info.nextStopID) {
-            nextStopId = "peak-" + info.nextStopID;
+            let peakStopId: number = info.nextStopID;
+            nextStopId = "peak-" + peakStopId;
+            // Peak's next stop can lag a bus that just left a stop, so place the bus on its route to find the real one
+            const located = await Live.locatePeakBus(routeId, info);
+            if (located) {
+                nextStopId = located.stopId;
+                atStop = located.at;
+                const stop = (await Live.getStops()).find(s => s[0] === located.stopId);
+                const peakStop = stop && (await Live.getPeakRouteStops(info.routeID))
+                    .find(s => Math.hypot((s.lat - stop[2]) * 111000, (s.lng - stop[3]) * 79000) < 120);
+                peakStopId = peakStop?.id ?? 0;
+            }
             // Use the map's name for the stop when it's drawn, so the popup and the stop agree
-            nextStop = await stopNameLookup?.(nextStopId) ?? (await Live.getPeakStop(info.nextStopID))?.name;
-            const [arrival] = await Live.getPeakArrivals(info.nextStopID, info.routeID);
+            nextStop = await stopNameLookup?.(nextStopId) ?? (located ? await Live.getStopName(nextStopId) : (await Live.getPeakStop(peakStopId))?.name);
+            const [arrival] = peakStopId ? await Live.getPeakArrivals(peakStopId, info.routeID) : [];
             if (arrival) eta = Math.round((arrival - Date.now() / 1000) / 60);
             // Peak's ETA is the route's next arrival at that stop, not this bus's. If the route isn't due there for
             // over an hour, this bus isn't serving it: it's finishing up (often the night's last run, maybe running late)
@@ -143,7 +155,7 @@ class Vehicle extends InfoWindowElement {
         if (offDuty) {
             const hour = new Date().getHours();
             lines.push(hour >= 20 || hour < 5 ? "Done for the night" : "Going out of service");
-        } else if (nextStop) lines.push((metro?.stopped ? "At stop: " : "Next stop: ") + nextStop + (!metro?.stopped && eta !== undefined && eta >= 0 ? ` (${eta === 0 ? "now" : eta + " min"})` : ""));
+        } else if (nextStop) lines.push((metro?.stopped || atStop ? "At stop: " : "Next stop: ") + nextStop + (!(metro?.stopped || atStop) && eta !== undefined && eta >= 0 ? ` (${eta === 0 ? "now" : eta + " min"})` : ""));
         if (metro?.delayMinutes !== undefined)
             lines.push(metro.delayMinutes > 1 ? `About ${metro.delayMinutes} min late` : metro.delayMinutes < -1 ? `About ${-metro.delayMinutes} min early` : "On time");
 

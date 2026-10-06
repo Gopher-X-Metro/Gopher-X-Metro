@@ -1,5 +1,6 @@
 import GtfsRealtimeBindings from "gtfs-realtime-bindings";
 import Realtime from "src/backend/Realtime.ts";
+import Peak from "src/backend/Peak.ts";
 import { getCachedFeed, getCachedJSON } from "src/backend/Fetch.ts";
 
 /**
@@ -212,6 +213,34 @@ namespace Live {
     }
 
     /**
+     * Finds the next stop of a campus bus by placing it on its route's shape. Peak's own next stop can lag behind a bus
+     * that just left a stop, so the stops (Metro Transit's ordered list for the route) are laid along the shape and the
+     * first one ahead of the bus is the next.
+     * @param routeId   route number, like "123"
+     * @param bus       the bus's Peak vehicle record
+     * @returns the next stop (a Metro Transit stop ID) and whether the bus is at it, or undefined if the bus isn't on its route
+     */
+    export async function locatePeakBus(routeId: string, bus: { lat: number, lng: number, course?: number, speed?: number, shapeID?: number })
+        : Promise<{ stopId: string, at: boolean } | undefined> {
+        if (!bus.shapeID) return undefined;
+        const key = routeId + ":" + bus.shapeID;
+        if (!peakLines.has(key)) peakLines.set(key, buildPeakLine(routeId, String(bus.shapeID)));
+        const line = await peakLines.get(key);
+        if (!line) return undefined;
+
+        // The bus's place on the line: the nearest pass, going the way the bus is heading
+        const found = nearLine(line.points, line.cum, bus.lat, bus.lng, PEAK_LINE_METERS);
+        const moving = (bus.speed ?? 0) > 2 && bus.course !== undefined;
+        const heading = moving ? found.filter(c => angleDifference(c.bearing, bus.course!) <= 100) : [];
+        const place = (heading.length ? heading : found).sort((a, b) => a.meters - b.meters)[0];
+        if (!place) return undefined;
+
+        const next = line.stops.find(stop => stop.along >= place.along - 5);
+        const stop = next ?? line.stops[0];
+        return { stopId: stop.id, at: distance(bus.lat, bus.lng, stop.lat, stop.lng) < 40 };
+    }
+
+    /**
      * Gets recent campus bus notices (detours, game days) for campus routes on the map
      * @param routeIds IDs of the routes on the map
      */
@@ -266,6 +295,92 @@ namespace Live {
     const NOTICE_DAYS = 3;
     const HOUR = 60 * 60 * 1000;
 
+    const PEAK_LINE_METERS = 60;
+    type PeakLine = {
+        points: Array<[number, number]>,
+        /** Meters along the line to each point */
+        cum: number[],
+        /** The route's stops in order, each with its meters along the line */
+        stops: Array<{ id: string, lat: number, lng: number, along: number }>,
+    };
+    const peakLines = new Map<string, Promise<PeakLine | undefined>>();
+
+    /**
+     * Lays a route's ordered stops along a campus shape: each stop takes the pass of the line near it that keeps the
+     * stops in order (a loop's first and last stop are the same place, at the start and end of the line)
+     */
+    async function buildPeakLine(routeId: string, shapeId: string) : Promise<PeakLine | undefined> {
+        const [shape, data, all] = await Promise.all([Peak.getPeakShapeLocations(shapeId), getPatterns(routeId), getStops()]);
+        if (shape.length < 2 || !data?.patterns.length) return undefined;
+        if (!stopCoords) stopCoords = new Map(all.map(stop => [stop[0], [stop[2], stop[3]]]));
+        const points = shape.map(p => [p.lat, p.lng] as [number, number]);
+        const cum = [0];
+        for (let i = 1; i < points.length; i++) cum.push(cum[i - 1] + distance(points[i - 1][0], points[i - 1][1], points[i][0], points[i][1]));
+
+        let best: PeakLine | undefined;
+        for (const pattern of data.patterns) {
+            const coords = pattern.map(id => stopCoords!.get(id));
+            if (coords.some(c => !c)) continue;
+            // Cheapest in-order choice of one pass per stop (passes are candidates close to the stop)
+            const options = coords.map(c => nearLine(points, cum, c![0], c![1], PEAK_LINE_METERS));
+            if (options.some(o => !o.length)) continue;
+            const cost: number[][] = [], from: number[][] = [];
+            options.forEach((passes, i) => {
+                cost.push(passes.map(() => Infinity));
+                from.push(passes.map(() => -1));
+                passes.forEach((pass, j) => {
+                    if (i === 0) { cost[i][j] = pass.meters; return; }
+                    options[i - 1].forEach((previous, k) => {
+                        if (pass.along >= previous.along && cost[i - 1][k] + pass.meters < cost[i][j]) { cost[i][j] = cost[i - 1][k] + pass.meters; from[i][j] = k; }
+                    });
+                });
+            });
+            const lastCosts = cost[cost.length - 1];
+            let j = lastCosts.indexOf(Math.min(...lastCosts));
+            if (!isFinite(lastCosts[j])) continue;
+            const stops: PeakLine["stops"] = [];
+            for (let i = options.length - 1; i >= 0; i--) {
+                stops.unshift({ id: pattern[i], lat: coords[i]![0], lng: coords[i]![1], along: options[i][j].along });
+                j = from[i][j];
+            }
+            if (!best || stops.length > best.stops.length) best = { points, cum, stops };
+        }
+        return best;
+    }
+
+    /**
+     * Places a point on a line: where it comes within range, one entry per pass of the line, with the direction the line runs there
+     */
+    function nearLine(points: Array<[number, number]>, cum: number[], lat: number, lng: number, range: number)
+        : Array<{ along: number, meters: number, bearing: number }> {
+        const passes: Array<{ along: number, meters: number, bearing: number }> = [];
+        let open = false;
+        for (let i = 1; i < points.length; i++) {
+            const [a, b] = [points[i - 1], points[i]];
+            const toRad = Math.PI / 180, scale = Math.cos(lat * toRad);
+            const bx = (b[1] - a[1]) * scale, by = b[0] - a[0];
+            const px = (lng - a[1]) * scale, py = lat - a[0];
+            const lengthSq = bx * bx + by * by;
+            const t = lengthSq ? Math.max(0, Math.min(1, (px * bx + py * by) / lengthSq)) : 0;
+            const meters = distance(lat, lng, a[0] + t * by, a[1] + t * bx / scale);
+            if (meters > range) { open = false; continue; }
+            const pass = { along: cum[i - 1] + t * (cum[i] - cum[i - 1]), meters, bearing: (Math.atan2(bx, by) / toRad + 360) % 360 };
+            // Consecutive segments in range are one pass: keep the closest
+            if (open && passes[passes.length - 1].meters <= meters) continue;
+            if (open) passes[passes.length - 1] = pass; else passes.push(pass);
+            open = true;
+        }
+        return passes;
+    }
+
+    /**
+     * Degrees between two compass bearings, 0 to 180
+     */
+    function angleDifference(a: number, b: number) : number {
+        const d = Math.abs(a - b) % 360;
+        return d > 180 ? 360 - d : d;
+    }
+
     type PeakStop = { name: string, lat: number, lng: number, open: boolean };
 
     /**
@@ -315,7 +430,7 @@ namespace Live {
 
     /**
      * Finds the next stop of a trip from the bus's location: the end of the stop-to-stop segment nearest the bus.
-     * Only segments up to the feed's reported stop are searched, so loops that pass the same spot twice resolve correctly.
+     * Only segments up to one past the feed's reported stop are searched, so loops that pass the same spot twice resolve correctly.
      * @param feedStopId the feed's next stop, an upper bound on how far along the trip the bus is
      * @returns the next stop, and whether the bus is at it
      */
@@ -332,7 +447,8 @@ namespace Live {
         const feedIndex = feedStopId ? pattern.indexOf(feedStopId) : -1;
         // Feed says the trip hasn't started: the bus is waiting to begin at the first stop
         if (feedIndex === 0) return { stopId: pattern[0], at: distance(lat, lng, coords[0]![0], coords[0]![1]) < 40 };
-        const last = feedIndex > 0 ? feedIndex : pattern.length - 1;
+        // The feed can lag a stop behind a bus that just left a stop, so search one stop past it
+        const last = feedIndex > 0 ? Math.min(feedIndex + 1, pattern.length - 1) : pattern.length - 1;
 
         // At a stop: within 40 m of one
         for (let i = 0; i <= last; i++)
