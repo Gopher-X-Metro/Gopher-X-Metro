@@ -1,5 +1,7 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import "maplibre-gl/dist/maplibre-gl.css";
+import "@maplibre/maplibre-gl-leaflet";
 
 import { useEffect, useRef, useState } from "react";
 
@@ -24,6 +26,66 @@ let currentMap: L.Map | null = null;
 
 /** The map shown on the page, for controls outside it */
 export function getMap() : L.Map | null { return currentMap; }
+
+// Water, parks and land in the palette of the campus rider map
+const BASEMAP_COLORS: [string, string, string][] = [
+    ["background", "background-color", "#f3f3f1"],
+    ["water", "fill-color", "#9cd7ee"],
+    ["waterway_river", "line-color", "#9cd7ee"],
+    ["waterway_other", "line-color", "#9cd7ee"],
+    ["park", "fill-color", "#dcefd6"],
+    ["landcover_wood", "fill-color", "#e3f0dc"],
+    ["landcover_grass", "fill-color", "#eef3ea"],
+    ["landuse_residential", "fill-color", "#f3f3f1"],
+    ["landuse_school", "fill-color", "#f0ede6"],
+    ["building", "fill-color", "#d9d6d0"],
+    ["building-3d", "fill-extrusion-color", "#dcd9d3"],
+    ["road_trunk_primary", "line-color", "#ffffff"],
+    ["road_secondary_tertiary", "line-color", "#ffffff"],
+    ["road_motorway", "line-color", "#e3e8ef"],
+    ["road_motorway_link", "line-color", "#e3e8ef"],
+    ["bridge_trunk_primary", "line-color", "#ffffff"],
+    ["bridge_secondary_tertiary", "line-color", "#ffffff"],
+    ["bridge_motorway", "line-color", "#e3e8ef"],
+    ["road_trunk_primary_casing", "line-color", "#d4d4d4"],
+    ["road_secondary_tertiary_casing", "line-color", "#d4d4d4"],
+    ["road_motorway_casing", "line-color", "#c9d0da"],
+    ["road_path_pedestrian", "line-color", "#a9d8a9"],
+    ["bridge_path_pedestrian", "line-color", "#a9d8a9"],
+];
+
+// The map's own transit icons would double up with this site's stops
+const BASEMAP_HIDDEN = ["poi_transit"];
+
+/**
+ * Labels campus buildings when zoomed in close, since the basemap leaves most of them unnamed
+ * @param gl    the basemap's MapLibre map, which draws the labels
+ */
+function addBuildingNames(gl: ReturnType<L.MaplibreGL["getMaplibreMap"]>) {
+    fetch(process.env.PUBLIC_URL + "/data/campus-buildings.json")
+        .then(response => response.json())
+        .then(buildings => {
+            const addLabels = () => {
+                if (gl.getSource("campus-buildings")) return;
+                gl.addSource("campus-buildings", { type: "geojson", data: buildings });
+                gl.addLayer({
+                    id: "campus-building-labels",
+                    type: "symbol",
+                    source: "campus-buildings",
+                    minzoom: 16.5,
+                    layout: {
+                        "text-field": ["get", "name"],
+                        "text-font": ["Noto Sans Regular"],
+                        "text-size": 11,
+                        "text-max-width": 7,
+                    },
+                    paint: { "text-color": "#5f5f5f", "text-halo-color": "#ffffff", "text-halo-width": 1.2 },
+                });
+            };
+            if (gl.isStyleLoaded()) addLabels(); else gl.once("load", addLabels);
+        })
+        .catch(() => {});
+}
 
 export default function MapPage({ hidden, setPage, isMobile }) {
     const [mapLoaded, setMapLoaded] = useState(false);
@@ -53,10 +115,20 @@ export default function MapPage({ hidden, setPage, isMobile }) {
                 minZoom: 10,
             }).setView(UMNLocation, defaultZoom);
             L.control.zoom({ position: "bottomright" }).addTo(leafletMap);
-            L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                maxZoom: 19,
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            // OpenFreeMap's Liberty (free, no key; keeps place icons), toned down so routes and stops stand out
+            const basemap = L.maplibreGL({
+                style: "https://tiles.openfreemap.org/styles/liberty",
             }).addTo(leafletMap);
+            const gl = basemap.getMaplibreMap();
+            // Restyle once the style's layers exist (it may load before or after this runs)
+            const restyle = () => {
+                for (const [layer, property, color] of BASEMAP_COLORS)
+                    if (gl.getLayer(layer)) gl.setPaintProperty(layer, property as any, color);
+                for (const layer of BASEMAP_HIDDEN)
+                    if (gl.getLayer(layer)) gl.setLayoutProperty(layer, "visibility", "none");
+            };
+            if (gl.isStyleLoaded()) restyle(); else gl.once("load", restyle);
+            addBuildingNames(gl);
             setMap(leafletMap);
             currentMap = leafletMap;
         }
