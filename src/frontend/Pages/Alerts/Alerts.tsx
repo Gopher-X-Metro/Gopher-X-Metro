@@ -39,7 +39,7 @@ export default function Alerts({ hidden, setPage }) {
                 {alert.routes.map(route => <span key={route} className="alert-route">{routeLabel(route)}</span>)}
                 <span className="alert-date">{when}</span>
             </div>
-            <p className="alert-title">{(alert as any).title ?? alert.header}</p>
+            <p className="alert-title">{alert.title ?? alert.header}</p>
             {alert.description && alert.description !== alert.header && <p className="alert-body">{alert.description}</p>}
         </li>
     );

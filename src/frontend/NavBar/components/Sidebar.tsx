@@ -43,6 +43,17 @@ export default function SideBar() {
     routes.set("3", "3 Como Av / Downtown");
 
     useEffect(() => {
+        // On phones the open sidebar covers most of the map, so tapping outside it closes it
+        if (!sidebarOpen || !window.matchMedia("(max-width: 640px)").matches) return;
+        const close = (event: PointerEvent) => {
+            const target = event.target as Element;
+            if (!target.closest(".sidebar, .openbtn")) setSidebarOpen(false);
+        };
+        document.addEventListener("pointerdown", close);
+        return () => document.removeEventListener("pointerdown", close);
+    }, [sidebarOpen])
+
+    useEffect(() => {
         // Allows the user to hit "Enter" to enter a route
         const searchBox = document.getElementById("search_route");
         searchBox?.addEventListener("keydown", event => event.code === "Enter" ? SearchFeature.searchRoute() : null);

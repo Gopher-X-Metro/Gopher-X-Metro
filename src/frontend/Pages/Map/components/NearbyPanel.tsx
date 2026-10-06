@@ -164,7 +164,7 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
         const ring = L.circleMarker([stop.lat, stop.lng], {
             radius: 16, color: "#ffcc33", weight: 4, fill: false, className: "focus-ring", interactive: false,
         });
-        const popup = L.popup({ autoPanPaddingTopLeft: [20, 90] })
+        const popup = L.popup({ autoPanPaddingTopLeft: [20, 90], autoPanPaddingBottomRight: [60, 140] })
             .setLatLng([stop.lat, stop.lng])
             .setContent(stopPopup(stop, colors, toggleRoute));
         focusLayer.current = L.layerGroup([ring]).addTo(map);
@@ -244,7 +244,7 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
 
     return (
         <div ref={container} className={"nearby-panel" + (isMobile ? " mobile" : "") + (open ? " open" : "")}>
-            <button className="nearby-toggle" onClick={() => setOpen(!open)} aria-expanded={open}>
+            <button className="nearby-toggle" onClick={() => { if (!open && isMobile) map?.closePopup(); setOpen(!open); }} aria-expanded={open}>
                 {open ? "✕ Close" : "🚏 Stops near me"}
             </button>
             {open && (
