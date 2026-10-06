@@ -57,6 +57,36 @@ const BASEMAP_COLORS: [string, string, string][] = [
 // The map's own transit icons would double up with this site's stops
 const BASEMAP_HIDDEN = ["poi_transit"];
 
+/**
+ * Labels campus buildings when zoomed in close, since the basemap leaves most of them unnamed
+ * @param gl    the basemap's MapLibre map, which draws the labels
+ */
+function addBuildingNames(gl: ReturnType<L.MaplibreGL["getMaplibreMap"]>) {
+    fetch(process.env.PUBLIC_URL + "/data/campus-buildings.json")
+        .then(response => response.json())
+        .then(buildings => {
+            const addLabels = () => {
+                if (gl.getSource("campus-buildings")) return;
+                gl.addSource("campus-buildings", { type: "geojson", data: buildings });
+                gl.addLayer({
+                    id: "campus-building-labels",
+                    type: "symbol",
+                    source: "campus-buildings",
+                    minzoom: 16.5,
+                    layout: {
+                        "text-field": ["get", "name"],
+                        "text-font": ["Noto Sans Regular"],
+                        "text-size": 11,
+                        "text-max-width": 7,
+                    },
+                    paint: { "text-color": "#5f5f5f", "text-halo-color": "#ffffff", "text-halo-width": 1.2 },
+                });
+            };
+            if (gl.isStyleLoaded()) addLabels(); else gl.once("load", addLabels);
+        })
+        .catch(() => {});
+}
+
 export default function MapPage({ hidden, setPage, isMobile }) {
     const [mapLoaded, setMapLoaded] = useState(false);
     const [map, setMap] = useState<L.Map | null>(null);
@@ -98,6 +128,7 @@ export default function MapPage({ hidden, setPage, isMobile }) {
                     if (gl.getLayer(layer)) gl.setLayoutProperty(layer, "visibility", "none");
             };
             if (gl.isStyleLoaded()) restyle(); else gl.once("load", restyle);
+            addBuildingNames(gl);
             setMap(leafletMap);
             currentMap = leafletMap;
         }
