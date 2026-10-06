@@ -10,46 +10,36 @@ class Vehicle extends InfoWindowElement {
     /**
      * Vehicle Constructor
      * @param vehicleId vehicle ID
-     * @param tripId 
-     * @param color color of vehicle image
-     * @param map map the vehicle displays on
+     * @param routeId   route the vehicle runs, shown on its marker
+     * @param map       map the vehicle displays on
      */
-    constructor (vehicleId: string, images: [string, string], map: L.Map) {
+    constructor (vehicleId: string, routeId: string, map: L.Map) {
         const contents = document.createElement("div");
-        contents.style.position = "relative";
+        contents.className = "vehicle-marker" + (RAIL_ROUTES.has(routeId) ? " rail" : "");
 
         super(vehicleId, map, L.marker([0, 0], {
             icon: L.divIcon({ html: contents, className: "", iconSize: [0, 0] }),
         }), [0, -15]);
 
-        // Create bus container
-        const busContainer = document.createElement("div");
-        busContainer.style.position = "absolute";
-        busContainer.style.transform = "translate(-50%, -50%)";
+        // Points the way the vehicle is heading, attached to the badge's edge
+        this.pointer = document.createElement("div");
+        this.pointer.className = "vehicle-pointer";
+        this.pointer.hidden = true;
+        contents.appendChild(this.pointer);
 
-        // Create arrow container
-        const arrowContainer = document.createElement("div");
-        arrowContainer.style.position = "absolute";
-        arrowContainer.style.transform = "translate(-50%, -50%)";
+        // The route's number in its color, outlined in white so light colors show on the map
+        const badge = this.routeBadge = document.createElement("div");
+        badge.className = "vehicle-badge";
+        badge.textContent = MARKER_LABELS[routeId] ?? routeId;
+        if (badge.textContent.length > 3) badge.classList.add("long");
+        contents.appendChild(badge);
 
-        // Create bus image
-        const busImage = document.createElement("img")
-        busImage.src = images[0];
-        busImage.style.width = "25px";
-        busContainer.appendChild(busImage);
-
-        // Create arrow image
-        const arrowImage = document.createElement("img")
-        arrowImage.src = images[1];
-        arrowImage.style.width = "40px";
-        arrowContainer.appendChild(arrowImage);
-
-        // Store reference to arrow image and container
-        this.arrowImg = arrowImage;
-        this.arrowCont = arrowContainer;
-
-        contents.appendChild(busContainer);
-        contents.appendChild(arrowContainer);
+        Resources.getColor(routeId).then(color => {
+            const hex = "#" + color.replace("#", "");
+            badge.style.background = hex;
+            badge.style.color = isLight(hex) ? "#1a1a1a" : "#ffffff";
+            this.pointer.style.setProperty("--route-color", hex);
+        });
 
         // Red "+N" badge for campus buses running late
         this.badge = document.createElement("div");
@@ -219,13 +209,18 @@ class Vehicle extends InfoWindowElement {
     }
     /**
      * Sets the direction the bus is heading
-     * @param bearing the orientation of the bus
+     * @param bearing the orientation of the bus, in degrees clockwise from north
      */
     public setBusBearing(bearing: number): void {
-        if (this.arrowImg) {
-            this.arrowImg.style.transform = `rotate(${bearing}deg)`;
-            this.setArrowImageOrientation(bearing);
-        }
+        const known = typeof bearing === "number" && !isNaN(bearing);
+        this.pointer.hidden = !known;
+        if (!known) return;
+        this.pointer.style.transform = `rotate(${bearing}deg)`;
+        // The badge is wider than tall, so the pointer sits farther out when pointing sideways
+        const halfWidth = (this.routeBadge.offsetWidth || 26) / 2, halfHeight = 13;
+        const radians = bearing * Math.PI / 180;
+        const edge = Math.min(halfWidth / Math.abs(Math.sin(radians) || 1e-9), halfHeight / Math.abs(Math.cos(radians) || 1e-9));
+        this.pointer.style.setProperty("--edge", edge + "px");
     }
     /**
      * Returns if the vehicle position has been updated
@@ -249,19 +244,6 @@ class Vehicle extends InfoWindowElement {
         const bearing = RAIL_BEARINGS[routeId][direction_id];
         if (bearing !== undefined) this.setBusBearing(bearing);
     }
-    /**
-     * Sets position of bus arrow image around center of bus image
-     * @param bearing the orientation of the bus
-     */
-    public setArrowImageOrientation(bearing: number) : void {
-        const radius = 10;
-        const radians = (bearing + 90) / 180 * Math.PI;
-        
-        if (this.arrowCont) {
-            this.arrowCont.style.top = (-Math.sin(radians) * radius).toString() + "px";
-            this.arrowCont.style.left = (-Math.cos(radians) * radius).toString() + "px";
-        }
-    }
     
     /* Private */
     private routeId: string | undefined;
@@ -271,11 +253,20 @@ class Vehicle extends InfoWindowElement {
     private badge: HTMLDivElement;
     private updatedTimestamp: number | undefined;
     private positionTimestamp : number | undefined;
-    private arrowImg: HTMLImageElement | null = null;
-    private arrowCont: HTMLDivElement;
+    private pointer: HTMLDivElement;
+    private routeBadge: HTMLDivElement;
 }
 
 const STALE_SECONDS = 120;
+const RAIL_ROUTES = new Set(["901", "902"]);
+// Short marker text where the route number isn't what riders call it
+const MARKER_LABELS: Record<string, string> = { "901": "Blue", "902": "Green", "925": "E", "FOOTBALL": "🏈" };
+
+/** If dark text reads better than white on this color */
+function isLight(hex: string) : boolean {
+    const [r, g, b] = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
+    return 0.299 * r + 0.587 * g + 0.114 * b > 170;
+}
 // Blue Line runs north-south (0 = north), Green Line east-west (0 = east)
 const RAIL_BEARINGS = { "901": [0, 180], "902": [90, 270] };
 const GLIDE_MS = 1500;

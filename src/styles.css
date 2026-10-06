@@ -637,3 +637,13 @@ input, button, select, textarea { font-family: inherit; }
 @media (pointer: coarse) {
   [role="menuitem"], [role="menuitemradio"] { min-height: 44px; }
 }
+
+/* Vehicle markers: the route number in its color, with a direction pointer on the edge */
+.vehicle-marker { position: relative; }
+.vehicle-badge { position: absolute; transform: translate(-50%, -50%); min-width: 26px; height: 26px; padding: 0 5px; box-sizing: border-box; border-radius: 13px; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.35); display: flex; align-items: center; justify-content: center; font: bold 12px/1 Arial, sans-serif; white-space: nowrap; background: #555; color: #fff; }
+.vehicle-badge.long { font-size: 10.5px; }
+.vehicle-marker.rail .vehicle-badge { border-radius: 7px; }
+/* Turns around the badge's center; the triangle sits just outside its top edge */
+.vehicle-pointer { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+.vehicle-pointer::before { content: ""; position: absolute; left: -9px; top: calc(-13px - var(--edge, 13px)); border-left: 9px solid transparent; border-right: 9px solid transparent; border-bottom: 13px solid #fff; filter: drop-shadow(0 -1px 1px rgba(0,0,0,.25)); }
+.vehicle-pointer::after { content: ""; position: absolute; left: -6px; top: calc(-9px - var(--edge, 13px)); border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 9px solid var(--route-color, #555); }

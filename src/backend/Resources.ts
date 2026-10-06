@@ -1,11 +1,6 @@
 import L from "leaflet";
 import Static from "./Static.ts";
 
-// Vehicle images keep fixed names (in public/) so a page cached from before a deploy still finds them
-const VEHICLES = process.env.PUBLIC_URL + "/vehicles/";
-/** [bus, arrow] image paths for a vehicle image name */
-const images = (name: string, arrow = name + "_arrow") : [string, string] => [VEHICLES + name + "_bus.png", VEHICLES + arrow + ".png"];
-
 // Backend and Frontend interface
 namespace Resources {
     /**
@@ -65,14 +60,6 @@ namespace Resources {
         }
     }
 
-    /**
-     * Gets the [bus, arrow] images of a route
-     * @param routeId ID of the route
-     */
-    export function getRouteImages(routeId: string) : [string, string] {
-        return ROUTE_IMAGES[routeId] ?? DEFAULT_IMAGES;
-    }
-
     export function createInactiveRoutePopup() {
         const popup = document.createElement('div');
         popup.classList.add('inactive-route-popup');
@@ -91,16 +78,6 @@ namespace Resources {
       
         document.body.appendChild(popup);
       }
-
-    /* Override Bus Images */
-    const ROUTE_IMAGES: Record<string, [string, string]> = {
-        "120": images("120"), "121": images("121"), "122": images("122"), "123": images("123"),
-        "124": images("124"), "125": images("125"), "2": images("2"), "3": images("3"),
-        "6": images("6"), "925": images("6"), "FOOTBALL": images("FOOTBALL"),
-        "902": [VEHICLES + "902_greenline.png", VEHICLES + "902_greenline_arrow.png"],
-        "901": [VEHICLES + "901_blueline.png", VEHICLES + "901_blueline_arrow.png"],
-    };
-    const DEFAULT_IMAGES = images("default", "default_arrow");
 
     /* Override Route Colors */
     const ROUTE_COLORS = {
