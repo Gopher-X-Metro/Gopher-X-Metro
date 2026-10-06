@@ -191,7 +191,7 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
         const catchable = minutes === undefined ? undefined
             : stop.departures?.find(d => d.time * 1000 - Date.now() >= minutes * 60000);
         const leave = catchable && minutes !== undefined
-            ? { in: Math.floor((catchable.time * 1000 - Date.now()) / 60000) - minutes, route: catchable.routeName }
+            ? { in: minutesAway(catchable) - minutes, route: catchable.routeName }
             : undefined;
         return (
             <li key={stop.id} className={"stop-row" + (focusedId === stop.id ? " focused" : "")}>
@@ -265,6 +265,14 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
             )}
         </div>
     )
+}
+
+/** Minutes until a departure, matching its shown "7 Min" text so the leave-by hint adds up */
+function minutesAway(d: Live.Departure) : number {
+    const shown = /^(\d+) Min/i.exec(d.text);
+    if (shown) return Number(shown[1]);
+    if (/^Due/i.test(d.text)) return 0;
+    return Math.round((d.time * 1000 - Date.now()) / 60000);
 }
 
 /**
