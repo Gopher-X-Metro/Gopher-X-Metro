@@ -1,13 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+
+// Only slow loads get the screen; a fast load would just see it flash
+const SHOW_AFTER_MS = 500;
 
 /**
  * The loading screen component
  * @param hidden if the screen should be hidden
  */
 export default function LoadingScreen({ hidden }) {
+  const [slow, setSlow] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setSlow(true), SHOW_AFTER_MS);
+    return () => clearTimeout(timer);
+  }, [])
+
   return (
     <>
-      {!hidden && (
+      {!hidden && slow && (
 
         <div
           id="loading-screen"
