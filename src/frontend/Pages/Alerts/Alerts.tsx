@@ -5,12 +5,12 @@ import Live from 'src/backend/Live';
 import RouteURL from 'src/backend/URL';
 
 import "../Schedule/schedules.css";
+import { routeLabel } from "src/backend/RouteNames";
 import "./alerts.css";
 
 // Routes listed in the sidebar, plus any the rider has added
 const SIDEBAR_ROUTES = ["120", "121", "122", "123", "124", "125", "126", "2", "3", "925", "901", "902"];
 
-const ROUTE_LABELS = { "901": "Blue Line", "902": "Green Line", "925": "E Line" };
 
 function date(seconds?: number) : string {
     return seconds ? new Date(seconds * 1000).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "";
@@ -36,7 +36,7 @@ export default function Alerts({ hidden, setPage }) {
     const card = (alert: Live.Alert, when: string) => (
         <li key={alert.id} className="alert-card">
             <div className="alert-routes">
-                {alert.routes.map(route => <span key={route} className="alert-route">{ROUTE_LABELS[route] ?? route}</span>)}
+                {alert.routes.map(route => <span key={route} className="alert-route">{routeLabel(route)}</span>)}
                 <span className="alert-date">{when}</span>
             </div>
             <p className="alert-title">{(alert as any).title ?? alert.header}</p>

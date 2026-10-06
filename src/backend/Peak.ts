@@ -4,36 +4,22 @@ import { getCachedJSON } from "src/backend/Fetch.ts";
 const PEAK_URL = `https://api.peaktransit.com/v5/index.php?app_id=_RIDER&key=${process.env.REACT_APP_PEAK_KEY}&action=list&agencyID=88&controller=`;
 namespace Peak {
     /**
-     * Gets the running routes
-     * @returns list of routes data
+     * Gets the shape IDs of a campus route
+     * @param routeId Peak Transit route ID
      */
     export async function getPeakShapeIds(routeId: string) : Promise<Set<string>> {
-        return new Set((await (await getPeakTrips(routeId)))
-        .map((trip: { shapeID: any; }) => trip.shapeID));
+        return new Set((await getPeakTrips(routeId)).map((trip: { shapeID: any; }) => trip.shapeID));
     }
     /**
      * Gets the location of each point on a shape line as an Array
      * @param shapeId ID of the shape
      */
     export async function getPeakShapeLocations(shapeId: string) : Promise<Array<L.LatLng>> {
-        const shape = await getPeakShapes(shapeId);
-        const shapeLocations: Array<L.LatLng> = [];
-
-        const pointString = shape?.points ?? "";
-        const pointArray = pointString.split(';');
-
-        // console.log("Points array: ", pointArray);
-        pointArray.forEach(point => {
-            const [latStr, lngStr] = point.split(',');
-
-            if (latStr && lngStr)
-                shapeLocations.push(L.latLng(latStr, lngStr));
-            else
-                console.warn(`Invalid latitude/longitude pair: ${latStr}, ${lngStr}`);
-        })
-        
-
-        return shapeLocations;
+        // Points come as "lat,lng;lat,lng;..."
+        return ((await getPeakShapes(shapeId))?.points ?? "").split(";")
+            .map((point: string) => point.split(","))
+            .filter(([lat, lng]: string[]) => lat && lng)
+            .map(([lat, lng]: string[]) => L.latLng(Number(lat), Number(lng)));
     }
     /**
      * Gets the trips of a route

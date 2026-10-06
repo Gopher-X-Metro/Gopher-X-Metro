@@ -28,14 +28,8 @@ namespace Data {
         const exception = exceptions.get(serviceId + "|" + today);
         if (exception) return exception === "1"; // 1 = added, 2 = removed
 
-        const service = getCalendar(serviceId);
+        const service = calendar.get(serviceId);
         return service ? service.start_date <= today && today <= service.end_date && service[days[(new Date()).getDay()]] === "1" : false;
-    }
-    /**
-     * Gets the calendar of metro
-     */
-    export function getCalendar(serviceId: string) : any { 
-        return calendar.get(serviceId); 
     }
     /**
      * Gets the trips (service and shape ids) of a route
@@ -68,18 +62,9 @@ namespace Data {
     /**
      * Gets the current date in format yyyymmdd
      */
-    export function date() {
-        var date = new Date(),
-            month = '' + (date.getMonth() + 1),
-            day = '' + date.getDate(),
-            year = date.getFullYear();
-    
-        if (month.length < 2) 
-            month = '0' + month;
-        if (day.length < 2) 
-            day = '0' + day;
-    
-        return year+month+day
+    export function date() : string {
+        const now = new Date();
+        return now.getFullYear() + String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0");
     }
 
     /* Private */
@@ -117,15 +102,7 @@ namespace Data {
     }
     
     /* Days of the week */
-    const days = [
-        "sunday", 
-        "monday", 
-        "tuesday", 
-        "wednesday", 
-        "thursday", 
-        "friday", 
-        "saturday"
-    ];
+    const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 
     // Generated from Metro Transit's GTFS feed by scripts/build-gtfs.mjs
     const DATA_URL = process.env.PUBLIC_URL + "/gtfs"

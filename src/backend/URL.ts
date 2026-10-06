@@ -17,33 +17,29 @@ namespace RouteURL {
         return ROUTE_ALIASES[clean] ?? clean;
     }
     /**
-     * Adds a new route to the URL, Sets the route without reloading the website
+     * Adds a new route to the URL without reloading the website
      * @param routeId route ID to add
      */
     export function addRoute(routeId: string) : void {
-        if (!RouteURL.getRoutes().has(routeId)) {
-            window.history.replaceState(window.history.state, getQuerySelectorTextContext(), "./?route=" + ((getRoutes().size === 0) ? routeId : (Array.from(getRoutes()).join(",") + "," + (routeId))));
-            onChange(); 
-        }
+        const routes = getRoutes();
+        if (!routes.has(routeId)) setRoutes(routes.add(routeId));
     }
     /**
      * Removes the specified route from the URL
      * @param routeId route ID to remove
      */
     export function removeRoute(routeId: string) : void {
-        if (getRoutes().has(routeId)) {
-            const routes = getRoutes();
-            routes.delete(routeId);
-            window.history.replaceState(window.history.state, getQuerySelectorTextContext(), (routes.size === 0) ? "./" : ("./?route=" + Array.from(routes).join(",")));
-            onChange();
-        }
+        const routes = getRoutes();
+        if (routes.delete(routeId)) setRoutes(routes);
     }
     /**
-     * Runs functions to when the URL is updated
+     * Runs a function whenever the URL's routes change
      * @param callbackfn function to run
+     * @returns a function that stops listening
      */
-    export function addListener(callbackfn: () => void) : void {
-        functions.push(callbackfn);
+    export function addListener(callbackfn: () => void) : () => void {
+        listeners.add(callbackfn);
+        return () => { listeners.delete(callbackfn); };
     }
 
     /* Private */
@@ -54,25 +50,12 @@ namespace RouteURL {
         "A": "921", "B": "922", "C": "923", "D": "924", "E": "925",
         "FOOTBALL SHUTTLE": "FOOTBALL", "GAME DAY": "FOOTBALL",
     };
-    const functions = new Array<() => void>();
+    const listeners = new Set<() => void>();
 
-    /**
-     * Runs the listeners that were added
-     */
-    function onChange() { functions.forEach(f => f()); }
-
-    /**
-     * Gets the url
-     */
-    function getQuerySelectorTextContext() : string {
-        const query = document.querySelector("title");
-
-        if (query && query.textContent) {
-            return query.textContent
-        } else {
-            console.warn("Could not get document.querySelector(\"title\").textContext!")
-            return "";
-        }
+    /** Writes the routes to the URL and runs the listeners */
+    function setRoutes(routes: Set<string>) : void {
+        window.history.replaceState(window.history.state, "", routes.size === 0 ? "./" : "./?route=" + [...routes].join(","));
+        listeners.forEach(f => f());
     }
 }
 

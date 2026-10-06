@@ -1,5 +1,6 @@
 import GtfsRealtimeBindings from "gtfs-realtime-bindings";
 import Realtime from "src/backend/Realtime.ts";
+import { getCachedFeed, getCachedJSON } from "src/backend/Fetch.ts";
 
 /**
  * Rider helpers: nearby stops, departures, next stops of vehicles, and service alerts
@@ -119,8 +120,8 @@ namespace Live {
         const tripUpdates = updates.get(tripId);
         const next = tripUpdates?.find(u => Number(u.arrival?.time ?? u.departure?.time ?? 0) >= now - 30);
         // The feed's stop_id can be a timepoint several stops ahead, so locate the bus on the trip's own stop list
-        const located = routeId ? await locateOnTrip(routeId, tripId, position, position?.stopId ?? next?.stopId) : undefined;
-        const stopId = located?.stopId ?? position?.stopId ?? next?.stopId;
+        const located = routeId ? await locateOnTrip(routeId, tripId, position, position?.stopId ?? next?.stopId ?? undefined) : undefined;
+        const stopId = located?.stopId ?? position?.stopId ?? next?.stopId ?? undefined;
         const stopped = located ? located.at && !!position?.stopped : position?.stopped;
         const match = tripUpdates?.find(u => u.stopId === stopId);
         const event = match?.arrival ?? match?.departure;
@@ -160,27 +161,8 @@ namespace Live {
      * Gets a campus bus stop's name and location
      * @param stopId Peak Transit ID of the stop
      */
-    export async function getPeakStop(stopId: number) : Promise<{ name: string, lat: number, lng: number } | undefined> {
-        type PeakStop = { name: string, lat: number, lng: number };
-        peakStopDetails ??= fetch(PEAK_URL + "stop2")
-            .then(response => response.json())
-            .then(data => new Map<number, PeakStop>((data.stop ?? []).map((stop: any) => [stop.stopID, { name: stop.longName, lat: Number(stop.lat), lng: Number(stop.lng) }])))
-            .catch(() => new Map<number, PeakStop>());
-        return (await peakStopDetails)?.get(stopId);
-    }
-    let peakStopDetails: Promise<Map<number, { name: string, lat: number, lng: number }>> | undefined;
-
-    /**
-     * Gets the name of a campus bus stop
-     * @param stopId Peak Transit ID of the stop
-     */
-    export async function getPeakStopName(stopId: number) : Promise<string | undefined> {
-        if (!peakStops)
-            peakStops = fetch(PEAK_URL + "stop2")
-                .then(response => response.json())
-                .then(data => new Map((data.stop ?? []).map((stop: any) => [stop.stopID, stop.longName])))
-                .catch(() => new Map());
-        return (await peakStops).get(stopId);
+    export async function getPeakStop(stopId: number) : Promise<PeakStop | undefined> {
+        return (await getPeakStops()).get(stopId);
     }
 
     /**
@@ -188,53 +170,30 @@ namespace Live {
      * @param routeIds IDs of the routes
      */
     export async function getAlerts(routeIds: Set<string>) : Promise<Alert[]> {
-        if (!alerts || Date.now() - alertsFetched > 120000) {
-            alertsFetched = Date.now();
-            alerts = fetch("https://svc.metrotransit.org/mtgtfs/alerts.pb")
-                .then(response => response.arrayBuffer())
-                .then(buffer => {
-                    const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer));
-                    const now = Date.now() / 1000;
-                    return feed.entity
-                        // An alert without active periods is active for as long as it's in the feed
-                        .filter(entity => entity.alert && (!entity.alert.activePeriod?.length || entity.alert.activePeriod.some(p =>
-                            Number(p.start ?? 0) <= now && (!p.end || Number(p.end) >= now))))
-                        .map(entity => ({
-                            id: entity.id,
-                            header: entity.alert?.headerText?.translation?.[0]?.text ?? "",
-                            description: entity.alert?.descriptionText?.translation?.[0]?.text ?? "",
-                            start: Number(entity.alert?.activePeriod?.[0]?.start ?? 0) || undefined,
-                            end: Number(entity.alert?.activePeriod?.[0]?.end ?? 0) || undefined,
-                            routes: [...new Set((entity.alert?.informedEntity ?? []).map(i => i.routeId).filter(Boolean) as string[])],
-                        }));
-                })
-                .catch(() => []);
-        }
-        return (await alerts).filter(alert => alert.header && alert.routes.some(route => routeIds.has(route)));
+        const now = Date.now() / 1000;
+        return ((await getCachedFeed("https://svc.metrotransit.org/mtgtfs/alerts.pb", 120000)) ?? [])
+            // An alert without active periods is active for as long as it's in the feed
+            .filter(entity => entity.alert && (!entity.alert.activePeriod?.length || entity.alert.activePeriod.some(p =>
+                Number(p.start ?? 0) <= now && (!p.end || Number(p.end) >= now))))
+            .map(entity => ({
+                id: entity.id,
+                header: entity.alert?.headerText?.translation?.[0]?.text ?? "",
+                description: entity.alert?.descriptionText?.translation?.[0]?.text ?? "",
+                start: Number(entity.alert?.activePeriod?.[0]?.start ?? 0) || undefined,
+                end: Number(entity.alert?.activePeriod?.[0]?.end ?? 0) || undefined,
+                routes: [...new Set((entity.alert?.informedEntity ?? []).map(i => i.routeId).filter(Boolean) as string[])],
+            }))
+            .filter(alert => alert.header && alert.routes.some(route => routeIds.has(route)));
     }
 
     /**
-     * Gets the estimated arrival (epoch seconds) of a campus route at a stop
+     * Gets the next two arrivals (epoch seconds) of a campus route at a stop, soonest first
      * @param stopId    Peak Transit stop ID
      * @param routeId   Peak Transit route ID
      */
-    export async function getPeakEta(stopId: number, routeId: number) : Promise<number | undefined> {
-        if (!peakEtas || Date.now() - peakEtasFetched > 15000) {
-            peakEtasFetched = Date.now();
-            peakEtas = fetch(PEAK_URL + "eta")
-                .then(response => response.json())
-                .then(data => new Map((data.stop ?? []).map((eta: any) => [eta.stopID + "|" + eta.routeID, eta])))
-                .catch(() => new Map());
-        }
-        return (await peakEtas).get(stopId + "|" + routeId)?.ETA1 || undefined;
-    }
-
-    /**
-     * Gets the next two arrivals (epoch seconds) of a campus route at a stop
-     */
     export async function getPeakArrivals(stopId: number, routeId: number) : Promise<number[]> {
-        await getPeakEta(stopId, routeId);
-        const eta = (await peakEtas as Map<any, any>).get(stopId + "|" + routeId);
+        const etas = await getCachedJSON(PEAK_URL + "eta", 15000);
+        const eta = (etas?.stop ?? []).find((e: any) => Number(e.stopID) === stopId && Number(e.routeID) === routeId);
         return [eta?.ETA1, eta?.ETA2].filter(time => time && time > Date.now() / 1000);
     }
 
@@ -242,19 +201,11 @@ namespace Live {
      * Gets the stops served by a campus route
      * @param routeId Peak Transit route ID
      */
-    export async function getPeakRouteStops(routeId: number) : Promise<Array<{ id: number, name: string, lat: number, lng: number }>> {
-        if (!peakRouteStops)
-            peakRouteStops = Promise.all([
-                fetch(PEAK_URL + "routestop2").then(response => response.json()),
-                fetch(PEAK_URL + "stop2").then(response => response.json()),
-            ]).then(([routeStops, stops]) => {
-                const byId = new Map((stops.stop ?? []).filter((stop: any) => !stop.disabled && !stop.closed).map((stop: any) => [stop.stopID, stop]));
-                return (routeStops.routeStops ?? []).filter((rs: any) => !rs.disabled && byId.has(rs.stopID)).map((rs: any) => {
-                    const stop: any = byId.get(rs.stopID);
-                    return { routeId: rs.routeID, id: stop.stopID, name: stop.longName, lat: Number(stop.lat), lng: Number(stop.lng) };
-                });
-            }).catch(() => []);
-        return (await peakRouteStops).filter((stop: any) => stop.routeId === routeId);
+    export async function getPeakRouteStops(routeId: number) : Promise<Array<PeakStop & { id: number }>> {
+        const [routeStops, stops] = await Promise.all([getCachedJSON(PEAK_URL + "routestop2", HOUR), getPeakStops()]);
+        return (routeStops?.routeStops ?? [])
+            .filter((rs: any) => rs.routeID === routeId && !rs.disabled && stops.get(rs.stopID)?.open)
+            .map((rs: any) => ({ id: rs.stopID, ...stops.get(rs.stopID)! }));
     }
 
     /**
@@ -262,25 +213,20 @@ namespace Live {
      * @param routeIds IDs of the routes on the map
      */
     export async function getCampusNotices(routeIds: Set<string> | null, days = NOTICE_DAYS) : Promise<Alert[]> {
-        if (!notices || Date.now() - noticesFetched > 300000) {
-            noticesFetched = Date.now();
-            const since = Math.floor(Date.now() / 1000) - 30 * 86400;
-            notices = fetch(PEAK_URL.replace("&action=list", "") + `Fcm_notifications&action=since&agency_id=88&topic=alerts&created=${since}`)
-                .then(response => response.json())
-                .then(data => (data.fcm_notifications ?? []).map((n: any) => ({
-                    id: "peak-" + n.id,
-                    header: n.body ? `${n.title}: ${n.body}` : n.title,
-                    description: n.body,
-                    title: n.title,
-                    routes: [...new Set<string>((n.title + " " + n.body).match(/12[0-6]/g) ?? [])],
-                    created: n.created,
-                    end: n.display_end,
-                })))
-                .catch(() => []);
-        }
+        // Rounded to the day so the address, and so the cache, stays the same between calls
+        const since = (Math.floor(Date.now() / 86400000) - 30) * 86400;
+        const data = await getCachedJSON(PEAK_URL.replace("&action=list", "") + `Fcm_notifications&action=since&agency_id=88&topic=alerts&created=${since}`, 300000);
         const now = Date.now() / 1000;
-        return (await notices)
-            .filter((n: any) => (n.end ? n.end > now : n.created > now - days * 86400))
+        return (data?.fcm_notifications ?? [])
+            .map((n: any) : Alert => ({
+                id: "peak-" + n.id,
+                header: n.body ? `${n.title}: ${n.body}` : n.title,
+                description: n.body,
+                routes: [...new Set<string>((n.title + " " + n.body).match(/12[0-6]/g) ?? [])],
+                created: n.created,
+                end: n.display_end,
+            }))
+            .filter((n: Alert) => (n.end ? n.end > now : (n.created ?? 0) > now - days * 86400))
             .filter((n: Alert) => !routeIds || n.routes.some(route => routeIds.has(route)))
             .sort((a: Alert, b: Alert) => (b.created ?? 0) - (a.created ?? 0));
     }
@@ -312,58 +258,44 @@ namespace Live {
     let stopNames : Map<string, string> | undefined;
     let stopCoords : Map<string, [number, number]> | undefined;
     const patterns = new Map<string, Promise<{ patterns: string[][], trips: Record<string, number> } | undefined>>();
-    let peakStops : Promise<Map<any, any>> | undefined;
-    let alerts : Promise<Alert[]> | undefined;
-    let alertsFetched = 0;
-    let peakEtas : Promise<Map<any, any>> | undefined;
-    let peakRouteStops : Promise<any[]> | undefined;
-    let peakEtasFetched = 0;
-    let notices : Promise<any[]> | undefined;
-    let noticesFetched = 0;
     // Campus notices have no end date, so only recent ones are shown
     const NOTICE_DAYS = 3;
-    let positions : Promise<Map<string, any>> | undefined;
-    let positionsFetched = 0;
+    const HOUR = 60 * 60 * 1000;
 
-    let updates : Promise<Map<string, any[]>> | undefined;
-    let updatesFetched = 0;
+    type PeakStop = { name: string, lat: number, lng: number, open: boolean };
+
+    /**
+     * Maps Peak Transit stop IDs to each open campus stop
+     */
+    async function getPeakStops() : Promise<Map<number, PeakStop>> {
+        const data = await getCachedJSON(PEAK_URL + "stop2", HOUR);
+        return new Map((data?.stop ?? []).map((stop: any) =>
+            [stop.stopID, { name: stop.longName, lat: Number(stop.lat), lng: Number(stop.lng), open: !stop.disabled && !stop.closed }]));
+    }
 
     /**
      * Maps trip IDs to each Metro Transit vehicle's current stop, status and bus number, refreshed every 15 seconds
      */
-    function getMetroPositions() : Promise<Map<string, { stopId?: string, stopped: boolean, label?: string, lat?: number, lng?: number }>> {
-        if (!positions || Date.now() - positionsFetched > 15000) {
-            positionsFetched = Date.now();
-            positions = fetch("https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb")
-                .then(response => response.arrayBuffer())
-                .then(buffer => new Map(GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)).entity
-                    .filter(entity => entity.vehicle?.trip?.tripId)
-                    .map(entity => [entity.vehicle?.trip?.tripId as string, {
-                        stopId: entity.vehicle?.stopId ?? undefined,
-                        stopped: entity.vehicle?.currentStatus === GtfsRealtimeBindings.transit_realtime.VehiclePosition.VehicleStopStatus.STOPPED_AT,
-                        label: entity.vehicle?.vehicle?.label ?? undefined,
-                        lat: entity.vehicle?.position?.latitude ?? undefined,
-                        lng: entity.vehicle?.position?.longitude ?? undefined,
-                    }])))
-                .catch(() => new Map());
-        }
-        return positions as Promise<Map<string, any>>;
+    async function getMetroPositions() : Promise<Map<string, { stopId?: string, stopped: boolean, label?: string, lat?: number, lng?: number }>> {
+        const STOPPED_AT = GtfsRealtimeBindings.transit_realtime.VehiclePosition.VehicleStopStatus.STOPPED_AT;
+        return new Map(((await getCachedFeed("https://svc.metrotransit.org/mtgtfs/vehiclepositions.pb", 15000)) ?? [])
+            .filter(entity => entity.vehicle?.trip?.tripId)
+            .map(entity => [entity.vehicle!.trip!.tripId!, {
+                stopId: entity.vehicle?.stopId ?? undefined,
+                stopped: entity.vehicle?.currentStatus === STOPPED_AT,
+                label: entity.vehicle?.vehicle?.label ?? undefined,
+                lat: entity.vehicle?.position?.latitude ?? undefined,
+                lng: entity.vehicle?.position?.longitude ?? undefined,
+            }]));
     }
 
     /**
      * Maps trip IDs to their predicted stop times, refreshed every 15 seconds
      */
-    function getMetroUpdates() : Promise<Map<string, any[]>> {
-        if (!updates || Date.now() - updatesFetched > 15000) {
-            updatesFetched = Date.now();
-            updates = fetch("https://svc.metrotransit.org/mtgtfs/tripupdates.pb")
-                .then(response => response.arrayBuffer())
-                .then(buffer => new Map(GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer)).entity
-                    .filter(entity => entity.tripUpdate?.trip?.tripId)
-                    .map(entity => [entity.tripUpdate?.trip?.tripId as string, entity.tripUpdate?.stopTimeUpdate ?? []])))
-                .catch(() => new Map());
-        }
-        return updates;
+    async function getMetroUpdates() : Promise<Map<string, GtfsRealtimeBindings.transit_realtime.TripUpdate.IStopTimeUpdate[]>> {
+        return new Map(((await getCachedFeed("https://svc.metrotransit.org/mtgtfs/tripupdates.pb", 15000)) ?? [])
+            .filter(entity => entity.tripUpdate?.trip?.tripId)
+            .map(entity => [entity.tripUpdate!.trip!.tripId!, entity.tripUpdate!.stopTimeUpdate ?? []]));
     }
 
     /**

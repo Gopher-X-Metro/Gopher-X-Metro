@@ -1,37 +1,10 @@
 import L from "leaflet";
 import Static from "./Static.ts";
-import Realtime from "./Realtime.ts";
 
 // Vehicle images keep fixed names (in public/) so a page cached from before a deploy still finds them
 const VEHICLES = process.env.PUBLIC_URL + "/vehicles/";
-const busImage120 = VEHICLES + "120_bus.png";
-const busImage121 = VEHICLES + "121_bus.png";
-const busImage122 = VEHICLES + "122_bus.png";
-const busImage123 = VEHICLES + "123_bus.png";
-const busImage124 = VEHICLES + "124_bus.png";
-const busImage125 = VEHICLES + "125_bus.png";
-const busImage2 = VEHICLES + "2_bus.png";
-const busImage3 = VEHICLES + "3_bus.png";
-const busImageFOOTBALL = VEHICLES + "FOOTBALL_bus.png";
-const arrowImageFOOTBALL = VEHICLES + "FOOTBALL_arrow.png";
-const busImage6 = VEHICLES + "6_bus.png";
-const busImage902 = VEHICLES + "902_greenline.png";
-const busImage901 = VEHICLES + "901_blueline.png";
-
-const arrowImage120 = VEHICLES + "120_arrow.png";
-const arrowImage121 = VEHICLES + "121_arrow.png";
-const arrowImage122 = VEHICLES + "122_arrow.png";
-const arrowImage123 = VEHICLES + "123_arrow.png";
-const arrowImage124 = VEHICLES + "124_arrow.png";
-const arrowImage125 = VEHICLES + "125_arrow.png";
-const arrowImage2 = VEHICLES + "2_arrow.png";
-const arrowImage3 = VEHICLES + "3_arrow.png";
-const arrowImage6 = VEHICLES + "6_arrow.png";
-const arrowImage902 = VEHICLES + "902_greenline_arrow.png";
-const arrowImage901 = VEHICLES + "901_blueline_arrow.png";
-
-const defaultBusImage = VEHICLES + "default_bus.png";
-const defaultArrowImage = VEHICLES + "default_arrow.png";
+/** [bus, arrow] image paths for a vehicle image name */
+const images = (name: string, arrow = name + "_arrow") : [string, string] => [VEHICLES + name + "_bus.png", VEHICLES + arrow + ".png"];
 
 // Backend and Frontend interface
 namespace Resources {
@@ -53,7 +26,7 @@ namespace Resources {
      * @param routeId ID of the route
      */
     export async function getShapeIds(routeId: string) : Promise<Set<string>> {
-        return new Set(await (await Static.getTrips(routeId))
+        return new Set((await Static.getTrips(routeId))
         .filter((trip: { service_id: string; }) => Static.isServiceRunning(trip.service_id))
         .map((trip: { shape_id: any; }) => trip.shape_id));
     }
@@ -63,9 +36,7 @@ namespace Resources {
      * @param shapeId ID of the shape
      */
     export async function getShapeLocations(shapeId: string) : Promise<Array<L.LatLng>> {
-        const shapeLocations = (await Static.getShapes(shapeId)).map(([lat, lon]) => L.latLng(lat, lon));
-
-        return shapeLocations
+        return (await Static.getShapes(shapeId)).map(([lat, lon]) => L.latLng(lat, lon));
     }
     
     /**
@@ -95,12 +66,11 @@ namespace Resources {
     }
 
     /**
-     * Gets the color of a route as a string
+     * Gets the [bus, arrow] images of a route
      * @param routeId ID of the route
      */
     export function getRouteImages(routeId: string) : [string, string] {
-        // It defaults to the colors manually defined. If the color is not defined, it defaults to the one if found. 
-        return ROUTE_IMAGES[routeId] ? ROUTE_IMAGES[routeId] : [defaultBusImage, defaultArrowImage];
+        return ROUTE_IMAGES[routeId] ?? DEFAULT_IMAGES;
     }
 
     export function createInactiveRoutePopup() {
@@ -123,21 +93,14 @@ namespace Resources {
       }
 
     /* Override Bus Images */
-    const ROUTE_IMAGES = {
-        "120": [busImage120, arrowImage120], 
-        "121": [busImage121, arrowImage121],
-        "122": [busImage122, arrowImage122],
-        "123": [busImage123, arrowImage123], 
-        "124": [busImage124, arrowImage124],
-        "125": [busImage125, arrowImage125],
-        "2": [busImage2, arrowImage2],
-        "3": [busImage3, arrowImage3],
-        "6": [busImage6, arrowImage6],
-        "925": [busImage6, arrowImage6],
-        "FOOTBALL": [busImageFOOTBALL, arrowImageFOOTBALL],
-        "902": [busImage902, arrowImage902],
-        "901": [busImage901, arrowImage901]
-    }
+    const ROUTE_IMAGES: Record<string, [string, string]> = {
+        "120": images("120"), "121": images("121"), "122": images("122"), "123": images("123"),
+        "124": images("124"), "125": images("125"), "2": images("2"), "3": images("3"),
+        "6": images("6"), "925": images("6"), "FOOTBALL": images("FOOTBALL"),
+        "902": [VEHICLES + "902_greenline.png", VEHICLES + "902_greenline_arrow.png"],
+        "901": [VEHICLES + "901_blueline.png", VEHICLES + "901_blueline_arrow.png"],
+    };
+    const DEFAULT_IMAGES = images("default", "default_arrow");
 
     /* Override Route Colors */
     const ROUTE_COLORS = {

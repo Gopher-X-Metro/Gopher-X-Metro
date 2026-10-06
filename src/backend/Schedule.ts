@@ -17,9 +17,7 @@ namespace Schedule {
      * @returns the route data
      */
     export async function getRoute(routeId: string) : Promise<any> {
-        for (const route of (await getRoutes()) ?? [])
-            if (route.route_id === routeId) 
-                return route;
+        return (await getRoutes())?.find(route => route.route_id === routeId);
     }
     /**
      * Gets more specified details about the route
@@ -41,25 +39,25 @@ namespace Schedule {
         return await getCachedJSON("https://svc.metrotransit.org/schedule/stoplist/"+routeId+"/"+scheduleId, HOUR)
     }
 
-    /* Private */
+    /**
+     * Gets a route's generated timetable (service spans by day and direction), or null if it has none
+     * @param routeId the route ID
+     */
+    export function getTimetable(routeId: string) : Promise<any> {
+        if (!timetables.has(routeId))
+            timetables.set(routeId, fetch(process.env.PUBLIC_URL + "/gtfs/schedules/" + routeId + ".json")
+                .then(response => response.ok && response.headers.get("content-type")?.includes("json") ? response.json() : null)
+                .catch(() => { timetables.delete(routeId); return null; }));
+        return timetables.get(routeId)!;
+    }
+    const timetables = new Map<string, Promise<any>>();
 
     /**
-     * Gets the week of the date in terms of Sunday, Saturday, and Weekday
+     * Gets today's schedule type: "Weekday", "Saturday" or "Sunday"
      */
-    export function getWeekDate() : string | undefined {
-        const date = new Date();
-        switch (date.getDay()) {
-            case 0:
-                return "Sunday"
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-                return "Weekday"
-            case 6:
-                return "Saturday"
-        }
+    export function getWeekDate() : string {
+        const day = new Date().getDay();
+        return day === 0 ? "Sunday" : day === 6 ? "Saturday" : "Weekday";
     }
 }
 

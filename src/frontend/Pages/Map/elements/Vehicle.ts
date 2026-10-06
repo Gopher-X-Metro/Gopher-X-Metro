@@ -2,6 +2,7 @@ import L from "leaflet";
 import InfoWindowElement from "./abstracts/InfoWindowElement";
 import Live from "src/backend/Live.ts";
 import Resources from "src/backend/Resources.ts";
+import { ROUTE_NAMES } from "src/backend/RouteNames.ts";
 
 class Vehicle extends InfoWindowElement {
     /* Public */
@@ -116,14 +117,14 @@ class Vehicle extends InfoWindowElement {
         if (info.nextStopID) {
             nextStopId = "peak-" + info.nextStopID;
             // Use the map's name for the stop when it's drawn, so the popup and the stop agree
-            nextStop = await stopNameLookup?.(nextStopId) ?? await Live.getPeakStopName(info.nextStopID);
-            const arrival = await Live.getPeakEta(info.nextStopID, info.routeID);
+            nextStop = await stopNameLookup?.(nextStopId) ?? (await Live.getPeakStop(info.nextStopID))?.name;
+            const [arrival] = await Live.getPeakArrivals(info.nextStopID, info.routeID);
             if (arrival) eta = Math.round((arrival - Date.now() / 1000) / 60);
             // Peak's ETA is the route's next arrival at that stop, not this bus's. If the route isn't due there for
             // over an hour, this bus isn't serving it: it's finishing up (often the night's last run, maybe running late)
             if (eta !== undefined && eta > 60) { eta = undefined; offDuty = true; }
         } else if (!this.id.startsWith("peak-")) {
-            metro = await Live.getMetroTrip(this.tripId ?? this.id, this.routeId);
+            metro = await Live.getMetroTrip(this.id, this.routeId);
             nextStop = metro.nextStop;
             nextStopId = metro.nextStopId;
             if (metro.arrival) eta = Math.round((metro.arrival - Date.now() / 1000) / 60);
@@ -136,7 +137,7 @@ class Vehicle extends InfoWindowElement {
             lines.push(metro.delayMinutes > 1 ? `About ${metro.delayMinutes} min late` : metro.delayMinutes < -1 ? `About ${-metro.delayMinutes} min early` : "On time");
 
         // Campus buses report schedule adherence and how full they are
-        if (!offDuty && info.nextStopID !== undefined && info.minsLate !== undefined && info.nextStopID)
+        if (!offDuty && info.nextStopID && info.minsLate !== undefined)
             lines.push(info.minsLate > 1 ? `About ${info.minsLate} min late` : info.minsLate < -1 ? `About ${-info.minsLate} min early` : "On time");
         if (info.HasAPC && info.APCPercentage > 0)
             lines.push(info.APCPercentage >= 90 ? "Crowded (standing room only)" : info.APCPercentage >= 50 ? "Some seats open" : "Plenty of seats");
@@ -180,15 +181,6 @@ class Vehicle extends InfoWindowElement {
             return (Date.now()/1000) - this.positionTimestamp; 
     }
     /**
-     * Get the trip ID
-     */
-    public getTripId() : string | undefined { return this.tripId; }
-    /**
-     * Sets the trip ID
-     * @param tripId trip ID
-     */
-    public setTripId(tripId : string) : void { this.tripId = tripId; }
-    /**
      * Sets the position of the vehicle on the map
      * @param position position of the vehicle
      * @param timestamp when this position was updated
@@ -226,24 +218,15 @@ class Vehicle extends InfoWindowElement {
         this.glide = requestAnimationFrame(step);
     }
     /**
-     * Gets the direction the bus is heading
-     */
-    public getBusBearing(): number | undefined { return this.bearing; }
-    /**
      * Sets the direction the bus is heading
      * @param bearing the orientation of the bus
      */
     public setBusBearing(bearing: number): void {
-        this.bearing = bearing;
         if (this.arrowImg) {
             this.arrowImg.style.transform = `rotate(${bearing}deg)`;
             this.setArrowImageOrientation(bearing);
         }
     }
-    /**
-     * Gets the direction the lightrail is heading
-     */
-    public getDirectionID(): number | undefined { return this.direction_id; }
     /**
      * Returns if the vehicle position has been updated
      */
@@ -258,24 +241,13 @@ class Vehicle extends InfoWindowElement {
      */
     public isUpdated(): boolean { return (this.updatedTimestamp && this.isPositionUpdated()) ? (Date.now() - this.updatedTimestamp < 500) : false; }
     /**
-     * Sets the direction the blueline lightrail is heading
-     * @param direction_id the orientation of the blueline lightrail
+     * Points a light rail train's arrow along its line, which only runs one way per direction
+     * @param routeId       901 (Blue Line) or 902 (Green Line)
+     * @param direction_id  the train's direction
      */
-    public setBlueDirectionID(direction_id: number): void {
-        this.direction_id = direction_id;
-        if (this.arrowImg) {
-            this.setArrowImageBluelineOrientation(direction_id);
-        }
-    }
-    /**
-     * Sets the direction the greenline lightrail is heading
-     * @param direction_id the orientation of the greenline lightrail
-     */
-    public setGreenDirectionID(direction_id: number): void {
-        this.direction_id = direction_id;
-        if (this.arrowImg) {
-            this.setArrowImageGreenlineOrientation(direction_id);
-        }
+    public setRailDirection(routeId: "901" | "902", direction_id: number): void {
+        const bearing = RAIL_BEARINGS[routeId][direction_id];
+        if (bearing !== undefined) this.setBusBearing(bearing);
     }
     /**
      * Sets position of bus arrow image around center of bus image
@@ -290,36 +262,6 @@ class Vehicle extends InfoWindowElement {
             this.arrowCont.style.left = (-Math.cos(radians) * radius).toString() + "px";
         }
     }
-    /**
-     * Sets position of bus arrow image around center of bus image
-     * @param direction_id the orientation of the blueline lightrail
-     */
-    public setArrowImageBluelineOrientation(direction_id: number) : void {
-        if (this.arrowCont && this.arrowImg) {
-            if (direction_id === 0) {
-                this.arrowImg.style.transform = `rotate(${0}deg)`;
-                this.arrowCont.style.top = "-10px";
-            } else if (direction_id === 1) {
-                this.arrowImg.style.transform = `rotate(${180}deg)`;
-                this.arrowCont.style.top = "10px";
-            }
-        }
-    }
-    /**
-     * Sets position of bus arrow image around center of bus image
-     * @param direction_id the orientation of the greenline lightrail
-     */
-    public setArrowImageGreenlineOrientation(direction_id: number) : void {
-        if (this.arrowCont && this.arrowImg) {
-            if (direction_id === 0) {
-                this.arrowImg.style.transform = `rotate(${90}deg)`;
-                this.arrowCont.style.left = "10px";
-            } else if (direction_id === 1) {
-                this.arrowImg.style.transform = `rotate(${270}deg)`;
-                this.arrowCont.style.left = "-10px";
-            }
-        }
-    }
     
     /* Private */
     private routeId: string | undefined;
@@ -328,15 +270,14 @@ class Vehicle extends InfoWindowElement {
     private glide = 0;
     private badge: HTMLDivElement;
     private updatedTimestamp: number | undefined;
-    private tripId: string | undefined;
     private positionTimestamp : number | undefined;
-    private bearing: number | undefined;
-    private direction_id: number | undefined;
     private arrowImg: HTMLImageElement | null = null;
     private arrowCont: HTMLDivElement;
 }
 
 const STALE_SECONDS = 120;
+// Blue Line runs north-south (0 = north), Green Line east-west (0 = east)
+const RAIL_BEARINGS = { "901": [0, 180], "902": [90, 270] };
 const GLIDE_MS = 1500;
 
 const DIRECTIONS = { NB: "Northbound", SB: "Southbound", EB: "Eastbound", WB: "Westbound" };
@@ -348,18 +289,5 @@ let stopNameLookup: ((stopId: string) => Promise<string | undefined>) | undefine
  */
 export function setStopNameLookup(lookup: (stopId: string) => Promise<string | undefined>) : void { stopNameLookup = lookup; }
 
-export const ROUTE_NAMES = {
-    "120": "120 East Bank Circulator",
-    "121": "121 Campus Connector",
-    "122": "122 University Ave Circulator",
-    "123": "123 4th Street Circulator",
-    "124": "124 St. Paul Circulator",
-    "125": "125 Dinkytown Connector",
-    "126": "126 Campus Express",
-    "FOOTBALL": "Football Game Day Shuttle",
-    "901": "METRO Blue Line",
-    "902": "METRO Green Line",
-    "925": "METRO E Line",
-};
 
 export default Vehicle;

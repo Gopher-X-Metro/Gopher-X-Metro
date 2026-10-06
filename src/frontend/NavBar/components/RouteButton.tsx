@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react';
 import RouteURL from 'src/backend/URL.ts';
 import Routes from 'src/frontend/Pages/Map/components/Routes';
 import Realtime from 'src/backend/Realtime.ts';
+import Schedule from 'src/backend/Schedule.ts';
 
 /**
  * Creates a route button with the route that the button leads to and the route that it leads to
@@ -11,23 +12,16 @@ import Realtime from 'src/backend/Realtime.ts';
  * @returns 
  */
 function RouteButton({ routeId, text }: { routeId: string, text?: string }) {
-  useEffect(() => {
-    // updates color of button click immediately
-    RouteURL.addListener(() => setActive(RouteURL.getRoutes().has(routeId)))
-    setActive(RouteURL.getRoutes().has(routeId));
-  }, [])
-
-  const [isActive, setActive] = useState(false);
+  const [isActive, setActive] = useState(() => RouteURL.getRoutes().has(routeId));
   const [isRunning, setRunning] = useState(true);
 
+  // Updates the button as soon as the route is added or removed
+  useEffect(() => RouteURL.addListener(() => setActive(RouteURL.getRoutes().has(routeId))), [routeId])
+
   useEffect(() => {
-    let schedule: Promise<any> | undefined;
     const check = async () => {
-      schedule ??= fetch(process.env.PUBLIC_URL + "/gtfs/schedules/" + routeId + ".json")
-        .then(response => response.ok && response.headers.get("content-type")?.includes("json") ? response.json() : null)
-        .catch(() => null);
-      const [spans, vehicles] = await Promise.all([schedule, Realtime.getVehicles(routeId).catch(() => undefined)]);
-      setRunning(inServiceWindow(await spans) || (vehicles?.length ?? 0) > 0);
+      const [spans, vehicles] = await Promise.all([Schedule.getTimetable(routeId), Realtime.getVehicles(routeId).catch(() => undefined)]);
+      setRunning(inServiceWindow(spans) || (vehicles?.length ?? 0) > 0);
     };
     check();
     const interval = setInterval(check, 60000);

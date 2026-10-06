@@ -5,6 +5,7 @@ import InfoWindowElement from './abstracts/InfoWindowElement';
 import Resources from 'src/backend/Resources.ts';
 import RouteURL from 'src/backend/URL.ts';
 import Alerts from 'src/backend/Alerts.ts';
+import { routeLabel } from 'src/backend/RouteNames.ts';
 import Primative from './abstracts/Primative';
 
 interface departure {
@@ -42,9 +43,6 @@ class Stop extends InfoWindowElement {
             bubblingMouseEvents: false,
             pane: stopPane(map)
         }));
-
-        this.departures = new Map<string, Array<departure>>();
-        this.elements = new Set<Primative>();
 
         this.name = name;
         this.direction = direction;
@@ -114,7 +112,7 @@ class Stop extends InfoWindowElement {
 
                     const chip = document.createElement("button");
                     chip.className = "stop-popup-chip";
-                    chip.textContent = ROUTE_CHIPS[routeId] ?? routeId;
+                    chip.textContent = chipLabel(routeId);
                     chip.style.background = "#" + colors[i];
                     chip.title = RouteURL.getRoutes().has(routeId) ? "Hide this route" : "Show this route on the map";
                     chip.addEventListener("click", event => {
@@ -133,7 +131,7 @@ class Stop extends InfoWindowElement {
                         times.appendChild(time);
                     });
                     row.appendChild(times);
-                    row.appendChild(Alerts.routeBell(this.getId(), this.name, ROUTE_CHIPS[routeId] ?? routeId,
+                    row.appendChild(Alerts.routeBell(this.getId(), this.name, chipLabel(routeId),
                         departures.map(d => ({ tripId: d.tripId, time: d.departure_time }))));
                     listElement.appendChild(row);
                 }
@@ -163,17 +161,8 @@ class Stop extends InfoWindowElement {
      * @param departure_time     time of departure epoch
      */
     public addDeparture(routeId: string, tripId: string, departure_text: string, direction_text: string, description: string, departure_time: number) : void {
-        if (!this.departures.has(routeId))
-            this.departures.set(routeId, new Array<departure>())
-
-        this.departures.get(routeId)?.push({
-            routeId: routeId,
-            tripId: tripId,
-            departure_text: departure_text,
-            direction_text: direction_text,
-            description: description,
-            departure_time: departure_time
-        })
+        if (!this.departures.has(routeId)) this.departures.set(routeId, []);
+        this.departures.get(routeId)!.push({ routeId, tripId, departure_text, direction_text, description, departure_time });
     }
     /**
      * Clears all departures
@@ -215,25 +204,16 @@ class Stop extends InfoWindowElement {
      * Updates the visibility baised on which elements are visible
      */
     public updateVisibility() : void {
-        let visible = false;
-
-        this.elements.forEach(element => {
-            if (element.isVisible()) {
-                visible = true
-                return;
-            }
-        })
-
-        this.setVisible(visible); 
+        this.setVisible([...this.elements].some(element => element.isVisible()));
     }
  
     /* Private */
 
     private name: string;
     private builds = 0;
-    private departures: Map<string, Array<departure>>;
+    private departures = new Map<string, Array<departure>>();
     private direction: string;
-    private elements: Set<Primative>;
+    private elements = new Set<Primative>();
 }
 
 const DEPARTURES_SHOWN = 5;
@@ -242,11 +222,11 @@ const DEPARTURES_SHOWN = 5;
 const STOP_ACTIVE = "#1f5fbf";
 const STOP_IDLE = "#9aa3ad";
 
-/** Short labels for route chips */
 // Light rail lines, so their stops can say what runs there
 const LIGHT_RAIL = new Set(["901", "902"]);
 
-const ROUTE_CHIPS = { "901": "Blue", "902": "Green", "925": "E Line", "FOOTBALL": "Football" };
+/** Short label for a route chip: "Blue" rather than "Blue Line" */
+const chipLabel = (routeId: string) => routeLabel(routeId).replace(/^(Blue|Green) Line$/, "$1");
 
 /** Stops get their own layer above route lines, so a line never covers a stop's tap target */
 function stopPane(map: L.Map) : string {
