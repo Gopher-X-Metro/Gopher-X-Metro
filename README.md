@@ -26,7 +26,7 @@ The Transit Pass allows students to have access to the Metro Transit buses and t
 ## About this revival
 The original project was built in 2024 by **Adam, Ken, Riley, Will, Babacar, Alex, Mike, and Andy**. In 2026 Ken revived it after the original hosting lapsed; the full commit history from the original team is preserved here.
 
-Live site: https://gopher-x-metro.github.io/Gopher-X-Metro/
+Live site: https://gopher-x-metro.github.io/
 
 Changes made to bring it back online with no paid services or API keys:
 - The map moved from Google Maps to [Leaflet](https://leafletjs.com/) with OpenStreetMap data, and place search uses [Photon](https://photon.komoot.io/).

@@ -1,6 +1,6 @@
 # Gopher-X-Metro
 
-Live map of UMN campus buses (Peak Transit) + Metro Transit buses/light rail. React 18 + Vite (`vite.config.mjs`; migrated from CRA, so `process.env.REACT_APP_*`/`PUBLIC_URL` are mapped via `define`), TypeScript, Chakra UI, Leaflet, Tailwind. Deployed to GitHub Pages (org repo `Gopher-X-Metro/Gopher-X-Metro`).
+Live map of UMN campus buses (Peak Transit) + Metro Transit buses/light rail. React 18 + Vite (`vite.config.mjs`; migrated from CRA, so `process.env.REACT_APP_*`/`PUBLIC_URL` are mapped via `define`), TypeScript, Chakra UI, Leaflet, Tailwind. Deployed to GitHub Pages (org repo `Gopher-X-Metro/gopher-x-metro.github.io`, served at the domain root; `public/Gopher-X-Metro/index.html` redirects the old /Gopher-X-Metro/ URL).
 
 ## Layout
 - `src/backend/` - data layer: `Static.ts` (static GTFS JSON from `public/gtfs`), `Realtime.ts` (GTFS-RT protobuf from svc.metrotransit.org + Peak vehicles), `Peak.ts` (UMN campus routes), `Live.ts` (nearby stops, departures, alerts), `Plan.ts`, `Schedule.ts`, `Fetch.ts` (JSON fetch helper, returns undefined on failure).
