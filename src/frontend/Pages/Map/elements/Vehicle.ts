@@ -116,7 +116,9 @@ class Vehicle extends InfoWindowElement {
             nextStop = await Live.getPeakStopName(info.nextStopID);
             nextStopId = "peak-" + info.nextStopID;
             const arrival = await Live.getPeakEta(info.nextStopID, info.routeID);
+            // Peak's ETA is the route's next arrival at that stop, not this bus's; hours out means it's a later trip (often tomorrow's)
             if (arrival) eta = Math.round((arrival - Date.now() / 1000) / 60);
+            if (eta !== undefined && eta > 60) eta = undefined;
         } else if (!this.id.startsWith("peak-")) {
             metro = await Live.getMetroTrip(this.tripId ?? this.id);
             nextStop = metro.nextStop;

@@ -289,7 +289,10 @@ namespace Routes {
             stop.clearDepartures();
             for (const time of await Live.getPeakArrivals(info.id, peakRouteId)) {
                 const minutes = Math.round((time - Date.now() / 1000) / 60);
-                stop.addDeparture(routeId, "", minutes <= 0 ? "Due" : minutes + " Min", "", "", time);
+                // Like Metro's countdowns, anything over an hour out reads as a clock time
+                const text = minutes <= 0 ? "Due" : minutes <= 60 ? minutes + " Min"
+                    : new Date(time * 1000).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+                stop.addDeparture(routeId, "", text, "", "", time);
             }
             stop.updateWindow();
         }
