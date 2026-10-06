@@ -56,6 +56,9 @@ class Stop extends InfoWindowElement {
      */
     public async updateWindow() : Promise<void> {
         this.setColor(this.departures.size === 0 ? STOP_IDLE : STOP_ACTIVE);
+        // Rail stations have a stop per direction at almost the same spot; keep the one with service on top (stops have their own pane, so this never hides them under route lines)
+        const marker = this.marker as L.CircleMarker;
+        if (this.departures.size > 0) marker.bringToFront(); else marker.bringToBack();
 
         /**
          * Generate the content of the infowindow
@@ -87,7 +90,7 @@ class Stop extends InfoWindowElement {
                 const allInactive = this.routeIds.size > 0 && [...this.routeIds].every(id => this.inactiveRouteIds.has(id));
                 warningElement.textContent = allInactive
                     ? "Sorry, this route is not active right now, please check the scheduling page for more information. "
-                    : "No buses scheduled here right now. ";
+                    : `No ${this.serviceKind()} scheduled here right now. `;
                 const link = document.createElement("a");
                 // Prefer a route that's currently shown on the map
                 const routeId = [...this.routeIds].find(id => RouteURL.getRoutes().has(id)) ?? [...this.routeIds][0];
@@ -176,6 +179,17 @@ class Stop extends InfoWindowElement {
      * Clears all departures
      */
     public clearDepartures() : void { this.departures.clear() }
+    /** The stop's name as shown on the map */
+    public getName() : string { return this.name; }
+    /**
+     * What serves this stop, in words: light rail, buses, or both
+     */
+    private serviceKind() : string {
+        const ids = [...this.routeIds];
+        const rail = ids.some(id => LIGHT_RAIL.has(id));
+        const bus = ids.some(id => !LIGHT_RAIL.has(id));
+        return rail && bus ? "buses or light rail" : rail ? "light rail" : "buses";
+    }
     /**
      * Changes the color of the stop
      * @param color  the new color
@@ -229,6 +243,9 @@ const STOP_ACTIVE = "#1f5fbf";
 const STOP_IDLE = "#9aa3ad";
 
 /** Short labels for route chips */
+// Light rail lines, so their stops can say what runs there
+const LIGHT_RAIL = new Set(["901", "902"]);
+
 const ROUTE_CHIPS = { "901": "Blue", "902": "Green", "925": "E Line", "FOOTBALL": "Football" };
 
 /** Stops get their own layer above route lines, so a line never covers a stop's tap target */

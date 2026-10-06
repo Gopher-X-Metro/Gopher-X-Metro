@@ -47,8 +47,8 @@ function clock(seconds: number) : string {
 /**
  * When each route runs and how often, built weekly from Metro Transit's schedule data
  */
-export default function Schedules({ hidden, setPage }) {
-    const [routeId, setRouteId] = useState("121");
+export default function Schedules({ hidden, setPage, initialRouteId }: { hidden: boolean, setPage: any, initialRouteId?: string }) {
+    const [routeId, setRouteId] = useState(initialRouteId ?? "121");
     const [schedule, setSchedule] = useState<Record<string, DirectionSchedule[]> | null | undefined>(undefined);
 
     const name = [...CAMPUS_ROUTES, ...METRO_ROUTES].find(([id]) => id === routeId)?.[1] ?? routeId;

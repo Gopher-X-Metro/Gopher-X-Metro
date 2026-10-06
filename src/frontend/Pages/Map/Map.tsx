@@ -70,12 +70,7 @@ export default function MapPage({ hidden, setPage, isMobile }) {
     useEffect(() => {
         // Initalizes Map Component
         if (map) {
-            const minimumDelay = 2000;
-
-            const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-            // Initialize the map and wait for the minimum delay
-            Promise.all([initalize(map), delay(minimumDelay)]).then(() => setMapLoaded(true));
+            initalize(map).then(() => setMapLoaded(true));
         }
     }, [map])
 

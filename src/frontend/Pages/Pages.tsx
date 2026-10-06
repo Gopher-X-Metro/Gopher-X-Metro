@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from 'react';
 
 import Map from './Map/Map.tsx';
-import About from './About/About.tsx';
-import Schedules from './Schedule/Schedules.tsx';
-import Alerts from './Alerts/Alerts.tsx';
+
+// Secondary pages load on first visit so the map's first paint isn't waiting on them
+const About = React.lazy(() => import('./About/About.tsx'));
+const Schedules = React.lazy(() => import('./Schedule/Schedules.tsx'));
+const Alerts = React.lazy(() => import('./Alerts/Alerts.tsx'));
+
+// A failed chunk load (flaky network, or a tab open across a redeploy) should not take the map down with it
+class PageErrorBoundary extends React.Component<{ children: React.ReactNode }, { failed: boolean }> {
+    state = { failed: false };
+    static getDerivedStateFromError() { return { failed: true }; }
+    render() { return this.state.failed ? null : this.props.children; }
+}
 
 export default function Pages( { isMobile } ) {
     const [page, setShownPage] = useState("map");
+    // Pages stay mounted once opened (hidden, not unmounted) so their state survives like before
+    const [opened, setOpened] = useState<string[]>([]);
+    if (page !== "map" && !opened.includes(page)) setOpened([...opened, page]);
 
     // Opening a page adds a history entry, so the phone's Back button returns to the map instead of leaving the site
     const setPage = (next: string) => {
@@ -27,6 +39,14 @@ export default function Pages( { isMobile } ) {
         return () => window.removeEventListener("popstate", onBack);
     }, [])
 
+    // Remembers the route a stop popup asked for, since Schedules may not be mounted yet to hear it
+    const scheduleRoute = React.useRef<string | undefined>(undefined);
+    useEffect(() => {
+        const remember = (event: Event) => { scheduleRoute.current = (event as CustomEvent).detail; };
+        document.addEventListener("gxm:open-schedule", remember);
+        return () => document.removeEventListener("gxm:open-schedule", remember);
+    }, [])
+
     const setPageRef = React.useRef(setPage);
     setPageRef.current = setPage;
 
@@ -40,9 +60,11 @@ export default function Pages( { isMobile } ) {
     return (
         <>
             <Map hidden={page!=="map"} setPage={setPage} isMobile={isMobile}/>
-            <About hidden={page!=="about"} setPage={setPage}/>
-            <Schedules hidden={page!=="schedules"} setPage={setPage}/>
-            <Alerts hidden={page !== "alerts"} setPage={setPage}/>
+            <PageErrorBoundary><React.Suspense fallback={null}>
+                {opened.includes("about") && <About hidden={page !== "about"} setPage={setPage}/>}
+                {opened.includes("schedules") && <Schedules hidden={page !== "schedules"} setPage={setPage} initialRouteId={scheduleRoute.current}/>}
+                {opened.includes("alerts") && <Alerts hidden={page !== "alerts"} setPage={setPage}/>}
+            </React.Suspense></PageErrorBoundary>
         </>
     )
 }
