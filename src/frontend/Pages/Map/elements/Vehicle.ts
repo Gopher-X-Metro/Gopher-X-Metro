@@ -123,7 +123,7 @@ class Vehicle extends InfoWindowElement {
             // over an hour, this bus isn't serving it: it's finishing up (often the night's last run, maybe running late)
             if (eta !== undefined && eta > 60) { eta = undefined; offDuty = true; }
         } else if (!this.id.startsWith("peak-")) {
-            metro = await Live.getMetroTrip(this.tripId ?? this.id);
+            metro = await Live.getMetroTrip(this.tripId ?? this.id, this.routeId);
             nextStop = metro.nextStop;
             nextStopId = metro.nextStopId;
             if (metro.arrival) eta = Math.round((metro.arrival - Date.now() / 1000) / 60);
