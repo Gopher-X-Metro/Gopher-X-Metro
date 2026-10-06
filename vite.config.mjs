@@ -13,7 +13,20 @@ export default defineConfig(({ mode }) => {
       "process.env.PUBLIC_URL": JSON.stringify("."),
       ...Object.fromEntries(Object.entries(env).map(([k, v]) => [`process.env.${k}`, JSON.stringify(v)])),
     },
-    build: { outDir: "build" },
+    build: {
+      outDir: "build",
+      rollupOptions: {
+        output: {
+          // Separate vendor chunks cache independently of app code and download in parallel
+          manualChunks(id) {
+            if (!id.includes("node_modules")) return;
+            if (id.includes("leaflet")) return "leaflet";
+            if (id.includes("@chakra-ui") || id.includes("@emotion") || id.includes("@ark-ui") || id.includes("@zag-js")) return "chakra";
+            if (id.includes("gtfs-realtime-bindings") || id.includes("protobufjs")) return "gtfs-rt";
+          },
+        },
+      },
+    },
     server: { port: Number(loadEnv(mode, process.cwd(), "PORT").PORT || 3000) },
   };
 });

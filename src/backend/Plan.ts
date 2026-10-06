@@ -1,9 +1,7 @@
-import proj4 from "proj4";
-
 namespace Plan {
 
     export async function serviceNearby(latitude: number, longitude: number, description: string | null, landmarkid: number, walkdist: number) {
-      const coordinates = fromLatLngtoUTM(latitude, longitude);
+      const coordinates = await fromLatLngtoUTM(latitude, longitude);
 
       let response = await fetch("https://svc.metrotransit.org/tripplanner/servicenearby", {
           method: "POST",
@@ -28,7 +26,8 @@ namespace Plan {
   }
 
 
-  function fromLatLngtoUTM(latitude: number, longitude: number) : { x:number, y:number } {
+  async function fromLatLngtoUTM(latitude: number, longitude: number) : Promise<{ x:number, y:number }> {
+    const { default: proj4 } = await import("proj4");
     proj4.defs([
     [
       "EPSG:4326",
