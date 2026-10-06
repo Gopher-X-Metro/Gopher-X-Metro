@@ -21,7 +21,8 @@
     "build": "vite build",
     "knip": "knip",
     "gtfs": "node scripts/build-gtfs.mjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build-buildings": "node scripts/build-campus-buildings.mjs"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
