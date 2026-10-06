@@ -93,8 +93,11 @@ function runs(service, date) {
     return !!c && c.start_date <= date && date <= c.end_date && c[days[new Date(date.slice(0, 4) + "-" + date.slice(4, 6) + "-" + date.slice(6) + "T12:00").getDay()]] === "1";
 }
 const firstStop = new Map(); // trip_id -> [sequence, seconds]
+const tripStops = new Map(); // trip_id -> [[sequence, stop_id]]
 await eachRow("stop_times.txt", row => {
     const seq = Number(row.stop_sequence), current = firstStop.get(row.trip_id);
+    if (!tripStops.has(row.trip_id)) tripStops.set(row.trip_id, []);
+    tripStops.get(row.trip_id).push([seq, row.stop_id]);
     if (!current || seq < current[0]) {
         const [h, m] = row.departure_time.split(":").map(Number);
         firstStop.set(row.trip_id, [seq, h * 3600 + m * 60]);
@@ -147,6 +150,22 @@ for (const [routeId, route] of schedules) {
         }));
     fs.writeFileSync(path.join(output, "schedules", routeId + ".json"), JSON.stringify(out));
 }
+
+// Stop patterns: each route's unique ordered stop lists, and which pattern each trip follows
+const patterns = new Map(); // route_id -> { patterns: string[][], index: Map<key, number>, trips: {} }
+for (const [tripId, stopList] of tripStops) {
+    const routeId = tripInfo.get(tripId)?.route;
+    if (!routeId) continue;
+    const stopIds = stopList.sort((a, b) => a[0] - b[0]).map(s => s[1]);
+    const key = stopIds.join(",");
+    if (!patterns.has(routeId)) patterns.set(routeId, { patterns: [], index: new Map(), trips: {} });
+    const route = patterns.get(routeId);
+    if (!route.index.has(key)) { route.index.set(key, route.patterns.length); route.patterns.push(stopIds); }
+    route.trips[tripId] = route.index.get(key);
+}
+fs.mkdirSync(path.join(output, "patterns"), { recursive: true });
+for (const [routeId, route] of patterns)
+    fs.writeFileSync(path.join(output, "patterns", routeId + ".json"), JSON.stringify({ patterns: route.patterns, trips: route.trips }));
 
 // Shapes as ordered [lat, lon] points
 const shapes = new Map();

@@ -110,15 +110,18 @@ namespace Live {
      * Gets the live details of a Metro Transit trip: next stop, predicted arrival, delay and bus number
      * @param tripId ID of the trip
      */
-    export async function getMetroTrip(tripId: string) : Promise<MetroTrip> {
+    export async function getMetroTrip(tripId: string, routeId?: string) : Promise<MetroTrip> {
         const [positions, updates] = await Promise.all([getMetroPositions(), getMetroUpdates()]);
         const position = positions.get(tripId);
         const now = Date.now() / 1000;
         // The first listed stop still ahead of the bus. Trip updates are sparse (unchanged stops are omitted),
-        // so the vehicle position's own stop_id is preferred as the true next stop.
+        // so the vehicle position's own stop_id is the fallback next stop.
         const tripUpdates = updates.get(tripId);
         const next = tripUpdates?.find(u => Number(u.arrival?.time ?? u.departure?.time ?? 0) >= now - 30);
-        const stopId = position?.stopId ?? next?.stopId;
+        // The feed's stop_id can be a timepoint several stops ahead, so locate the bus on the trip's own stop list
+        const located = routeId ? await locateOnTrip(routeId, tripId, position, position?.stopId ?? next?.stopId) : undefined;
+        const stopId = located?.stopId ?? position?.stopId ?? next?.stopId;
+        const stopped = located ? located.at && !!position?.stopped : position?.stopped;
         const match = tripUpdates?.find(u => u.stopId === stopId);
         const event = match?.arrival ?? match?.departure;
         const delay = (event ?? next?.arrival ?? next?.departure)?.delay;
@@ -134,7 +137,7 @@ namespace Live {
             nextStopId: stopId,
             arrival,
             delayMinutes: delay !== undefined && delay !== null ? Math.round(Number(delay) / 60) : undefined,
-            stopped: position?.stopped,
+            stopped,
             busNumber: position?.label,
         };
     }
@@ -307,6 +310,8 @@ namespace Live {
 
     let stops : Promise<Array<[string, string, number, number]>> | undefined;
     let stopNames : Map<string, string> | undefined;
+    let stopCoords : Map<string, [number, number]> | undefined;
+    const patterns = new Map<string, Promise<{ patterns: string[][], trips: Record<string, number> } | undefined>>();
     let peakStops : Promise<Map<any, any>> | undefined;
     let alerts : Promise<Alert[]> | undefined;
     let alertsFetched = 0;
@@ -359,6 +364,63 @@ namespace Live {
                 .catch(() => new Map());
         }
         return updates;
+    }
+
+    /**
+     * Gets a route's stop patterns (ordered stop lists) and the pattern each trip follows
+     */
+    function getPatterns(routeId: string) : Promise<{ patterns: string[][], trips: Record<string, number> } | undefined> {
+        if (!patterns.has(routeId))
+            patterns.set(routeId, fetch(process.env.PUBLIC_URL + "/gtfs/patterns/" + routeId + ".json")
+                .then(response => response.ok ? response.json() : undefined)
+                .catch(() => undefined));
+        return patterns.get(routeId)!;
+    }
+
+    /**
+     * Finds the next stop of a trip from the bus's location: the end of the stop-to-stop segment nearest the bus.
+     * Only segments up to the feed's reported stop are searched, so loops that pass the same spot twice resolve correctly.
+     * @param feedStopId the feed's next stop, an upper bound on how far along the trip the bus is
+     * @returns the next stop, and whether the bus is at it
+     */
+    async function locateOnTrip(routeId: string, tripId: string, position: { lat?: number, lng?: number } | undefined, feedStopId?: string)
+        : Promise<{ stopId: string, at: boolean } | undefined> {
+        if (position?.lat === undefined || position?.lng === undefined) return undefined;
+        const [data, all] = await Promise.all([getPatterns(routeId), getStops()]);
+        const pattern = data?.patterns[data.trips[tripId]];
+        if (!pattern?.length) return undefined;
+        if (!stopCoords) stopCoords = new Map(all.map(stop => [stop[0], [stop[2], stop[3]]]));
+        const coords = pattern.map(id => stopCoords!.get(id));
+        if (coords.some(c => !c)) return undefined;
+        const { lat, lng } = position;
+        const feedIndex = feedStopId ? pattern.indexOf(feedStopId) : -1;
+        // Feed says the trip hasn't started: the bus is waiting to begin at the first stop
+        if (feedIndex === 0) return { stopId: pattern[0], at: distance(lat, lng, coords[0]![0], coords[0]![1]) < 40 };
+        const last = feedIndex > 0 ? feedIndex : pattern.length - 1;
+
+        // At a stop: within 40 m of one
+        for (let i = 0; i <= last; i++)
+            if (distance(lat, lng, coords[i]![0], coords[i]![1]) < 40) return { stopId: pattern[i], at: true };
+
+        let best = -1, bestDistance = Infinity;
+        for (let i = 1; i <= last; i++) {
+            const d = segmentDistance(lat, lng, coords[i - 1]!, coords[i]!);
+            if (d < bestDistance) { bestDistance = d; best = i; }
+        }
+        // Far from the route (detour, deadheading): trust the feed instead
+        return best > 0 && bestDistance < 300 ? { stopId: pattern[best], at: false } : undefined;
+    }
+
+    /**
+     * Meters from a point to the straight segment between two [lat, lng] points
+     */
+    function segmentDistance(lat: number, lng: number, a: [number, number], b: [number, number]) : number {
+        const toRad = Math.PI / 180, scale = Math.cos(lat * toRad);
+        const bx = (b[1] - a[1]) * scale, by = b[0] - a[0];
+        const px = (lng - a[1]) * scale, py = lat - a[0];
+        const lengthSq = bx * bx + by * by;
+        const t = lengthSq ? Math.max(0, Math.min(1, (px * bx + py * by) / lengthSq)) : 0;
+        return distance(lat, lng, a[0] + t * by, a[1] + t * bx / scale);
     }
 
     /**
