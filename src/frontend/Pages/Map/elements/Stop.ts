@@ -179,6 +179,8 @@ class Stop extends InfoWindowElement {
      * Clears all departures
      */
     public clearDepartures() : void { this.departures.clear() }
+    /** The stop's name as shown on the map */
+    public getName() : string { return this.name; }
     /**
      * What serves this stop, in words: light rail, buses, or both
      */

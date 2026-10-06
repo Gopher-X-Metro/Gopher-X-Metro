@@ -1,6 +1,6 @@
 import L from "leaflet";
 import Live from "src/backend/Live.ts";
-import { ROUTE_NAMES } from "../elements/Vehicle";
+import { ROUTE_NAMES, setStopNameLookup } from "../elements/Vehicle";
 import { LINE_BOLD, LINE_NORMAL } from "../elements/Path";
 import Resources from "src/backend/Resources.ts";
 import Schedule from "src/backend/Schedule.ts";
@@ -70,6 +70,8 @@ namespace Routes {
         RouteURL.addListener(() => refresh());
         // Bus popups link their next stop here (an event avoids a Vehicle -> Routes import cycle)
         document.addEventListener("gxm:open-stop", event => openStop((event as CustomEvent<string>).detail));
+        // Bus popups name their next stop the way the map's stop does
+        setStopNameLookup(async stopId => (await findStop(stopId))?.getName());
 
         // Loads the static routes
         refresh()
@@ -233,21 +235,7 @@ namespace Routes {
      * @param stopId Metro Transit stop ID, or "peak-<id>" for a campus stop
      */
     export async function openStop(stopId: string) : Promise<void> {
-        let stop = await stops.get(stopId);
-        // Campus buses report Peak Transit stop IDs, but routes drawn from Metro Transit data use Metro IDs,
-        // so fall back to the loaded stop nearest the Peak stop's location
-        if (!stop && stopId.startsWith("peak-")) {
-            const peak = await Live.getPeakStop(Number(stopId.slice(5)));
-            if (peak) {
-                let best: [number, Stop | undefined] = [NEAREST_STOP_METERS, undefined];
-                for (const candidate of stops.values()) {
-                    const s = await candidate;
-                    const meters = s ? (s.getMarker() as L.CircleMarker).getLatLng().distanceTo([peak.lat, peak.lng]) : Infinity;
-                    if (meters < best[0]) best = [meters, s];
-                }
-                stop = best[1];
-            }
-        } else if (!stop) stop = await loadStop(stopId, "");
+        const stop = await findStop(stopId) ?? (stopId.startsWith("peak-") ? undefined : await loadStop(stopId, ""));
         if (!stop) return;
         for (const other of stops.values()) (await other)?.infoWindow?.setVisible(false);
         const location = (stop.getMarker() as L.CircleMarker).getLatLng();
@@ -255,6 +243,26 @@ namespace Routes {
         stop.infoWindow.setPosition(location);
         stop.infoWindow.setVisible(true);
         stop.updateWindow();
+    }
+
+    /**
+     * Finds a stop already on the map
+     * @param stopId Metro Transit stop ID, or "peak-<id>" for a campus stop
+     */
+    async function findStop(stopId: string) : Promise<Stop | undefined> {
+        const stop = await stops.get(stopId);
+        if (stop || !stopId.startsWith("peak-")) return stop;
+        // Campus buses report Peak Transit stop IDs, but routes drawn from Metro Transit data use Metro IDs,
+        // so fall back to the loaded stop nearest the Peak stop's location
+        const peak = await Live.getPeakStop(Number(stopId.slice(5)));
+        if (!peak) return undefined;
+        let best: [number, Stop | undefined] = [NEAREST_STOP_METERS, undefined];
+        for (const candidate of stops.values()) {
+            const s = await candidate;
+            const meters = s ? (s.getMarker() as L.CircleMarker).getLatLng().distanceTo([peak.lat, peak.lng]) : Infinity;
+            if (meters < best[0]) best = [meters, s];
+        }
+        return best[1];
     }
 
     /** How close a loaded stop must be to count as the same stop as a Peak Transit one */

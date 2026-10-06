@@ -112,25 +112,31 @@ class Vehicle extends InfoWindowElement {
         let nextStopId: string | undefined;
         let eta: number | undefined;
         let metro: Live.MetroTrip | undefined;
+        let offDuty = false;
         if (info.nextStopID) {
-            nextStop = await Live.getPeakStopName(info.nextStopID);
             nextStopId = "peak-" + info.nextStopID;
+            // Use the map's name for the stop when it's drawn, so the popup and the stop agree
+            nextStop = await stopNameLookup?.(nextStopId) ?? await Live.getPeakStopName(info.nextStopID);
             const arrival = await Live.getPeakEta(info.nextStopID, info.routeID);
-            // Peak's ETA is the route's next arrival at that stop, not this bus's; hours out means it's a later trip (often tomorrow's)
             if (arrival) eta = Math.round((arrival - Date.now() / 1000) / 60);
-            if (eta !== undefined && eta > 60) eta = undefined;
+            // Peak's ETA is the route's next arrival at that stop, not this bus's. If the route isn't due there for
+            // over an hour, this bus isn't serving it: it's finishing up (often the night's last run, maybe running late)
+            if (eta !== undefined && eta > 60) { eta = undefined; offDuty = true; }
         } else if (!this.id.startsWith("peak-")) {
             metro = await Live.getMetroTrip(this.tripId ?? this.id);
             nextStop = metro.nextStop;
             nextStopId = metro.nextStopId;
             if (metro.arrival) eta = Math.round((metro.arrival - Date.now() / 1000) / 60);
         }
-        if (nextStop) lines.push((metro?.stopped ? "At stop: " : "Next stop: ") + nextStop + (!metro?.stopped && eta !== undefined && eta >= 0 ? ` (${eta === 0 ? "now" : eta + " min"})` : ""));
+        if (offDuty) {
+            const hour = new Date().getHours();
+            lines.push(hour >= 20 || hour < 5 ? "Done for the night" : "Going out of service");
+        } else if (nextStop) lines.push((metro?.stopped ? "At stop: " : "Next stop: ") + nextStop + (!metro?.stopped && eta !== undefined && eta >= 0 ? ` (${eta === 0 ? "now" : eta + " min"})` : ""));
         if (metro?.delayMinutes !== undefined)
             lines.push(metro.delayMinutes > 1 ? `About ${metro.delayMinutes} min late` : metro.delayMinutes < -1 ? `About ${-metro.delayMinutes} min early` : "On time");
 
         // Campus buses report schedule adherence and how full they are
-        if (info.nextStopID !== undefined && info.minsLate !== undefined && info.nextStopID)
+        if (!offDuty && info.nextStopID !== undefined && info.minsLate !== undefined && info.nextStopID)
             lines.push(info.minsLate > 1 ? `About ${info.minsLate} min late` : info.minsLate < -1 ? `About ${-info.minsLate} min early` : "On time");
         if (info.HasAPC && info.APCPercentage > 0)
             lines.push(info.APCPercentage >= 90 ? "Crowded (standing room only)" : info.APCPercentage >= 50 ? "Some seats open" : "Plenty of seats");
@@ -334,6 +340,13 @@ const STALE_SECONDS = 120;
 const GLIDE_MS = 1500;
 
 const DIRECTIONS = { NB: "Northbound", SB: "Southbound", EB: "Eastbound", WB: "Westbound" };
+
+let stopNameLookup: ((stopId: string) => Promise<string | undefined>) | undefined;
+/**
+ * Lets the map supply stop names for bus popups (set by Routes, which imports this file)
+ * @param lookup gets a stop's name as the map shows it
+ */
+export function setStopNameLookup(lookup: (stopId: string) => Promise<string | undefined>) : void { stopNameLookup = lookup; }
 
 export const ROUTE_NAMES = {
     "120": "120 East Bank Circulator",
