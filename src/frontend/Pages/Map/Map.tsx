@@ -76,7 +76,7 @@ export default function MapPage({ hidden, setPage, isMobile }) {
 
     return (
     <>
-        <div ref={page} className="h-[100%] w-full bg-black" hidden={hidden}>
+        <div ref={page} className="h-[100%] w-full bg-[#e5e3df]" hidden={hidden}>
             <NavBar setPage={setPage} isMobile={isMobile}/>
             <LoadingScreen hidden={mapLoaded}/>
             <div className="map relative h-full w-full">

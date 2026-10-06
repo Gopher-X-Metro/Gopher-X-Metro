@@ -187,6 +187,12 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
 
     const renderStop = (stop: StopView) => {
         const minutes = walk(stop);
+        // The first departure the rider can still walk to, and how long until they need to set off
+        const catchable = minutes === undefined ? undefined
+            : stop.departures?.find(d => d.time * 1000 - Date.now() >= minutes * 60000);
+        const leave = catchable && minutes !== undefined
+            ? { in: Math.floor((catchable.time * 1000 - Date.now()) / 60000) - minutes, route: catchable.routeName }
+            : undefined;
         return (
             <li key={stop.id} className={"stop-row" + (focusedId === stop.id ? " focused" : "")}>
                 <div className="stop-head">
@@ -199,6 +205,9 @@ export default function NearbyPanel({ map, isMobile }: { map: L.Map | null, isMo
                     </button>
                 </div>
                 {minutes !== undefined && <p className="walk">🚶 {minutes} min walk</p>}
+                {leave && <p className={"leave-by" + (leave.in <= 1 ? " now" : "")}>
+                    {leave.in <= 1 ? "Leave now" : `Leave in ${leave.in} min`} to catch the {leave.route}
+                </p>}
                 {stop.alerts?.map((alert, i) => <p key={i} className="stop-alert" onClick={e => e.currentTarget.classList.toggle("full")}>⚠ {alert}</p>)}
                 {stop.error && <p className="muted">Couldn't load departures.</p>}
                 {stop.departures && stop.departures.length === 0 && <p className="muted">No departures soon.</p>}

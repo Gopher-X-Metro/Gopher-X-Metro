@@ -38,20 +38,8 @@ export default function NavBar({ setPage, isMobile }) {
                         <Button {...YELLOW_BUTTON} onClick={() => setPage("alerts")}>
                             Bus Alerts
                         </Button>
-                        <a href='https://campusmaps.umn.edu/' target="_blank" rel="noreferrer">
-                            <Button {...YELLOW_BUTTON}>
-                                Campus Bus Map
-                            </Button>
-                        </a>
-
-                        <a href='https://umn.rider.peaktransit.com' target="_blank" rel="noreferrer">
-                            <Button {...YELLOW_BUTTON}>
-                                GopherTrip Map
-                            </Button>
-                        </a>
-
-                        <Button rounded='full' {...YELLOW_BUTTON} onClick={() => setPage("about")}>
-                            ?
+                        <Button {...YELLOW_BUTTON} onClick={() => setPage("about")}>
+                            About
                         </Button>
 
                     </div>

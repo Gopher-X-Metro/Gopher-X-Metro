@@ -22,14 +22,8 @@ const ResponsiveDropdown = ({ setPage, isMobile }) => {
                             <Menu.Item {...MENU_ITEM} value="alerts" onClick={() => setPage("alerts")}>
                               Bus Alerts
                             </Menu.Item>
-                            <Menu.Item {...MENU_ITEM} value="campus-map" asChild>
-                              <a href='https://campusmaps.umn.edu/' target="_blank" rel="noreferrer">Campus Bus Map</a>
-                            </Menu.Item>
-                            <Menu.Item {...MENU_ITEM} value="gopher-trip" asChild>
-                              <a href='https://umn.rider.peaktransit.com' target="_blank" rel="noreferrer">Gopher Trip Map</a>
-                            </Menu.Item>
                             <Menu.Item {...MENU_ITEM} value="about" onClick={() => setPage("about")}>
-                              About Us
+                              About
                             </Menu.Item>
                         </Menu.Content>
                     </Menu.Positioner>
