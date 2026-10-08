@@ -17,6 +17,9 @@ The Transit Pass allows students to have access to the Metro Transit buses and t
 - Metro Transit API
 - Peak Transit API
 - Leaflet + OpenStreetMap (CARTO tiles, Photon search)
+- GTFS / GTFS-Realtime
+- GitHub Actions (scheduled data and model refreshes)
+- LightGBM (delay forecast models)
 
 
 [Github](https://github.umn.edu/joh20327/Gopher-City-Bus) \
