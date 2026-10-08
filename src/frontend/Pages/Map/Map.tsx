@@ -39,6 +39,7 @@ const BASEMAP_COLORS: [string, string, string][] = [
     ["landuse_residential", "fill-color", "#f3f3f1"],
     ["landuse_school", "fill-color", "#f0ede6"],
     ["building", "fill-color", "#d9d6d0"],
+    ["building", "fill-outline-color", "#cac8c4"],
     ["building-3d", "fill-extrusion-color", "#dcd9d3"],
     ["road_trunk_primary", "line-color", "#ffffff"],
     ["road_secondary_tertiary", "line-color", "#ffffff"],
@@ -52,6 +53,23 @@ const BASEMAP_COLORS: [string, string, string][] = [
     ["road_motorway_casing", "line-color", "#c9d0da"],
     ["road_path_pedestrian", "line-color", "#a9d8a9"],
     ["bridge_path_pedestrian", "line-color", "#a9d8a9"],
+];
+
+// At night the basemap is inverted, so these are set light-side-up: buildings, outlines, roads and casings
+// are pushed further from the background so their shapes stay readable once dark
+const BASEMAP_NIGHT_COLORS: [string, string, string][] = [
+    ["background", "background-color", "#d6d6d4"],
+    ["landuse_residential", "fill-color", "#d6d6d4"],
+    ["building", "fill-color", "#a39f97"],
+    ["building", "fill-outline-color", "#6f6c66"],
+    ["building-3d", "fill-extrusion-color", "#a39f97"],
+    ["road_trunk_primary", "line-color", "#c2c2c2"],
+    ["road_secondary_tertiary", "line-color", "#c2c2c2"],
+    ["bridge_trunk_primary", "line-color", "#c2c2c2"],
+    ["bridge_secondary_tertiary", "line-color", "#c2c2c2"],
+    ["road_trunk_primary_casing", "line-color", "#7d7d7d"],
+    ["road_secondary_tertiary_casing", "line-color", "#7d7d7d"],
+    ["road_motorway_casing", "line-color", "#7d7d7d"],
 ];
 
 // The map's own transit icons would double up with this site's stops
@@ -153,8 +171,18 @@ export default function MapPage({ hidden, setPage, isMobile }) {
             if (gl.isStyleLoaded()) restyle(); else gl.once("load", restyle);
             addBuildingNames(gl);
             // After sunset in Minneapolis the basemap goes dark (inverted, so labels follow); routes and stops keep their colors
-            const applyTheme = () => { gl.getContainer().style.filter = isNight() ? "invert(1) hue-rotate(180deg) brightness(0.9)" : ""; };
-            applyTheme();
+            let night: boolean | undefined;
+            const applyTheme = () => {
+                const now = isNight();
+                if (now === night) return;
+                night = now;
+                gl.getContainer().style.filter = now ? "invert(1) hue-rotate(180deg) contrast(1.1)" : "";
+                // Day colors come back first, so night only overrides what it changes
+                for (const [layer, property, color] of now ? [...BASEMAP_COLORS, ...BASEMAP_NIGHT_COLORS] : BASEMAP_COLORS)
+                    if (gl.getLayer(layer)) gl.setPaintProperty(layer, property as any, color);
+            };
+            // Restyle runs once the style loads, so apply the theme after it
+            if (gl.isStyleLoaded()) applyTheme(); else gl.once("load", () => { night = undefined; applyTheme(); });
             setInterval(applyTheme, 60000);
             setMap(leafletMap);
             currentMap = leafletMap;
