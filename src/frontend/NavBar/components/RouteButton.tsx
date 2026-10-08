@@ -40,9 +40,10 @@ function RouteButton({ routeId, text }: { routeId: string, text?: string }) {
     title: isRunning ? undefined : "Not running right now",
     onClick: () => {
       // selects specific route depending on button pressed
-      if (!isActive)
+      if (!isActive) {
         RouteURL.addRoute(routeId);
-      else
+        Routes.focusRoute(routeId);
+      } else
         RouteURL.removeRoute(routeId);
 
       // Remove info windows associated with the routeId

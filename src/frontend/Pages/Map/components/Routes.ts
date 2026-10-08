@@ -42,12 +42,18 @@ namespace Routes {
      * Moves the map to show routes if none of them are in view, waiting briefly for their lines to load
      * @param routeIds IDs of the routes
      */
-    export async function showRoute(...routeIds: string[]) : Promise<void> {
+    export function showRoute(...routeIds: string[]) : Promise<void> { return fitRoutes(routeIds, false); }
+    /**
+     * Moves the map to frame a route, waiting briefly for its lines to load
+     * @param routeId ID of the route
+     */
+    export function focusRoute(routeId: string) : Promise<void> { return fitRoutes([routeId], true); }
+    async function fitRoutes(routeIds: string[], always: boolean) : Promise<void> {
         for (let attempt = 0; attempt < 40; attempt++) {
             const bounds = L.latLngBounds([]);
             routeIds.forEach(id => getRoute(id)?.getPaths().forEach(path => bounds.extend((path.getMarker() as L.Polyline).getBounds())));
             if (bounds.isValid()) {
-                if (!map.getBounds().intersects(bounds)) map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+                if (always || !map.getBounds().intersects(bounds)) map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
                 return;
             }
             await new Promise(resolve => setTimeout(resolve, 250));
