@@ -57,6 +57,29 @@ const BASEMAP_COLORS: [string, string, string][] = [
 // The map's own transit icons would double up with this site's stops
 const BASEMAP_HIDDEN = ["poi_transit"];
 
+const MPLS = { lat: 44.9778, lng: -93.265 };
+
+/**
+ * Whether the sun is down in Minneapolis (NOAA's sunrise equation, official zenith 90.833°)
+ * @param now the moment to check
+ */
+function isNight(now = new Date()) : boolean {
+    const rad = Math.PI / 180;
+    const day = Math.floor((now.getTime() - Date.UTC(now.getUTCFullYear(), 0, 0)) / 86400000);
+    const gamma = 2 * Math.PI / 365 * (day - 1);
+    const declination = 0.006918 - 0.399912 * Math.cos(gamma) + 0.070257 * Math.sin(gamma)
+        - 0.006758 * Math.cos(2 * gamma) + 0.000907 * Math.sin(2 * gamma);
+    const equationOfTime = 229.18 * (0.000075 + 0.001868 * Math.cos(gamma) - 0.032077 * Math.sin(gamma)
+        - 0.014615 * Math.cos(2 * gamma) - 0.040849 * Math.sin(2 * gamma));
+    const hourAngle = Math.acos(Math.cos(90.833 * rad) / (Math.cos(MPLS.lat * rad) * Math.cos(declination))
+        - Math.tan(MPLS.lat * rad) * Math.tan(declination)) / rad;
+    const solarNoon = 720 - 4 * MPLS.lng - equationOfTime;   // UTC minutes
+    const minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+    // Distance from solar noon, wrapped to ±12h; the sun is up within hourAngle * 4 minutes of it
+    const fromNoon = ((minutes - solarNoon + 2160) % 1440) - 720;
+    return Math.abs(fromNoon) > hourAngle * 4;
+}
+
 /**
  * Labels campus buildings when zoomed in close, since the basemap leaves most of them unnamed
  * @param gl    the basemap's MapLibre map, which draws the labels
@@ -129,6 +152,10 @@ export default function MapPage({ hidden, setPage, isMobile }) {
             };
             if (gl.isStyleLoaded()) restyle(); else gl.once("load", restyle);
             addBuildingNames(gl);
+            // After sunset in Minneapolis the basemap goes dark (inverted, so labels follow); routes and stops keep their colors
+            const applyTheme = () => { gl.getContainer().style.filter = isNight() ? "invert(1) hue-rotate(180deg) brightness(0.9)" : ""; };
+            applyTheme();
+            setInterval(applyTheme, 60000);
             setMap(leafletMap);
             currentMap = leafletMap;
         }
