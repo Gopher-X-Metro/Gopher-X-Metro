@@ -58,18 +58,18 @@ const BASEMAP_COLORS: [string, string, string][] = [
 // At night the basemap is inverted, so these are set light-side-up: buildings, outlines, roads and casings
 // are pushed further from the background so their shapes stay readable once dark
 const BASEMAP_NIGHT_COLORS: [string, string, string][] = [
-    ["background", "background-color", "#b0b0ae"],
-    ["landuse_residential", "fill-color", "#b0b0ae"],
-    ["building", "fill-color", "#837f77"],
-    ["building", "fill-outline-color", "#4d4a45"],
-    ["building-3d", "fill-extrusion-color", "#837f77"],
-    ["road_trunk_primary", "line-color", "#8c8c8c"],
-    ["road_secondary_tertiary", "line-color", "#8c8c8c"],
-    ["bridge_trunk_primary", "line-color", "#8c8c8c"],
-    ["bridge_secondary_tertiary", "line-color", "#8c8c8c"],
-    ["road_trunk_primary_casing", "line-color", "#5a5a5a"],
-    ["road_secondary_tertiary_casing", "line-color", "#5a5a5a"],
-    ["road_motorway_casing", "line-color", "#5a5a5a"],
+    ["background", "background-color", "#d0d0ce"],
+    ["landuse_residential", "fill-color", "#d0d0ce"],
+    ["building", "fill-color", "#97938b"],
+    ["building", "fill-outline-color", "#615e58"],
+    ["building-3d", "fill-extrusion-color", "#97938b"],
+    ["road_trunk_primary", "line-color", "#a0a0a0"],
+    ["road_secondary_tertiary", "line-color", "#a0a0a0"],
+    ["bridge_trunk_primary", "line-color", "#a0a0a0"],
+    ["bridge_secondary_tertiary", "line-color", "#a0a0a0"],
+    ["road_trunk_primary_casing", "line-color", "#6e6e6e"],
+    ["road_secondary_tertiary_casing", "line-color", "#6e6e6e"],
+    ["road_motorway_casing", "line-color", "#6e6e6e"],
 ];
 
 // The map's own transit icons would double up with this site's stops
@@ -176,7 +176,7 @@ export default function MapPage({ hidden, setPage, isMobile }) {
                 const now = isNight();
                 if (now === night) return;
                 night = now;
-                gl.getContainer().style.filter = now ? "invert(1) hue-rotate(180deg) brightness(1.15)" : "";
+                gl.getContainer().style.filter = now ? "invert(1) hue-rotate(180deg)" : "";
                 // Day colors come back first, so night only overrides what it changes
                 for (const [layer, property, color] of now ? [...BASEMAP_COLORS, ...BASEMAP_NIGHT_COLORS] : BASEMAP_COLORS)
                     if (gl.getLayer(layer)) gl.setPaintProperty(layer, property as any, color);
