@@ -213,6 +213,9 @@ class Vehicle extends InfoWindowElement {
                 p.append(label, link, line.slice(label.length + nextStop.length));
             } else p.textContent = line;
             if (i === lines.length - 1) p.className = "muted";
+            // Live delay: red when late or early (off schedule), green when on time
+            if (/^About \d+ min (late|early)$/.test(line)) p.classList.add("delay-off");
+            else if (line === "On time") p.classList.add("delay-ok");
             div.appendChild(p);
         });
         return div;

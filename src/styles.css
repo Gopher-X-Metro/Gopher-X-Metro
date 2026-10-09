@@ -538,6 +538,8 @@ body:not(.mobile) .alert-banner { top: calc(var(--header-h, 80px) + 64px); }
 .vehicle-popup h3 { font-weight: bold; font-size: 14px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
 .vehicle-popup .route-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 .vehicle-popup p { margin: 2px 0 !important; }
+.vehicle-popup p.delay-off { color: #c62828; font-weight: 600; }
+.vehicle-popup p.delay-ok { color: #2e7d32; font-weight: 600; }
 
 /* Late campus bus badge */
 /* Predicted-late dot on buses (past-run history from metro-transit-delays) and its legend */
