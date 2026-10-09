@@ -188,11 +188,8 @@ class Vehicle extends InfoWindowElement {
             : `Location updated ${age < 5 ? "just now" : age + "s ago"}`);
 
         // Past runs of this trip (not this bus's live delay), from the published history
-        if (this.prediction) {
-            const { minutes, late, runs } = this.prediction;
-            const typical = minutes > 1 ? `${Math.round(minutes)} min late` : minutes < -1 ? `${Math.round(-minutes)} min early` : "on time";
-            lines.push(`Past runs: typically ${typical}, ${Math.round(late * 100)}% chance 5+ min late (${runs} runs)`);
-        }
+        if (this.prediction)
+            lines.push(this.prediction.risk === "late" ? "Past runs: often late" : "Past runs: usually on time");
 
         const busNumber = metro?.busNumber ?? info.vehicleName;
         if (busNumber) lines.push("Bus #" + busNumber);
