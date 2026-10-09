@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import Resources from "src/backend/Resources";
 import Marker from "./components/Marker";
 import Routes from "./components/Routes";
+import PredictionLegend from "./components/PredictionLegend";
 import RouteURL from "src/backend/URL";
 
 import LoadingScreen from "./components/LoadingScreen";
@@ -212,6 +213,7 @@ export default function MapPage({ hidden, setPage, isMobile }) {
                 <CenterButton map={map}/>
                 <AlertBanner/>
                 <NearbyPanel map={map} isMobile={isMobile}/>
+                <PredictionLegend/>
             </div>
         </div>
     </>);

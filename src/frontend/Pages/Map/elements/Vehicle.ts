@@ -3,6 +3,7 @@ import InfoWindowElement from "./abstracts/InfoWindowElement";
 import Live from "src/backend/Live.ts";
 import Resources from "src/backend/Resources.ts";
 import { ROUTE_NAMES } from "src/backend/RouteNames.ts";
+import Predictions from "src/backend/Predictions.ts";
 
 class Vehicle extends InfoWindowElement {
     /* Public */
@@ -67,6 +68,22 @@ class Vehicle extends InfoWindowElement {
         this.badge.className = "delay-badge";
         this.badge.hidden = true;
         contents.appendChild(this.badge);
+
+        // Predicted-late dot on the bus's corner, green when usually on time, amber when late is likely
+        this.dot = document.createElement("div");
+        this.dot.className = "predict-dot";
+        this.dot.hidden = true;
+        contents.appendChild(this.dot);
+    }
+    /**
+     * Stores the past-run prediction for the vehicle's trip and shows its dot
+     * @param prediction the trip's prediction, or undefined when there is none
+     */
+    public setPrediction(prediction: Predictions.Prediction | undefined) : void {
+        this.prediction = prediction;
+        this.dot.hidden = !(prediction && Predictions.isShown());
+        this.dot.className = "predict-dot " + (prediction?.risk === "late" ? "predict-late" : "predict-on-time");
+        this.dot.title = prediction?.risk === "late" ? "Often runs late on this trip" : "Usually on time for this trip";
     }
     /**
      * Stores the latest realtime data of the vehicle
@@ -169,6 +186,13 @@ class Vehicle extends InfoWindowElement {
         lines.push(age > STALE_SECONDS 
             ? `Location may be out of date (${Math.round(age / 60)} min old)` 
             : `Location updated ${age < 5 ? "just now" : age + "s ago"}`);
+
+        // Past runs of this trip (not this bus's live delay), from the published history
+        if (this.prediction) {
+            const { minutes, late, runs } = this.prediction;
+            const typical = minutes > 1 ? `${Math.round(minutes)} min late` : minutes < -1 ? `${Math.round(-minutes)} min early` : "on time";
+            lines.push(`Past runs: typically ${typical}, ${Math.round(late * 100)}% chance 5+ min late (${runs} runs)`);
+        }
 
         const busNumber = metro?.busNumber ?? info.vehicleName;
         if (busNumber) lines.push("Bus #" + busNumber);
@@ -292,6 +316,8 @@ class Vehicle extends InfoWindowElement {
     private windowUpdated = 0;
     private glide = 0;
     private badge: HTMLDivElement;
+    private dot: HTMLDivElement;
+    private prediction: Predictions.Prediction | undefined;
     private updatedTimestamp: number | undefined;
     private positionTimestamp : number | undefined;
     private arrowImg: HTMLImageElement | null = null;

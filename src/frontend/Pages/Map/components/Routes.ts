@@ -7,6 +7,7 @@ import Resources from "src/backend/Resources.ts";
 import Schedule from "src/backend/Schedule.ts";
 import Vehicle from "../elements/Vehicle.ts";
 import RouteURL from "src/backend/URL.ts";
+import Predictions from "src/backend/Predictions.ts";
 import Route from "../elements/Route.ts";
 import Realtime from "src/backend/Realtime.ts";
 import Peak from "src/backend/Peak.ts";
@@ -117,6 +118,9 @@ namespace Routes {
 
                 vehicle.setPosition(L.latLng(info.latitude, info.longitude), info.timestamp);
                 vehicle.setInfo(routeId, info);
+                // Not awaited: the prediction loads separately so it never delays the bus's position
+                if (!String(info.trip_id).startsWith("peak-"))
+                    Predictions.forTrip(routeId, info.trip_id).then(prediction => vehicle.setPrediction(prediction));
                 vehicle.updateWindow();
                 vehicle.updateTimestamp();
             }
